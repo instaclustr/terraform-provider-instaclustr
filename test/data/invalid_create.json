@@ -1,0 +1,21 @@
+{
+    "clusterName": "invalid!!!",
+    "bundles": [
+        {
+            "bundle": "APACHE_CASSANDRA",
+            "version": "apache-cassandra-3.0.18"
+        }
+    ],
+    "provider": {
+        "name": "AWS_VPC",
+        "accountName": null
+    },
+    "slaTier" : "NON_PRODUCTION",
+    "nodeSize": "t3-small",
+    "dataCentre": "US_WEST_2",
+    "clusterNetwork" : "192.168.0.0/18",
+    "rackAllocation": {
+        "numberOfRacks": "3",
+        "nodesPerRack": "1"
+    }
+}

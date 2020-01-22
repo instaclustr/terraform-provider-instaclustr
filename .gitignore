@@ -1,0 +1,5 @@
+test/mock_api_server/server.log
+test/mock_api_server/__pycache__
+
+vendor
+terraform-provider-instaclustr
