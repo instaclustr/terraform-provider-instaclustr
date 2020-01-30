@@ -2,6 +2,20 @@
 
 A [Terraform](http://terraform.io) provider for managing Instaclustr Platform resources.  
 
+It provides a flexible set of resources for provisioning and managing [Instaclustr based clusters](http://instaclustr.com/) via the use of Terraform.  
+
+For general information about Terraform, visit the [official website](https://terraform.io/) and [GitHub project page](https://github.com/hashicorp/terraform).
+
+For further information about Instaclustr, please see [FAQ](https://www.instaclustr.com/resources/faqs/) and [Support](https://support.instaclustr.com/hc/en-us) 
+
+## Key benefits
+
+- Removes the need to write custom code integration directly with the Instaclustr API
+- Instaclustr based infrastructure as code deployments with minimal effort
+- Ease of integration into existing terraform or automated CI/CD based workflows
+- Ease of customisation and configuration in order to meet operational requirements
+- Use of existing Instaclustr authentication methodologies
+
 ## Requirements
 
 - Terraform 0.10.x or higher
@@ -9,7 +23,7 @@ A [Terraform](http://terraform.io) provider for managing Instaclustr Platform re
 
 ## Building The Provider
 
-Cloning the provider source code
+Clone the provider source code
 
 ```sh
 $ mkdir -p $GOPATH/src/github.com/instaclustr; cd $GOPATH/src/github.com/instaclustr
@@ -30,11 +44,12 @@ $ cd $GOPATH/src/github.com/instaclustr/terraform-provider-instaclustr
 $ make install
 ```
 
-For further details on Provider installation please see the [Terraform installation guide](https://www.terraform.io/docs/plugins/basics.html#installing-plugins)
+For further details on Provider installation please see the [Terraform installation guide](https://www.terraform.io/docs/plugins/basics.html#installing-a-plugin).
 
 ## Authentication
 
-This provider requires the API key for provisioning API because all API calls are protected by HTTP basic authentication over TLS. To create an API key, you should log in [Instaclustr Console](https://console.instaclustr.com), then go to `Account` -> `API Keys`, find the row of `Provisioning` and click `Generate Key`. You could leave your username and API key in the provider configuration like:
+This provider requires an API Key in order to provision Instaclustr resources. To create an API key, please log into the [Instaclustr Console](https://console.instaclustr.com) or signup for an account [here](https://console.instaclustr.com/user/signup) if you dont have one.  Navigate to `Account` -> `API Keys` page, locate the `Provisioning` role and click `Generate Key`.  This username and API key combination should then be placed into the provider configuration:
+
 ```
 provider "instaclustr" {
     username = "<Your instaclustr username here>"
@@ -117,11 +132,9 @@ Property | Description | Default
 bundle|Accepts APACHE_CASSANDRA. Compatible bundles: SPARK and/or ZEPPELIN.|Required
 version|For Cassandra: apache-cassandra-2.1.19, apache-cassandra-2.2.13, apache-cassandra-3.0.14, apache-cassandra-3.0.17, apache-cassandra-3.0.18, apache-cassandra-3.11, apache-cassandra-3.11.3, apache-cassandra-3.11.4.ic1. For Spark: apache-spark:2.1.3, apache-spark:2.1.3.ic1, apache-spark:2.3.2. For Zeppelin: apache-zeppelin:0.8.0-spark-2.3.2, apache-zeppelin:0.7.1-spark-2.1.1|Required
 
-## Further information and documentation
-
-All values of properties come from the provisioning API. The available values for properties may change with the upgrade of provisioning API. For the latest values definition, see [provisioning API definition](https://www.instaclustr.com/support/api-integrations/api-reference/provisioning-api/).
-
 ## Contributing
+
+Firstly thanks!  We value your time and will do our best to review the PR as soon as possible. 
 
 1. [Install golang](https://golang.org/doc/install#install)
 2. Clone repository to: $GOPATH/src/github.com/instaclustr/terraform-provider-instaclust
@@ -130,6 +143,11 @@ All values of properties come from the provisioning API. The available values fo
 5. Setup environment variable `TF_ACC` to enable online acceptance test cases by `$ export TF_ACC=1`
 6. Setup environment variables `IC_USERNAME` and `IC_API_KEY` of your provisioning API to grant online acceptance test cases permission by `$ export IC_USERNAME=<your instaclustr username>` and `$ export IC_API_KEY=<your provisioning API key>`
 7. Run the acceptance tests `$ make testacc`
+8. Create a PR and send it our way :)
+
+## Further information and documentation
+
+This provider makes use of the Instaclustr API.  For further information including latest updates and value definitions, please see [the provisioning API documentation](https://www.instaclustr.com/support/api-integrations/api-reference/provisioning-api/).
 
 # License
 
