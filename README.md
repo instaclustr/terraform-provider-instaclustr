@@ -27,7 +27,7 @@ Clone the provider source code
 
 ```sh
 $ mkdir -p $GOPATH/src/github.com/instaclustr; cd $GOPATH/src/github.com/instaclustr
-$ git clone hhttps://github.com/instaclustr/terraform-provider-instaclustr.git
+$ git clone https://github.com/instaclustr/terraform-provider-instaclustr.git
 ```
 
 Build the source into executable binary
