@@ -149,6 +149,8 @@ Firstly thanks!  We value your time and will do our best to review the PR as soo
 
 This provider makes use of the Instaclustr API.  For further information including latest updates and value definitions, please see [the provisioning API documentation](https://www.instaclustr.com/support/api-integrations/api-reference/provisioning-api/).
 
+Please see https://www.instaclustr.com/support/documentation/announcements/instaclustr-open-source-project-status/ for Instaclustr support status of this project.
+
 # License
 
 Apache2 - See the included LICENSE file for more details.
