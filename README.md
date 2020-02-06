@@ -94,7 +94,7 @@ resource "instaclustr_cluster" "example" {
 
 ## Configuration
 ### Resources
-`instaclustr_cluster`  
+### Resource:  `instaclustr_cluster`  
 A resource for managing clusters on Instaclustr Managed Platform. A cluster contains a base application and several add-ons.
 
 #### Properties
@@ -132,7 +132,7 @@ Property | Description | Default
 bundle|Accepts APACHE_CASSANDRA. Compatible bundles: SPARK and/or ZEPPELIN.|Required
 version|For Cassandra: apache-cassandra-2.1.19, apache-cassandra-2.2.13, apache-cassandra-3.0.14, apache-cassandra-3.0.17, apache-cassandra-3.0.18, apache-cassandra-3.11, apache-cassandra-3.11.3, apache-cassandra-3.11.4.ic1. For Spark: apache-spark:2.1.3, apache-spark:2.1.3.ic1, apache-spark:2.3.2. For Zeppelin: apache-zeppelin:0.8.0-spark-2.3.2, apache-zeppelin:0.7.1-spark-2.1.1|Required
 
-`instaclustr_firewall_rule`                             
+### Resource:  `instaclustr_firewall_rule`                             
 A resource for managing cluster firewall rules on Instaclustr Managed Platform. A firewall rule allows access to your Instaclustr cluster.
 
 #### Properties
@@ -161,17 +161,19 @@ resource "instaclustr_firewall_rule" "example" {
 }
 ```
 
-### Resource
-`instaclustr_vpc_peering`  
-A resource for managing VPC peering connections on Instaclustr Managed Platform.
+### Resource: `instaclustr_vpc_peering`  
+A resource for managing VPC peering connections on Instaclustr Managed Platform. This is only avaliable for clusters hosted in AWS
 
 #### Properties
 Property | Description | Default
 ---------|-------------|--------
-cluster_id|The ID of an existing Instaclustr managed cluster|Required
-peer_vpc_id||
-peer_account_id||
-peer_subnet|||
+cluster_id|The ID of an existing Instaclustr managed cluster| Not Required if cdc_id provided
+cdc_id|The ID of an existing Instaclustr managed cluster data centre|Not Required if cluster_id provided
+peer_vpc_id|The ID of the VPC with which you are creating the VPC peering connection|Required
+peer_account_id|The account ID of the owner of the accepter VPC|Required
+peer_subnet|The subnet for the VPC|Required
+peer_region| The Region code for the accepter VPC, if the accepter VPC is located in a Region other than the Region in which you make the request. | Not Required
+
 
 #### Example
 ```
