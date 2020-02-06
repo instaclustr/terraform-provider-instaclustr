@@ -132,6 +132,57 @@ Property | Description | Default
 bundle|Accepts APACHE_CASSANDRA. Compatible bundles: SPARK and/or ZEPPELIN.|Required
 version|For Cassandra: apache-cassandra-2.1.19, apache-cassandra-2.2.13, apache-cassandra-3.0.14, apache-cassandra-3.0.17, apache-cassandra-3.0.18, apache-cassandra-3.11, apache-cassandra-3.11.3, apache-cassandra-3.11.4.ic1. For Spark: apache-spark:2.1.3, apache-spark:2.1.3.ic1, apache-spark:2.3.2. For Zeppelin: apache-zeppelin:0.8.0-spark-2.3.2, apache-zeppelin:0.7.1-spark-2.1.1|Required
 
+`instaclustr_firewall_rule`                             
+A resource for managing cluster firewall rules on Instaclustr Managed Platform. A firewall rule allows access to your Instaclustr cluster.
+
+#### Properties
+Property | Description | Default
+---------|-------------|--------
+cluster_id|The ID of an existing Instaclustr managed cluster|Required
+rule_cidr|The network to add to your cluster firewall rule. Must be a valid IPv4 CIDR|Required
+rules|List of rule types that the specified network is allowed access to. See below for rule options.|Required
+
+`rules`
+
+Property | Description | Default
+---------|-------------|--------
+type|Accepts CASSANDRA, SPARK, SPARK_JOBSERVER|Required
+
+#### Example
+```
+resource "instaclustr_firewall_rule" "example" {
+    cluster_id = "${instaclustr_cluster.example.id}"
+    rule_cidr = "10.1.0.0/16"
+    rules = [
+        { 
+            type = "CASSANDRA"
+        }
+    ]
+}
+```
+
+### Resource
+`instaclustr_vpc_peering`  
+A resource for managing VPC peering connections on Instaclustr Managed Platform.
+
+#### Properties
+Property | Description | Default
+---------|-------------|--------
+cluster_id|The ID of an existing Instaclustr managed cluster|Required
+peer_vpc_id||
+peer_account_id||
+peer_subnet|||
+
+#### Example
+```
+resource "instaclustr_vpc_peering" "example_vpc_peering" {
+    cluster_id = "${instaclustr_cluster.example.cluster_id}"
+    peer_vpc_id = "vpc-123456"
+    peer_account_id = "1234567890"
+    peer_subnet = "10.0.0.0/20"
+}
+```
+
 ## Contributing
 
 Firstly thanks!  We value your time and will do our best to review the PR as soon as possible. 
