@@ -1,0 +1,73 @@
+module github.com/instaclustr/terraform-provider-instaclustr
+
+go 1.13
+
+require (
+	cloud.google.com/go v0.50.0
+	cloud.google.com/go/storage v1.5.0 // indirect
+	github.com/BurntSushi/toml v0.3.1
+	github.com/agext/levenshtein v1.2.2
+	github.com/apparentlymart/go-cidr v1.0.1
+	github.com/apparentlymart/go-textseg v1.0.0
+	github.com/armon/go-radix v1.0.0
+	github.com/aws/aws-sdk-go v1.25.10
+	github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d
+	github.com/bgentry/speakeasy v0.1.0
+	github.com/bmatcuk/doublestar v1.1.5
+	github.com/davecgh/go-spew v1.1.1
+	github.com/fatih/color v1.7.0
+	github.com/golang/groupcache v0.0.0-20191227052852-215e87163ea7
+	github.com/golang/protobuf v1.3.2
+	github.com/google/go-cmp v0.3.1
+	github.com/google/uuid v1.1.1
+	github.com/hashicorp/errwrap v1.0.0
+	github.com/hashicorp/go-cleanhttp v0.5.1
+	github.com/hashicorp/go-getter v1.4.0
+	github.com/hashicorp/go-hclog v0.9.2
+	github.com/hashicorp/go-multierror v1.0.0
+	github.com/hashicorp/go-plugin v1.0.1
+	github.com/hashicorp/go-safetemp v1.0.0
+	github.com/hashicorp/go-uuid v1.0.1
+	github.com/hashicorp/go-version v1.2.0
+	github.com/hashicorp/hcl v1.0.0
+	github.com/hashicorp/hcl2 v0.0.0-20191002203319-fb75b3253c80
+	github.com/hashicorp/hil v0.0.0-20190212132231-97b3a9cdfa93
+	github.com/hashicorp/logutils v1.0.0
+	github.com/hashicorp/terraform v0.12.9
+	github.com/hashicorp/terraform-config-inspect v0.0.0-20190821133035-82a99dc22ef4
+	github.com/hashicorp/yamux v0.0.0-20190923154419-df201c70410d
+	github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af
+	github.com/jstemmer/go-junit-report v0.9.1
+	github.com/mattn/go-colorable v0.1.1
+	github.com/mattn/go-isatty v0.0.10
+	github.com/mitchellh/cli v1.0.0
+	github.com/mitchellh/colorstring v0.0.0-20190213212951-d06e56a500db
+	github.com/mitchellh/copystructure v1.0.0
+	github.com/mitchellh/go-homedir v1.1.0
+	github.com/mitchellh/go-testing-interface v1.0.0
+	github.com/mitchellh/go-wordwrap v1.0.0
+	github.com/mitchellh/hashstructure v1.0.0
+	github.com/mitchellh/mapstructure v1.1.2
+	github.com/mitchellh/reflectwalk v1.0.1
+	github.com/oklog/run v1.0.0
+	github.com/posener/complete v1.2.1
+	github.com/spf13/afero v1.2.2
+	github.com/ulikunitz/xz v0.5.6
+	github.com/vmihailenco/tagparser v0.1.0
+	github.com/zclconf/go-cty v1.1.0
+	github.com/zclconf/go-cty-yaml v1.0.1
+	go.opencensus.io v0.22.2
+	golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550
+	golang.org/x/exp v0.0.0-20191227195350-da58074b4299
+	golang.org/x/lint v0.0.0-20191125180803-fdd1cda4f05f
+	golang.org/x/net v0.0.0-20191209160850-c0dbc17a3553
+	golang.org/x/oauth2 v0.0.0-20191202225959-858c2ad4c8b6
+	golang.org/x/sys v0.0.0-20191228213918-04cbcbbfeed8
+	golang.org/x/text v0.3.2
+	golang.org/x/tools v0.0.0-20191227053925-7b8e75db28f4
+	google.golang.org/api v0.15.0
+	google.golang.org/appengine v1.6.5
+	google.golang.org/genproto v0.0.0-20191230161307-f3c370f40bfb
+	google.golang.org/grpc v1.26.0
+	honnef.co/go/tools v0.0.1-2019.2.3
+)

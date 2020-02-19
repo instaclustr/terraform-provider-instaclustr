@@ -10,8 +10,8 @@ clean:
 	rm -fr vendor
 
 deps:
-	go get -u github.com/golang/dep/cmd/dep
-	dep ensure
+	#go get -u github.com/golang/dep/cmd/dep
+	#dep ensure
 
 build: deps
 	go build -o $(BIN_NAME)_v$(VERSION) main.go
