@@ -23,7 +23,7 @@ func TestAccCluster(t *testing.T) {
 	apiKey := os.Getenv("IC_API_KEY")
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey)
 	updatedConfig := strings.Replace(oriConfig, "testcluster", "newcluster", 1)
-	hostname := "https://api.instaclustr.com"
+	hostname := instaclustr.ApiHostname
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -57,7 +57,7 @@ func TestAccClusterResize(t *testing.T) {
 	invalidResizeClassConfig := strings.Replace(oriConfig, "resizeable-small(r5-l)", "resizeable-large(r5-xl)", 1)
 	invalidResizeConfig := strings.Replace(oriConfig, "resizeable-small(r5-l)", "t3.medium", 1)
 
-	hostname := "https://api.instaclustr.com"
+	hostname := instaclustr.ApiHostname
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
 		PreCheck:     func() { testAccPreCheck(t) },

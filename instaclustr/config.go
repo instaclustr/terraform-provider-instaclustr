@@ -1,5 +1,9 @@
 package instaclustr
 
+const (
+    ApiHostname string = "https://api.instaclustr.com"
+)
+
 type Config struct {
     Username string
     ApiKey string
@@ -9,7 +13,7 @@ type Config struct {
 }
 
 func (c *Config) Init() {
-    c.apiServerHostname = "https://api.instaclustr.com"
+    c.apiServerHostname = ApiHostname
     c.Client = new(APIClient)
     c.Client.InitClient(c.apiServerHostname, c.Username, c.ApiKey)
 }

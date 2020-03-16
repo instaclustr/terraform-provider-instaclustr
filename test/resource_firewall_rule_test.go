@@ -20,7 +20,7 @@ func TestAccFirewallRuleResource(t *testing.T) {
 	apiKey := os.Getenv("IC_API_KEY")
 	config := fmt.Sprintf(string(tfFile), username, apiKey)
 
-	hostname := "https://api.instaclustr.com"
+	hostname := instaclustr.ApiHostname
 	resource.Test(t, resource.TestCase{
 		Providers:    testProviders,
 		CheckDestroy: checkFirewallRuleDeleted(hostname, username, apiKey),
