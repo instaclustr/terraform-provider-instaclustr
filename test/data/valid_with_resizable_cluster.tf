@@ -20,7 +20,7 @@ resource "instaclustr_cluster" "resizable_cluster" {
     bundles = [
         {
             bundle = "APACHE_CASSANDRA"
-            version = "apache-cassandra-3.0.18"
+            version = "3.11.4"
         }
     ]
 }

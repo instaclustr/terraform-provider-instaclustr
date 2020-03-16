@@ -19,7 +19,7 @@ For further information about Instaclustr, please see [FAQ](https://www.instaclu
 ## Requirements
 
 - Terraform 0.10.x or higher
-- Go 1.8 or higher
+- Go 1.14 or higher
 
 ## Building The Provider
 
@@ -78,7 +78,7 @@ resource "instaclustr_cluster" "example" {
     bundles = [
         {
             bundle = "APACHE_CASSANDRA"
-            version = "apache-cassandra-3.0.18"
+            version = "3.11.4"
         },
         {
             bundle = "SPARK"
@@ -130,7 +130,7 @@ nodes_per_rack|Number of nodes per rack. Max allowed is 10|Required
 Property | Description | Default
 ---------|-------------|--------
 bundle|Accepts APACHE_CASSANDRA. Compatible bundles: SPARK and/or ZEPPELIN.|Required
-version|For Cassandra: apache-cassandra-2.1.19, apache-cassandra-2.2.13, apache-cassandra-3.0.14, apache-cassandra-3.0.17, apache-cassandra-3.0.18, apache-cassandra-3.11, apache-cassandra-3.11.3, apache-cassandra-3.11.4.ic1. For Spark: apache-spark:2.1.3, apache-spark:2.1.3.ic1, apache-spark:2.3.2. For Zeppelin: apache-zeppelin:0.8.0-spark-2.3.2, apache-zeppelin:0.7.1-spark-2.1.1|Required
+version|For Cassandra: 2.1.19, 2.2.13, 3.0.14, 3.0.17, 3.0.18, 3.11, 3.11.3, 3.11.4.<br>For Spark: apache-spark:2.1.3, apache-spark:2.1.3.ic1, apache-spark:2.3.2.<br>For Zeppelin: apache-zeppelin:0.8.0-spark-2.3.2, apache-zeppelin:0.7.1-spark-2.1.1|Required
 
 ### Resource:  `instaclustr_firewall_rule`                             
 A resource for managing cluster firewall rules on Instaclustr Managed Platform. A firewall rule allows access to your Instaclustr cluster.

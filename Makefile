@@ -9,11 +9,7 @@ clean:
 	rm $(BIN_NAME)_v$(VERSION)
 	rm -fr vendor
 
-deps:
-	go get -u github.com/golang/dep/cmd/dep
-	dep ensure
-
-build: deps
+build:
 	go build -o $(BIN_NAME)_v$(VERSION) main.go
 
 test:
