@@ -20,7 +20,7 @@ resource "instaclustr_cluster" "valid_with_vpc_peering" {
     bundles = [
         {
             bundle = "APACHE_CASSANDRA"
-            version = "apache-cassandra-3.11.4.ic3"
+            version = "3.11.4"
         }
     ]
 }
