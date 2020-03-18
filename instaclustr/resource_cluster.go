@@ -106,12 +106,21 @@ func resourceCluster() *schema.Resource {
 				},
 			},
 
-			"bundles": {
+			"bundle": {
 				Type:     schema.TypeList,
 				Required: true,
-				Elem: &schema.Schema{
-					Type: schema.TypeMap,
-					Elem: schema.TypeString,
+				MinItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"bundle": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+						"version": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+					},
 				},
 			},
 		},
@@ -266,7 +275,7 @@ func getMapPropertyFromResourceData(d *schema.ResourceData, propertyKey string) 
 
 func getBundles(d *schema.ResourceData) []Bundle {
 	bundles := make([]Bundle, 0)
-	for _, inBundle := range d.Get("bundles").([]interface{}) {
+	for _, inBundle := range d.Get("bundle").([]interface{}) {
 		aBundle := make(map[string]string)
 		for key, value := range inBundle.(map[string]interface{}) {
 			strKey := fmt.Sprintf("%v", key)
