@@ -122,39 +122,9 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Creating cluster.")
 	client := meta.(*Config).Client
 
-	bundles := make([]Bundle, 0)
-	for _, inBundle := range d.Get("bundles").([]interface{}) {
-		aBundle := make(map[string]string)
-		for key, value := range inBundle.(map[string]interface{}) {
-			strKey := fmt.Sprintf("%v", key)
-			strValue := fmt.Sprintf("%v", value)
-			aBundle[strKey] = strValue
-		}
-		bundle := Bundle{
-			Bundle:  aBundle["bundle"],
-			Version: aBundle["version"],
-		}
-		bundles = append(bundles, bundle)
-	}
-
-	inClusterProvider := d.Get("cluster_provider").(map[string]interface{})
-	clusterProvider := make(map[string]*string)
-	for key, value := range inClusterProvider {
-		strKey := fmt.Sprintf("%v", key)
-		strValue := fmt.Sprintf("%v", value)
-		if strValue != "" {
-			clusterProvider[strKey] = &strValue
-		} else {
-			clusterProvider[strKey] = nil
-		}
-	}
-	inRackAllocation := d.Get("rack_allocation").(map[string]interface{})
-	rackAllocation := make(map[string]string)
-	for key, value := range inRackAllocation {
-		strKey := fmt.Sprintf("%v", key)
-		strValue := fmt.Sprintf("%v", value)
-		rackAllocation[strKey] = strValue
-	}
+	bundles := getBundles(d)
+	clusterProvider := getMapPropertyFromResourceData(d, "cluster_provider")
+	rackAllocation := getMapPropertyFromResourceData(d, "rack_allocation")
 
 	createData := CreateRequest{
 		ClusterName: d.Get("cluster_name").(string),
@@ -168,8 +138,8 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		DataCentre:     d.Get("data_centre").(string),
 		ClusterNetwork: d.Get("cluster_network").(string),
 		RackAllocation: RackAllocation{
-			NumberOfRacks: rackAllocation["number_of_racks"],
-			NodesPerRack:  rackAllocation["nodes_per_rack"],
+			NumberOfRacks: *rackAllocation["number_of_racks"],
+			NodesPerRack:  *rackAllocation["nodes_per_rack"],
 		},
 	}
 
@@ -277,4 +247,37 @@ func resourceClusterDelete(d *schema.ResourceData, meta interface{}) error {
 	d.Set("cluster_id", "")
 	log.Printf("[INFO] Cluster %s has been marked for deletion.", id)
 	return nil
+}
+
+func getMapPropertyFromResourceData(d *schema.ResourceData, propertyKey string) map[string]*string {
+	propertyVal := d.Get(propertyKey).(map[string]interface{})
+	keyToValPointerDict := make(map[string]*string)
+	for key, value := range propertyVal {
+		strKey := fmt.Sprintf("%v", key)
+		strValue := fmt.Sprintf("%v", value)
+		if strValue != "" {
+			keyToValPointerDict[strKey] = &strValue
+		} else {
+			keyToValPointerDict[strKey] = nil
+		}
+	}
+	return keyToValPointerDict
+}
+
+func getBundles(d *schema.ResourceData) []Bundle {
+	bundles := make([]Bundle, 0)
+	for _, inBundle := range d.Get("bundles").([]interface{}) {
+		aBundle := make(map[string]string)
+		for key, value := range inBundle.(map[string]interface{}) {
+			strKey := fmt.Sprintf("%v", key)
+			strValue := fmt.Sprintf("%v", value)
+			aBundle[strKey] = strValue
+		}
+		bundle := Bundle{
+			Bundle:  aBundle["bundle"],
+			Version: aBundle["version"],
+		}
+		bundles = append(bundles, bundle)
+	}
+	return bundles
 }
