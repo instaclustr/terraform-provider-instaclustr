@@ -262,12 +262,11 @@ func getMapPropertyFromResourceData(d *schema.ResourceData, propertyKey string) 
 	propertyVal := d.Get(propertyKey).(map[string]interface{})
 	keyToValPointerDict := make(map[string]*string)
 	for key, value := range propertyVal {
-		strKey := fmt.Sprintf("%v", key)
 		strValue := fmt.Sprintf("%v", value)
 		if strValue != "" {
-			keyToValPointerDict[strKey] = &strValue
+			keyToValPointerDict[key] = &strValue
 		} else {
-			keyToValPointerDict[strKey] = nil
+			keyToValPointerDict[key] = nil
 		}
 	}
 	return keyToValPointerDict
@@ -278,9 +277,8 @@ func getBundles(d *schema.ResourceData) []Bundle {
 	for _, inBundle := range d.Get("bundle").([]interface{}) {
 		aBundle := make(map[string]string)
 		for key, value := range inBundle.(map[string]interface{}) {
-			strKey := fmt.Sprintf("%v", key)
 			strValue := fmt.Sprintf("%v", value)
-			aBundle[strKey] = strValue
+			aBundle[key] = strValue
 		}
 		bundle := Bundle{
 			Bundle:  aBundle["bundle"],
