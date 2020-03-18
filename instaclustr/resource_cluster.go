@@ -238,8 +238,8 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("cluster_provider", before)
 	before, _ = d.GetChange("rack_allocation")
 	d.Set("rack_allocation", before)
-	before, _ = d.GetChange("bundles")
-	d.Set("bundles", before)
+	before, _ = d.GetChange("bundle")
+	d.Set("bundle", before)
 	log.Printf("[INFO] Fetched cluster %s info from the remote server.", cluster.ID)
 	return nil
 }
