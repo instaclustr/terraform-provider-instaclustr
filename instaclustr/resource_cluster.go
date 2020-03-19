@@ -176,36 +176,43 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Creating cluster.")
 	client := meta.(*Config).Client
 
-	bundles := getBundles(d)
-	clusterProvider := getMapPropertyFromResourceData(d, "cluster_provider")
-	rackAllocation := getMapPropertyFromResourceData(d, "rack_allocation")
+	bundles, err := getBundles(d)
+	if err != nil {
+		return formatCreateErrMsg(err)
+	}
+
+	var clusterProvider ClusterProvider
+	err = mapstructure.Decode(d.Get("cluster_provider").(map[string]interface{}), &clusterProvider)
+	if err != nil {
+		return err
+	}
+
+	var rackAllocation RackAllocation
+	err = mapstructure.Decode(d.Get("rack_allocation").(map[string]interface{}), &rackAllocation)
+	if err != nil {
+		return err
+	}
 
 	createData := CreateRequest{
-		ClusterName: d.Get("cluster_name").(string),
-		Bundles:     bundles,
-		Provider: ClusterProvider{
-			Name:        clusterProvider["name"],
-			AccountName: clusterProvider["account_name"],
-		},
-		SlaTier:        d.Get("sla_tier").(string),
-		NodeSize:       d.Get("node_size").(string),
-		DataCentre:     d.Get("data_centre").(string),
-		ClusterNetwork: d.Get("cluster_network").(string),
-		RackAllocation: RackAllocation{
-			NumberOfRacks: *rackAllocation["number_of_racks"],
-			NodesPerRack:  *rackAllocation["nodes_per_rack"],
-		},
+		ClusterName:           d.Get("cluster_name").(string),
+		Bundles:               bundles,
+		Provider:              clusterProvider,
+		SlaTier:               d.Get("sla_tier").(string),
+		NodeSize:              d.Get("node_size").(string),
+		DataCentre:            d.Get("data_centre").(string),
+		ClusterNetwork:        d.Get("cluster_network").(string),
+		RackAllocation:        rackAllocation,
 	}
 
 	var jsonStr []byte
-	jsonStr, err := json.Marshal(createData)
+	jsonStr, err = json.Marshal(createData)
 	if err != nil {
-		return fmt.Errorf("[Error] Error creating cluster: %s", err)
+		return formatCreateErrMsg(err)
 	}
 
 	id, err := client.CreateCluster(jsonStr)
 	if err != nil {
-		return fmt.Errorf("[Error] Error creating cluster: %s", err)
+		return formatCreateErrMsg(err)
 	}
 	d.SetId(id)
 	d.Set("cluster_id", id)
@@ -303,48 +310,19 @@ func resourceClusterDelete(d *schema.ResourceData, meta interface{}) error {
 	return nil
 }
 
-func getMapPropertyFromResourceData(d *schema.ResourceData, propertyKey string) map[string]*string {
-	propertyVal := d.Get(propertyKey).(map[string]interface{})
-	keyToValPointerDict := make(map[string]*string)
-	for key, value := range propertyVal {
-		strValue := fmt.Sprintf("%v", value)
-		if strValue != "" {
-			keyToValPointerDict[key] = &strValue
-		} else {
-			keyToValPointerDict[key] = nil
-		}
-	}
-	return keyToValPointerDict
-}
-
-func getBundles(d *schema.ResourceData) []Bundle {
+func getBundles(d *schema.ResourceData) ([]Bundle, error) {
 	bundles := make([]Bundle, 0)
 	for _, inBundle := range d.Get("bundle").([]interface{}) {
-		aBundle := make(map[string]string)
-		var bundleOptions BundleOptions
-		for key, value := range inBundle.(map[string]interface{}) {
-			if key == "options" {
-				bundleOptions = getBundleOptions(value)
-			} else {
-				strValue := fmt.Sprintf("%v", value)
-				aBundle[key] = strValue
-			}
-		}
-		bundle := Bundle{
-			Bundle:  aBundle["bundle"],
-			Version: aBundle["version"],
-			Options: bundleOptions,
+		var bundle Bundle
+		err := mapstructure.Decode(inBundle.(map[string]interface{}), &bundle)
+		if err != nil {
+			return nil, err
 		}
 		bundles = append(bundles, bundle)
 	}
-	return bundles
+	return bundles, nil
 }
 
-func getBundleOptions(bOptions interface{}) BundleOptions {
-	var options BundleOptions
-	err := mapstructure.Decode(bOptions.(map[string]interface{}), &options)
-	if err == nil {
-		return options
-	}
-	return options
+func formatCreateErrMsg(err error) error {
+	return fmt.Errorf("[Error] Error creating cluster: %s", err)
 }

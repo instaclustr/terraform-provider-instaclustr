@@ -10,9 +10,9 @@ type RuleType struct {
 }
 
 type Bundle struct {
-	Bundle  string        `json:"bundle"`
-	Version string        `json:"version"`
-	Options BundleOptions `json:"options,omitempty"`
+	Bundle  string        `json:"bundle" mapstructure:"bundle"`
+	Version string        `json:"version" mapstructure:"version"`
+	Options BundleOptions `json:"options,omitempty" mapstructure:"options"`
 }
 
 type BundleOptions struct {
@@ -28,24 +28,24 @@ type BundleOptions struct {
 }
 
 type ClusterProvider struct {
-	Name        *string `json:"name"`
-	AccountName *string `json:"accountName"`
+	Name        *string `json:"name" mapstructure:"name"`
+	AccountName *string `json:"accountName, omitempty" mapstructure:"account_name"`
 }
 
 type RackAllocation struct {
-	NumberOfRacks string `json:"numberOfRacks"`
-	NodesPerRack  string `json:"nodesPerRack"`
+	NumberOfRacks string `json:"numberOfRacks" mapstructure:"number_of_racks"`
+	NodesPerRack  string `json:"nodesPerRack" mapstructure:"nodes_per_rack"`
 }
 
 type CreateRequest struct {
-	ClusterName    string          `json:"clusterName"`
-	Bundles        []Bundle        `json:"bundles"`
-	Provider       ClusterProvider `json:"provider"`
-	SlaTier        string          `json:"slaTier"`
-	NodeSize       string          `json:"nodeSize"`
-	DataCentre     string          `json:"dataCentre"`
-	ClusterNetwork string          `json:"clusterNetwork"`
-	RackAllocation RackAllocation  `json:"rackAllocation"`
+	ClusterName           string          `json:"clusterName"`
+	Bundles               []Bundle        `json:"bundles"`
+	Provider              ClusterProvider `json:"provider"`
+	SlaTier               string          `json:"slaTier"`
+	NodeSize              string          `json:"nodeSize"`
+	DataCentre            string          `json:"dataCentre"`
+	ClusterNetwork        string          `json:"clusterNetwork"`
+	RackAllocation        RackAllocation  `json:"rackAllocation"`
 }
 
 type Cluster struct {
