@@ -45,6 +45,7 @@ type CreateRequest struct {
 	NodeSize              string          `json:"nodeSize"`
 	DataCentre            string          `json:"dataCentre"`
 	ClusterNetwork        string          `json:"clusterNetwork"`
+	PrivateNetworkCluster string          `json:"privateNetworkCluster"`
 	RackAllocation        RackAllocation  `json:"rackAllocation"`
 }
 

@@ -201,6 +201,7 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		NodeSize:              d.Get("node_size").(string),
 		DataCentre:            d.Get("data_centre").(string),
 		ClusterNetwork:        d.Get("cluster_network").(string),
+		PrivateNetworkCluster: fmt.Sprintf("%v", d.Get("private_network_cluster")),
 		RackAllocation:        rackAllocation,
 	}
 
