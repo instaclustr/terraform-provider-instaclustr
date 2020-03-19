@@ -10,8 +10,21 @@ type RuleType struct {
 }
 
 type Bundle struct {
-	Bundle  string `json:"bundle"`
-	Version string `json:"version"`
+	Bundle  string        `json:"bundle"`
+	Version string        `json:"version"`
+	Options BundleOptions `json:"options,omitempty"`
+}
+
+type BundleOptions struct {
+	AuthnAuthz                    string `json:"authnAuthz,omitempty" mapstructure:"auth_n_authz"`
+	ClientEncryption              string `json:"clientEncryption,omitempty" mapstructure:"client_encryption"`
+	UsePrivateBroadcastRpcAddress string `json:"usePrivateBroadcastRPCAddress,omitempty" mapstructure:"use_private_broadcast_rpc_address"`
+	LuceneEnabled                 string `json:"luceneEnabled,omitempty" mapstructure:"lucene_enabled"`
+	ContinuousBackupEnabled       string `json:"continuousBackupEnabled,omitempty" mapstructure:"continuous_backup_enabled"`
+	NumberPartitions              string `json:"numberPartitions,omitempty" mapstructure:"number_partitions"`
+	AutoCreateTopics              string `json:"autoCreateTopics,omitempty" mapstructure:"auto_create_topics"`
+	DeleteTopics                  string `json:"deleteTopics,omitempty" mapstructure:"delete_topics"`
+	PasswordAuthentication        string `json:"passwordAuthentication,omitempty" mapstructure:"password_authentication"`
 }
 
 type ClusterProvider struct {

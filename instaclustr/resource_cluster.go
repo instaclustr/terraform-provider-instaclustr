@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/mitchellh/mapstructure"
 )
 
 func resourceCluster() *schema.Resource {
@@ -320,15 +321,30 @@ func getBundles(d *schema.ResourceData) []Bundle {
 	bundles := make([]Bundle, 0)
 	for _, inBundle := range d.Get("bundle").([]interface{}) {
 		aBundle := make(map[string]string)
+		var bundleOptions BundleOptions
 		for key, value := range inBundle.(map[string]interface{}) {
-			strValue := fmt.Sprintf("%v", value)
-			aBundle[key] = strValue
+			if key == "options" {
+				bundleOptions = getBundleOptions(value)
+			} else {
+				strValue := fmt.Sprintf("%v", value)
+				aBundle[key] = strValue
+			}
 		}
 		bundle := Bundle{
 			Bundle:  aBundle["bundle"],
 			Version: aBundle["version"],
+			Options: bundleOptions,
 		}
 		bundles = append(bundles, bundle)
 	}
 	return bundles
+}
+
+func getBundleOptions(bOptions interface{}) BundleOptions {
+	var options BundleOptions
+	err := mapstructure.Decode(bOptions.(map[string]interface{}), &options)
+	if err == nil {
+		return options
+	}
+	return options
 }
