@@ -111,6 +111,26 @@ func TestAccClusterInvalid(t *testing.T) {
 	})
 }
 
+func TestAccClusterInvalidBundleOptionCombo(t *testing.T) {
+	testAccProvider := instaclustr.Provider()
+	testAccProviders := map[string]terraform.ResourceProvider{
+		"instaclustr": testAccProvider,
+	}
+	validConfig, _ := ioutil.ReadFile("data/invalid_with_wrong_bundle_option.tf")
+	username := os.Getenv("IC_USERNAME")
+	apiKey := os.Getenv("IC_API_KEY")
+	resource.Test(t, resource.TestCase{
+		Providers: testAccProviders,
+		PreCheck:  func() { testAccPreCheck(t) },
+		Steps: []resource.TestStep{
+			{
+				Config:      fmt.Sprintf(string(validConfig), username, apiKey),
+				ExpectError: regexp.MustCompile("Error creating cluster"),
+			},
+		},
+	})
+}
+
 func testAccPreCheck(t *testing.T) {
 	if v := os.Getenv("IC_USERNAME"); v == "" {
 		t.Fatal("IC_USERNAME for provisioning API must be set for acceptance tests")
