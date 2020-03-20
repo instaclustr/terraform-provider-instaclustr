@@ -107,6 +107,16 @@ func resourceCluster() *schema.Resource {
 				},
 			},
 
+			"bundles": {
+				Type:     schema.TypeList,
+				Optional: true,
+				Elem: &schema.Schema{
+					Type: schema.TypeMap,
+					Elem: schema.TypeString,
+				},
+				Removed: "Please change bundles argument -> bundle blocks (example under example/main.tf), and to avoid causing an update to the existing tfstate - replace all keys named 'bundles' with 'bundle' in resources with the provider 'provider.instaclustr'",
+			},
+
 			"bundle": {
 				Type:     schema.TypeList,
 				Required: true,
