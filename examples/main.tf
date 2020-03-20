@@ -17,9 +17,13 @@ resource "instaclustr_cluster" "example2" {
     number_of_racks = 3
     nodes_per_rack = 1
   }
+
   bundle {
     bundle = "APACHE_CASSANDRA"
     version = "3.11.4"
+    options = {
+      auth_n_authz = true
+    }
   }
 
   bundle {
