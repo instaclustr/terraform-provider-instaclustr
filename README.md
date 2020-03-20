@@ -75,20 +75,21 @@ resource "instaclustr_cluster" "example" {
         number_of_racks = 3
         nodes_per_rack = 1
     }
-    bundles = [
-        {
-            bundle = "APACHE_CASSANDRA"
-            version = "3.11.4"
-        },
-        {
-            bundle = "SPARK"
-            version = "apache-spark:2.3.2"
-        },
-        {
-            bundle = "ZEPPELIN"
-            version = "apache-zeppelin:0.8.0-spark-2.3.2"
+    bundle {
+        bundle = "APACHE_CASSANDRA"
+        version = "3.11.4"
+        options = {
+          auth_n_authz = true
         }
-    ]
+      }
+      bundle {
+        bundle = "SPARK"
+        version = "apache-spark:2.3.2"
+      }
+      bundle {
+        bundle = "ZEPPELIN"
+        version = "apache-zeppelin:0.8.0-spark-2.3.2"
+      }
 }
 ```
 
@@ -106,9 +107,9 @@ data_centre|Desired data centre. See [here](https://www.instaclustr.com/support/
 sla_tier|Accepts PRODUCTION/NON_PRODUCTION. The SLA Tier feature on the Instaclustr console is used to classify clusters as either production and non_production. See [here](https://www.instaclustr.com/support/documentation/useful-information/sla-tier/) for more details.|NON_PRODUCTION
 cluster_network|The private network address block for the cluster specified using CIDR address notation. The network must have a prefix length between /12 and /22 and must be part of a private address space.|10.224.0.0/12
 private_network_cluster|Accepts true/false. Creates the cluster with private network only.|false
-cluster_provider|The information of infrastructure provider. See below for its options.|Required
-rack_allocation|The number of resources to use. See below for its options.|Required
-bundles|Array of bundle information. See below for bundle options.|Required
+cluster_provider|The information of infrastructure provider. See below for its properties.|Required
+rack_allocation|The number of resources to use. See below for its properties.|Required
+bundle|Array of bundle information. See below for its properties.|Required
 
 `cluster_provider`
 
@@ -125,12 +126,27 @@ Property | Description | Default
 number_of_racks|Number of racks to use when allocating nodes. Max allowed is 5|Required
 nodes_per_rack|Number of nodes per rack. Max allowed is 10|Required
 
-`bundles`
+`bundle`
 
 Property | Description | Default
 ---------|-------------|--------
 bundle|Accepts APACHE_CASSANDRA. Compatible bundles: SPARK and/or ZEPPELIN.|Required
 version|For Cassandra: 2.1.19, 2.2.13, 3.0.14, 3.0.17, 3.0.18, 3.11, 3.11.3, 3.11.4.<br>For Spark: apache-spark:2.1.3, apache-spark:2.1.3.ic1, apache-spark:2.3.2.<br>For Zeppelin: apache-zeppelin:0.8.0-spark-2.3.2, apache-zeppelin:0.7.1-spark-2.1.1|Required
+options|Options and add-ons for the given bundle. See `bundle.options` below for its properties|{} (empty)
+
+`bundle.options` - _all properties listed are optional_
+
+Property | Description | For Bundles | Default
+---------|-------------|-------------|--------
+auth_n_authz|Accepts true/false. Enables Password Authentication and User Authorization.|Cassandra|false
+client_encryption|Accepts true/false. Enables Client ⇄ Node Encryption.|Cassandra, Kafka, Spark|false
+use_private_broadcast_rpc_address|Accepts true/false. Enables broadcast of private IPs for auto-discovery.|Cassandra|false
+lucene_enabled|Accepts true/false. Enabled Cassandra Lucene Index Plugin.|Cassandra|false
+continuous_backup_enabled|Accepts true/false. Enables commitlog backups and increases the frequency of the default snapshot backups.|Cassandra|false
+number_partitions|Default number of partitions to be assigned per topic.|Kafka|Number of nodes
+auto_create_topics|Accepts true/false. Enable to allow brokers to automatically create a topic, if it does not already exist, when messages are published to it.|Kafka|true
+delete_topics|Accepts true/false. Enable to allow topics to be deleted via the `ic-kafka-topics` tool.|Kafka|true
+password_authentication|Accepts true/false. Require clients to provide credentials — a username & API Key — to connect to the Spark Jobserver.|Spark|false
 
 ### Resource:  `instaclustr_firewall_rule`                             
 A resource for managing cluster firewall rules on Instaclustr Managed Platform. A firewall rule allows access to your Instaclustr cluster.
@@ -184,6 +200,12 @@ resource "instaclustr_vpc_peering" "example_vpc_peering" {
     peer_subnet = "10.0.0.0/20"
 }
 ```
+
+### Migrating from 0.0.1 &rarr; 0.1.0
+A schema change has been made from 0.0.1 which no longer supports the `bundles` argument and uses `bundle` blocks instead. This change can cause `terraform apply` to fail with a message that `bundles` has been removed and/or updating isn't supported. To resolve this -<br>
+1. Change all usages of the `bundles` argument &rarr; `bundle` blocks (example under example/main.tf)
+2. In the .tfstate files, replace all keys named `bundles` with `bundle` in resources under the Instaclustr provider.
+
 
 ## Contributing
 
