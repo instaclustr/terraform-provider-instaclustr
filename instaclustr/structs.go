@@ -15,8 +15,11 @@ type Bundle struct {
 }
 
 type ClusterProvider struct {
-	Name        *string `json:"name"`
-	AccountName *string `json:"accountName"`
+	Name              *string `json:"name"`
+	AccountName       *string `json:"accountName,omitempty"`
+	Tags              *string `json:"tags,omitempty"`
+	ResourceGroup     *string `json:"resourceGroup,omitempty"`
+	DiskEncryptionKey *string `json:"diskEncryptionKey,omitempty"`
 }
 
 type RackAllocation struct {
@@ -105,4 +108,10 @@ type ResizeClusterRequest struct {
 	NewNodeSize           string `json:"newNodeSize"`
 	ConcurrentResizes     int    `json:"concurrentResizes"`
 	NotifySupportContacts string `json:"notifySupportContacts"`
+}
+
+type EncryptionKey struct {
+	ID    string `json:"id"`
+	Alias string `json:"alias"`
+	ARN   string `json:"arn"`
 }

@@ -56,6 +56,12 @@ func resourceCluster() *schema.Resource {
 				Default:  false,
 			},
 
+			"pci_compliant_cluster": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  false,
+			},
+
 			"public_contact_point": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -82,6 +88,14 @@ func resourceCluster() *schema.Resource {
 							Optional: true,
 						},
 						"tags": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"resource_group": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+						"disk_encryption_key": {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
@@ -160,8 +174,11 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		ClusterName: d.Get("cluster_name").(string),
 		Bundles:     bundles,
 		Provider: ClusterProvider{
-			Name:        clusterProvider["name"],
-			AccountName: clusterProvider["account_name"],
+			Name:              clusterProvider["name"],
+			AccountName:       clusterProvider["account_name"],
+			Tags:              clusterProvider["tags"],
+			ResourceGroup:     clusterProvider["resource_group"],
+			DiskEncryptionKey: clusterProvider["disk_encryption_key"],
 		},
 		SlaTier:        d.Get("sla_tier").(string),
 		NodeSize:       d.Get("node_size").(string),
@@ -176,9 +193,11 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 	var jsonStr []byte
 	jsonStr, err := json.Marshal(createData)
 	if err != nil {
+		log.Printf("TEST: %s", jsonStr)
 		return fmt.Errorf("[Error] Error creating cluster: %s", err)
 	}
 
+	log.Printf("TEST: %s", jsonStr)
 	id, err := client.CreateCluster(jsonStr)
 	if err != nil {
 		return fmt.Errorf("[Error] Error creating cluster: %s", err)

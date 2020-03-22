@@ -1,7 +1,7 @@
 package instaclustr
 
 const (
-    ApiHostname string = "https://api.instaclustr.com"
+    ApiHostname string = "https://api.dev.instaclustr.com"
 )
 
 type Config struct {
