@@ -17,18 +17,25 @@ resource "instaclustr_cluster" "valid" {
         number_of_racks = 3
         nodes_per_rack = 1
     }
-    bundles = [
-        {
-            bundle = "APACHE_CASSANDRA"
-            version = "3.11.4"
-        },
-        {
-            bundle = "SPARK"
-            version = "apache-spark:2.3.2"
-        },
-        {
-            bundle = "ZEPPELIN"
-            version = "apache-zeppelin:0.8.0-spark-2.3.2"
+
+    bundle {
+        bundle = "APACHE_CASSANDRA"
+        version = "3.11.4"
+        options = {
+            auth_n_authz = true
+            use_private_broadcast_rpc_address = true
+            lucene_enabled = true
+            continuous_backup_enabled = true
         }
-    ]
+    }
+
+    bundle {
+        bundle = "SPARK"
+        version = "apache-spark:2.3.2"
+    }
+
+    bundle {
+        bundle = "ZEPPELIN"
+        version = "apache-zeppelin:0.8.0-spark-2.3.2"
+    }
 }

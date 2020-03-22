@@ -10,29 +10,43 @@ type RuleType struct {
 }
 
 type Bundle struct {
-	Bundle  string `json:"bundle"`
-	Version string `json:"version"`
+	Bundle  string        `json:"bundle" mapstructure:"bundle"`
+	Version string        `json:"version" mapstructure:"version"`
+	Options BundleOptions `json:"options,omitempty" mapstructure:"options"`
+}
+
+type BundleOptions struct {
+	AuthnAuthz                    string `json:"authnAuthz,omitempty" mapstructure:"auth_n_authz"`
+	ClientEncryption              string `json:"clientEncryption,omitempty" mapstructure:"client_encryption"`
+	UsePrivateBroadcastRpcAddress string `json:"usePrivateBroadcastRPCAddress,omitempty" mapstructure:"use_private_broadcast_rpc_address"`
+	LuceneEnabled                 string `json:"luceneEnabled,omitempty" mapstructure:"lucene_enabled"`
+	ContinuousBackupEnabled       string `json:"continuousBackupEnabled,omitempty" mapstructure:"continuous_backup_enabled"`
+	NumberPartitions              string `json:"numberPartitions,omitempty" mapstructure:"number_partitions"`
+	AutoCreateTopics              string `json:"autoCreateTopics,omitempty" mapstructure:"auto_create_topics"`
+	DeleteTopics                  string `json:"deleteTopics,omitempty" mapstructure:"delete_topics"`
+	PasswordAuthentication        string `json:"passwordAuthentication,omitempty" mapstructure:"password_authentication"`
 }
 
 type ClusterProvider struct {
-	Name        *string `json:"name"`
-	AccountName *string `json:"accountName"`
+	Name        *string `json:"name" mapstructure:"name"`
+	AccountName *string `json:"accountName, omitempty" mapstructure:"account_name"`
 }
 
 type RackAllocation struct {
-	NumberOfRacks string `json:"numberOfRacks"`
-	NodesPerRack  string `json:"nodesPerRack"`
+	NumberOfRacks string `json:"numberOfRacks" mapstructure:"number_of_racks"`
+	NodesPerRack  string `json:"nodesPerRack" mapstructure:"nodes_per_rack"`
 }
 
 type CreateRequest struct {
-	ClusterName    string          `json:"clusterName"`
-	Bundles        []Bundle        `json:"bundles"`
-	Provider       ClusterProvider `json:"provider"`
-	SlaTier        string          `json:"slaTier"`
-	NodeSize       string          `json:"nodeSize"`
-	DataCentre     string          `json:"dataCentre"`
-	ClusterNetwork string          `json:"clusterNetwork"`
-	RackAllocation RackAllocation  `json:"rackAllocation"`
+	ClusterName           string          `json:"clusterName"`
+	Bundles               []Bundle        `json:"bundles"`
+	Provider              ClusterProvider `json:"provider"`
+	SlaTier               string          `json:"slaTier"`
+	NodeSize              string          `json:"nodeSize"`
+	DataCentre            string          `json:"dataCentre"`
+	ClusterNetwork        string          `json:"clusterNetwork"`
+	PrivateNetworkCluster string          `json:"privateNetworkCluster"`
+	RackAllocation        RackAllocation  `json:"rackAllocation"`
 }
 
 type Cluster struct {

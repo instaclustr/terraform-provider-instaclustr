@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/mitchellh/mapstructure"
 )
 
 func resourceCluster() *schema.Resource {
@@ -108,10 +109,73 @@ func resourceCluster() *schema.Resource {
 
 			"bundles": {
 				Type:     schema.TypeList,
-				Required: true,
+				Optional: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeMap,
 					Elem: schema.TypeString,
+				},
+				Removed: "Please change bundles argument -> bundle blocks (example under example/main.tf), and to avoid causing an update to the existing tfstate - replace all keys named 'bundles' with 'bundle' in resources with the provider 'provider.instaclustr'",
+			},
+
+			"bundle": {
+				Type:     schema.TypeList,
+				Required: true,
+				MinItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"bundle": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+						"version": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+						"options": {
+							Type:     schema.TypeMap,
+							Optional: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"auth_n_authz": {
+										Type:     schema.TypeBool,
+										Optional: true,
+									},
+									"client_encryption": {
+										Type:     schema.TypeBool,
+										Optional: true,
+									},
+									"use_private_broadcast_rpc_address": {
+										Type:     schema.TypeBool,
+										Optional: true,
+									},
+									"lucene_enabled": {
+										Type:     schema.TypeBool,
+										Optional: true,
+									},
+									"continuous_backup_enabled": {
+										Type:     schema.TypeBool,
+										Optional: true,
+									},
+									"number_partitions": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+									"auto_create_topics": {
+										Type:     schema.TypeBool,
+										Optional: true,
+									},
+									"delete_topics": {
+										Type:     schema.TypeBool,
+										Optional: true,
+									},
+									"password_authentication": {
+										Type:     schema.TypeBool,
+										Optional: true,
+									},
+								},
+							},
+						},
+					},
 				},
 			},
 		},
@@ -122,66 +186,44 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Creating cluster.")
 	client := meta.(*Config).Client
 
-	bundles := make([]Bundle, 0)
-	for _, inBundle := range d.Get("bundles").([]interface{}) {
-		aBundle := make(map[string]string)
-		for key, value := range inBundle.(map[string]interface{}) {
-			strKey := fmt.Sprintf("%v", key)
-			strValue := fmt.Sprintf("%v", value)
-			aBundle[strKey] = strValue
-		}
-		bundle := Bundle{
-			Bundle:  aBundle["bundle"],
-			Version: aBundle["version"],
-		}
-		bundles = append(bundles, bundle)
+	bundles, err := getBundles(d)
+	if err != nil {
+		return formatCreateErrMsg(err)
 	}
 
-	inClusterProvider := d.Get("cluster_provider").(map[string]interface{})
-	clusterProvider := make(map[string]*string)
-	for key, value := range inClusterProvider {
-		strKey := fmt.Sprintf("%v", key)
-		strValue := fmt.Sprintf("%v", value)
-		if strValue != "" {
-			clusterProvider[strKey] = &strValue
-		} else {
-			clusterProvider[strKey] = nil
-		}
+	var clusterProvider ClusterProvider
+	err = mapstructure.Decode(d.Get("cluster_provider").(map[string]interface{}), &clusterProvider)
+	if err != nil {
+		return err
 	}
-	inRackAllocation := d.Get("rack_allocation").(map[string]interface{})
-	rackAllocation := make(map[string]string)
-	for key, value := range inRackAllocation {
-		strKey := fmt.Sprintf("%v", key)
-		strValue := fmt.Sprintf("%v", value)
-		rackAllocation[strKey] = strValue
+
+	var rackAllocation RackAllocation
+	err = mapstructure.Decode(d.Get("rack_allocation").(map[string]interface{}), &rackAllocation)
+	if err != nil {
+		return err
 	}
 
 	createData := CreateRequest{
-		ClusterName: d.Get("cluster_name").(string),
-		Bundles:     bundles,
-		Provider: ClusterProvider{
-			Name:        clusterProvider["name"],
-			AccountName: clusterProvider["account_name"],
-		},
-		SlaTier:        d.Get("sla_tier").(string),
-		NodeSize:       d.Get("node_size").(string),
-		DataCentre:     d.Get("data_centre").(string),
-		ClusterNetwork: d.Get("cluster_network").(string),
-		RackAllocation: RackAllocation{
-			NumberOfRacks: rackAllocation["number_of_racks"],
-			NodesPerRack:  rackAllocation["nodes_per_rack"],
-		},
+		ClusterName:           d.Get("cluster_name").(string),
+		Bundles:               bundles,
+		Provider:              clusterProvider,
+		SlaTier:               d.Get("sla_tier").(string),
+		NodeSize:              d.Get("node_size").(string),
+		DataCentre:            d.Get("data_centre").(string),
+		ClusterNetwork:        d.Get("cluster_network").(string),
+		PrivateNetworkCluster: fmt.Sprintf("%v", d.Get("private_network_cluster")),
+		RackAllocation:        rackAllocation,
 	}
 
 	var jsonStr []byte
-	jsonStr, err := json.Marshal(createData)
+	jsonStr, err = json.Marshal(createData)
 	if err != nil {
-		return fmt.Errorf("[Error] Error creating cluster: %s", err)
+		return formatCreateErrMsg(err)
 	}
 
 	id, err := client.CreateCluster(jsonStr)
 	if err != nil {
-		return fmt.Errorf("[Error] Error creating cluster: %s", err)
+		return formatCreateErrMsg(err)
 	}
 	d.SetId(id)
 	d.Set("cluster_id", id)
@@ -259,8 +301,8 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("cluster_provider", before)
 	before, _ = d.GetChange("rack_allocation")
 	d.Set("rack_allocation", before)
-	before, _ = d.GetChange("bundles")
-	d.Set("bundles", before)
+	before, _ = d.GetChange("bundle")
+	d.Set("bundle", before)
 	log.Printf("[INFO] Fetched cluster %s info from the remote server.", cluster.ID)
 	return nil
 }
@@ -277,4 +319,21 @@ func resourceClusterDelete(d *schema.ResourceData, meta interface{}) error {
 	d.Set("cluster_id", "")
 	log.Printf("[INFO] Cluster %s has been marked for deletion.", id)
 	return nil
+}
+
+func getBundles(d *schema.ResourceData) ([]Bundle, error) {
+	bundles := make([]Bundle, 0)
+	for _, inBundle := range d.Get("bundle").([]interface{}) {
+		var bundle Bundle
+		err := mapstructure.Decode(inBundle.(map[string]interface{}), &bundle)
+		if err != nil {
+			return nil, err
+		}
+		bundles = append(bundles, bundle)
+	}
+	return bundles, nil
+}
+
+func formatCreateErrMsg(err error) error {
+	return fmt.Errorf("[Error] Error creating cluster: %s", err)
 }
