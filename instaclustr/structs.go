@@ -28,14 +28,16 @@ type RackAllocation struct {
 }
 
 type CreateRequest struct {
-	ClusterName    string          `json:"clusterName"`
-	Bundles        []Bundle        `json:"bundles"`
-	Provider       ClusterProvider `json:"provider"`
-	SlaTier        string          `json:"slaTier"`
-	NodeSize       string          `json:"nodeSize"`
-	DataCentre     string          `json:"dataCentre"`
-	ClusterNetwork string          `json:"clusterNetwork"`
-	RackAllocation RackAllocation  `json:"rackAllocation"`
+	ClusterName           string          `json:"clusterName"`
+	Bundles               []Bundle        `json:"bundles"`
+	Provider              ClusterProvider `json:"provider"`
+	SlaTier               string          `json:"slaTier"`
+	NodeSize              string          `json:"nodeSize"`
+	DataCentre            string          `json:"dataCentre"`
+	ClusterNetwork        string          `json:"clusterNetwork"`
+	PrivateNetworkCluster bool            `json:"privateNetworkCluster"`
+	PCICompliantCluster   bool            `json:"pciCompliantCluster"`
+	RackAllocation        RackAllocation  `json:"rackAllocation"`
 }
 
 type Cluster struct {
