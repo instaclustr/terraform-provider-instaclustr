@@ -49,7 +49,7 @@ func resourceEncryptionKeyAdd(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("[Error] Error adding encryption key: %s", err)
 	}
 
-	id, err := client.CreateCluster(jsonStr)
+	id, err := client.EncryptionKeyAdd(jsonStr)
 	if err != nil {
 		return fmt.Errorf("[Error] Error adding encryption key: %s", err)
 	}
@@ -59,9 +59,9 @@ func resourceEncryptionKeyAdd(d *schema.ResourceData, meta interface{}) error {
 	return nil
 }
 
-func getResourceById(resources *[]EncryptionKey, id string) (interface{}, error) {
+func getResourceByID(resources *[]EncryptionKey, id string) (interface{}, error) {
 	for _, resource := range *resources {
-		if fmt.Sprint(resource.ID) == id {
+		if resource.ID == id {
 			return resource, nil
 		}
 	}
@@ -77,7 +77,7 @@ func resourceEncryptionKeyRead(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("[Error] Error reading cluster: %s", err)
 	}
 
-	keyResource, err := getResourceById(keys, id)
+	keyResource, err := getResourceByID(keys, id)
 	if err != nil {
 		return fmt.Errorf("[Error] Error encryption key %s does not exist", id)
 	}
