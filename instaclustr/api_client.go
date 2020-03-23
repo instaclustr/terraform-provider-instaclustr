@@ -225,12 +225,14 @@ func (c *APIClient) ReadVpcPeering(cdcID string, vpcPeeringID string) (*VPCPeeri
 
 func (c *APIClient) EncryptionKeyAdd(data []byte) (string, error) {
 	url := fmt.Sprintf("%s/provisioning/v1/encryption-keys", c.apiServerHostname)
+	log.Printf("[EBS URL]: %s", url)
 	resp, err := c.MakeRequest(url, "POST", data)
 	if err != nil {
 		return "", err
 	}
 
 	bodyText, err := ioutil.ReadAll(resp.Body)
+	log.Printf("[EBS RET BODY]: %s", bodyText)
 	if resp.StatusCode != 202 {
 		return "", errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
 	}
@@ -242,17 +244,19 @@ func (c *APIClient) EncryptionKeyAdd(data []byte) (string, error) {
 		return "", err
 	}
 
+	log.Printf("[EBS RESP JSON]: %s", respJson)
 	respJsonData := respJson.(map[string]interface{})
 	for _, value := range respJsonData {
-		id = fmt.Sprint("%v", value)
+		id = value.(string)
 	}
+	log.Printf("[EBS ID RET]: %s", id)
 	return id, nil
 }
 
-func getResourceByID(resources *[]EncryptionKey, id string) (interface{}, error) {
+func getResourceByID(resources *[]EncryptionKey, id string) (*EncryptionKey, error) {
 	for _, resource := range *resources {
 		if resource.ID == id {
-			return resource, nil
+			return &resource, nil
 		}
 	}
 	return nil, errors.New(id)
@@ -281,7 +285,7 @@ func (c *APIClient) EncryptionKeyRead(id string) (*EncryptionKey, error) {
 		return nil, errors.New(fmt.Sprintf("Error encryption key %s does not exist", id))
 	}
 
-	return keyResource.(*EncryptionKey), nil
+	return keyResource, nil
 }
 
 func (c *APIClient) EncryptionKeyDelete(keyID string) error {

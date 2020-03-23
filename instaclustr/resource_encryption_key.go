@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"strings"
 
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -19,7 +18,7 @@ func resourceEncryptionKey() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"key_id": {
 				Type:     schema.TypeString,
-				Optional: true,
+				Computed: true,
 			},
 			"alias": {
 				Type:     schema.TypeString,
@@ -49,25 +48,14 @@ func resourceEncryptionKeyAdd(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	id, err := client.EncryptionKeyAdd(jsonStr)
+	log.Printf("[KEY ADD]: %s", id)
 	if err != nil {
 		return fmt.Errorf("[Error] Error adding encryption key: %s", err)
 	}
-	d.SetId(after(id, "%v"))
-	d.Set("key_id", after(id, "%v"))
-	log.Printf("[INFO] Encyption key %s has been added.", after(id, "%v"))
+	d.SetId(id)
+	d.Set("key_id", id)
+	log.Printf("[INFO] Encyption key %s has been added.", id)
 	return nil
-}
-
-func after(value string, a string) string {
-	pos := strings.LastIndex(value, a)
-	if pos == -1 {
-		return ""
-	}
-	adjustedPos := pos + len(a)
-	if adjustedPos >= len(value) {
-		return ""
-	}
-	return value[adjustedPos:len(value)]
 }
 
 func resourceEncryptionKeyRead(d *schema.ResourceData, meta interface{}) error {
@@ -76,9 +64,10 @@ func resourceEncryptionKeyRead(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Reading encryption key %s.", id)
 	keyResource, err := client.EncryptionKeyRead(id)
 	if err != nil {
-		return fmt.Errorf("[Error] Error reading cluster: %s", err)
+		return fmt.Errorf("[Error] Error reading encryption key: %s", err)
 	}
 
+	d.SetId(keyResource.ID)
 	d.Set("key_id", keyResource.ID)
 	d.Set("alias", keyResource.Alias)
 	d.Set("arn", keyResource.ARN)
