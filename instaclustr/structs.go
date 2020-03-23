@@ -114,6 +114,6 @@ type ResizeClusterRequest struct {
 
 type EncryptionKey struct {
 	ID    string `json:"id,omitempty"`
-	Alias string `json:"alias"`
-	ARN   string `json:"arn"`
+	Alias string `json:"alias,omitempty"`
+	ARN   string `json:"arn,omitempty"`
 }

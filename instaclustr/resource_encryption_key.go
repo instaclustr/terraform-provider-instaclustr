@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -23,11 +24,11 @@ func resourceEncryptionKey() *schema.Resource {
 			},
 			"alias": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
 			"arn": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
 		},
 	}
@@ -44,7 +45,6 @@ func resourceEncryptionKeyAdd(d *schema.ResourceData, meta interface{}) error {
 
 	var jsonStr []byte
 	jsonStr, err := json.Marshal(createData)
-	log.Printf("[EBS TEST]: %s", jsonStr)
 	if err != nil {
 		return fmt.Errorf("[Error] Error adding encryption key: %s", err)
 	}
@@ -53,10 +53,22 @@ func resourceEncryptionKeyAdd(d *schema.ResourceData, meta interface{}) error {
 	if err != nil {
 		return fmt.Errorf("[Error] Error adding encryption key: %s", err)
 	}
-	d.SetId(id)
-	d.Set("key_id", id)
-	log.Printf("[INFO] Encyption key %s has been added.", id)
+	d.SetId(after(id, "%v"))
+	d.Set("key_id", after(id, "%v"))
+	log.Printf("[INFO] Encyption key %s has been added.", after(id, "%v"))
 	return nil
+}
+
+func after(value string, a string) string {
+	pos := strings.LastIndex(value, a)
+	if pos == -1 {
+		return ""
+	}
+	adjustedPos := pos + len(a)
+	if adjustedPos >= len(value) {
+		return ""
+	}
+	return value[adjustedPos:len(value)]
 }
 
 func getResourceByID(resources *[]EncryptionKey, id string) (interface{}, error) {
