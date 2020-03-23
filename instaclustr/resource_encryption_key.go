@@ -2,9 +2,9 @@ package instaclustr
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
-	"errors"
 
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -18,15 +18,15 @@ func resourceEncryptionKey() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"key_id": {
-				Type: 	  schema.TypeString,
+				Type:     schema.TypeString,
 				Optional: true,
 			},
 			"alias": {
-				Type: schema.TypeString,
+				Type:     schema.TypeString,
 				Required: true,
 			},
 			"arn": {
-				Type: schema.TypeString,
+				Type:     schema.TypeString,
 				Required: true,
 			},
 		},
@@ -44,6 +44,7 @@ func resourceEncryptionKeyAdd(d *schema.ResourceData, meta interface{}) error {
 
 	var jsonStr []byte
 	jsonStr, err := json.Marshal(createData)
+	log.Printf("[EBS TEST]: %s", jsonStr)
 	if err != nil {
 		return fmt.Errorf("[Error] Error adding encryption key: %s", err)
 	}

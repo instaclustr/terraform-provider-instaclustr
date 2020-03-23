@@ -195,11 +195,9 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 	var jsonStr []byte
 	jsonStr, err := json.Marshal(createData)
 	if err != nil {
-		log.Printf("TEST: %s", jsonStr)
 		return fmt.Errorf("[Error] Error creating cluster: %s", err)
 	}
 
-	log.Printf("TEST: %s", jsonStr)
 	id, err := client.CreateCluster(jsonStr)
 	if err != nil {
 		return fmt.Errorf("[Error] Error creating cluster: %s", err)
