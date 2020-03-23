@@ -4,7 +4,7 @@ provider "instaclustr" {
 }
 
 resource "instaclustr_cluster" "invalid" {
-    cluster_name = "test!@#$"
+    cluster_name = "testcluster"
     node_size = "t3.small"
     data_centre = "US_WEST_2"
     sla_tier = "NON_PRODUCTION"
@@ -21,6 +21,9 @@ resource "instaclustr_cluster" "invalid" {
     bundle {
         bundle = "APACHE_CASSANDRA"
         version = "3.11.4"
+        options = {
+            client_encryption = true
+        }
     }
 
     bundle {

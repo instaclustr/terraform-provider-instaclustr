@@ -17,10 +17,8 @@ resource "instaclustr_cluster" "resizable_cluster" {
         number_of_racks = 3
         nodes_per_rack = 1
     }
-    bundles = [
-        {
-            bundle = "APACHE_CASSANDRA"
-            version = "3.11.4"
-        }
-    ]
+    bundle {
+        bundle = "APACHE_CASSANDRA"
+        version = "3.11.4"
+    }
 }
