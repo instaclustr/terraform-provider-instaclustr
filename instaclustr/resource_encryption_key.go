@@ -2,7 +2,6 @@ package instaclustr
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"log"
 	"strings"
@@ -71,32 +70,18 @@ func after(value string, a string) string {
 	return value[adjustedPos:len(value)]
 }
 
-func getResourceByID(resources *[]EncryptionKey, id string) (interface{}, error) {
-	for _, resource := range *resources {
-		if resource.ID == id {
-			return resource, nil
-		}
-	}
-	return nil, errors.New(id)
-}
-
 func resourceEncryptionKeyRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*Config).Client
 	id := d.Get("key_id").(string)
 	log.Printf("[INFO] Reading encryption key %s.", id)
-	keys, err := client.EncryptionKeyRead()
+	keyResource, err := client.EncryptionKeyRead(id)
 	if err != nil {
 		return fmt.Errorf("[Error] Error reading cluster: %s", err)
 	}
 
-	keyResource, err := getResourceByID(keys, id)
-	if err != nil {
-		return fmt.Errorf("[Error] Error encryption key %s does not exist", id)
-	}
-
-	d.Set("key_id", keyResource.(EncryptionKey).ID)
-	d.Set("alias", keyResource.(EncryptionKey).Alias)
-	d.Set("arn", keyResource.(EncryptionKey).ARN)
+	d.Set("key_id", keyResource.ID)
+	d.Set("alias", keyResource.Alias)
+	d.Set("arn", keyResource.ARN)
 	log.Printf("[INFO] Read encyption key %s.", id)
 	return nil
 }

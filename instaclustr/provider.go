@@ -31,8 +31,8 @@ func Provider() *schema.Provider {
 
 func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	config := Config{
-		Username:     d.Get("username").(string),
-		ApiKey:       d.Get("api_key").(string),
+		Username: d.Get("username").(string),
+		ApiKey:   d.Get("api_key").(string),
 	}
 
 	config.Init()
