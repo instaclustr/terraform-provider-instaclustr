@@ -226,7 +226,7 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		DataCentre:            d.Get("data_centre").(string),
 		ClusterNetwork:        d.Get("cluster_network").(string),
 		PrivateNetworkCluster: fmt.Sprintf("%v", d.Get("private_network_cluster")),
-		PCICompliantCluster:   fmt.Sprintf("%v", d.Get("pci_compliant_cluster"))
+		PCICompliantCluster:   fmt.Sprintf("%v", d.Get("pci_compliant_cluster")),
 		RackAllocation:        rackAllocation,
 	}
 
