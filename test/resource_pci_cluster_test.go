@@ -13,12 +13,12 @@ import (
 	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 )
 
-func TestAccCluster(t *testing.T) {
+func TestAccPCICluster(t *testing.T) {
 	testAccProvider := instaclustr.Provider()
 	testAccProviders := map[string]terraform.ResourceProvider{
 		"instaclustr": testAccProvider,
 	}
-	validConfig, _ := ioutil.ReadFile("data/valid.tf")
+	validConfig, _ := ioutil.ReadFile("data/pci_valid.tf")
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey)
@@ -26,14 +26,14 @@ func TestAccCluster(t *testing.T) {
 	hostname := instaclustr.ApiHostname
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
-		PreCheck:     func() { testAccPreCheck(t) },
-		CheckDestroy: testCheckResourceDeleted("valid", hostname, username, apiKey),
+		PreCheck:     func() { testAccPCIPreCheck(t) },
+		CheckDestroy: testCheckPCIResourceDeleted("valid", hostname, username, apiKey),
 		Steps: []resource.TestStep{
 			{
 				Config: oriConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckResourceValid("valid"),
-					testCheckResourceCreated("valid", hostname, username, apiKey),
+					testCheckPCIResourceValid("valid"),
+					testCheckPCIResourceCreated("valid", hostname, username, apiKey),
 				),
 			},
 			{
@@ -44,11 +44,11 @@ func TestAccCluster(t *testing.T) {
 	})
 }
 
-func TestAccClusterResize(t *testing.T) {
+func TestAccPCIClusterResize(t *testing.T) {
 	testAccProviders := map[string]terraform.ResourceProvider{
 		"instaclustr": instaclustr.Provider(),
 	}
-	validConfig, _ := ioutil.ReadFile("data/valid_with_resizable_cluster.tf")
+	validConfig, _ := ioutil.ReadFile("data/valid_with_resizable_pci_cluster.tf")
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey)
@@ -60,22 +60,22 @@ func TestAccClusterResize(t *testing.T) {
 	hostname := instaclustr.ApiHostname
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
-		PreCheck:     func() { testAccPreCheck(t) },
-		CheckDestroy: testCheckResourceDeleted("resizable_cluster", hostname, username, apiKey),
+		PreCheck:     func() { testAccPCIPreCheck(t) },
+		CheckDestroy: testCheckPCIResourceDeleted("resizable_pci_cluster", hostname, username, apiKey),
 		Steps: []resource.TestStep{
 			{
 				Config: oriConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckResourceValid("resizable_cluster"),
-					testCheckResourceCreated("resizable_cluster", hostname, username, apiKey),
+					testCheckPCIResourceValid("resizable_pci_cluster"),
+					testCheckPCIResourceCreated("resizable_pci_cluster", hostname, username, apiKey),
 				),
 			},
 			{
 				Config: validResizeConfig,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_cluster", "cluster_name", "tf-resizable-test"),
-					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_cluster", "node_size", "resizeable-small(r5-xl)"),
-					testCheckClusterResize(hostname, username, apiKey, "resizeable-small(r5-xl)"),
+					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_pci_cluster", "cluster_name", "tf-resizable-test"),
+					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_pci_cluster", "node_size", "resizeable-small(r5-xl)"),
+					testCheckPCIClusterResize(hostname, username, apiKey, "resizeable-small(r5-xl)"),
 				),
 				ExpectNonEmptyPlan: true,
 			},
@@ -91,17 +91,17 @@ func TestAccClusterResize(t *testing.T) {
 	})
 }
 
-func TestAccClusterInvalid(t *testing.T) {
+func TestAccPCIClusterInvalid(t *testing.T) {
 	testAccProvider := instaclustr.Provider()
 	testAccProviders := map[string]terraform.ResourceProvider{
 		"instaclustr": testAccProvider,
 	}
-	validConfig, _ := ioutil.ReadFile("data/invalid.tf")
+	validConfig, _ := ioutil.ReadFile("data/pci_invalid.tf")
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
 	resource.Test(t, resource.TestCase{
 		Providers: testAccProviders,
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:  func() { testAccPCIPreCheck(t) },
 		Steps: []resource.TestStep{
 			{
 				Config:      fmt.Sprintf(string(validConfig), username, apiKey),
@@ -111,27 +111,7 @@ func TestAccClusterInvalid(t *testing.T) {
 	})
 }
 
-func TestAccClusterInvalidBundleOptionCombo(t *testing.T) {
-	testAccProvider := instaclustr.Provider()
-	testAccProviders := map[string]terraform.ResourceProvider{
-		"instaclustr": testAccProvider,
-	}
-	validConfig, _ := ioutil.ReadFile("data/invalid_with_wrong_bundle_option.tf")
-	username := os.Getenv("IC_USERNAME")
-	apiKey := os.Getenv("IC_API_KEY")
-	resource.Test(t, resource.TestCase{
-		Providers: testAccProviders,
-		PreCheck:  func() { testAccPreCheck(t) },
-		Steps: []resource.TestStep{
-			{
-				Config:      fmt.Sprintf(string(validConfig), username, apiKey),
-				ExpectError: regexp.MustCompile("Error creating cluster"),
-			},
-		},
-	})
-}
-
-func testAccPreCheck(t *testing.T) {
+func testAccPCIPreCheck(t *testing.T) {
 	if v := os.Getenv("IC_USERNAME"); v == "" {
 		t.Fatal("IC_USERNAME for provisioning API must be set for acceptance tests")
 	}
@@ -140,7 +120,7 @@ func testAccPreCheck(t *testing.T) {
 	}
 }
 
-func testCheckResourceValid(resourceName string) resource.TestCheckFunc {
+func testCheckPCIResourceValid(resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		resourceState := s.Modules[0].Resources["instaclustr_cluster."+resourceName]
 		if resourceState == nil {
@@ -155,7 +135,7 @@ func testCheckResourceValid(resourceName string) resource.TestCheckFunc {
 	}
 }
 
-func testCheckResourceCreated(resourceName, hostname, username, apiKey string) resource.TestCheckFunc {
+func testCheckPCIResourceCreated(resourceName, hostname, username, apiKey string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		resourceState := s.Modules[0].Resources["instaclustr_cluster."+resourceName]
 		id := resourceState.Primary.Attributes["cluster_id"]
@@ -172,7 +152,7 @@ func testCheckResourceCreated(resourceName, hostname, username, apiKey string) r
 	}
 }
 
-func testCheckResourceDeleted(resourceName, hostname, username, apiKey string) resource.TestCheckFunc {
+func testCheckPCIResourceDeleted(resourceName, hostname, username, apiKey string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		resourceState := s.Modules[0].Resources["instaclustr_cluster."+resourceName]
 		id := resourceState.Primary.Attributes["cluster_id"]
@@ -180,15 +160,15 @@ func testCheckResourceDeleted(resourceName, hostname, username, apiKey string) r
 		client.InitClient(hostname, username, apiKey)
 		err := client.DeleteCluster(id)
 		if err == nil {
-			return fmt.Errorf("Cluster %s still exists", id)
+			return fmt.Errorf("Cluster %s still exists.", id)
 		}
 		return nil
 	}
 }
 
-func testCheckClusterResize(hostname, username, apiKey, expectedNodeSize string) resource.TestCheckFunc {
+func testCheckPCIClusterResize(hostname, username, apiKey, expectedNodeSize string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		resourceState := s.Modules[0].Resources["instaclustr_cluster.resizable_cluster"]
+		resourceState := s.Modules[0].Resources["instaclustr_cluster.resizable_pci_cluster"]
 		id := resourceState.Primary.Attributes["cluster_id"]
 		client := new(instaclustr.APIClient)
 		client.InitClient(hostname, username, apiKey)

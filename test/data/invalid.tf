@@ -10,6 +10,7 @@ resource "instaclustr_cluster" "invalid" {
     sla_tier = "NON_PRODUCTION"
     cluster_network = "192.168.0.0/18"
     private_network_cluster = false
+    pci_compliant_cluster = false
     cluster_provider = {
         name = "AWS_VPC"
     }

@@ -3,7 +3,6 @@ package test
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"regexp"
 	"testing"
@@ -25,7 +24,6 @@ func TestAccEBSKey(t *testing.T) {
 	kmsArn := os.Getenv("KMS_ARN")
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, kmsAlias, kmsArn)
 	hostname := instaclustr.ApiHostname
-	log.Printf("Running init test")
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccEBSKeyProviders,
 		PreCheck:     func() { testEnvPreCheck(t) },
@@ -40,7 +38,6 @@ func TestAccEBSKey(t *testing.T) {
 			},
 		},
 	})
-	log.Printf("Passed init test")
 }
 
 func TestAccEBSKeyInvalid(t *testing.T) {
@@ -78,13 +75,11 @@ func testEnvPreCheck(t *testing.T) {
 	if v := os.Getenv("KMS_ARN"); v == "" {
 		t.Fatal("KMS_ARN for AccEBS encryption must be set for acceptance tests")
 	}
-	log.Printf("Passed environment checks")
 }
 
 func testCheckAccEBSResourceValid(resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		resourceState := s.Modules[0].Resources["instaclustr_encryption_key."+resourceName]
-		log.Printf("Getten (resource)")
 		if resourceState == nil {
 			return fmt.Errorf("%s: resource not found in state", resourceName)
 		}
@@ -93,7 +88,6 @@ func testCheckAccEBSResourceValid(resourceName string) resource.TestCheckFunc {
 		if instanceState == nil {
 			return fmt.Errorf("resource has no primary instance")
 		}
-		log.Printf("Returned (created)")
 		return nil
 	}
 }
@@ -102,7 +96,6 @@ func testCheckAccEBSResourceCreated(resourceName, hostname, username, apiKey str
 	return func(s *terraform.State) error {
 		resourceState := s.Modules[0].Resources["instaclustr_encryption_key."+resourceName]
 		id := resourceState.Primary.Attributes["key_id"]
-		log.Printf("Gotten id (created) %s", id)
 		client := new(instaclustr.APIClient)
 		client.InitClient(hostname, username, apiKey)
 		resource, err := client.EncryptionKeyRead(id)
@@ -112,7 +105,6 @@ func testCheckAccEBSResourceCreated(resourceName, hostname, username, apiKey str
 		if resource.ID != id {
 			return fmt.Errorf("Encryption key expected %s but got %s", id, resource.ID)
 		}
-		log.Printf("Returned (created) %s", id)
 		return nil
 	}
 }
@@ -121,11 +113,9 @@ func testCheckAccEBSResourceDeleted(resourceName, hostname, username, apiKey str
 	return func(s *terraform.State) error {
 		resourceState := s.Modules[0].Resources["instaclustr_encryption_key."+resourceName]
 		id := resourceState.Primary.Attributes["key_id"]
-		log.Printf("Gotten id (deleted) %s", id)
 		client := new(instaclustr.APIClient)
 		client.InitClient(hostname, username, apiKey)
 		err := client.EncryptionKeyDelete(id)
-		log.Printf("Errored? %s", err)
 		if err == nil {
 			return fmt.Errorf("Encryption key %s still exists", id)
 		}

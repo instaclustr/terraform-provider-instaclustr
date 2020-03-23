@@ -3,14 +3,14 @@ provider "instaclustr" {
     api_key = "%s"
 }
 
-resource "instaclustr_cluster" "valid" {
-    cluster_name = "testcluster"
+resource "instaclustr_cluster" "invalid" {
+    cluster_name = "test!@#$"
     node_size = "t3.small"
     data_centre = "US_WEST_2"
     sla_tier = "NON_PRODUCTION"
     cluster_network = "192.168.0.0/18"
-    private_network_cluster = false
-    pci_compliant_cluster = false
+    private_network_cluster = true
+    pci_compliant_cluster = true
     cluster_provider = {
         name = "AWS_VPC"
     }
@@ -22,12 +22,6 @@ resource "instaclustr_cluster" "valid" {
     bundle {
         bundle = "APACHE_CASSANDRA"
         version = "3.11.4"
-        options = {
-            auth_n_authz = true
-            use_private_broadcast_rpc_address = true
-            lucene_enabled = true
-            continuous_backup_enabled = true
-        }
     }
 
     bundle {
