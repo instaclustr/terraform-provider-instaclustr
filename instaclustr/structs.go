@@ -31,8 +31,8 @@ type ClusterProvider struct {
 	Name              *string `json:"name" mapstructure:"name"`
 	AccountName       *string `json:"accountName, omitempty" mapstructure:"account_name"`
 	Tags              *string `json:"tags,omitempty" mapstructure:"tags"`
-	ResourceGroup     *string `json:"resourceGroup,omitempty" mapstructure:"resourceGroup"`
-	DiskEncryptionKey *string `json:"diskEncryptionKey,omitempty" mapstructure:"diskEncryptionKey"`
+	ResourceGroup     *string `json:"resourceGroup,omitempty" mapstructure:"resource_group"`
+	DiskEncryptionKey *string `json:"diskEncryptionKey,omitempty" mapstructure:"disk_encryption_key"`
 }
 
 type RackAllocation struct {
