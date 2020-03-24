@@ -223,7 +223,7 @@ func (c *APIClient) ReadVpcPeering(cdcID string, vpcPeeringID string) (*VPCPeeri
 	return &vpcPeering, nil
 }
 
-func (c *APIClient) EncryptionKeyAdd(data []byte) (string, error) {
+func (c *APIClient) CreateEncryptionKey(data []byte) (string, error) {
 	url := fmt.Sprintf("%s/provisioning/v1/encryption-keys", c.apiServerHostname)
 	resp, err := c.MakeRequest(url, "POST", data)
 	if err != nil {
@@ -258,7 +258,7 @@ func getEncryptionKeyByID(resources *[]EncryptionKey, id string) (*EncryptionKey
 	return nil, errors.New(id)
 }
 
-func (c *APIClient) EncryptionKeyRead(id string) (*EncryptionKey, error) {
+func (c *APIClient) ReadEncryptionKey(id string) (*EncryptionKey, error) {
 	url := fmt.Sprintf("%s/provisioning/v1/encryption-keys", c.apiServerHostname)
 	resp, err := c.MakeRequest(url, "GET", nil)
 	if err != nil {
@@ -284,7 +284,7 @@ func (c *APIClient) EncryptionKeyRead(id string) (*EncryptionKey, error) {
 	return keyResource, nil
 }
 
-func (c *APIClient) EncryptionKeyDelete(keyID string) error {
+func (c *APIClient) DeleteEncryptionKey(keyID string) error {
 	url := fmt.Sprintf("%s/provisioning/v1/encryption-keys/%s", c.apiServerHostname, keyID)
 	resp, err := c.MakeRequest(url, "DELETE", nil)
 	if err != nil {

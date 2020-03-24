@@ -98,7 +98,7 @@ func testCheckAccEBSResourceCreated(resourceName, hostname, username, apiKey str
 		id := resourceState.Primary.Attributes["key_id"]
 		client := new(instaclustr.APIClient)
 		client.InitClient(hostname, username, apiKey)
-		resource, err := client.EncryptionKeyRead(id)
+		resource, err := client.ReadEncryptionKey(id)
 		if err != nil {
 			return fmt.Errorf("Failed to read encryption key %s: %s", id, err)
 		}
@@ -115,7 +115,7 @@ func testCheckAccEBSResourceDeleted(resourceName, hostname, username, apiKey str
 		id := resourceState.Primary.Attributes["key_id"]
 		client := new(instaclustr.APIClient)
 		client.InitClient(hostname, username, apiKey)
-		err := client.EncryptionKeyDelete(id)
+		err := client.DeleteEncryptionKey(id)
 		if err == nil {
 			return fmt.Errorf("Encryption key %s still exists", id)
 		}

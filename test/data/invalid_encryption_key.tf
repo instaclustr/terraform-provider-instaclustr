@@ -4,6 +4,6 @@ provider "instaclustr" {
 }
 
 resource "instaclustr_encryption_key" "invalid" {
-    alias = "%s!@#$"
-    arn = "%s"
+    alias = "%s"
+    arn = "%s!@#$"
 }

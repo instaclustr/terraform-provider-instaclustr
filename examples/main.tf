@@ -16,7 +16,8 @@ resource "instaclustr_cluster" "example2" {
   cluster_network = "192.168.0.0/18"
   private_network_cluster = false
   cluster_provider = {
-    name = "AWS_VPC"
+    name = "AWS_VPC",
+    disk_encryption_key = "${instaclustr_encryption_key.add_ebs_key.key_id}"
   }
   rack_allocation = {
     number_of_racks = 3

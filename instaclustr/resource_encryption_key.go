@@ -10,7 +10,7 @@ import (
 
 func resourceEncryptionKey() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceEncryptionKeyAdd,
+		Create: resourceEncryptionKeyCreate,
 		Read:   resourceEncryptionKeyRead,
 		Update: resourceEncryptionKeyUpdate,
 		Delete: resourceEncryptionKeyDelete,
@@ -32,7 +32,7 @@ func resourceEncryptionKey() *schema.Resource {
 	}
 }
 
-func resourceEncryptionKeyAdd(d *schema.ResourceData, meta interface{}) error {
+func resourceEncryptionKeyCreate(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Adding encryption key.")
 	client := meta.(*Config).Client
 
@@ -47,7 +47,7 @@ func resourceEncryptionKeyAdd(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("[Error] Error adding encryption key: %s", err)
 	}
 
-	id, err := client.EncryptionKeyAdd(jsonStr)
+	id, err := client.CreateEncryptionKey(jsonStr)
 	if err != nil {
 		return fmt.Errorf("[Error] Error adding encryption key: %s", err)
 	}
@@ -61,7 +61,7 @@ func resourceEncryptionKeyRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*Config).Client
 	id := d.Get("key_id").(string)
 	log.Printf("[INFO] Reading encryption key %s.", id)
-	keyResource, err := client.EncryptionKeyRead(id)
+	keyResource, err := client.ReadEncryptionKey(id)
 	if err != nil {
 		return fmt.Errorf("[Error] Error reading encryption key: %s", err)
 	}
@@ -82,7 +82,7 @@ func resourceEncryptionKeyDelete(d *schema.ResourceData, meta interface{}) error
 	client := meta.(*Config).Client
 	id := d.Get("key_id").(string)
 	log.Printf("[INFO] Deleting encryption key %s.", id)
-	err := client.EncryptionKeyDelete(id)
+	err := client.DeleteEncryptionKey(id)
 	if err != nil {
 		return fmt.Errorf("[Error] Error deleting encryption key: %s", err)
 	}
