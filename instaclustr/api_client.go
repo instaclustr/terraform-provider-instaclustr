@@ -225,14 +225,12 @@ func (c *APIClient) ReadVpcPeering(cdcID string, vpcPeeringID string) (*VPCPeeri
 
 func (c *APIClient) EncryptionKeyAdd(data []byte) (string, error) {
 	url := fmt.Sprintf("%s/provisioning/v1/encryption-keys", c.apiServerHostname)
-	log.Printf("[EBS URL]: %s", url)
 	resp, err := c.MakeRequest(url, "POST", data)
 	if err != nil {
 		return "", err
 	}
 
 	bodyText, err := ioutil.ReadAll(resp.Body)
-	log.Printf("[EBS RET BODY]: %s", bodyText)
 	if resp.StatusCode != 202 {
 		return "", errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
 	}
@@ -244,12 +242,10 @@ func (c *APIClient) EncryptionKeyAdd(data []byte) (string, error) {
 		return "", err
 	}
 
-	log.Printf("[EBS RESP JSON]: %s", respJson)
 	respJsonData := respJson.(map[string]interface{})
 	for _, value := range respJsonData {
 		id = value.(string)
 	}
-	log.Printf("[EBS ID RET]: %s", id)
 	return id, nil
 }
 
