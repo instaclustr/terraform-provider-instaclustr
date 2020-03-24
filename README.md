@@ -108,7 +108,7 @@ data_centre|Desired data centre. See [here](https://www.instaclustr.com/support/
 sla_tier|Accepts PRODUCTION/NON_PRODUCTION. The SLA Tier feature on the Instaclustr console is used to classify clusters as either production and non_production. See [here](https://www.instaclustr.com/support/documentation/useful-information/sla-tier/) for more details.|NON_PRODUCTION
 cluster_network|The private network address block for the cluster specified using CIDR address notation. The network must have a prefix length between /12 and /22 and must be part of a private address space.|10.224.0.0/12
 private_network_cluster|Accepts true/false. Creates the cluster with private network only.|false
-pci_compliant_cluster|Accepts true/false. Creates the cluster wuth PCI compliance enabled.|false
+pci_compliant_cluster|Accepts true/false. Creates the cluster with PCI compliance enabled.|false
 cluster_provider|The information of infrastructure provider. See below for its properties.|Required
 rack_allocation|The number of resources to use. See below for its properties.|Required
 bundle|Array of bundle information. See below for its properties.|Required
