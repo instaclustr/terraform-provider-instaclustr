@@ -4,12 +4,12 @@ provider "instaclustr" {
 }
 
 resource "instaclustr_cluster" "invalid" {
-    cluster_name = "test!@#$"
+    cluster_name = "test"
     node_size = "t3.small"
     data_centre = "US_WEST_2"
     sla_tier = "NON_PRODUCTION"
     cluster_network = "192.168.0.0/18"
-    private_network_cluster = true
+    private_network_cluster = false
     pci_compliant_cluster = true
     cluster_provider = {
         name = "AWS_VPC"
@@ -22,15 +22,5 @@ resource "instaclustr_cluster" "invalid" {
     bundle {
         bundle = "APACHE_CASSANDRA"
         version = "3.11.4"
-    }
-
-    bundle {
-        bundle = "SPARK"
-        version = "apache-spark:2.3.2"
-    }
-
-    bundle {
-        bundle = "ZEPPELIN"
-        version = "apache-zeppelin:0.8.0-spark-2.3.2"
     }
 }
