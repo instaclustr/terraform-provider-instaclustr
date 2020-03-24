@@ -249,7 +249,7 @@ func (c *APIClient) EncryptionKeyAdd(data []byte) (string, error) {
 	return id, nil
 }
 
-func getResourceByID(resources *[]EncryptionKey, id string) (*EncryptionKey, error) {
+func getEncryptionKeyByID(resources *[]EncryptionKey, id string) (*EncryptionKey, error) {
 	for _, resource := range *resources {
 		if resource.ID == id {
 			return &resource, nil
@@ -276,7 +276,7 @@ func (c *APIClient) EncryptionKeyRead(id string) (*EncryptionKey, error) {
 		return nil, errors.New(fmt.Sprintf("Could not unmarshal JSON - Status code: %d, message: %s", resp.StatusCode, bodyText))
 	}
 
-	keyResource, err := getResourceByID(&kmsKeys, id)
+	keyResource, err := getEncryptionKeyByID(&kmsKeys, id)
 	if err != nil {
 		return nil, errors.New(fmt.Sprintf("Error encryption key %s does not exist", id))
 	}
