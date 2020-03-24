@@ -48,7 +48,6 @@ func resourceEncryptionKeyAdd(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	id, err := client.EncryptionKeyAdd(jsonStr)
-	log.Printf("[KEY ADD]: %s", id)
 	if err != nil {
 		return fmt.Errorf("[Error] Error adding encryption key: %s", err)
 	}
