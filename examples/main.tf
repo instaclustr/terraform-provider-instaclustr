@@ -4,7 +4,7 @@ provider "instaclustr" {
 }
 
 resource "instaclustr_encryption_key" "add_ebs_key" {
-    alias = "<Your KMS key alias here>"
+    alias = "testkey"
     arn = "<Your KMS key ARN here>"
 }
 

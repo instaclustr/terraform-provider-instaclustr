@@ -20,9 +20,8 @@ func TestAccEBSKey(t *testing.T) {
 	validConfig, _ := ioutil.ReadFile("data/valid_encryption_key.tf")
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
-	kmsAlias := os.Getenv("KMS_ALIAS")
 	kmsArn := os.Getenv("KMS_ARN")
-	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, kmsAlias, kmsArn)
+	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, kmsArn)
 	hostname := instaclustr.ApiHostname
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccEBSKeyProviders,
@@ -48,14 +47,13 @@ func TestAccEBSKeyInvalid(t *testing.T) {
 	validConfig, _ := ioutil.ReadFile("data/invalid_encryption_key.tf")
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
-	kmsAlias := os.Getenv("KMS_ALIAS")
 	kmsArn := os.Getenv("KMS_ARN")
 	resource.Test(t, resource.TestCase{
 		Providers: testAccEBSKeyProviders,
 		PreCheck:  func() { testEnvPreCheck(t) },
 		Steps: []resource.TestStep{
 			{
-				Config:      fmt.Sprintf(string(validConfig), username, apiKey, kmsAlias, kmsArn),
+				Config:      fmt.Sprintf(string(validConfig), username, apiKey, kmsArn),
 				ExpectError: regexp.MustCompile("Error adding encryption key"),
 			},
 		},
@@ -68,9 +66,6 @@ func testEnvPreCheck(t *testing.T) {
 	}
 	if v := os.Getenv("IC_API_KEY"); v == "" {
 		t.Fatal("IC_API_KEY for provisioning API must be set for acceptance tests")
-	}
-	if v := os.Getenv("KMS_ALIAS"); v == "" {
-		t.Fatal("KMS_ALIAS for AccEBS encryption must be set for acceptance tests")
 	}
 	if v := os.Getenv("KMS_ARN"); v == "" {
 		t.Fatal("KMS_ARN for AccEBS encryption must be set for acceptance tests")
