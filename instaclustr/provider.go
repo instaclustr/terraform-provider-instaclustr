@@ -18,9 +18,10 @@ func Provider() *schema.Provider {
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
-			"instaclustr_cluster":       resourceCluster(),
-			"instaclustr_firewall_rule": resourceFirewallRule(),
-			"instaclustr_vpc_peering":   resourceVpcPeering(),
+			"instaclustr_cluster":        resourceCluster(),
+			"instaclustr_encryption_key": resourceEncryptionKey(),
+			"instaclustr_firewall_rule":  resourceFirewallRule(),
+			"instaclustr_vpc_peering":    resourceVpcPeering(),
 		},
 	}
 	provider.ConfigureFunc = providerConfigure
@@ -30,8 +31,8 @@ func Provider() *schema.Provider {
 
 func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	config := Config{
-		Username:     d.Get("username").(string),
-		ApiKey:       d.Get("api_key").(string),
+		Username: d.Get("username").(string),
+		ApiKey:   d.Get("api_key").(string),
 	}
 
 	config.Init()

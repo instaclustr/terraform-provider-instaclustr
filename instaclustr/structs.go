@@ -28,8 +28,11 @@ type BundleOptions struct {
 }
 
 type ClusterProvider struct {
-	Name        *string `json:"name" mapstructure:"name"`
-	AccountName *string `json:"accountName, omitempty" mapstructure:"account_name"`
+	Name              *string `json:"name" mapstructure:"name"`
+	AccountName       *string `json:"accountName, omitempty" mapstructure:"account_name"`
+	Tags              *string `json:"tags,omitempty" mapstructure:"tags"`
+	ResourceGroup     *string `json:"resourceGroup,omitempty" mapstructure:"resource_group"`
+	DiskEncryptionKey *string `json:"diskEncryptionKey,omitempty" mapstructure:"disk_encryption_key"`
 }
 
 type RackAllocation struct {
@@ -46,6 +49,7 @@ type CreateRequest struct {
 	DataCentre            string          `json:"dataCentre"`
 	ClusterNetwork        string          `json:"clusterNetwork"`
 	PrivateNetworkCluster string          `json:"privateNetworkCluster"`
+	PCICompliantCluster   string          `json:"pciCompliantCluster"`
 	RackAllocation        RackAllocation  `json:"rackAllocation"`
 }
 
@@ -119,4 +123,10 @@ type ResizeClusterRequest struct {
 	NewNodeSize           string `json:"newNodeSize"`
 	ConcurrentResizes     int    `json:"concurrentResizes"`
 	NotifySupportContacts string `json:"notifySupportContacts"`
+}
+
+type EncryptionKey struct {
+	ID    string `json:"id,omitempty"`
+	Alias string `json:"alias,omitempty"`
+	ARN   string `json:"arn,omitempty"`
 }
