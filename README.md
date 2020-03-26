@@ -239,7 +239,7 @@ Firstly thanks!  We value your time and will do our best to review the PR as soo
 4. Run the tests by `$ make test`
 5. Setup environment variable `TF_ACC` to enable online acceptance test cases by `$ export TF_ACC=1`
 6. Setup environment variables `IC_USERNAME` and `IC_API_KEY` of your provisioning API to grant online acceptance test cases permission by `$ export IC_USERNAME=<your instaclustr username>` and `$ export IC_API_KEY=<your provisioning API key>`
-7. Setup environment variable `KMS_ARN` to your AWS KMS key values to run test cases for EBS encryption of nodes by `$ export KMS_ALIAS=<your KMS alias>` and `$ export KMS_ARN=<your KMS ARN>`.</br><b><i>Note:</i></b> You cannot use an ARN previously added to your account as an encryption key.
+7. Setup environment variable `KMS_ARN` to your AWS KMS key values to run test cases for EBS encryption of nodes by `$ export KMS_ARN=<your KMS ARN>`.</br><b><i>Note:</i></b> You cannot use an ARN previously added to your account as an encryption key.
 8. Run the acceptance tests `$ make testacc`
 9. Create a PR and send it our way :)
 
