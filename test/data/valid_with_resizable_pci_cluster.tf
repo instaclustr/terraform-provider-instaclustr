@@ -3,14 +3,14 @@ provider "instaclustr" {
     api_key = "%s"
 }
 
-resource "instaclustr_cluster" "valid" {
-    cluster_name = "testcluster"
-    node_size = "t3.small"
-    data_centre = "US_WEST_2"
+resource "instaclustr_cluster" "resizable_pci_cluster" {
+    cluster_name = "tf-resizable-test"
+    node_size = "resizeable-small(r5-l)"
+    data_centre = "US_EAST_1"
     sla_tier = "NON_PRODUCTION"
     cluster_network = "192.168.0.0/18"
-    private_network_cluster = false
-    pci_compliant_cluster = false
+    private_network_cluster = true
+    pci_compliant_cluster = true
     cluster_provider = {
         name = "AWS_VPC"
     }
@@ -18,25 +18,13 @@ resource "instaclustr_cluster" "valid" {
         number_of_racks = 3
         nodes_per_rack = 1
     }
-
     bundle {
         bundle = "APACHE_CASSANDRA"
         version = "3.11.4"
         options = {
             auth_n_authz = true
             use_private_broadcast_rpc_address = true
-            lucene_enabled = true
-            continuous_backup_enabled = true
+            client_encryption = true
         }
-    }
-
-    bundle {
-        bundle = "SPARK"
-        version = "apache-spark:2.3.2"
-    }
-
-    bundle {
-        bundle = "ZEPPELIN"
-        version = "apache-zeppelin:0.8.0-spark-2.3.2"
     }
 }

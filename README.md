@@ -68,6 +68,7 @@ resource "instaclustr_cluster" "example" {
     sla_tier = "NON_PRODUCTION"
     cluster_network = "192.168.0.0/18"
     private_network_cluster = false
+    pci_compliant_cluster = false
     cluster_provider = {
         name = "AWS_VPC"
     }
@@ -107,6 +108,7 @@ data_centre|Desired data centre. See [here](https://www.instaclustr.com/support/
 sla_tier|Accepts PRODUCTION/NON_PRODUCTION. The SLA Tier feature on the Instaclustr console is used to classify clusters as either production and non_production. See [here](https://www.instaclustr.com/support/documentation/useful-information/sla-tier/) for more details.|NON_PRODUCTION
 cluster_network|The private network address block for the cluster specified using CIDR address notation. The network must have a prefix length between /12 and /22 and must be part of a private address space.|10.224.0.0/12
 private_network_cluster|Accepts true/false. Creates the cluster with private network only.|false
+pci_compliant_cluster|Accepts true/false. Creates the cluster with PCI compliance enabled.|false
 cluster_provider|The information of infrastructure provider. See below for its properties.|Required
 rack_allocation|The number of resources to use. See below for its properties.|Required
 bundle|Array of bundle information. See below for its properties.|Required
@@ -118,6 +120,8 @@ Property | Description | Default
 name|Accepts AWS_VPC now. The new cluster will be deployed on Amazon Web Service.|Required
 account_name|For customers running in their own account. Your provider account can be found on the ‘Account’ tab on the console, or the “Provider Account” property on any existing cluster.|""
 tags|If specified, the value is a map from tag key to value. For restrictions, refer to the [AWS User Guide](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html#tag-restrictions). Tags are defined per cluster and will be applied to every instance in the cluster.|""
+resource_group|AZURE only, if specified, the value is name for an Azure Resource Group which the resources will be provisioned into.|""
+disk_encryption_key|Specify an KMS encryption key to encrypt data on nodes. KMS encryption key must be set in Account settings before provisioning an encrypted cluster.|""
 
 `rack_allocation`
 
@@ -178,7 +182,7 @@ resource "instaclustr_firewall_rule" "example" {
 ```
 
 ### Resource: `instaclustr_vpc_peering`  
-A resource for managing VPC peering connections on Instaclustr Managed Platform. This is only avaliable for clusters hosted in AWS
+A resource for managing VPC peering connections on Instaclustr Managed Platform. This is only avaliable for clusters hosted with the AWS provider.
 
 #### Properties
 Property | Description | Default
@@ -201,6 +205,24 @@ resource "instaclustr_vpc_peering" "example_vpc_peering" {
 }
 ```
 
+### Resource: `instaclustr_encryption_key`  
+A resource for managing EBS encryption of nodes with KMS keys. This is only avaliable for clusters hosted with the AWS provider.
+
+#### Properties
+Property | Description | Default
+---------|-------------|--------
+key_id|Internal ID of the KMS encryption key. Can be found via GET to `https://api.instaclustr.com/provisioning/v1/encryption-keys`|""
+alias|KMS key alias, a human-readibly identifier specified alongside your KMS ARN|""
+arn|KMS ARN, identifier specifying provider, location and key in a ':' value seperated string|""
+
+#### Example
+```
+resource "instaclustr_encryption_key" "example_encryption_key" {
+    alias: "virginia 1"
+    arn: "arn:aws:kms:us-east-1:123456789012:key12345678-1234-1234-1234-123456789abc"
+}
+```
+
 ### Migrating from 0.0.1 &rarr; 0.1.0
 A schema change has been made from 0.0.1 which no longer supports the `bundles` argument and uses `bundle` blocks instead. This change can cause `terraform apply` to fail with a message that `bundles` has been removed and/or updating isn't supported. To resolve this -<br>
 1. Change all usages of the `bundles` argument &rarr; `bundle` blocks (example under example/main.tf)
@@ -217,8 +239,9 @@ Firstly thanks!  We value your time and will do our best to review the PR as soo
 4. Run the tests by `$ make test`
 5. Setup environment variable `TF_ACC` to enable online acceptance test cases by `$ export TF_ACC=1`
 6. Setup environment variables `IC_USERNAME` and `IC_API_KEY` of your provisioning API to grant online acceptance test cases permission by `$ export IC_USERNAME=<your instaclustr username>` and `$ export IC_API_KEY=<your provisioning API key>`
-7. Run the acceptance tests `$ make testacc`
-8. Create a PR and send it our way :)
+7. Setup environment variable `KMS_ALIAS` and `KMS_ARN` to your AWS KMS key values to run test cases for EBS encryption of nodes by `$ export KMS_ALIAS=<your KMS alias>` and `$ export KMS_ARN=<your KMS ARN>`.</br><b><i>Note:</i></b> You cannot use an ARN previously added to your account as an encryption key.
+8. Run the acceptance tests `$ make testacc`
+9. Create a PR and send it our way :)
 
 ## Further information and documentation
 

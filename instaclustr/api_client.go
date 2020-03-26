@@ -27,8 +27,8 @@ func (c *APIClient) InitClient(hostname string, username string, apiKey string) 
 		Transport: &http.Transport{},
 	}
 }
-	func(c *APIClient) SetClient(client *http.Client)  {
-		c.client = client
+func (c *APIClient) SetClient(client *http.Client) {
+	c.client = client
 }
 
 func (c *APIClient) MakeRequest(url string, method string, data []byte) (*http.Response, error) {
@@ -221,4 +221,78 @@ func (c *APIClient) ReadVpcPeering(cdcID string, vpcPeeringID string) (*VPCPeeri
 	var vpcPeering VPCPeering
 	json.Unmarshal(bodyText, &vpcPeering)
 	return &vpcPeering, nil
+}
+
+func (c *APIClient) CreateEncryptionKey(data []byte) (string, error) {
+	url := fmt.Sprintf("%s/provisioning/v1/encryption-keys", c.apiServerHostname)
+	resp, err := c.MakeRequest(url, "POST", data)
+	if err != nil {
+		return "", err
+	}
+
+	bodyText, err := ioutil.ReadAll(resp.Body)
+	if resp.StatusCode != 202 {
+		return "", errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
+	}
+
+	var respJson interface{}
+	var id string
+	err = json.Unmarshal(bodyText, &respJson)
+	if err != nil {
+		return "", err
+	}
+
+	respJsonData := respJson.(map[string]interface{})
+	for _, value := range respJsonData {
+		id = value.(string)
+	}
+	return id, nil
+}
+
+func getEncryptionKeyByID(resources *[]EncryptionKey, id string) (*EncryptionKey, error) {
+	for _, resource := range *resources {
+		if resource.ID == id {
+			return &resource, nil
+		}
+	}
+	return nil, errors.New(id)
+}
+
+func (c *APIClient) ReadEncryptionKey(id string) (*EncryptionKey, error) {
+	url := fmt.Sprintf("%s/provisioning/v1/encryption-keys", c.apiServerHostname)
+	resp, err := c.MakeRequest(url, "GET", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	bodyText, err := ioutil.ReadAll(resp.Body)
+	if resp.StatusCode != 200 {
+		return nil, errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
+	}
+	var kmsKeys []EncryptionKey
+	err = json.Unmarshal(bodyText, &kmsKeys)
+
+	if err != nil {
+		return nil, errors.New(fmt.Sprintf("Could not unmarshal JSON - Status code: %d, message: %s", resp.StatusCode, bodyText))
+	}
+
+	keyResource, err := getEncryptionKeyByID(&kmsKeys, id)
+	if err != nil {
+		return nil, errors.New(fmt.Sprintf("Error encryption key %s does not exist", id))
+	}
+
+	return keyResource, nil
+}
+
+func (c *APIClient) DeleteEncryptionKey(keyID string) error {
+	url := fmt.Sprintf("%s/provisioning/v1/encryption-keys/%s", c.apiServerHostname, keyID)
+	resp, err := c.MakeRequest(url, "DELETE", nil)
+	if err != nil {
+		return err
+	}
+	bodyText, err := ioutil.ReadAll(resp.Body)
+	if resp.StatusCode != 202 {
+		return errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
+	}
+	return nil
 }

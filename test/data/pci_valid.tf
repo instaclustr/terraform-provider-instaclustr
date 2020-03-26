@@ -5,12 +5,12 @@ provider "instaclustr" {
 
 resource "instaclustr_cluster" "valid" {
     cluster_name = "testcluster"
-    node_size = "t3.small"
+    node_size = "m5l-250-v2"
     data_centre = "US_WEST_2"
     sla_tier = "NON_PRODUCTION"
     cluster_network = "192.168.0.0/18"
-    private_network_cluster = false
-    pci_compliant_cluster = false
+    private_network_cluster = true
+    pci_compliant_cluster = true
     cluster_provider = {
         name = "AWS_VPC"
     }
@@ -25,18 +25,7 @@ resource "instaclustr_cluster" "valid" {
         options = {
             auth_n_authz = true
             use_private_broadcast_rpc_address = true
-            lucene_enabled = true
-            continuous_backup_enabled = true
+            client_encryption = true
         }
-    }
-
-    bundle {
-        bundle = "SPARK"
-        version = "apache-spark:2.3.2"
-    }
-
-    bundle {
-        bundle = "ZEPPELIN"
-        version = "apache-zeppelin:0.8.0-spark-2.3.2"
     }
 }
