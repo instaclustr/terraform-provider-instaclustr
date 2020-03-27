@@ -25,7 +25,7 @@ func TestAccEBSKey(t *testing.T) {
 	hostname := instaclustr.ApiHostname
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccEBSKeyProviders,
-		PreCheck:     func() { testEnvPreCheck(t) },
+		PreCheck:     func() { AccTestEnvVarsCheck(t) },
 		CheckDestroy: testCheckAccEBSResourceDeleted("valid", hostname, username, apiKey),
 		Steps: []resource.TestStep{
 			{
@@ -50,7 +50,7 @@ func TestAccEBSKeyInvalid(t *testing.T) {
 	kmsArn := os.Getenv("KMS_ARN")
 	resource.Test(t, resource.TestCase{
 		Providers: testAccEBSKeyProviders,
-		PreCheck:  func() { testEnvPreCheck(t) },
+		PreCheck:  func() { AccTestEnvVarsCheck(t) },
 		Steps: []resource.TestStep{
 			{
 				Config:      fmt.Sprintf(string(validConfig), username, apiKey, kmsArn),
@@ -58,18 +58,6 @@ func TestAccEBSKeyInvalid(t *testing.T) {
 			},
 		},
 	})
-}
-
-func testEnvPreCheck(t *testing.T) {
-	if v := os.Getenv("IC_USERNAME"); v == "" {
-		t.Fatal("IC_USERNAME for provisioning API must be set for acceptance tests")
-	}
-	if v := os.Getenv("IC_API_KEY"); v == "" {
-		t.Fatal("IC_API_KEY for provisioning API must be set for acceptance tests")
-	}
-	if v := os.Getenv("KMS_ARN"); v == "" {
-		t.Fatal("KMS_ARN for AccEBS encryption must be set for acceptance tests")
-	}
 }
 
 func testCheckAccEBSResourceValid(resourceName string) resource.TestCheckFunc {

@@ -26,7 +26,7 @@ func TestAccCluster(t *testing.T) {
 	hostname := instaclustr.ApiHostname
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { AccTestEnvVarsCheck(t) },
 		CheckDestroy: testCheckResourceDeleted("valid", hostname, username, apiKey),
 		Steps: []resource.TestStep{
 			{
@@ -60,7 +60,7 @@ func TestAccClusterResize(t *testing.T) {
 	hostname := instaclustr.ApiHostname
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
-		PreCheck:     func() { testAccPreCheck(t) },
+		PreCheck:     func() { AccTestEnvVarsCheck(t) },
 		CheckDestroy: testCheckResourceDeleted("resizable_cluster", hostname, username, apiKey),
 		Steps: []resource.TestStep{
 			{
@@ -101,7 +101,7 @@ func TestAccClusterInvalid(t *testing.T) {
 	apiKey := os.Getenv("IC_API_KEY")
 	resource.Test(t, resource.TestCase{
 		Providers: testAccProviders,
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:  func() { AccTestEnvVarsCheck(t) },
 		Steps: []resource.TestStep{
 			{
 				Config:      fmt.Sprintf(string(validConfig), username, apiKey),
@@ -121,7 +121,7 @@ func TestAccClusterInvalidBundleOptionCombo(t *testing.T) {
 	apiKey := os.Getenv("IC_API_KEY")
 	resource.Test(t, resource.TestCase{
 		Providers: testAccProviders,
-		PreCheck:  func() { testAccPreCheck(t) },
+		PreCheck:  func() { AccTestEnvVarsCheck(t) },
 		Steps: []resource.TestStep{
 			{
 				Config:      fmt.Sprintf(string(validConfig), username, apiKey),
@@ -131,13 +131,53 @@ func TestAccClusterInvalidBundleOptionCombo(t *testing.T) {
 	})
 }
 
-func testAccPreCheck(t *testing.T) {
-	if v := os.Getenv("IC_USERNAME"); v == "" {
-		t.Fatal("IC_USERNAME for provisioning API must be set for acceptance tests")
+func TestAccClusterCustomVPC(t *testing.T) {
+	testAccProvider := instaclustr.Provider()
+	testAccProviders := map[string]terraform.ResourceProvider{
+		"instaclustr": testAccProvider,
 	}
-	if v := os.Getenv("IC_API_KEY"); v == "" {
-		t.Fatal("IC_API_KEY for provisioning API must be set for acceptance tests")
+	validConfig, _ := ioutil.ReadFile("data/valid_with_custom_vpc.tf")
+	username := os.Getenv("IC_USERNAME")
+	apiKey := os.Getenv("IC_API_KEY")
+	providerAccountName := os.Getenv("IC_PROV_ACC_NAME")
+	providerVpcId := os.Getenv("IC_PROV_VPC_ID")
+	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, providerAccountName, providerVpcId)
+	hostname := instaclustr.ApiHostname
+	resource.Test(t, resource.TestCase{
+		Providers:    testAccProviders,
+		PreCheck:     func() { AccTestEnvVarsCheck(t) },
+		CheckDestroy: testCheckResourceDeleted("vpc_cluster", hostname, username, apiKey),
+		Steps: []resource.TestStep{
+			{
+				Config: oriConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid("vpc_cluster"),
+					testCheckResourceCreated("vpc_cluster", hostname, username, apiKey),
+				),
+			},
+		},
+	})
+}
+
+func TestAccClusterCustomVPCInvalid(t *testing.T) {
+	testAccProvider := instaclustr.Provider()
+	testAccProviders := map[string]terraform.ResourceProvider{
+		"instaclustr": testAccProvider,
 	}
+	validConfig, _ := ioutil.ReadFile("data/invalid_with_custom_vpc.tf")
+	username := os.Getenv("IC_USERNAME")
+	apiKey := os.Getenv("IC_API_KEY")
+	providerAccountName := os.Getenv("IC_PROV_ACC_NAME")
+	resource.Test(t, resource.TestCase{
+		Providers: testAccProviders,
+		PreCheck:  func() { AccTestEnvVarsCheck(t) },
+		Steps: []resource.TestStep{
+			{
+				Config:      fmt.Sprintf(string(validConfig), username, apiKey, providerAccountName),
+				ExpectError: regexp.MustCompile("Error creating cluster"),
+			},
+		},
+	})
 }
 
 func testCheckResourceValid(resourceName string) resource.TestCheckFunc {
