@@ -88,6 +88,10 @@ func resourceCluster() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
+						"custom_virtual_network_id": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
 						"tags": {
 							Type:     schema.TypeString,
 							Optional: true,

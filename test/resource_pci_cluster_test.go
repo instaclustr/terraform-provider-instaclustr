@@ -26,7 +26,7 @@ func TestAccPCICluster(t *testing.T) {
 	hostname := instaclustr.ApiHostname
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
-		PreCheck:     func() { testAccPCIPreCheck(t) },
+		PreCheck:     func() { AccTestEnvVarsCheck(t) },
 		CheckDestroy: testCheckPCIResourceDeleted("valid", hostname, username, apiKey),
 		Steps: []resource.TestStep{
 			{
@@ -60,7 +60,7 @@ func TestAccPCIClusterResize(t *testing.T) {
 	hostname := instaclustr.ApiHostname
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
-		PreCheck:     func() { testAccPCIPreCheck(t) },
+		PreCheck:     func() { AccTestEnvVarsCheck(t) },
 		CheckDestroy: testCheckPCIResourceDeleted("resizable_pci_cluster", hostname, username, apiKey),
 		Steps: []resource.TestStep{
 			{
@@ -101,7 +101,7 @@ func TestAccPCIClusterInvalid(t *testing.T) {
 	apiKey := os.Getenv("IC_API_KEY")
 	resource.Test(t, resource.TestCase{
 		Providers: testAccProviders,
-		PreCheck:  func() { testAccPCIPreCheck(t) },
+		PreCheck:  func() { AccTestEnvVarsCheck(t) },
 		Steps: []resource.TestStep{
 			{
 				Config:      fmt.Sprintf(string(validConfig), username, apiKey),
@@ -109,15 +109,6 @@ func TestAccPCIClusterInvalid(t *testing.T) {
 			},
 		},
 	})
-}
-
-func testAccPCIPreCheck(t *testing.T) {
-	if v := os.Getenv("IC_USERNAME"); v == "" {
-		t.Fatal("IC_USERNAME for provisioning API must be set for acceptance tests")
-	}
-	if v := os.Getenv("IC_API_KEY"); v == "" {
-		t.Fatal("IC_API_KEY for provisioning API must be set for acceptance tests")
-	}
 }
 
 func testCheckPCIResourceValid(resourceName string) resource.TestCheckFunc {

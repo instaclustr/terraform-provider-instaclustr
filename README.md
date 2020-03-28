@@ -122,6 +122,7 @@ account_name|For customers running in their own account. Your provider account c
 tags|If specified, the value is a map from tag key to value. For restrictions, refer to the [AWS User Guide](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html#tag-restrictions). Tags are defined per cluster and will be applied to every instance in the cluster.|""
 resource_group|AZURE only, if specified, the value is name for an Azure Resource Group which the resources will be provisioned into.|""
 disk_encryption_key|Specify an KMS encryption key to encrypt data on nodes. KMS encryption key must be set in Account settings before provisioning an encrypted cluster.|""
+custom_virtual_network_id|Specify a custom AWS VPC ID to use for customers provisioning in their own account. <b><i>Note:</i></b> Using this option requires that the cluster_network match the IPv4 CIDR block of the specified VPC ID.|""
 
 `rack_allocation`
 
@@ -237,11 +238,19 @@ Firstly thanks!  We value your time and will do our best to review the PR as soo
 2. Clone repository to: $GOPATH/src/github.com/instaclustr/terraform-provider-instaclust
 3. Build the provider by `$ make build`
 4. Run the tests by `$ make test`
-5. Setup environment variable `TF_ACC` to enable online acceptance test cases by `$ export TF_ACC=1`
-6. Setup environment variables `IC_USERNAME` and `IC_API_KEY` of your provisioning API to grant online acceptance test cases permission by `$ export IC_USERNAME=<your instaclustr username>` and `$ export IC_API_KEY=<your provisioning API key>`
-7. Setup environment variable `KMS_ARN` to your AWS KMS key values to run test cases for EBS encryption of nodes by `$ export KMS_ARN=<your KMS ARN>`.</br><b><i>Note:</i></b> You cannot use an ARN previously added to your account as an encryption key.
-8. Run the acceptance tests `$ make testacc`
-9. Create a PR and send it our way :)
+5. Set up all of the environmental variables listed [below](#acceptance-test-environment-variables) to prepare for acceptance testing.
+6. Run the acceptance tests `$ make testacc`
+7. Create a PR and send it our way :)
+
+#### Acceptance Test Environment Variables
+Variable | Command | Description
+---------|-------------|--------
+TF_ACC|`$ export TF_ACC=1`|Enables online acceptance tests.
+IC_USERNAME|`$ export IC_USERNAME=<your instaclustr username>`|Authorizes Provisioning API
+IC_API_KEY|`$ export IC_API_KEY=<your provisioning API key>`|Authorizes Provisioning API
+KMS_ARN|`$ export KMS_ARN=<your KMS ARN>`|For EBS encryption of nodes. <b><i>Note:</i></b> You cannot use an ARN previously added to your account as an encryption key.
+IC_PROV_ACC_NAME|`$ export IC_PROV_ACC_NAME="<your provider name>"`|Your "Run In Your Own Account" account name.
+IC_PROV_VPC_ID|`$ export IC_PROV_VPC_ID="<your AWS VPC ID>"`|For provisioning into a custom VPC.
 
 ## Further information and documentation
 
