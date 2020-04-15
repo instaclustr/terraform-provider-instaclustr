@@ -146,8 +146,8 @@ Property | Description | For Bundles | Default
 auth_n_authz|Accepts true/false. Enables Password Authentication and User Authorization.|Cassandra|false
 client_encryption|Accepts true/false. Enables Client ⇄ Node Encryption.|Cassandra, Kafka, Elasticsearch, Spark|false
 dedicated_master_nodes|Accepts true/false. Enables Dedicated Master Nodes.|Elasticsearch|false
-master_node_size|Desired master node sizes.|Elasticsearch|Required
-security_plugin|Accepts true/false. Enables Securiy Plugin.|Elasticsearch|false
+master_node_size|Desired master node size. See [here](https://www.instaclustr.com/support/api-integrations/api-reference/provisioning-api/#section-reference-data-data-centres-and-node-sizes) for more details.|Elasticsearch|Required
+security_plugin|Accepts true/false. Enables Security Plugin.|Elasticsearch|false
 use_private_broadcast_rpc_address|Accepts true/false. Enables broadcast of private IPs for auto-discovery.|Cassandra|false
 lucene_enabled|Accepts true/false. Enabled Cassandra Lucene Index Plugin.|Cassandra|false
 continuous_backup_enabled|Accepts true/false. Enables commitlog backups and increases the frequency of the default snapshot backups.|Cassandra|false
