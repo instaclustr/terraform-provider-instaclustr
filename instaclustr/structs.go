@@ -18,6 +18,9 @@ type Bundle struct {
 type BundleOptions struct {
 	AuthnAuthz                    string `json:"authnAuthz,omitempty" mapstructure:"auth_n_authz"`
 	ClientEncryption              string `json:"clientEncryption,omitempty" mapstructure:"client_encryption"`
+	DedicatedMasterNodes          string `json:"dedicatedMasterNodes,omitempty" mapstructure:"dedicated_master_nodes"`
+	MasterNodeSize          	  string `json:"masterNodeSize,omitempty" mapstructure:"master_node_size"`
+	SecurityPlugin          	  string `json:"securityPlugin,omitempty" mapstructure:"security_plugin"`
 	UsePrivateBroadcastRpcAddress string `json:"usePrivateBroadcastRPCAddress,omitempty" mapstructure:"use_private_broadcast_rpc_address"`
 	LuceneEnabled                 string `json:"luceneEnabled,omitempty" mapstructure:"lucene_enabled"`
 	ContinuousBackupEnabled       string `json:"continuousBackupEnabled,omitempty" mapstructure:"continuous_backup_enabled"`
