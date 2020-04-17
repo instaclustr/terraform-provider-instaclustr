@@ -83,6 +83,39 @@ resource "instaclustr_vpc_peering" "example_vpc_peering" {
   peer_subnet = "10.0.0.0/20"
 }
 
+resource "instaclustr_cluster" "example_kafka" {
+  cluster_name = "test_kafka"
+  node_size = "r5.large-500-gp2"
+  data_centre = "US_WEST_2"
+  sla_tier = "NON_PRODUCTION"
+  cluster_network = "192.168.0.0/18"
+  cluster_provider = {
+    name = "AWS_VPC"
+  }
+  rack_allocation = {
+    number_of_racks = 3
+    nodes_per_rack = 1
+  }
+
+  bundle {
+    bundle = "KAFKA"
+    version = "2.3.1"
+    options = {
+      auth_n_authz = true
+    }
+  }
+
+  bundle {
+    bundle = "KAFKA_REST_PROXY"
+    version = "5.0.0"
+  }
+
+  bundle {
+    bundle = "KAFKA_SCHEMA_REGISTRY"
+    version = "5.0.0"
+  }
+}
+
 resource "instaclustr_cluster" "example-elasticsearch" {
   cluster_name = "es-cluster"
   node_size = "m5l-250-v2"
