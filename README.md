@@ -237,7 +237,7 @@ ZEPPELIN|apache-zeppelin:0.8.0-spark-2.3.2, apache-zeppelin:0.7.1-spark-2.1.1|AP
 KAFKA|2.1.1, 2.3.1|
 KAFKA_REST_PROXY|5.0.0|KAFKA
 KAFKA_SCHEMA_REGISTRY|5.0.0|KAFKA
-ELASTICSEARCH|opendistro-for-elasticsearch:1.4.0|ELASTICSEARCH
+ELASTICSEARCH|opendistro-for-elasticsearch:1.4.0
 
 ### Migrating from 0.0.1 &rarr; 0.1.0
 A schema change has been made from 0.0.1 which no longer supports the `bundles` argument and uses `bundle` blocks instead. This change can cause `terraform apply` to fail with a message that `bundles` has been removed and/or updating isn't supported. To resolve this -<br>
