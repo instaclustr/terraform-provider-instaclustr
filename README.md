@@ -135,8 +135,8 @@ nodes_per_rack|Number of nodes per rack. Max allowed is 10|Required
 
 Property | Description | Default
 ---------|-------------|--------
-bundle|Accepts APACHE_CASSANDRA. Compatible bundles: SPARK and/or ZEPPELIN.|Required
-version|For Cassandra: 2.1.19, 2.2.13, 3.0.14, 3.0.17, 3.0.18, 3.11, 3.11.3, 3.11.4.<br>For Spark: apache-spark:2.1.3, apache-spark:2.1.3.ic1, apache-spark:2.3.2.<br>For Zeppelin: apache-zeppelin:0.8.0-spark-2.3.2, apache-zeppelin:0.7.1-spark-2.1.1|Required
+bundle| See [Bundles and Versions below](#bundles-and-versions)|Required
+version| See [Bundles and Versions below](#bundles-and-versions)|Required
 options|Options and add-ons for the given bundle. See `bundle.options` below for its properties|{} (empty)
 
 `bundle.options` - _all properties listed are optional_
@@ -226,6 +226,18 @@ resource "instaclustr_encryption_key" "example_encryption_key" {
     arn: "arn:aws:kms:us-east-1:123456789012:key12345678-1234-1234-1234-123456789abc"
 }
 ```
+
+## Bundles and Versions
+
+Bundle | Versions | Compatible With
+---------|-------------|---------------
+APACHE_CASSANDRA|2.1.19, 2.2.13, 3.0.14, 3.0.17, 3.0.18, 3.11, 3.11.3, 3.11.4|
+SPARK|apache-spark:2.1.3, apache-spark:2.1.3.ic1, apache-spark:2.3.2|APACHE_CASSANDRA
+ZEPPELIN|apache-zeppelin:0.8.0-spark-2.3.2, apache-zeppelin:0.7.1-spark-2.1.1|APACHE_CASSANDRA
+KAFKA|2.1.1, 2.3.1|
+KAFKA_REST_PROXY|5.0.0|KAFKA
+KAFKA_SCHEMA_REGISTRY|5.0.0|KAFKA
+ELASTICSEARCH|opendistro-for-elasticsearch:1.4.0
 
 ### Migrating from 0.0.1 &rarr; 0.1.0
 A schema change has been made from 0.0.1 which no longer supports the `bundles` argument and uses `bundle` blocks instead. This change can cause `terraform apply` to fail with a message that `bundles` has been removed and/or updating isn't supported. To resolve this -<br>
