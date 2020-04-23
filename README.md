@@ -244,10 +244,6 @@ A schema change has been made from 0.0.1 which no longer supports the `bundles` 
 1. Change all usages of the `bundles` argument &rarr; `bundle` blocks (example under example/main.tf)
 2. In the .tfstate files, replace all keys named `bundles` with `bundle` in resources under the Instaclustr provider.
 
-### Limitations
-- The only update operation supported at the moment is to change node sizes.
-- Updating configurations may fail if there is a mismatch between local tfstate and the live state. Example - destroying a cluster will fail if the cluster was already destroyed through the [Instaclustr Console](https://console.instaclustr.com).
-
 ## Contributing
 
 Firstly thanks!  We value your time and will do our best to review the PR as soon as possible. 
