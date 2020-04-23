@@ -239,11 +239,14 @@ KAFKA_REST_PROXY|5.0.0|KAFKA
 KAFKA_SCHEMA_REGISTRY|5.0.0|KAFKA
 ELASTICSEARCH|opendistro-for-elasticsearch:1.4.0
 
-### Migrating from 0.0.1 &rarr; 0.1.0
+### Migrating from 0.0.1 &rarr; 0.1.0+
 A schema change has been made from 0.0.1 which no longer supports the `bundles` argument and uses `bundle` blocks instead. This change can cause `terraform apply` to fail with a message that `bundles` has been removed and/or updating isn't supported. To resolve this -<br>
 1. Change all usages of the `bundles` argument &rarr; `bundle` blocks (example under example/main.tf)
 2. In the .tfstate files, replace all keys named `bundles` with `bundle` in resources under the Instaclustr provider.
 
+### Limitations
+- The only update operation supported at the moment is to change node sizes.
+- Updating configurations may fail if there is a mismatch between local tfstate and the live state. Example - destroying a cluster will fail if the cluster was already destroyed through the [Instaclustr Console](https://console.instaclustr.com).
 
 ## Contributing
 
