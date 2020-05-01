@@ -1,5 +1,9 @@
 package instaclustr
 
+const (
+    DefaultApiHostname string = "https://api.instaclustr.com"
+)
+
 type Config struct {
     Username string
     ApiKey string
