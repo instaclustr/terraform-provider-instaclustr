@@ -15,6 +15,11 @@ func Provider() *schema.Provider {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+			"api_hostname": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Default: "https://api.instaclustr.com",
+			},
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
@@ -31,8 +36,9 @@ func Provider() *schema.Provider {
 
 func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	config := Config{
-		Username: d.Get("username").(string),
-		ApiKey:   d.Get("api_key").(string),
+		Username: 				d.Get("username").(string),
+		ApiKey:   				d.Get("api_key").(string),
+		apiServerHostname:      d.Get("api_hostname").(string),
 	}
 
 	config.Init()
