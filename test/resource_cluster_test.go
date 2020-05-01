@@ -13,6 +13,14 @@ import (
 	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 )
 
+func getenv(key, fallback string) string {
+    value := os.Getenv(key)
+    if len(value) == 0 {
+        return fallback
+    }
+    return value
+}
+
 func TestAccCluster(t *testing.T) {
 	testAccProvider := instaclustr.Provider()
 	testAccProviders := map[string]terraform.ResourceProvider{
@@ -23,7 +31,7 @@ func TestAccCluster(t *testing.T) {
 	apiKey := os.Getenv("IC_API_KEY")
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey)
 	updatedConfig := strings.Replace(oriConfig, "testcluster", "newcluster", 1)
-	hostname := instaclustr.ApiHostname
+	hostname := getenv("IC_API_URL", instaclustr.DefaultApiHostname)
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
 		PreCheck:     func() { AccTestEnvVarsCheck(t) },
@@ -57,7 +65,7 @@ func TestAccClusterResize(t *testing.T) {
 	invalidResizeClassConfig := strings.Replace(oriConfig, "resizeable-small(r5-l)", "resizeable-large(r5-xl)", 1)
 	invalidResizeConfig := strings.Replace(oriConfig, "resizeable-small(r5-l)", "t3.medium", 1)
 
-	hostname := instaclustr.ApiHostname
+	hostname := getenv("IC_API_URL", instaclustr.DefaultApiHostname)
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
 		PreCheck:     func() { AccTestEnvVarsCheck(t) },
@@ -142,7 +150,7 @@ func TestAccClusterCustomVPC(t *testing.T) {
 	providerAccountName := os.Getenv("IC_PROV_ACC_NAME")
 	providerVpcId := os.Getenv("IC_PROV_VPC_ID")
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, providerAccountName, providerVpcId)
-	hostname := instaclustr.ApiHostname
+	hostname := getenv("IC_API_URL", instaclustr.DefaultApiHostname)
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
 		PreCheck:     func() { AccTestEnvVarsCheck(t) },

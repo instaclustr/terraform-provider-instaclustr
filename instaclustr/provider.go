@@ -4,6 +4,9 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
+const (
+    DefaultApiHostname string = "https://api.instaclustr.com"
+)
 func Provider() *schema.Provider {
 	provider := &schema.Provider{
 		Schema: map[string]*schema.Schema{
@@ -18,7 +21,7 @@ func Provider() *schema.Provider {
 			"api_hostname": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default: "https://api.instaclustr.com",
+				Default: DefaultApiHostname,
 			},
 		},
 
