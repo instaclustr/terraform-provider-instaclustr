@@ -13,13 +13,6 @@ import (
 	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 )
 
-func getenv(key, fallback string) string {
-    value := os.Getenv(key)
-    if len(value) == 0 {
-        return fallback
-    }
-    return value
-}
 
 func TestAccCluster(t *testing.T) {
 	testAccProvider := instaclustr.Provider()
