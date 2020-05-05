@@ -24,7 +24,7 @@ func AccTestEnvVarsCheck(t *testing.T) {
 }
 
 
-func getoptionalenv(key, fallback string) string {
+func getOptionalEnv(key, fallback string) string {
     value := os.Getenv(key)
     if len(value) == 0 {
         return fallback
