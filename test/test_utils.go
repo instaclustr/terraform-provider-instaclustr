@@ -22,3 +22,12 @@ func AccTestEnvVarsCheck(t *testing.T) {
 		t.Fatal("IC_PROV_VPC_ID for provisioning API must be set for acceptance tests")
 	}
 }
+
+
+func getOptionalEnv(key, fallback string) string {
+    value := os.Getenv(key)
+    if len(value) == 0 {
+        return fallback
+    }
+    return value
+}
