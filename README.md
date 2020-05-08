@@ -155,6 +155,12 @@ number_partitions|Default number of partitions to be assigned per topic.|Kafka|N
 auto_create_topics|Accepts true/false. Enable to allow brokers to automatically create a topic, if it does not already exist, when messages are published to it.|Kafka|true
 delete_topics|Accepts true/false. Enable to allow topics to be deleted via the `ic-kafka-topics` tool.|Kafka|true
 password_authentication|Accepts true/false. Require clients to provide credentials — a username & API Key — to connect to the Spark Jobserver.|Spark|false
+target_kafka_cluster_id|GUID of the Instaclustr managed Kafka Cluster Id you wish to connect to. Must be in the same Instaclustr account.|Kafka Connect|Required
+vpc_type|Available options: `KAFKA_VPC`, `VPC_PEERED`, `SEPARATE_VPC`. Only required if targeting an Instaclustr managed cluster.|Kafka Connect|`SEPARATE_VPC`
+aws_access_key, aws_secret_key, s3_bucket_name|Access information for the S3 bucket where you will store your custom connectors. (if using AWS)|Kafka Connect
+azure_storage_account_name, azure_storage_account_key, azure_storage_container_name|Access information for the Azure Storage container where you will store your custom connectors.|Kafka Connect
+ssl_enabled_protocols, ssl_truststore_password, ssl_protocol, security_protocol, sasl_mechanism, sasl_jaas_config, bootstrap_servers|Connection information for your Kafka Cluster. These options are analogous to the similarly named options that you would place in your Kafka Connect worker.properties file. Only required if connecting to a Non-Instaclustr managed Kafka Cluster|Kafka Connect
+truststore|Base64 encoded version of the TLS trust store (in JKS format) used to connect to your Kafka Cluster. Only required if connecting to a Non-Instaclustr managed Kafka Cluster with TLS enabled|Kafka Connect
 
 ### Resource:  `instaclustr_firewall_rule`                             
 A resource for managing cluster firewall rules on Instaclustr Managed Platform. A firewall rule allows access to your Instaclustr cluster.
