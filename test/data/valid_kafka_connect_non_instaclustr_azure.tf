@@ -27,7 +27,7 @@ resource "instaclustr_cluster" "validKC" {
             azure_storage_account_key = "%s"
             azure_storage_container_name = "%s"
             ssl_enabled_protocols = "%s"
-            ssl_trustore_password = "%s"
+            ssl_truststore_password = "%s"
             ssl_protocol = "%s"
             security_protocol = "%s"
             sasl_mechanism = "%s"

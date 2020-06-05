@@ -93,7 +93,7 @@ func TestKafkaConnectClusterCreateNonInstaclustrAZURE(t *testing.T) {
         azureStorageAccountKey := os.Getenv("IC_AZURE_STORAGE_ACCOUNT_KEY")
         azureStorageContainerName := os.Getenv("IC_AZURE_STORAGE_CONTAINER_NAME")
         sslEnabledProtocols := os.Getenv("IC_SSL_ENABLED_PROTOCOLS")
-        sslTrustorePassword := os.Getenv("IC_SSL_TRUSTORE_PASSWORD")
+        sslTruststorePassword := os.Getenv("IC_SSL_TRUSTSTORE_PASSWORD")
         sslProtocol := os.Getenv("IC_SSL_PROTOCOL")
         securityProtocol := os.Getenv("IC_SECURITY_PROTOCOL")
         saslMechanism := os.Getenv("IC_SASL_MECHANISM")
@@ -101,7 +101,7 @@ func TestKafkaConnectClusterCreateNonInstaclustrAZURE(t *testing.T) {
         bootstrapServers := os.Getenv("IC_BOOTSTRAP_SERVER")
         truststore := os.Getenv("IC_TRUSTSTORE")
         oriKCConfig := fmt.Sprintf(string(validKCConfig), username, apiKey, azureStorageAccountName,
-		azureStorageAccountKey, azureStorageContainerName, sslEnabledProtocols, sslTrustorePassword,
+		azureStorageAccountKey, azureStorageContainerName, sslEnabledProtocols, sslTruststorePassword,
 		sslProtocol, securityProtocol, saslMechanism, saslJaasConfig, bootstrapServers, truststore)
         hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
         resource.Test(t, resource.TestCase{
