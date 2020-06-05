@@ -163,11 +163,8 @@ resource "instaclustr_cluster" "validKC" {
         bundle = "KAFKA_CONNECT"
         version = "2.3.1"
         options = {
-            target_kafka_cluster_id = "%s"
+            target_kafka_cluster_id = ${instaclustr_cluster.example_kafka.cluster_id}"
             vpc_id = "SEPARATE_VPC"
-            aws_access_key = "%s"
-            aws_secret_key = "%s"
-            s3_bucket_name = "%s"
         }
     }
 }
