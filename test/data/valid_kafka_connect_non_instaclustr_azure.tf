@@ -32,7 +32,7 @@ resource "instaclustr_cluster" "validKC" {
             security_protocol = "%s"
             sasl_mechanism = "%s"
             sasl_jaas_config = "%s"
-            bootstrap_servers = %s"
+            bootstrap_servers = "%s"
             truststore = "%s"
         }
     }
