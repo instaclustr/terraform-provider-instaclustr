@@ -190,6 +190,70 @@ func resourceCluster() *schema.Resource {
 										Type:     schema.TypeBool,
 										Optional: true,
 									},
+									"target_kafka_cluster_id": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"vpc_type": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"aws_access_key": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"aws_secret_key": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"s3_bucket_name": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"azure_storage_account_name": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"azure_storage_account_key": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"azure_storage_container_name": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"ssl_enabled_protocols": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"ssl_truststore_password": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"ssl_protocol": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"security_protocol": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"sasl_mechanism": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"sasl_jaas_config": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"bootstrap_servers": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"truststore": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
 								},
 							},
 						},
