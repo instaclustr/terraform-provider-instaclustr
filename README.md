@@ -272,6 +272,14 @@ IC_API_KEY|`$ export IC_API_KEY=<your provisioning API key>`|Authorizes Provisio
 KMS_ARN|`$ export KMS_ARN=<your KMS ARN>`|For EBS encryption of nodes. <b><i>Note:</i></b> You cannot use an ARN previously added to your account as an encryption key.
 IC_PROV_ACC_NAME|`$ export IC_PROV_ACC_NAME="<your provider name>"`|Your "Run In Your Own Account" account name.
 IC_PROV_VPC_ID|`$ export IC_PROV_VPC_ID="<your AWS VPC ID>"`|For provisioning into a custom VPC.
+
+#### Environment Variables Specific to Kafka Connect Acceptance Test
+
+These environment variables are optional and only required when we want to do acceptance tests for Kafka Connect.
+It is toggled by setting IC_TEST_KAFKA_CONNECT environment variable.
+
+Variable | Command | Description
+---------|-------------|--------
 IC_TEST_KAFKA_CONNECT|`$ export IC_PROV_VPC_ID=1`|Enables acceptance tests for Kafka Connect.
 IC_TARGET_KAFKA_CLUSTER_ID|`$ export IC_PROV_VPC_ID="<target kafka cluster ID>"`|For Kafka Connect connection information. See bundle options.
 IC_AWS_ACCESS_KEY|`$ export IC_PROV_VPC_ID="<access key for the AWS S3 bucket>"`|For Kafka Connect connection information. See bundle options.
