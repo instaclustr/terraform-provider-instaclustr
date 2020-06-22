@@ -64,17 +64,26 @@ func resourceVpcPeeringCreate(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Creating VPC peering request.")
 	client := meta.(*Config).Client
 
+	const ClusterReadInterval = 5
+	const WaitForClusterTimeout = 60
 	var cdcID string
+	var latestStatus string
+	timePassed := 0
 	for {
 		cluster, err := client.ReadCluster(d.Get("cluster_id").(string))
 		if err != nil {
 			return fmt.Errorf("[Error] Error retrieving cluster info: %s", err)
 		}
-		if cluster.ClusterStatus == "PROVISIONED" {
+		latestStatus = cluster.ClusterStatus
+		if cluster.ClusterStatus == "PROVISIONED" || cluster.ClusterStatus == "RUNNING" {
 			cdcID = cluster.DataCentres[0].ID
 			break
 		}
-		time.Sleep(5 * time.Second)
+		if timePassed > WaitForClusterTimeout {
+			return fmt.Errorf("[Error] Timed out waiting for cluster to have the status 'PROVISIONED' or 'RUNNING'. Current cluster status is '%s'", latestStatus)
+		}
+		time.Sleep(ClusterReadInterval * time.Second)
+		timePassed += ClusterReadInterval
 	}
 
 	createData := CreateVPCPeeringRequest{
