@@ -192,7 +192,9 @@ resource "instaclustr_firewall_rule" "example" {
 ```
 
 ### Resource: `instaclustr_vpc_peering`  
-A resource for managing VPC peering connections on Instaclustr Managed Platform. This is only avaliable for clusters hosted with the AWS provider.
+A resource for managing VPC peering connections on Instaclustr Managed Platform. This is only avaliable for clusters hosted with the AWS provider.  
+  
+When creating this resource, the process will wait for target cluster to be in the `PROVISIONED` or `RUNNING` status. The process will time out after 60 seconds of waiting. 
 
 #### Properties
 Property | Description | Default
