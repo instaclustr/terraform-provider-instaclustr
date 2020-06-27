@@ -199,8 +199,7 @@ When creating this resource, the process will wait for target cluster to be in t
 #### Properties
 Property | Description | Default
 ---------|-------------|--------
-cluster_id|The ID of an existing Instaclustr managed cluster| Not Required if cdc_id provided
-cdc_id|The ID of an existing Instaclustr managed cluster data centre|Not Required if cluster_id provided
+cluster_id|The ID of an existing Instaclustr managed cluster|Required
 peer_vpc_id|The ID of the VPC with which you are creating the VPC peering connection|Required
 peer_account_id|The account ID of the owner of the accepter VPC|Required
 peer_subnet|The subnet for the VPC|Required
