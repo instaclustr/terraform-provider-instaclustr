@@ -150,3 +150,18 @@ type EncryptionKey struct {
 	Alias string `json:"alias,omitempty"`
 	ARN   string `json:"arn,omitempty"`
 }
+
+type CreateKafkaUserRequest struct {
+	Username		string		`json:"username"`
+	Password		string		`json:"password"`
+	InitialPermissions	string		`json:"initial-permissions"`
+}
+
+type UpdateKafkaUserRequest struct {
+	Username		string		`json:"username"`
+	Password		string		`json:"password"`
+}
+
+type DeleteKafkaUserRequest struct {
+	Username		string		`json:"username"`
+}
