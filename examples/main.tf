@@ -169,3 +169,13 @@ resource "instaclustr_cluster" "validKC" {
     }
 }
 
+resource "instaclustr_kafka_user" "kafka_user_charlie" {
+  cluster_id = "${instaclustr_clustr.example_kafka.cluster_id}"
+  username = "charlie"
+  password = "charlie123!"
+  initial_permissions = "none"
+}                       
+                              
+resource "instaclustr_kafka_user_list" "kafka_user_list" { 
+  cluster_id = "${instaclustr_clustr.example_kafka.cluster_id}"
+}  
