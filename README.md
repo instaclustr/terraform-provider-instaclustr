@@ -235,10 +235,14 @@ resource "instaclustr_encryption_key" "example_encryption_key" {
 }
 ```
 
-### Resource:  `instaclustr_kafka_user` and `instaclustr_kafka_user_list`                             
+### Resource  `instaclustr_kafka_user` and Data Source `instaclustr_kafka_user_list`                             
 Resources for managing Kafka user for a Kafka cluster. 
-Kafka user list is a read-only resource used to get the list of kafka user in a cluster, 
+Kafka user list is a read-only data source used to get the list of kafka user in a cluster, 
 while Kafka user is a resource used to create, update password, and delete Kafka users.
+
+Note: There is a possibility that someone else delete the Kafka user through other means, e.g., instaclustr console and API.
+This will cause the Kafka user resource to be not in sync because it does not have read.
+In such case, to recreate the user just remove the Kafka user resource, and then create a new one.
 
 #### Properties
 `instaclustr_kafka_user`
@@ -266,7 +270,7 @@ resource "instaclustr_kafka_user" "kafka_user_charlie" {
 }
 
 
-resource "instaclustr_kafka_user_list" "kafka_user_list" {
+data "instaclustr_kafka_user_list" "kafka_user_list" {
   cluster_id = "${instaclustr_cluster.kafka_cluster.cluster_id}"
 }
 ```

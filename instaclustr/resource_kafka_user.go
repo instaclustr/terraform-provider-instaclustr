@@ -68,6 +68,7 @@ func resourceKafkaUserCreate(d *schema.ResourceData, meta interface{}) error {
 			// user is already set, so we don't change anything
 			d.SetId(fmt.Sprintf("%s-%s", cluster_id, username))
 			log.Printf("[INFO] Kafka user %d already exists in %s.", username, cluster_id)
+			return nil
 		}
 	}
 
