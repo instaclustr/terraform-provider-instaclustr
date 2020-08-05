@@ -176,6 +176,6 @@ resource "instaclustr_kafka_user" "kafka_user_charlie" {
   initial_permissions = "none"
 }                       
                               
-resource "instaclustr_kafka_user_list" "kafka_user_list" { 
+data "instaclustr_kafka_user_list" "kafka_user_list" { 
   cluster_id = "${instaclustr_clustr.example_kafka.cluster_id}"
 }  

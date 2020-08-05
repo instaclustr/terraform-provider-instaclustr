@@ -28,7 +28,9 @@ func Provider() *schema.Provider {
 			"instaclustr_firewall_rule":   resourceFirewallRule(),
 			"instaclustr_vpc_peering":     resourceVpcPeering(),
 			"instaclustr_kafka_user":      resourceKafkaUser(),
-			"instaclustr_kafka_user_list": resourceKafkaUserList(),
+		},
+		DataSourcesMap: map[string]*schema.Resource{
+			"instaclustr_kafka_user_list": dataSourceKafkaUserList(),
 		},
 	}
 	provider.ConfigureFunc = providerConfigure

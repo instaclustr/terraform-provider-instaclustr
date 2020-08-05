@@ -32,7 +32,7 @@ resource "instaclustr_kafka_user" "kafka_user_charlie" {
 }
 */
 /*
-resource "instaclustr_kafka_user_list" "kafka_user_list" {
+data "instaclustr_kafka_user_list" "kafka_user_list" {
   cluster_id = "${instaclustr_cluster.kafka_cluster.cluster_id}"
 }
 */

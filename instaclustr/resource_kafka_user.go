@@ -29,8 +29,7 @@ func resourceKafkaUser() *schema.Resource {
 
 			"password": {
 				Type:     schema.TypeString,
-				Optional: true,
-				Default: "",
+				Required: true,
 			},
 
 			"initial_permissions": {
@@ -38,30 +37,6 @@ func resourceKafkaUser() *schema.Resource {
 				Optional: true,
 				Default: "none",
 				ForceNew: true,
-			},
-		},
-	}
-}
-
-func resourceKafkaUserList() *schema.Resource {
-	return &schema.Resource{
-		Create: resourceKafkaUserListRead,
-		Read:   resourceKafkaUserListRead,
-		Update: resourceKafkaUserListRead,
-		Delete: resourceKafkaUserListDelete,
-
-		Schema: map[string]*schema.Schema{
-			"cluster_id": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-
-			"username_list":  &schema.Schema {
-				Type:     schema.TypeList,
-				Elem:     &schema.Schema {
-				              Type: schema.TypeString,
-				          },
-				Computed: true,
 			},
 		},
 	}
@@ -83,7 +58,7 @@ func resourceKafkaUserCreate(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("[Error] Cluster %s is not RUNNING.", cluster_id)
 	}
 		
-	// just use linear search for now
+	// just use linear search for now to check if the user going to be created is already in the system
 	usernameList, err := client.ReadKafkaUserList(cluster_id)
 	if err != nil {
 		return fmt.Errorf("[Error] Error retrieving kafka user list: %s", err)
@@ -93,6 +68,7 @@ func resourceKafkaUserCreate(d *schema.ResourceData, meta interface{}) error {
 			// user is already set, so we don't change anything
 			d.SetId(fmt.Sprintf("%s-%s", cluster_id, username))
 			log.Printf("[INFO] Kafka user %d already exists in %s.", username, cluster_id)
+			return nil
 		}
 	}
 
@@ -180,25 +156,3 @@ func resourceKafkaUserDelete(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Kafka user %s has been deleted.", d.Get("username").(string))
 	return nil
 }
-
-func resourceKafkaUserListRead(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*Config).Client
-
-	usernameList, err := client.ReadKafkaUserList(d.Get("cluster_id").(string))
-	if err != nil {
-		return fmt.Errorf("[Error] Error fetching the kafka user list: %s", err)
-	}
-
-	d.SetId(fmt.Sprintf("%s-user-list", d.Get("cluster_id").(string)))
-	d.Set("username_list", usernameList)
-
-	log.Printf("[INFO] Fetched Kafka user list in %s.", d.Get("cluster_id").(string))
-	return nil
-}
-func resourceKafkaUserListDelete(d *schema.ResourceData, meta interface{}) error {
-	d.SetId("")
-	d.Set("cluster_id", "")
-	d.Set("username_list", "")
-	return nil
-}
-

@@ -47,7 +47,7 @@ func TestKafkaUserResource(t *testing.T) {
 					checkKafkaClusterRunning(hostname, username, apiKey),
 				),
 			},
-			{
+ 			{
 				Config: createKafkaUserConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckResourceValid("instaclustr_kafka_user.kafka_user_charlie"),
@@ -57,7 +57,7 @@ func TestKafkaUserResource(t *testing.T) {
 			{
 				Config: createKafkaUserListConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckResourceValid("instaclustr_kafka_user_list.kafka_user_list"),
+					testCheckResourceValid("data.instaclustr_kafka_user_list.kafka_user_list"),
 					checkKafkaUserListCreated(hostname, username, apiKey),
 				),
 			},
@@ -193,7 +193,7 @@ func checkKafkaUserDeleted(kafka_username, hostname, username, apiKey string) re
 
 func checkKafkaUserListCreated(hostname, username, apiKey string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		resourceState := s.Modules[0].Resources["instaclustr_kafka_user_list.kafka_user_list"]
+		resourceState := s.Modules[0].Resources["data.instaclustr_kafka_user_list.kafka_user_list"]
 
 		client := new(instaclustr.APIClient)
 		client.InitClient(hostname, username, apiKey)
@@ -216,9 +216,6 @@ func checkKafkaUserListCreated(hostname, username, apiKey string) resource.TestC
 			}
 		}
 
-		//if usernameList != usernameListResource {
-		//	return fmt.Errorf("List of Kafka users of the Kafka cluster and resource are different. ")
-		//}
 		return nil
 	}
 }
