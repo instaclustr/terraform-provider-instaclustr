@@ -19,8 +19,8 @@ type BundleOptions struct {
 	AuthnAuthz                    string `json:"authnAuthz,omitempty" mapstructure:"auth_n_authz"`
 	ClientEncryption              string `json:"clientEncryption,omitempty" mapstructure:"client_encryption"`
 	DedicatedMasterNodes          string `json:"dedicatedMasterNodes,omitempty" mapstructure:"dedicated_master_nodes"`
-	MasterNodeSize          	  string `json:"masterNodeSize,omitempty" mapstructure:"master_node_size"`
-	SecurityPlugin          	  string `json:"securityPlugin,omitempty" mapstructure:"security_plugin"`
+	MasterNodeSize                string `json:"masterNodeSize,omitempty" mapstructure:"master_node_size"`
+	SecurityPlugin                string `json:"securityPlugin,omitempty" mapstructure:"security_plugin"`
 	UsePrivateBroadcastRpcAddress string `json:"usePrivateBroadcastRPCAddress,omitempty" mapstructure:"use_private_broadcast_rpc_address"`
 	LuceneEnabled                 string `json:"luceneEnabled,omitempty" mapstructure:"lucene_enabled"`
 	ContinuousBackupEnabled       string `json:"continuousBackupEnabled,omitempty" mapstructure:"continuous_backup_enabled"`
@@ -28,6 +28,22 @@ type BundleOptions struct {
 	AutoCreateTopics              string `json:"autoCreateTopics,omitempty" mapstructure:"auto_create_topics"`
 	DeleteTopics                  string `json:"deleteTopics,omitempty" mapstructure:"delete_topics"`
 	PasswordAuthentication        string `json:"passwordAuthentication,omitempty" mapstructure:"password_authentication"`
+	TargetKafkaClusterId          string `json:"targetKafkaClusterId,omitempty" mapstructure:"target_kafka_cluster_id"`
+	VPCType                       string `json:"vpcType,omitempty" mapstructure:"vpc_type"`
+	AWSAccessKeyId                string `json:"aws.access.key.id,omitempty" mapstructure:"aws_access_key"`
+	AWSSecretKey                  string `json:"aws.secret.access.key,omitempty" mapstructure:"aws_secret_key"`
+	S3BucketName                  string `json:"s3.bucket.name,omitempty" mapstructure:"s3_bucket_name"`
+	AzureStorageAccountName       string `json:"azure.storage.account.name,omitempty" mapstructure:"azure_storage_account_name"`
+	AzureStorageAccountKey        string `json:"azure.storage.account.key,omitempty" mapstructure:"azure_storage_account_key"`
+	AzureStorageContainerName     string `json:"azure.storage.container.name,omitempty" mapstructure:"azure_storage_container_name"`
+	SslEnabledProtocols           string `json:"ssl.enabled.protocols,omitempty" mapstructure:"ssl_enabled_protocols"`
+	SslTruststorePassword         string `json:"ssl.truststore.password,omitempty" mapstructure:"ssl_truststore_password"`
+	SslProtocol                   string `json:"ssl.protocol,omitempty" mapstructure:"ssl_protocol"`
+	SecurityProtocol              string `json:"security.protocol,omitempty" mapstructure:"security_protocol"`
+	SaslMechanism                 string `json:"sasl.mechanism,omitempty" mapstructure:"sasl_mechanism"`
+	SaslJaasConfig                string `json:"sasl.jaas.config,omitempty" mapstructure:"sasl_jaas_config"`
+	BootstrapServers              string `json:"bootstrap.servers,omitempty" mapstructure:"bootstrap_servers"`
+	Truststore                    string `json:"truststore,omitempty" mapstructure:"truststore"`
 }
 
 type ClusterProvider struct {
@@ -133,4 +149,19 @@ type EncryptionKey struct {
 	ID    string `json:"id,omitempty"`
 	Alias string `json:"alias,omitempty"`
 	ARN   string `json:"arn,omitempty"`
+}
+
+type CreateKafkaUserRequest struct {
+	Username		string		`json:"username"`
+	Password		string		`json:"password"`
+	InitialPermissions	string		`json:"initial-permissions"`
+}
+
+type UpdateKafkaUserRequest struct {
+	Username		string		`json:"username"`
+	Password		string		`json:"password"`
+}
+
+type DeleteKafkaUserRequest struct {
+	Username		string		`json:"username"`
 }

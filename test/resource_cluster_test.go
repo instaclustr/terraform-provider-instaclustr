@@ -13,6 +13,7 @@ import (
 	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 )
 
+
 func TestAccCluster(t *testing.T) {
 	testAccProvider := instaclustr.Provider()
 	testAccProviders := map[string]terraform.ResourceProvider{
@@ -23,7 +24,7 @@ func TestAccCluster(t *testing.T) {
 	apiKey := os.Getenv("IC_API_KEY")
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey)
 	updatedConfig := strings.Replace(oriConfig, "testcluster", "newcluster", 1)
-	hostname := instaclustr.ApiHostname
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
 		PreCheck:     func() { AccTestEnvVarsCheck(t) },
@@ -44,6 +45,103 @@ func TestAccCluster(t *testing.T) {
 	})
 }
 
+func TestKafkaConnectClusterCreateInstaclustrAWS(t *testing.T) {
+        if v := os.Getenv("IC_TEST_KAFKA_CONNECT"); v == "" {
+                t.Skip("Skipping TestKafkaConnectClusterCreateInstaclustrAWS because IC_TEST_KAFKA_CONNECT is not set")
+        } 
+        testAccProvider := instaclustr.Provider()
+        testAccProviders := map[string]terraform.ResourceProvider{
+                "instaclustr": testAccProvider,
+        }
+        validKCConfig, _ := ioutil.ReadFile("data/valid_kafka_connect_instaclustr_aws.tf")
+        username := os.Getenv("IC_USERNAME")
+        apiKey := os.Getenv("IC_API_KEY")
+        kafkaClusterId := os.Getenv("IC_TARGET_KAFKA_CLUSTER_ID")
+        awsAccessKey := os.Getenv("IC_AWS_ACCESS_KEY")
+        awsSecretKey := os.Getenv("IC_AWS_SECRET_KEY")
+        S3BucketName := os.Getenv("IC_S3_BUCKET_NAME")
+        oriKCConfig := fmt.Sprintf(string(validKCConfig), username, apiKey, kafkaClusterId, awsAccessKey, awsSecretKey, S3BucketName)
+        hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+        resource.Test(t, resource.TestCase{
+                Providers:    testAccProviders,
+                PreCheck:     func() { AccTestEnvVarsCheck(t) },
+                CheckDestroy: testCheckResourceDeleted("validKC", hostname, username, apiKey),
+                Steps: []resource.TestStep{
+                        {
+                                Config: oriKCConfig,
+                                Check: resource.ComposeTestCheckFunc(
+                                        testCheckResourceValid("validKC"),
+                                        testCheckResourceCreated("validKC", hostname, username, apiKey),
+                                ),
+                        },
+                },
+        })
+}     
+
+func TestKafkaConnectClusterCreateNonInstaclustrAZURE(t *testing.T) {
+        if v := os.Getenv("IC_TEST_KAFKA_CONNECT"); v == "" {
+                t.Skip("Skipping TestKafkaConnectClusterCreateNonInstaclustrAZURE because IC_TEST_KAFKA_CONNECT is not set")
+        } 
+        testAccProvider := instaclustr.Provider()
+        testAccProviders := map[string]terraform.ResourceProvider{
+                "instaclustr": testAccProvider,
+        }
+        validKCConfig, _ := ioutil.ReadFile("data/valid_kafka_connect_non_instaclustr_azure.tf")
+        username := os.Getenv("IC_USERNAME")
+        apiKey := os.Getenv("IC_API_KEY")
+        azureStorageAccountName := os.Getenv("IC_AZURE_STORAGE_ACCOUNT_NAME")
+        azureStorageAccountKey := os.Getenv("IC_AZURE_STORAGE_ACCOUNT_KEY")
+        azureStorageContainerName := os.Getenv("IC_AZURE_STORAGE_CONTAINER_NAME")
+        sslEnabledProtocols := os.Getenv("IC_SSL_ENABLED_PROTOCOLS")
+        sslTruststorePassword := os.Getenv("IC_SSL_TRUSTSTORE_PASSWORD")
+        sslProtocol := os.Getenv("IC_SSL_PROTOCOL")
+        securityProtocol := os.Getenv("IC_SECURITY_PROTOCOL")
+        saslMechanism := os.Getenv("IC_SASL_MECHANISM")
+        saslJaasConfig := os.Getenv("IC_SASL_JAAS_CONFIG")
+        bootstrapServers := os.Getenv("IC_BOOTSTRAP_SERVER")
+        truststore := os.Getenv("IC_TRUSTSTORE")
+        oriKCConfig := fmt.Sprintf(string(validKCConfig), username, apiKey, azureStorageAccountName,
+		azureStorageAccountKey, azureStorageContainerName, sslEnabledProtocols, sslTruststorePassword,
+		sslProtocol, securityProtocol, saslMechanism, saslJaasConfig, bootstrapServers, truststore)
+        hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+        resource.Test(t, resource.TestCase{
+                Providers:    testAccProviders,
+                PreCheck:     func() { AccTestEnvVarsCheck(t) },
+                CheckDestroy: testCheckResourceDeleted("validKC", hostname, username, apiKey),
+                Steps: []resource.TestStep{
+                        {
+                                Config: oriKCConfig,
+                                Check: resource.ComposeTestCheckFunc(
+                                        testCheckResourceValid("validKC"),
+                                        testCheckResourceCreated("validKC", hostname, username, apiKey),
+                                ),
+                        },
+                },
+        })
+}     
+
+func TestKafkaConnectClusterInvalid(t *testing.T) {
+	testAccProvider := instaclustr.Provider()
+	testAccProviders := map[string]terraform.ResourceProvider{
+		"instaclustr": testAccProvider,
+	}
+	readConfig, _ := ioutil.ReadFile("data/invalid_kafka_connect.tf")
+	username := os.Getenv("IC_USERNAME")
+	apiKey := os.Getenv("IC_API_KEY")
+        invalidConfig := fmt.Sprintf(string(readConfig), username, apiKey)
+        fmt.Printf("Config : %s", invalidConfig)
+	resource.Test(t, resource.TestCase{
+		Providers: testAccProviders,
+		PreCheck:  func() { AccTestEnvVarsCheck(t) },
+		Steps: []resource.TestStep{
+			{
+				Config:      invalidConfig,
+				ExpectError: regexp.MustCompile("Error creating cluster"),
+			},
+		},
+	})
+}
+
 func TestAccClusterResize(t *testing.T) {
 	testAccProviders := map[string]terraform.ResourceProvider{
 		"instaclustr": instaclustr.Provider(),
@@ -57,7 +155,7 @@ func TestAccClusterResize(t *testing.T) {
 	invalidResizeClassConfig := strings.Replace(oriConfig, "resizeable-small(r5-l)", "resizeable-large(r5-xl)", 1)
 	invalidResizeConfig := strings.Replace(oriConfig, "resizeable-small(r5-l)", "t3.medium", 1)
 
-	hostname := instaclustr.ApiHostname
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
 		PreCheck:     func() { AccTestEnvVarsCheck(t) },
@@ -142,7 +240,7 @@ func TestAccClusterCustomVPC(t *testing.T) {
 	providerAccountName := os.Getenv("IC_PROV_ACC_NAME")
 	providerVpcId := os.Getenv("IC_PROV_VPC_ID")
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, providerAccountName, providerVpcId)
-	hostname := instaclustr.ApiHostname
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
 		PreCheck:     func() { AccTestEnvVarsCheck(t) },

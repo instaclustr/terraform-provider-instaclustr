@@ -155,6 +155,12 @@ number_partitions|Default number of partitions to be assigned per topic.|Kafka|N
 auto_create_topics|Accepts true/false. Enable to allow brokers to automatically create a topic, if it does not already exist, when messages are published to it.|Kafka|true
 delete_topics|Accepts true/false. Enable to allow topics to be deleted via the `ic-kafka-topics` tool.|Kafka|true
 password_authentication|Accepts true/false. Require clients to provide credentials — a username & API Key — to connect to the Spark Jobserver.|Spark|false
+target_kafka_cluster_id|GUID of the Instaclustr managed Kafka Cluster Id you wish to connect to. Must be in the same Instaclustr account.|Kafka Connect|Required
+vpc_type|Available options: `KAFKA_VPC`, `VPC_PEERED`, `SEPARATE_VPC`. Only required if targeting an Instaclustr managed cluster.|Kafka Connect|`SEPARATE_VPC`
+aws_access_key, aws_secret_key, s3_bucket_name|Access information for the S3 bucket where you will store your custom connectors. (if using AWS)|Kafka Connect
+azure_storage_account_name, azure_storage_account_key, azure_storage_container_name|Access information for the Azure Storage container where you will store your custom connectors.|Kafka Connect
+ssl_enabled_protocols, ssl_truststore_password, ssl_protocol, security_protocol, sasl_mechanism, sasl_jaas_config, bootstrap_servers|Connection information for your Kafka Cluster. These options are analogous to the similarly named options that you would place in your Kafka Connect worker.properties file. Only required if connecting to a Non-Instaclustr managed Kafka Cluster|Kafka Connect
+truststore|Base64 encoded version of the TLS trust store (in JKS format) used to connect to your Kafka Cluster. Only required if connecting to a Non-Instaclustr managed Kafka Cluster with TLS enabled|Kafka Connect
 
 ### Resource:  `instaclustr_firewall_rule`                             
 A resource for managing cluster firewall rules on Instaclustr Managed Platform. A firewall rule allows access to your Instaclustr cluster.
@@ -186,17 +192,19 @@ resource "instaclustr_firewall_rule" "example" {
 ```
 
 ### Resource: `instaclustr_vpc_peering`  
-A resource for managing VPC peering connections on Instaclustr Managed Platform. This is only avaliable for clusters hosted with the AWS provider.
+A resource for managing VPC peering connections on Instaclustr Managed Platform. This is only avaliable for clusters hosted with the AWS provider.  
+  
+When creating this resource, the process will wait for target cluster to be in the `PROVISIONED` or `RUNNING` status. The process will time out after 60 seconds of waiting. 
 
 #### Properties
 Property | Description | Default
 ---------|-------------|--------
-cluster_id|The ID of an existing Instaclustr managed cluster| Not Required if cdc_id provided
-cdc_id|The ID of an existing Instaclustr managed cluster data centre|Not Required if cluster_id provided
+cluster_id|The ID of an existing Instaclustr managed cluster|Required
 peer_vpc_id|The ID of the VPC with which you are creating the VPC peering connection|Required
 peer_account_id|The account ID of the owner of the accepter VPC|Required
 peer_subnet|The subnet for the VPC|Required
 peer_region| The Region code for the accepter VPC, if the accepter VPC is located in a Region other than the Region in which you make the request. | Not Required
+aws_vpc_connection_id| The ID of the VPC peering connection. | Computed
 
 
 #### Example
@@ -227,6 +235,46 @@ resource "instaclustr_encryption_key" "example_encryption_key" {
 }
 ```
 
+### Resource  `instaclustr_kafka_user` and Data Source `instaclustr_kafka_user_list`                             
+Resources for managing Kafka user for a Kafka cluster. 
+Kafka user list is a read-only data source used to get the list of kafka user in a cluster, 
+while Kafka user is a resource used to create, update password, and delete Kafka users.
+
+Note: There is a possibility that someone else delete the Kafka user through other means, e.g., instaclustr console and API.
+This will cause the Kafka user resource to be not in sync because it does not have read.
+In such case, to recreate the user just remove the Kafka user resource, and then create a new one.
+
+#### Properties
+`instaclustr_kafka_user`
+
+Property | Description | Default
+---------|-------------|--------
+cluster_id|The ID of an existing Instaclustr Kafka managed cluster. |Required
+username|User name for the Kafka user|Required
+password|Password for the Kafka user|Required
+initial_permissions|Initial permission set (ACL) associated with this user. Possible values are: `standard`, `read-only`, and `none`. | `none`
+
+`instaclustr_kafka_user_list`
+
+Property | Description | Default
+---------|-------------|--------
+cluster_id|The ID of an existing Instaclustr Kafka managed cluster. |Required
+
+#### Example
+```
+resource "instaclustr_kafka_user" "kafka_user_charlie" {
+  cluster_id = "${instaclustr_cluster.kafka_cluster.cluster_id}"
+  username = "charlie"
+  password = "charlie1!"
+  initial_permissions = "none"
+}
+
+
+data "instaclustr_kafka_user_list" "kafka_user_list" {
+  cluster_id = "${instaclustr_cluster.kafka_cluster.cluster_id}"
+}
+```
+
 ## Bundles and Versions
 
 Bundle | Versions | Compatible With
@@ -234,10 +282,11 @@ Bundle | Versions | Compatible With
 APACHE_CASSANDRA|2.1.19, 2.2.13, 3.0.14, 3.0.17, 3.0.18, 3.11, 3.11.3, 3.11.4|
 SPARK|apache-spark:2.1.3, apache-spark:2.1.3.ic1, apache-spark:2.3.2|APACHE_CASSANDRA
 ZEPPELIN|apache-zeppelin:0.8.0-spark-2.3.2, apache-zeppelin:0.7.1-spark-2.1.1|APACHE_CASSANDRA
-KAFKA|2.1.1, 2.3.1|
+KAFKA|2.1.1, 2.3.1, 2.4.1|
 KAFKA_REST_PROXY|5.0.0|KAFKA
 KAFKA_SCHEMA_REGISTRY|5.0.0|KAFKA
 ELASTICSEARCH|opendistro-for-elasticsearch:1.4.0
+KAFKA_CONNECT|2.3.1, 2.4.1|
 
 ### Migrating from 0.0.1 &rarr; 1.0.0+
 A schema change has been made from 0.0.1 which no longer supports the `bundles` argument and uses `bundle` blocks instead. This change can cause `terraform apply` to fail with a message that `bundles` has been removed and/or updating isn't supported. To resolve this -<br>
@@ -265,6 +314,30 @@ IC_API_KEY|`$ export IC_API_KEY=<your provisioning API key>`|Authorizes Provisio
 KMS_ARN|`$ export KMS_ARN=<your KMS ARN>`|For EBS encryption of nodes. <b><i>Note:</i></b> You cannot use an ARN previously added to your account as an encryption key.
 IC_PROV_ACC_NAME|`$ export IC_PROV_ACC_NAME="<your provider name>"`|Your "Run In Your Own Account" account name.
 IC_PROV_VPC_ID|`$ export IC_PROV_VPC_ID="<your AWS VPC ID>"`|For provisioning into a custom VPC.
+
+#### Environment Variables Specific to Kafka Connect Acceptance Test
+
+These environment variables are optional and only required when we want to do acceptance tests for Kafka Connect.
+It is toggled by setting IC_TEST_KAFKA_CONNECT environment variable.
+
+Variable | Command | Description
+---------|-------------|--------
+IC_TEST_KAFKA_CONNECT|`$ export IC_PROV_VPC_ID=1`|Enables acceptance tests for Kafka Connect.
+IC_TARGET_KAFKA_CLUSTER_ID|`$ export IC_PROV_VPC_ID="<target kafka cluster ID>"`|For Kafka Connect connection information. See bundle options.
+IC_AWS_ACCESS_KEY|`$ export IC_PROV_VPC_ID="<access key for the AWS S3 bucket>"`|For Kafka Connect connection information. See bundle options.
+IC_AWS_SECRET_KEY|`$ export IC_PROV_VPC_ID="<secret key for the AWS S3 bucket>"`|For Kafka Connect connection information. See bundle options.
+IC_S3_BUCKET_NAME|`$ export IC_PROV_VPC_ID="<AWS S3 bucket name>"`|For Kafka Connect connection information. See bundle options.
+IC_AZURE_STORAGE_ACCOUNT_NAME|`$ export IC_PROV_VPC_ID="<account name for the AZURE container storage>"`|For Kafka Connect connection information. See bundle options.
+IC_AZURE_STORAGE_ACCOUNT_KEY|`$ export IC_PROV_VPC_ID="<account key for the AZURE container storage>"`|For Kafka Connect connection information. See bundle options.
+IC_AZURE_STORAGE_CONTAINER_NAME|`$ export IC_PROV_VPC_ID="<the name of the AZURE container storage>"`|For Kafka Connect connection information. See bundle options.
+IC_SSL_ENABLED_PROTOCOLS|`$ export IC_PROV_VPC_ID="<SSL enabled protocols>"`|For Kafka Connect connection information. See bundle options.
+IC_SSL_TRUSTSTORE_PASSWORD|`$ export IC_PROV_VPC_ID="<SSL truststore password>"`|For Kafka Connect connection information. See bundle options.
+IC_SSL_PROTOCOL|`$ export IC_PROV_VPC_ID="<SSL protocol>"`|For Kafka Connect connection information. See bundle options.
+IC_SECURITY_PROTOCOL|`$ export IC_PROV_VPC_ID="<Security protocol>"`|For Kafka Connect connection information. See bundle options.
+IC_SASL_MECHANISM|`$ export IC_PROV_VPC_ID="<SASL mechanism>"`|For Kafka Connect connection information. See bundle options.
+IC_SASL_JAAS_CONFIG|`$ export IC_PROV_VPC_ID="<SASL JAAS config>"`|For Kafka Connect connection information. See bundle options.
+IC_BOOTSTRAP_SERVERS|`$ export IC_PROV_VPC_ID="<bootstrap servers>"`|For Kafka Connect connection information. See bundle options.
+IC_TRUSTSTORE|`$ export IC_PROV_VPC_ID="<Base64 encoding of the truststore jks>"`|For Kafka Connect connection information. See bundle options.
 
 ## Further information and documentation
 

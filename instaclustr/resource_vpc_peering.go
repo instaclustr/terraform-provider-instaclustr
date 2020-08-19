@@ -51,6 +51,11 @@ func resourceVpcPeering() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
+
+			"aws_vpc_connection_id": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
 		},
 	}
 }
@@ -59,17 +64,26 @@ func resourceVpcPeeringCreate(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Creating VPC peering request.")
 	client := meta.(*Config).Client
 
+	const ClusterReadInterval = 5
+	const WaitForClusterTimeout = 60
 	var cdcID string
+	var latestStatus string
+	timePassed := 0
 	for {
 		cluster, err := client.ReadCluster(d.Get("cluster_id").(string))
 		if err != nil {
 			return fmt.Errorf("[Error] Error retrieving cluster info: %s", err)
 		}
-		if cluster.ClusterStatus == "PROVISIONED" {
+		latestStatus = cluster.ClusterStatus
+		if cluster.ClusterStatus == "PROVISIONED" || cluster.ClusterStatus == "RUNNING" {
 			cdcID = cluster.DataCentres[0].ID
 			break
 		}
-		time.Sleep(5 * time.Second)
+		if timePassed > WaitForClusterTimeout {
+			return fmt.Errorf("[Error] Timed out waiting for cluster to have the status 'PROVISIONED' or 'RUNNING'. Current cluster status is '%s'", latestStatus)
+		}
+		time.Sleep(ClusterReadInterval * time.Second)
+		timePassed += ClusterReadInterval
 	}
 
 	createData := CreateVPCPeeringRequest{
@@ -92,6 +106,14 @@ func resourceVpcPeeringCreate(d *schema.ResourceData, meta interface{}) error {
 	d.SetId(id)
 	d.Set("vpc_peering_id", id)
 	d.Set("cdc_id", cdcID)
+
+	vpcPeering, err := client.ReadVpcPeering(cdcID, id)
+	if err != nil {
+		return fmt.Errorf("[Error] Error reading VPC peering connection: %s", err)
+	}
+
+	d.Set("aws_vpc_connection_id", vpcPeering.AWSVpcConnectionID)
+
 	log.Printf("[INFO] VPC peering request %s has been created.", id)
 	return nil
 }
@@ -116,6 +138,7 @@ func resourceVpcPeeringRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("cdc_id", vpcPeering.ClusterDataCentre)
 	d.Set("peer_vpc_id", vpcPeering.PeerVpcID)
 	d.Set("peer_account_id", vpcPeering.PeerAccountID)
+	d.Set("aws_vpc_connection_id", vpcPeering.AWSVpcConnectionID)
 
 	before, _ := d.GetChange("peer_subnet")
 	d.Set("peer_subnet", before)
