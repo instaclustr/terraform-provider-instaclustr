@@ -25,7 +25,7 @@ func resourceFirewallRule() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"rule_securityGroupId": {
+			"rule_security_group_id": {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
@@ -65,9 +65,9 @@ func resourceFirewallRuleCreate(d *schema.ResourceData, meta interface{}) error 
 			Network: d.Get("rule_cidr").(string),
 			Rules:   rules,
 		}
-	} else if d.Get("rule_securityGroupId") != nil {
+	} else if d.Get("rule_security_group_id") != nil {
 		rule = FirewallRule{
-			SecurityGroupId: d.Get("rule_securityGroupId").(string),
+			SecurityGroupId: d.Get("rule_security_group_id").(string),
 			Rules:   rules,
 		}
 	} else {
@@ -105,7 +105,7 @@ func resourceFirewallRuleRead(d *schema.ResourceData, meta interface{}) error {
 			log.Printf("[INFO] Read rule %s from cluster %s", value.Network, id)
 			d.Set("cluster_id", id)
 			d.Set("rule_cidr", value.Network)
-			d.Set("rule_securityGroupId", value.SecurityGroupId)
+			d.Set("rule_security_group_id", value.SecurityGroupId)
 			d.SetId(value.Network)
 			d.Set("rules", value.Rules)
 		}
@@ -138,9 +138,9 @@ func resourceFirewallRuleDelete(d *schema.ResourceData, meta interface{}) error 
 		Network: d.Get("rule_cidr").(string),
 		Rules:   rules,
 		}
-	} else if d.Get("rule_securityGroupId") != nil {
+	} else if d.Get("rule_security_group_id") != nil {
 		rule = FirewallRule{
-			SecurityGroupId: d.Get("rule_securityGroupId").(string),
+			SecurityGroupId: d.Get("rule_security_group_id").(string),
 			Rules:   rules,
 			}
 	}

@@ -32,3 +32,13 @@ resource "instaclustr_firewall_rule" "valid_with_firewall_rule" {
         }
     ]
 }
+
+resource "instaclustr_firewall_rule" "valid_with_sg_rule" {
+    cluster_id = "${instaclustr_cluster.valid_with_firewall_rule.id}"
+    rule_security_group_id = "sg-123512"
+    rules = [
+        { 
+            type = "CASSANDRA"
+        }
+    ]
+}
