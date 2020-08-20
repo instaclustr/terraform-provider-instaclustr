@@ -164,12 +164,14 @@ truststore|Base64 encoded version of the TLS trust store (in JKS format) used to
 
 ### Resource:  `instaclustr_firewall_rule`                             
 A resource for managing cluster firewall rules on Instaclustr Managed Platform. A firewall rule allows access to your Instaclustr cluster.
+Note: Either rule_cidr OR rule_security_group_id must be provided per rule (but not both)
 
 #### Properties
 Property | Description | Default
 ---------|-------------|--------
 cluster_id|The ID of an existing Instaclustr managed cluster|Required
-rule_cidr|The network to add to your cluster firewall rule. Must be a valid IPv4 CIDR|Required
+rule_cidr|The network to add to your cluster firewall rule. Must be a valid IPv4 CIDR|Optional
+rule_security_group_id|The Peered AWS VPC Security Group id to your cluster firewall rule|Optional
 rules|List of rule types that the specified network is allowed access to. See below for rule options.|Required
 
 `rules`

@@ -58,14 +58,14 @@ func resourceFirewallRuleCreate(d *schema.ResourceData, meta interface{}) error 
 		rules = append(rules, RuleType{Type: aRule})
 	}
 	var rule FirewallRule
-	if d.Get("rule_cidr") != nil && d.Get("rule_seucirytGroupId") != nil {
+	if d.Get("rule_cidr") != "" && d.Get("rule_security_group_id") != "" {
 		return fmt.Errorf("[Error] Error creating firewall rule: Only one of Security Group of Rule Cidr can be provided per rule")
-	} else if d.Get("rule_cidr") != nil {
+	} else if d.Get("rule_cidr") != "" {
 		rule = FirewallRule{
 			Network: d.Get("rule_cidr").(string),
 			Rules:   rules,
 		}
-	} else if d.Get("rule_security_group_id") != nil {
+	} else if d.Get("rule_security_group_id") != "" {
 		rule = FirewallRule{
 			SecurityGroupId: d.Get("rule_security_group_id").(string),
 			Rules:   rules,
@@ -133,12 +133,12 @@ func resourceFirewallRuleDelete(d *schema.ResourceData, meta interface{}) error 
 		rules = append(rules, RuleType{Type: aRule})
 	}
 	var rule FirewallRule
-	if d.Get("rule_cidr") != nil {
+	if d.Get("rule_cidr") != "" {
 		rule = FirewallRule{
 		Network: d.Get("rule_cidr").(string),
 		Rules:   rules,
 		}
-	} else if d.Get("rule_security_group_id") != nil {
+	} else if d.Get("rule_security_group_id") != "" {
 		rule = FirewallRule{
 			SecurityGroupId: d.Get("rule_security_group_id").(string),
 			Rules:   rules,

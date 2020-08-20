@@ -1,6 +1,7 @@
 provider "instaclustr" {
     username = "%s"
     api_key = "%s"
+    api_hostname = "%s"
 }
 
 resource "instaclustr_cluster" "resizable_cluster" {
