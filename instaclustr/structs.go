@@ -1,8 +1,8 @@
 package instaclustr
 
 type FirewallRule struct {
-	Network string     `json:"network"`
-	SecurityGroupId string     `json:"securityGroupId"`
+	Network string     `json:"network,omitempty"`
+	SecurityGroupId string     `json:"securityGroupId,omitempty"`
 	Rules   []RuleType `json:"rules"`
 }
 
