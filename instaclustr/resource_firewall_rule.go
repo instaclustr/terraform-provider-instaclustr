@@ -23,11 +23,11 @@ func resourceFirewallRule() *schema.Resource {
 
 			"rule_cidr": {
 				Type:     schema.TypeString,
-				Required: false,
+				Optional: true,
 			},
 			"rule_securityGroupId": {
 				Type:     schema.TypeString,
-				Required: false,
+				Optional: true,
 			},
 
 			"rules": {
@@ -57,14 +57,17 @@ func resourceFirewallRuleCreate(d *schema.ResourceData, meta interface{}) error 
 
 		rules = append(rules, RuleType{Type: aRule})
 	}
-	if d["rule_cidr"] {
-		rule := FirewallRule{
+	var rule FirewallRule
+	if d.Get("rule_cidr") != nil && d.Get("rule_seucirytGroupId") != nil {
+		return fmt.Errorf("[Error] Error creating firewall rule: Only one of Security Group of Rule Cidr can be provided per rule")
+	} else if d.Get("rule_cidr") != nil {
+		rule = FirewallRule{
 			Network: d.Get("rule_cidr").(string),
 			Rules:   rules,
 		}
-	} else if d["rule_securityGroupId"] {
-		rule := FirewallRule{
-			SecurityGroup: d.Get("rule_securityGroupId").(string),
+	} else if d.Get("rule_securityGroupId") != nil {
+		rule = FirewallRule{
+			SecurityGroupId: d.Get("rule_securityGroupId").(string),
 			Rules:   rules,
 		}
 	} else {
@@ -102,7 +105,7 @@ func resourceFirewallRuleRead(d *schema.ResourceData, meta interface{}) error {
 			log.Printf("[INFO] Read rule %s from cluster %s", value.Network, id)
 			d.Set("cluster_id", id)
 			d.Set("rule_cidr", value.Network)
-			d.Set("rule_securityGroupId", value.Network)
+			d.Set("rule_securityGroupId", value.SecurityGroupId)
 			d.SetId(value.Network)
 			d.Set("rules", value.Rules)
 		}
@@ -129,10 +132,17 @@ func resourceFirewallRuleDelete(d *schema.ResourceData, meta interface{}) error 
 
 		rules = append(rules, RuleType{Type: aRule})
 	}
-
-	rule := FirewallRule{
+	var rule FirewallRule
+	if d.Get("rule_cidr") != nil {
+		rule = FirewallRule{
 		Network: d.Get("rule_cidr").(string),
 		Rules:   rules,
+		}
+	} else if d.Get("rule_securityGroupId") != nil {
+		rule = FirewallRule{
+			SecurityGroupId: d.Get("rule_securityGroupId").(string),
+			Rules:   rules,
+			}
 	}
 
 	var jsonStr []byte

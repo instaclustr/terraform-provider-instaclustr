@@ -298,7 +298,7 @@ A schema change has been made from 0.0.1 which no longer supports the `bundles` 
 Firstly thanks!  We value your time and will do our best to review the PR as soon as possible. 
 
 1. [Install golang](https://golang.org/doc/install#install)
-2. Clone repository to: $GOPATH/src/github.com/instaclustr/terraform-provider-instaclust
+2. Clone repository to: $GOPATH/src/github.com/instaclustr/terraform-provider-instaclustr
 3. Build the provider by `$ make build`
 4. Run the tests by `$ make test`
 5. Set up all of the environmental variables listed [below](#acceptance-test-environment-variables) to prepare for acceptance testing.
