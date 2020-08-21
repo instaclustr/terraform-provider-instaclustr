@@ -140,7 +140,7 @@ func (c *APIClient) CreateFirewallRule(data []byte, clusterID string) error {
 }
 
 func (c *APIClient) ReadFirewallRules(clusterID string) (*[]FirewallRule, error) {
-	url := fmt.Sprintf("%s/provisioning/v1/%s/firewallRules", c.apiServerHostname, clusterID)
+	url := fmt.Sprintf("%s/provisioning/v1/%s/firewallRules/", c.apiServerHostname, clusterID)
 	resp, err := c.MakeRequest(url, "GET", nil)
 	if err != nil {
 		return nil, err
@@ -160,7 +160,7 @@ func (c *APIClient) ReadFirewallRules(clusterID string) (*[]FirewallRule, error)
 }
 
 func (c *APIClient) DeleteFirewallRule(data []byte, clusterID string) error {
-	url := fmt.Sprintf("%s/provisioning/v1/%s/firewallRules", c.apiServerHostname, clusterID)
+	url := fmt.Sprintf("%s/provisioning/v1/%s/firewallRules/", c.apiServerHostname, clusterID)
 	resp, err := c.MakeRequest(url, "DELETE", data)
 	if err != nil {
 		return err

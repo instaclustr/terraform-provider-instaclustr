@@ -23,13 +23,9 @@ resource "instaclustr_cluster" "valid_with_firewall_rule" {
         version = "3.11.4"
     }
 }
-
-resource "instaclustr_firewall_rule" "valid_with_firewall_rule" {
-    cluster_id = "${instaclustr_cluster.valid_with_firewall_rule.id}"
-    rule_cidr = "10.1.0.0/16"
-    rules = [
-        { 
-            type = "CASSANDRA"
-        }
-    ]
+resource "instaclustr_vpc_peering" "valid_with_vpc_peering" {
+    cluster_id = "${instaclustr_cluster.valid_with_vpc_peering.cluster_id}"
+    peer_vpc_id = "vpc-12345678"
+    peer_account_id = "494111121110"
+    peer_subnet = "10.128.176.0/20"
 }
