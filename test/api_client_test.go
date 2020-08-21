@@ -153,3 +153,29 @@ func TestAPIDeleteSgFirewall(t *testing.T) {
 		t.Fatalf("Failed to create firewall rule: %s", err2)
 	}
 }
+
+func TestAPIClientCreateNullFirewall(t *testing.T) {
+	filename := "data/null_firewall.json"
+	jsonStr, err := ioutil.ReadFile(filename)
+	if err != nil {
+		t.Fatalf("Failed to load %s: %s", filename, err)
+	}
+	client := SetupMock(t, "should-be-uuid/firewallRules/", `{"id":"should-be-uuid"}`, 400)
+	err2 := client.CreateFirewallRule(jsonStr, "should-be-uuid")
+	if err2 == nil {
+		t.Fatalf("Firewall creation expected error but got null: %s", err2)
+	}
+}
+
+func TestAPIClientCreateInvalidFirewall(t *testing.T) {
+	filename := "data/invalid_firewall.json"
+	jsonStr, err := ioutil.ReadFile(filename)
+	if err != nil {
+		t.Fatalf("Failed to load %s: %s", filename, err)
+	}
+	client := SetupMock(t, "should-be-uuid/firewallRules/", `{"id":"should-be-uuid"}`, 400)
+	err2 := client.CreateFirewallRule(jsonStr, "should-be-uuid")
+	if err2 == nil {
+		t.Fatalf("Firewall creation expected error but got null: %s", err2)
+	}
+}
