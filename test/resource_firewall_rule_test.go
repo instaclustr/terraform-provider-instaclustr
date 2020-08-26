@@ -18,9 +18,10 @@ func TestAccFirewallRuleResource(t *testing.T) {
 	tfFile, _ := ioutil.ReadFile("data/valid_with_firewall_rule.tf")
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
-	config := fmt.Sprintf(string(tfFile), username, apiKey)
-
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+	config := fmt.Sprintf(string(tfFile), username, apiKey, hostname)
+
+
 	resource.Test(t, resource.TestCase{
 		Providers:    testProviders,
 		CheckDestroy: checkFirewallRuleDeleted(hostname, username, apiKey),
