@@ -44,6 +44,9 @@ type BundleOptions struct {
 	SaslJaasConfig                string `json:"sasl.jaas.config,omitempty" mapstructure:"sasl_jaas_config"`
 	BootstrapServers              string `json:"bootstrap.servers,omitempty" mapstructure:"bootstrap_servers"`
 	Truststore                    string `json:"truststore,omitempty" mapstructure:"truststore"`
+	DedicatedZookeeper            string `json:"dedicatedZookeeper,omitempty" mapstructure:"dedicated_zookeeper"`
+	ZookeeperNodeSize             string `json:"zookeeperNodeSize,omitempty" mapstructure:"zookeeper_node_size"`
+	ZookeeperNodeCount            string `json:"zookeeperNodeCount,omitempty" mapstructure:"zookeeper_node_count"`
 }
 
 type ClusterProvider struct {

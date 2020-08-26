@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"regexp"
-	"strings"
+//	"regexp"
+//	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform/helper/resource"
@@ -13,7 +13,7 @@ import (
 	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 )
 
-
+/* hendra
 func TestAccCluster(t *testing.T) {
 	testAccProvider := instaclustr.Provider()
 	testAccProviders := map[string]terraform.ResourceProvider{
@@ -44,7 +44,36 @@ func TestAccCluster(t *testing.T) {
 		},
 	})
 }
+*/
 
+func TestKafkaDedicatedZookeeper(t *testing.T) {
+        testAccProvider := instaclustr.Provider()
+        testAccProviders := map[string]terraform.ResourceProvider{
+                "instaclustr": testAccProvider,
+        }
+        validConfig, _ := ioutil.ReadFile("data/kafka_dedicated_zookeeper.tf")
+        username := os.Getenv("IC_USERNAME")
+        apiKey := os.Getenv("IC_API_KEY")
+        hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+	zookeeperNodeSize := "t3.small-20-gp2-zk"
+        testConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname, zookeeperNodeSize)
+        resource.Test(t, resource.TestCase{
+                Providers:    testAccProviders,
+                CheckDestroy: testCheckResourceDeleted("kafka_dedicated_zookeeper", hostname, username, apiKey),
+                Steps: []resource.TestStep{
+                        {
+                                Config: testConfig,
+                                Check: resource.ComposeTestCheckFunc(
+                                        testCheckResourceValid("kafka_dedicated_zookeeper"),
+                                        testCheckResourceCreated("kafka_dedicated_zookeeper", hostname, username, apiKey),
+                                        testKafkaDedicatedZookeeper("kafka_dedicated_zookeeper", hostname, username, apiKey, "t3.small-20-gp2", zookeeperNodeSize),
+                                ),
+                        },
+                },
+        })
+}     
+
+/* hendra
 func TestKafkaConnectClusterCreateInstaclustrAWS(t *testing.T) {
         if v := os.Getenv("IC_TEST_KAFKA_CONNECT"); v == "" {
                 t.Skip("Skipping TestKafkaConnectClusterCreateInstaclustrAWS because IC_TEST_KAFKA_CONNECT is not set")
@@ -277,6 +306,7 @@ func TestAccClusterCustomVPCInvalid(t *testing.T) {
 		},
 	})
 }
+hendra */
 
 func testCheckResourceValid(resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
@@ -338,6 +368,35 @@ func testCheckClusterResize(hostname, username, apiKey, expectedNodeSize string)
 		targetNodeSize := cluster.DataCentres[0].ResizeTargetNodeSize
 		if targetNodeSize != expectedNodeSize {
 			return fmt.Errorf("Expected cluster to be resized to %s", expectedNodeSize)
+		}
+		return nil
+	}
+}
+
+func testKafkaDedicatedZookeeper(resourceName, hostname, username, apiKey, kafkaNodeSize, zookeeperNodeSize string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		resourceState := s.Modules[0].Resources["instaclustr_cluster."+resourceName]
+		id := resourceState.Primary.Attributes["cluster_id"]
+		client := new(instaclustr.APIClient)
+		client.InitClient(hostname, username, apiKey)
+		cluster, err := client.ReadCluster(id)
+		if err != nil {
+			return fmt.Errorf("Failed to read cluster %s: %s", id, err)
+		}
+		if cluster.DataCentres[0].NodeCount != 6 {
+			return fmt.Errorf("Cluster expected 6 nodes but got %d", cluster.DataCentres[0].NodeCount)
+		}
+
+		nodeSizeCount := make(map[string]int)
+		for _, node := range(cluster.DataCentres[0].Nodes) {
+			nodeSizeCount[node.Size] += 1
+		}
+
+		if nodeSizeCount[kafkaNodeSize] != 3 {
+			return fmt.Errorf("The number of kafka nodes (%s) is expected to be 3, but got %d", kafkaNodeSize, nodeSizeCount[kafkaNodeSize])
+		}
+		if nodeSizeCount[zookeeperNodeSize] != 3 {
+			return fmt.Errorf("The number of zookeeper nodes (%s) is expected to be 3, but got %d", zookeeperNodeSize, nodeSizeCount[zookeeperNodeSize])
 		}
 		return nil
 	}
