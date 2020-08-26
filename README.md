@@ -164,12 +164,14 @@ truststore|Base64 encoded version of the TLS trust store (in JKS format) used to
 
 ### Resource:  `instaclustr_firewall_rule`                             
 A resource for managing cluster firewall rules on Instaclustr Managed Platform. A firewall rule allows access to your Instaclustr cluster.
+Note: Either `rule_cidr` OR `rule_security_group_id` must be provided per rule (but not both)
 
 #### Properties
 Property | Description | Default
 ---------|-------------|--------
 cluster_id|The ID of an existing Instaclustr managed cluster|Required
-rule_cidr|The network to add to your cluster firewall rule. Must be a valid IPv4 CIDR|Required
+rule_cidr|The network to add to your cluster firewall rule. Must be a valid IPv4 CIDR (e.g. 123.4.5.67/32) |Optional
+rule_security_group_id|The Peered AWS VPC Security Group id to your cluster firewall rule (e.g. sg-12345678) |Optional
 rules|List of rule types that the specified network is allowed access to. See below for rule options.|Required
 
 `rules`
@@ -298,7 +300,7 @@ A schema change has been made from 0.0.1 which no longer supports the `bundles` 
 Firstly thanks!  We value your time and will do our best to review the PR as soon as possible. 
 
 1. [Install golang](https://golang.org/doc/install#install)
-2. Clone repository to: $GOPATH/src/github.com/instaclustr/terraform-provider-instaclust
+2. Clone repository to: $GOPATH/src/github.com/instaclustr/terraform-provider-instaclustr
 3. Build the provider by `$ make build`
 4. Run the tests by `$ make test`
 5. Set up all of the environmental variables listed [below](#acceptance-test-environment-variables) to prepare for acceptance testing.

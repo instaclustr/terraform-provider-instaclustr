@@ -23,7 +23,11 @@ func resourceFirewallRule() *schema.Resource {
 
 			"rule_cidr": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
+			},
+			"rule_security_group_id": {
+				Type:     schema.TypeString,
+				Optional: true,
 			},
 
 			"rules": {
@@ -53,11 +57,19 @@ func resourceFirewallRuleCreate(d *schema.ResourceData, meta interface{}) error 
 
 		rules = append(rules, RuleType{Type: aRule})
 	}
-
-	rule := FirewallRule{
-		Network: d.Get("rule_cidr").(string),
-		Rules:   rules,
+	var rule FirewallRule
+	if d.Get("rule_cidr") != "" && d.Get("rule_security_group_id") != "" {
+		return fmt.Errorf("[Error] Error creating firewall rule: Only one of Security Group of Rule Cidr can be provided per rule")
+	} else if d.Get("rule_cidr") == "" && d.Get("rule_security_group_id") == ""{
+		return fmt.Errorf("[Error] Error creating firewall rule: either one of Security Group of Rule Cidr is required")
+	}else {
+		rule = FirewallRule{
+			Network: d.Get("rule_cidr").(string),
+			SecurityGroupId: d.Get("rule_security_group_id").(string),
+			Rules:   rules,
+		}
 	}
+	
 
 	var jsonStr []byte
 	jsonStr, err := json.Marshal(rule)
@@ -89,6 +101,7 @@ func resourceFirewallRuleRead(d *schema.ResourceData, meta interface{}) error {
 			log.Printf("[INFO] Read rule %s from cluster %s", value.Network, id)
 			d.Set("cluster_id", id)
 			d.Set("rule_cidr", value.Network)
+			d.Set("rule_security_group_id", value.SecurityGroupId)
 			d.SetId(value.Network)
 			d.Set("rules", value.Rules)
 		}
@@ -115,11 +128,12 @@ func resourceFirewallRuleDelete(d *schema.ResourceData, meta interface{}) error 
 
 		rules = append(rules, RuleType{Type: aRule})
 	}
-
+	
 	rule := FirewallRule{
+		SecurityGroupId: d.Get("rule_security_group_id").(string),
 		Network: d.Get("rule_cidr").(string),
 		Rules:   rules,
-	}
+		}
 
 	var jsonStr []byte
 	jsonStr, err := json.Marshal(rule)
