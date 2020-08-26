@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-//	"regexp"
-//	"strings"
+	"regexp"
+	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform/helper/resource"
@@ -13,7 +13,6 @@ import (
 	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 )
 
-/* hendra
 func TestAccCluster(t *testing.T) {
 	testAccProvider := instaclustr.Provider()
 	testAccProviders := map[string]terraform.ResourceProvider{
@@ -44,7 +43,6 @@ func TestAccCluster(t *testing.T) {
 		},
 	})
 }
-*/
 
 func TestKafkaDedicatedZookeeper(t *testing.T) {
         testAccProvider := instaclustr.Provider()
@@ -73,7 +71,6 @@ func TestKafkaDedicatedZookeeper(t *testing.T) {
         })
 }     
 
-/* hendra
 func TestKafkaConnectClusterCreateInstaclustrAWS(t *testing.T) {
         if v := os.Getenv("IC_TEST_KAFKA_CONNECT"); v == "" {
                 t.Skip("Skipping TestKafkaConnectClusterCreateInstaclustrAWS because IC_TEST_KAFKA_CONNECT is not set")
@@ -306,7 +303,6 @@ func TestAccClusterCustomVPCInvalid(t *testing.T) {
 		},
 	})
 }
-hendra */
 
 func testCheckResourceValid(resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
