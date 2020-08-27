@@ -18,7 +18,7 @@ For further information about Instaclustr, please see [FAQ](https://www.instaclu
 
 ## Requirements
 
-- Terraform 0.10.x or higher
+- Terraform v0.10.x - .v0.12.28 (we are actively working towards supporting v.0.13.0 and above).
 - Go 1.14 or higher
 
 ## Building The Provider
