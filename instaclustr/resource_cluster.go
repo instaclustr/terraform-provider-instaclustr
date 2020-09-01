@@ -254,6 +254,14 @@ func resourceCluster() *schema.Resource {
 										Type:     schema.TypeString,
 										Optional: true,
 									},
+									"master_nodes": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+									"replica_nodes": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
 								},
 							},
 						},
