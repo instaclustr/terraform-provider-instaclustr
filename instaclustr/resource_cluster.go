@@ -441,7 +441,7 @@ func checkIfBundleRequiresRackAllocation(bundles []Bundle) bool {
 
 	for i := 0; i < len(bundles); i++ {
 		for j := 0; j < len(noRackAllocationBundles); j++ {
-			if bundles[i].Bundle == noRackAllocationBundles[j] {
+			if strings.ToLower(bundles[i].Bundle) == strings.ToLower(noRackAllocationBundles[j]) {
 				return false
 			}
 		}
