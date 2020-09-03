@@ -1,9 +1,9 @@
 package instaclustr
 
 type FirewallRule struct {
-	Network string     `json:"network,omitempty"`
+	Network         string     `json:"network,omitempty"`
 	SecurityGroupId string     `json:"securityGroupId,omitempty"`
-	Rules   []RuleType `json:"rules"`
+	Rules           []RuleType `json:"rules"`
 }
 
 type RuleType struct {
@@ -45,6 +45,8 @@ type BundleOptions struct {
 	SaslJaasConfig                string `json:"sasl.jaas.config,omitempty" mapstructure:"sasl_jaas_config"`
 	BootstrapServers              string `json:"bootstrap.servers,omitempty" mapstructure:"bootstrap_servers"`
 	Truststore                    string `json:"truststore,omitempty" mapstructure:"truststore"`
+	RedisMasterNodes              string `json:"masterNodes,omitempty" mapstructure:"master_nodes"`
+	RedisReplicaNodes             string `json:"replicaNodes,omitempty" mapstructure:"replica_nodes"`
 }
 
 type ClusterProvider struct {
@@ -71,7 +73,7 @@ type CreateRequest struct {
 	ClusterNetwork        string          `json:"clusterNetwork"`
 	PrivateNetworkCluster string          `json:"privateNetworkCluster"`
 	PCICompliantCluster   string          `json:"pciCompliantCluster"`
-	RackAllocation        RackAllocation  `json:"rackAllocation"`
+	RackAllocation        *RackAllocation `json:"rackAllocation,omitempty"`
 }
 
 type Cluster struct {
@@ -153,16 +155,16 @@ type EncryptionKey struct {
 }
 
 type CreateKafkaUserRequest struct {
-	Username		string		`json:"username"`
-	Password		string		`json:"password"`
-	InitialPermissions	string		`json:"initial-permissions"`
+	Username           string `json:"username"`
+	Password           string `json:"password"`
+	InitialPermissions string `json:"initial-permissions"`
 }
 
 type UpdateKafkaUserRequest struct {
-	Username		string		`json:"username"`
-	Password		string		`json:"password"`
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 type DeleteKafkaUserRequest struct {
-	Username		string		`json:"username"`
+	Username string `json:"username"`
 }
