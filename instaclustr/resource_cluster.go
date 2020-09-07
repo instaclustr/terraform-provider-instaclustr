@@ -69,10 +69,22 @@ func resourceCluster() *schema.Resource {
 				Optional: true,
 			},
 
+			"public_contact_addresses": {
+				Type:     schema.TypeList,
+				Computed: true,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+			},
+
 			"private_contact_point": {
 				Type:     schema.TypeString,
 				Computed: true,
 				Optional: true,
+			},
+
+			"private_contact_addresses": {
+				Type:     schema.TypeList,
+				Computed: true,
+				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
 
 			"cluster_provider": {
@@ -385,11 +397,20 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 
 	if len(cluster.DataCentres[0].Nodes[0].PublicAddress) != 0 {
 		err = d.Set("public_contact_point", cluster.DataCentres[0].Nodes[0].PublicAddress)
-
+		nodes := make([]string, len(cluster.DataCentres[0].Nodes))
+		for _, node := range cluster.DataCentres[0].Nodes {
+			nodes = append(nodes, node.PublicAddress[0])
+		}
+		err = d.Set("public_contact_addresses", nodes)
 	}
 
 	if len(cluster.DataCentres[0].Nodes[0].PrivateAddress) != 0 {
 		err = d.Set("private_contact_point", cluster.DataCentres[0].Nodes[0].PrivateAddress)
+		nodes := make([]string, len(cluster.DataCentres[0].Nodes))
+		for _, node := range cluster.DataCentres[0].Nodes {
+			nodes = append(nodes, node.PrivateAddress[0])
+		}
+		err = d.Set("private_contact_addresses", nodes)
 	}
 
 	var before interface{}
