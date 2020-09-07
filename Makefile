@@ -1,6 +1,6 @@
 BIN_NAME="terraform-provider-instaclustr"
 VERSION=v1.6.1
-NVERSION=1.6.0
+NVERSION=1.6.1
 
 .PHONY: install clean all build test testacc
 
