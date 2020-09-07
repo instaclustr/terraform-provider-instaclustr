@@ -16,7 +16,7 @@ build:
 	cp bin/$(BIN_NAME)_$(VERSION) ~/checkouts/deltatre/terraform/environment/terraform.d/plugins/instaclustr/instaclustr/instaclustr/$(NVERSION)/linux_amd64/
 	mkdir -p ~/checkouts/deltatre/terraform/environment/terraform.d/plugins/instaclustr/instaclustr/instaclustr/$(NVERSION)/darwin_amd64/
 	env GOOS=darwin GOARCH=amd64 go build -o bin/$(BIN_NAME)_$(VERSION) main.go
-	cp bin/$(BIN_NAME)_$(VERSION) ~/checkouts/deltatre/terraform/environment/terraform.d/plugins/instaclustr/instaclustr/instaclustr/$(NVERSION)/darwin_amd64/
+	cp bin/$(BIN_NAME)_$(VERSION) ~/checkouts/deltatre/terraform/environment/terraform.d/plugins/instaclustr/instaclustr/instaclustr/$(NVERSION)/darwin_amd64/	
 
 test:
 	cd test && go test -v -timeout 120m -count=1
