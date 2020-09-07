@@ -6,9 +6,18 @@ import (
 	"log"
 	"regexp"
 	"strings"
+	"time"
 
+	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/mitchellh/mapstructure"
+)
+
+var (
+	validStates = map[string]bool{
+		"RUNNING":     true,
+		"PROVISIONED": true,
+	}
 )
 
 func resourceCluster() *schema.Resource {
@@ -17,6 +26,9 @@ func resourceCluster() *schema.Resource {
 		Read:   resourceClusterRead,
 		Update: resourceClusterUpdate,
 		Delete: resourceClusterDelete,
+		Timeouts: &schema.ResourceTimeout{
+			Create: schema.DefaultTimeout(15 * time.Minute),
+		},
 
 		Schema: map[string]*schema.Schema{
 			"cluster_id": {
@@ -37,6 +49,11 @@ func resourceCluster() *schema.Resource {
 			"data_centre": {
 				Type:     schema.TypeString,
 				Required: true,
+			},
+
+			"data_centre_id": {
+				Type:     schema.TypeString,
+				Computed: true,
 			},
 
 			"sla_tier": {
@@ -69,10 +86,43 @@ func resourceCluster() *schema.Resource {
 				Optional: true,
 			},
 
+			"public_contact_addresses": {
+				Type:     schema.TypeList,
+				Computed: true,
+				Optional: true,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+			},
+
 			"private_contact_point": {
 				Type:     schema.TypeString,
 				Computed: true,
 				Optional: true,
+			},
+
+			"private_contact_addresses": {
+				Type:     schema.TypeList,
+				Computed: true,
+				Optional: true,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+			},
+
+			"cluster_certificate_download": {
+				Type:     schema.TypeString,
+				Computed: true,
+				Optional: true,
+			},
+
+			"username": {
+				Type:     schema.TypeString,
+				Computed: true,
+				Optional: true,
+			},
+
+			"instaclustr_user_password": {
+				Type:      schema.TypeString,
+				Computed:  true,
+				Optional:  true,
+				Sensitive: true,
 			},
 
 			"cluster_provider": {
@@ -281,6 +331,23 @@ func resourceCluster() *schema.Resource {
 					},
 				},
 			},
+
+			"wait_for": {
+				Type:     schema.TypeString,
+				Optional: true,
+				ForceNew: false,
+				Default:  "",
+
+				ValidateFunc: func(i interface{}, s string) (ws []string, errors []error) {
+					state := i.(string)
+
+					if len(state) != 0 && !validStates[strings.ToUpper(state)] {
+						errors = append(errors, fmt.Errorf("%s is not valid state. Use RUNNING or PROVISIONED.", state))
+					}
+
+					return
+				},
+			},
 		},
 	}
 }
@@ -338,7 +405,26 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 	d.SetId(id)
 	d.Set("cluster_id", id)
 	log.Printf("[INFO] Cluster %s has been created.", id)
-	return nil
+
+	waitForState := d.Get("wait_for").(string)
+
+	if len(waitForState) > 0 {
+		return resource.Retry(d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
+			cluster, err := client.ReadCluster(id)
+
+			if err != nil {
+				return resource.NonRetryableError(fmt.Errorf("[Error] Error retrieving cluster info: %s", err))
+			}
+
+			if cluster.ClusterStatus == waitForState {
+				return resource.NonRetryableError(resourceClusterRead(d, meta))
+			}
+
+			return resource.RetryableError(fmt.Errorf("[Error] Cluster is in state %s", cluster.ClusterStatus))
+		})
+	} else {
+		return resourceClusterRead(d, meta)
+	}
 }
 
 func resourceClusterUpdate(d *schema.ResourceData, meta interface{}) error {
@@ -371,12 +457,12 @@ func resourceClusterUpdate(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	d.SetPartial("node_size")
-	return nil
+	return resourceClusterRead(d, meta)
 }
 
 func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*Config).Client
-	id := d.Get("cluster_id").(string)
+	id := d.Id()
 	log.Printf("[INFO] Reading status of cluster %s.", id)
 	cluster, err := client.ReadCluster(id)
 	if err != nil {
@@ -403,27 +489,36 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("node_size", nodeSize)
 
 	d.Set("data_centre", cluster.DataCentres[0].Name)
+	d.Set("data_centre_id", cluster.DataCentres[0].ID)
 	d.Set("sla_tier", strings.ToUpper(cluster.SlaTier))
 	d.Set("cluster_network", cluster.DataCentres[0].CdcNetwork)
 	d.Set("private_network_cluster", cluster.DataCentres[0].PrivateIPOnly)
 	d.Set("pci_compliant_cluster", cluster.PciCompliance)
+	d.Set("cluster_certificate_download", cluster.ClusterCertificateDownload)
+	d.Set("username", cluster.Username)
+
+	if len(cluster.InstaclustrUserPassword) > 0 {
+		d.Set("instaclustr_user_password", cluster.InstaclustrUserPassword)
+	}
 
 	if len(cluster.DataCentres[0].Nodes[0].PublicAddress) != 0 {
 		err = d.Set("public_contact_point", cluster.DataCentres[0].Nodes[0].PublicAddress)
-
+		var nodes []string
+		for _, node := range cluster.DataCentres[0].Nodes {
+			nodes = append(nodes, node.PublicAddress)
+		}
+		err = d.Set("public_contact_addresses", nodes)
 	}
 
 	if len(cluster.DataCentres[0].Nodes[0].PrivateAddress) != 0 {
 		err = d.Set("private_contact_point", cluster.DataCentres[0].Nodes[0].PrivateAddress)
+		var nodes []string
+		for _, node := range cluster.DataCentres[0].Nodes {
+			nodes = append(nodes, node.PrivateAddress)
+		}
+		err = d.Set("private_contact_addresses", nodes)
 	}
 
-	var before interface{}
-	before, _ = d.GetChange("cluster_provider")
-	d.Set("cluster_provider", before)
-	before, _ = d.GetChange("rack_allocation")
-	d.Set("rack_allocation", before)
-	before, _ = d.GetChange("bundle")
-	d.Set("bundle", before)
 	log.Printf("[INFO] Fetched cluster %s info from the remote server.", cluster.ID)
 	return nil
 }

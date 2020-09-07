@@ -112,6 +112,7 @@ pci_compliant_cluster|Accepts true/false. Creates the cluster with PCI complianc
 cluster_provider|The information of infrastructure provider. See below for its properties.|Required
 rack_allocation|The number of resources to use. See below for its properties.|Optional, but Required for all Bundle types excluding Redis.
 bundle|Array of bundle information. See below for its properties.|Required
+wait_for|Wait for given cluster state. Available states: `RUNNING`, `PROVISIONED`|""
 
 `cluster_provider`
 

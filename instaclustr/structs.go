@@ -110,15 +110,15 @@ type DataCentre struct {
 }
 
 type Node struct {
-	ID             string   `json:"id"`
-	Size           string   `json:"size"`
-	Rack           string   `json:"rack"`
-	PublicAddress  []string `json:"publicAddress"`
-	PrivateAddress []string `json:"privateAddress"`
-	NodeStatus     string   `json:"nodeStatus"`
-	SparkMaster    bool     `json:"sparkMaster"`
-	SparkJobserver bool     `json:"sparkJobserver"`
-	Zeppelin       bool     `json:"zeppelin"`
+	ID             string `json:"id"`
+	Size           string `json:"size"`
+	Rack           string `json:"rack"`
+	PublicAddress  string `json:"publicAddress"`
+	PrivateAddress string `json:"privateAddress"`
+	NodeStatus     string `json:"nodeStatus"`
+	SparkMaster    bool   `json:"sparkMaster"`
+	SparkJobserver bool   `json:"sparkJobserver"`
+	Zeppelin       bool   `json:"zeppelin"`
 }
 
 type CreateVPCPeeringRequest struct {
