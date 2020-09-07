@@ -341,33 +341,31 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 func resourceClusterUpdate(d *schema.ResourceData, meta interface{}) error {
 	d.Partial(true)
 	// currently only cluster resize is supported
-	if !d.HasChange("node_size") {
-		return fmt.Errorf("[Error] The cluster doesn't support update")
-	}
+	if d.HasChange("node_size") {
+		before, after := d.GetChange("node_size")
+		regex := regexp.MustCompile(`resizeable-(small|large)`)
+		oldNodeClass := regex.FindString(before.(string))
+		newNodeClass := regex.FindString(after.(string))
 
-	before, after := d.GetChange("node_size")
-	regex := regexp.MustCompile(`resizeable-(small|large)`)
-	oldNodeClass := regex.FindString(before.(string))
-	newNodeClass := regex.FindString(after.(string))
+		isNotResizable := (oldNodeClass == "")
+		isNotSameSizeClass := (newNodeClass != oldNodeClass)
+		if isNotResizable || isNotSameSizeClass {
+			return fmt.Errorf("[Error] Cannot resize nodes from %s to %s", before, after)
+		}
 
-	isNotResizable := (oldNodeClass == "")
-	isNotSameSizeClass := (newNodeClass != oldNodeClass)
-	if isNotResizable || isNotSameSizeClass {
-		return fmt.Errorf("[Error] Cannot resize nodes from %s to %s", before, after)
-	}
+		client := meta.(*Config).Client
+		clusterID := d.Get("cluster_id").(string)
+		cluster, err := client.ReadCluster(clusterID)
+		if err != nil {
+			return fmt.Errorf("[Error] Error reading cluster: %s", err)
+		}
+		err = client.ResizeCluster(clusterID, cluster.DataCentres[0].ID, after.(string))
+		if err != nil {
+			return fmt.Errorf("[Error] Error resizing cluster %s with error %s", clusterID, err)
+		}
 
-	client := meta.(*Config).Client
-	clusterID := d.Get("cluster_id").(string)
-	cluster, err := client.ReadCluster(clusterID)
-	if err != nil {
-		return fmt.Errorf("[Error] Error reading cluster: %s", err)
+		d.SetPartial("node_size")
 	}
-	err = client.ResizeCluster(clusterID, cluster.DataCentres[0].ID, after.(string))
-	if err != nil {
-		return fmt.Errorf("[Error] Error resizing cluster %s with error %s", clusterID, err)
-	}
-
-	d.SetPartial("node_size")
 	return nil
 }
 
