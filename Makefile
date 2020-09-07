@@ -1,5 +1,6 @@
-BIN_NAME="terraform-provider-instaclustr"
-VERSION=v1.4.0
+BIN_NAME=terraform-provider-instaclustr
+VERSION=v1.4.1-deltatre
+NVERSION=1.4.1
 
 .PHONY: install clean all build test testacc
 
@@ -10,7 +11,12 @@ clean:
 	rm -fr vendor
 
 build:
-	go build -o bin/$(BIN_NAME)_$(VERSION) main.go
+	env GOOS=linux GOARCH=amd64 go build -o bin/$(BIN_NAME)_$(VERSION) main.go
+	mkdir -p ~/checkouts/deltatre/terraform/environment/terraform.d/plugins/instaclustr/instaclustr/instaclustr/$(NVERSION)/linux_amd64/
+	cp bin/$(BIN_NAME)_$(VERSION) ~/checkouts/deltatre/terraform/environment/terraform.d/plugins/instaclustr/instaclustr/instaclustr/$(NVERSION)/linux_amd64/
+	mkdir -p ~/checkouts/deltatre/terraform/environment/terraform.d/plugins/instaclustr/instaclustr/instaclustr/$(NVERSION)/darwin_amd64/
+	env GOOS=darwin GOARCH=amd64 go build -o bin/$(BIN_NAME)_$(VERSION) main.go
+	cp bin/$(BIN_NAME)_$(VERSION) ~/checkouts/deltatre/terraform/environment/terraform.d/plugins/instaclustr/instaclustr/instaclustr/$(NVERSION)/darwin_amd64/	
 
 test:
 	cd test && go test -v -timeout 120m -count=1
