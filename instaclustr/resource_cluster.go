@@ -397,7 +397,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		err = d.Set("public_contact_point", cluster.DataCentres[0].Nodes[0].PublicAddress)
 		nodes := make([]string, len(cluster.DataCentres[0].Nodes))
 		for _, node := range cluster.DataCentres[0].Nodes {
-			nodes = append(nodes, node.PublicAddress[0])
+			nodes = append(nodes, node.PublicAddress)
 		}
 		err = d.Set("public_contact_addresses", nodes)
 	}
@@ -406,7 +406,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		err = d.Set("private_contact_point", cluster.DataCentres[0].Nodes[0].PrivateAddress)
 		nodes := make([]string, len(cluster.DataCentres[0].Nodes))
 		for _, node := range cluster.DataCentres[0].Nodes {
-			nodes = append(nodes, node.PrivateAddress[0])
+			nodes = append(nodes, node.PrivateAddress)
 		}
 		err = d.Set("private_contact_addresses", nodes)
 	}
