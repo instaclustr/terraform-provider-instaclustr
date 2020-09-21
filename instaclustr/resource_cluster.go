@@ -251,7 +251,7 @@ func resourceCluster() *schema.Resource {
 										Optional: true,
 									},
 									"truststore": {
-										Type:     schema.TypeBool,
+										Type:     schema.TypeString,
 										Optional: true,
 									},
 									"dedicated_zookeeper": {
@@ -373,13 +373,12 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 
 	nodeSize := ""
 	/* 
-	*  Ideally, we would like this information to be coming directly from the Instaclustr API cluster status.
-	*  However, it is still a work in progress for the Instaclustr API cluster status to return bundle specific information (INS-8526).
+	*  Ideally, we would like this information to be coming directly from the API cluster status.
 	*  Hence, this is a slightly hacky way of ignoring zookeeper node sizes (Kafka bundle specific).
 	*/
 	for _, node := range(cluster.DataCentres[0].Nodes) {
 		nodeSize = node.Size
-		if (!strings.HasSuffix(nodeSize, "-zk")) {
+		if (!strings.HasPrefix(nodeSize, "zk-")) {
 			break
 		}
 	}
