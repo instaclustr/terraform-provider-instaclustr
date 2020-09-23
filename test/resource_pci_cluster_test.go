@@ -21,9 +21,9 @@ func TestAccPCICluster(t *testing.T) {
 	validConfig, _ := ioutil.ReadFile("data/pci_valid.tf")
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
-	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey)
-	updatedConfig := strings.Replace(oriConfig, "testcluster", "newcluster", 1)
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
+	updatedConfig := strings.Replace(oriConfig, "testcluster", "newcluster", 1)
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
 		PreCheck:     func() { AccTestEnvVarsCheck(t) },
@@ -51,20 +51,21 @@ func TestAccPCIClusterResize(t *testing.T) {
 	validConfig, _ := ioutil.ReadFile("data/valid_with_resizable_pci_cluster.tf")
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
-	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey)
-	validResizeConfig := strings.Replace(oriConfig, "resizeable-small(r5-l)", "resizeable-small(r5-xl)", 1)
-	validResizeConfig = strings.Replace(validResizeConfig, "tf-resizable-test", "tf-resizable-partial-test", 1)
-	invalidResizeClassConfig := strings.Replace(oriConfig, "resizeable-small(r5-l)", "resizeable-large(r5-xl)", 1)
-	invalidResizeConfig := strings.Replace(oriConfig, "resizeable-small(r5-l)", "t3.medium", 1)
-
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+	originalConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
+	validResizeConfig := strings.Replace(originalConfig, "resizeable-small(r5-l)", "resizeable-small(r5-xl)", 1)
+	validResizeConfig = strings.Replace(validResizeConfig, "tf-resizable-test", "tf-resizable-partial-test", 1)
+	invalidResizeClassConfig := strings.Replace(originalConfig, "resizeable-small(r5-l)", "resizeable-large(r5-xl)", 1)
+	invalidResizeConfig := strings.Replace(originalConfig, "resizeable-small(r5-l)", "t3.medium", 1)
+
+
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
 		PreCheck:     func() { AccTestEnvVarsCheck(t) },
 		CheckDestroy: testCheckPCIResourceDeleted("resizable_pci_cluster", hostname, username, apiKey),
 		Steps: []resource.TestStep{
 			{
-				Config: oriConfig,
+				Config: originalConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckPCIResourceValid("resizable_pci_cluster"),
 					testCheckPCIResourceCreated("resizable_pci_cluster", hostname, username, apiKey),
@@ -99,12 +100,13 @@ func TestAccPCIClusterInvalid(t *testing.T) {
 	validConfig, _ := ioutil.ReadFile("data/pci_invalid.tf")
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 	resource.Test(t, resource.TestCase{
 		Providers: testAccProviders,
 		PreCheck:  func() { AccTestEnvVarsCheck(t) },
 		Steps: []resource.TestStep{
 			{
-				Config:      fmt.Sprintf(string(validConfig), username, apiKey),
+				Config:      fmt.Sprintf(string(validConfig), username, apiKey, hostname),
 				ExpectError: regexp.MustCompile("Error creating cluster"),
 			},
 		},

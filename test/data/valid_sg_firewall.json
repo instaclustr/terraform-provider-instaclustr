@@ -1,0 +1,8 @@
+{
+  "securityGroupId":"sg-0123abcde456ffabc",
+  "rules":[
+    {
+      "type":"CASSANDRA"
+    }
+  ]
+}
