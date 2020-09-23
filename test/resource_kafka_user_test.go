@@ -41,21 +41,21 @@ func TestKafkaUserResource(t *testing.T) {
 			{
 				Config: createClusterConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckKafkaUserResourceValid("instaclustr_cluster.kafka_cluster"),
+					testCheckResourceValidKafka("instaclustr_cluster.kafka_cluster"),
 					checkKafkaClusterRunning(hostname, username, apiKey),
 				),
 			},
  			{
 				Config: createKafkaUserConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckKafkaUserResourceValid("instaclustr_kafka_user.kafka_user_charlie"),
+					testCheckResourceValidKafka("instaclustr_kafka_user.kafka_user_charlie"),
 					checkKafkaUserCreated(hostname, username, apiKey),
 				),
 			},
 			{
 				Config: createKafkaUserListConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckKafkaUserResourceValid("data.instaclustr_kafka_user_list.kafka_user_list"),
+					testCheckResourceValidKafka("data.instaclustr_kafka_user_list.kafka_user_list"),
 					checkKafkaUserListCreated(hostname, username, apiKey),
 				),
 			},
@@ -76,7 +76,7 @@ func TestKafkaUserResource(t *testing.T) {
 	
 }
 
-func testCheckKafkaUserResourceValid(resourceName string) resource.TestCheckFunc {
+func testCheckResourceValidKafka(resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		resourceState := s.Modules[0].Resources[resourceName]
 		if resourceState == nil {

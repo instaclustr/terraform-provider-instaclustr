@@ -18,7 +18,7 @@ For further information about Instaclustr, please see [FAQ](https://www.instaclu
 
 ## Requirements
 
-- Terraform 0.10.x or higher
+- Terraform v0.10.x - .v0.12.28 (we are actively working towards supporting v.0.13.0 and above).
 - Go 1.14 or higher
 
 ## Building The Provider
@@ -110,7 +110,7 @@ cluster_network|The private network address block for the cluster specified usin
 private_network_cluster|Accepts true/false. Creates the cluster with private network only.|false
 pci_compliant_cluster|Accepts true/false. Creates the cluster with PCI compliance enabled.|false
 cluster_provider|The information of infrastructure provider. See below for its properties.|Required
-rack_allocation|The number of resources to use. See below for its properties.|Required
+rack_allocation|The number of resources to use. See below for its properties.|Optional, but Required for all Bundle types excluding Redis.
 bundle|Array of bundle information. See below for its properties.|Required
 
 `cluster_provider`
@@ -144,7 +144,7 @@ options|Options and add-ons for the given bundle. See `bundle.options` below for
 Property | Description | For Bundles | Default
 ---------|-------------|-------------|--------
 auth_n_authz|Accepts true/false. Enables Password Authentication and User Authorization.|Cassandra|false
-client_encryption|Accepts true/false. Enables Client ⇄ Node Encryption.|Cassandra, Kafka, Elasticsearch, Spark|false
+client_encryption|Accepts true/false. Enables Client ⇄ Node Encryption.|Cassandra, Kafka, Elasticsearch, Spark, Redis|false
 dedicated_master_nodes|Accepts true/false. Enables Dedicated Master Nodes.|Elasticsearch|false
 master_node_size|Desired master node size. See [here](https://www.instaclustr.com/support/api-integrations/api-reference/provisioning-api/#section-reference-data-data-centres-and-node-sizes) for more details.|Elasticsearch|Required
 security_plugin|Accepts true/false. Enables Security Plugin. This option gives an extra layer of security to the cluster. This will automatically enable internode encryption.|Elasticsearch|false
@@ -161,18 +161,22 @@ aws_access_key, aws_secret_key, s3_bucket_name|Access information for the S3 buc
 azure_storage_account_name, azure_storage_account_key, azure_storage_container_name|Access information for the Azure Storage container where you will store your custom connectors.|Kafka Connect
 ssl_enabled_protocols, ssl_truststore_password, ssl_protocol, security_protocol, sasl_mechanism, sasl_jaas_config, bootstrap_servers|Connection information for your Kafka Cluster. These options are analogous to the similarly named options that you would place in your Kafka Connect worker.properties file. Only required if connecting to a Non-Instaclustr managed Kafka Cluster|Kafka Connect
 truststore|Base64 encoded version of the TLS trust store (in JKS format) used to connect to your Kafka Cluster. Only required if connecting to a Non-Instaclustr managed Kafka Cluster with TLS enabled|Kafka Connect
+master_nodes|The number of Master nodes in a generated Redis Cluster.|Redis|Required (Integers)
+replica_nodes|The number of Replica nodes in a generated Redis Cluster.|Redis|Required (Integers)
 dedicated_zookeeper|Indicate whether this Kafka cluster should allocate dedicated Zookeeper nodes|Kafka|false
 zookeeper_node_size|If `dedicated_zookeeper` is true, then it is the node size for the dedicated Zookeeper nodes. Have a look [here](https://www.instaclustr.com/support/api-integrations/api-reference/provisioning-api/#section-create-cluster) (Kafka bundle options table) for node size options. |Kafka
 zookeeper_node_count|If `dedicated_zookeeper` is true, then it indicates how many nodes are allocated to be Zookeeper nodes|Kafka
 
 ### Resource:  `instaclustr_firewall_rule`                             
 A resource for managing cluster firewall rules on Instaclustr Managed Platform. A firewall rule allows access to your Instaclustr cluster.
+Note: Either `rule_cidr` OR `rule_security_group_id` must be provided per rule (but not both)
 
 #### Properties
 Property | Description | Default
 ---------|-------------|--------
 cluster_id|The ID of an existing Instaclustr managed cluster|Required
-rule_cidr|The network to add to your cluster firewall rule. Must be a valid IPv4 CIDR|Required
+rule_cidr|The network to add to your cluster firewall rule. Must be a valid IPv4 CIDR (e.g. 123.4.5.67/32) |Optional
+rule_security_group_id|The Peered AWS VPC Security Group id to your cluster firewall rule (e.g. sg-12345678) |Optional
 rules|List of rule types that the specified network is allowed access to. See below for rule options.|Required
 
 `rules`
@@ -290,6 +294,7 @@ KAFKA_REST_PROXY|5.0.0|KAFKA
 KAFKA_SCHEMA_REGISTRY|5.0.0|KAFKA
 ELASTICSEARCH|opendistro-for-elasticsearch:1.4.0
 KAFKA_CONNECT|2.3.1, 2.4.1|
+REDIS|6.0.4|
 
 ### Migrating from 0.0.1 &rarr; 1.0.0+
 A schema change has been made from 0.0.1 which no longer supports the `bundles` argument and uses `bundle` blocks instead. This change can cause `terraform apply` to fail with a message that `bundles` has been removed and/or updating isn't supported. To resolve this -<br>
@@ -301,7 +306,7 @@ A schema change has been made from 0.0.1 which no longer supports the `bundles` 
 Firstly thanks!  We value your time and will do our best to review the PR as soon as possible. 
 
 1. [Install golang](https://golang.org/doc/install#install)
-2. Clone repository to: $GOPATH/src/github.com/instaclustr/terraform-provider-instaclust
+2. Clone repository to: $GOPATH/src/github.com/instaclustr/terraform-provider-instaclustr
 3. Build the provider by `$ make build`
 4. Run the tests by `$ make test`
 5. Set up all of the environmental variables listed [below](#acceptance-test-environment-variables) to prepare for acceptance testing.

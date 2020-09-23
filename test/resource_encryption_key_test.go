@@ -20,9 +20,9 @@ func TestAccEBSKey(t *testing.T) {
 	validConfig, _ := ioutil.ReadFile("data/valid_encryption_key.tf")
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
-	kmsArn := os.Getenv("KMS_ARN")
-	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, kmsArn)
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+	kmsArn := os.Getenv("KMS_ARN")
+	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname, kmsArn)
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccEBSKeyProviders,
 		PreCheck:     func() { AccTestEnvVarsCheck(t) },
@@ -47,13 +47,14 @@ func TestAccEBSKeyInvalid(t *testing.T) {
 	validConfig, _ := ioutil.ReadFile("data/invalid_encryption_key.tf")
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 	kmsArn := os.Getenv("KMS_ARN")
 	resource.Test(t, resource.TestCase{
 		Providers: testAccEBSKeyProviders,
 		PreCheck:  func() { AccTestEnvVarsCheck(t) },
 		Steps: []resource.TestStep{
 			{
-				Config:      fmt.Sprintf(string(validConfig), username, apiKey, kmsArn),
+				Config:      fmt.Sprintf(string(validConfig), username, apiKey, hostname, kmsArn),
 				ExpectError: regexp.MustCompile("Error adding encryption key"),
 			},
 		},

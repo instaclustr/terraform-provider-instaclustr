@@ -76,6 +76,16 @@ resource "instaclustr_firewall_rule" "example_firewall_rule" {
   ]
 }
 
+resource "instaclustr_firewall_rule" "example_firewall_rule_sg" {
+  cluster_id = "${instaclustr_cluster.example2.id}"
+  securityGroupId = "sg-0123abcde456ffabc"
+  rules = [
+    {
+      type = "CASSANDRA"
+    }
+  ]
+}
+
 resource "instaclustr_vpc_peering" "example_vpc_peering" {
   cluster_id = "${instaclustr_cluster.example.cluster_id}"
   peer_vpc_id = "vpc-123456"
@@ -182,3 +192,43 @@ resource "instaclustr_kafka_user" "kafka_user_charlie" {
 data "instaclustr_kafka_user_list" "kafka_user_list" { 
   cluster_id = "${instaclustr_clustr.example_kafka.cluster_id}"
 }  
+
+resource "instaclustr_cluster" "private_cluster_example" {
+  cluster_name = "testcluster"
+  node_size = "m5l-250-v2"
+  data_centre = "US_EAST_1"
+  sla_tier = "PRODUCTION"
+  cluster_network = "192.168.0.0/18"
+  private_network_cluster = true
+  cluster_provider = {
+    name = "AWS_VPC",
+  }
+  rack_allocation = {
+    number_of_racks = 2
+    nodes_per_rack = 1
+  }
+  bundle {
+    bundle = "APACHE_CASSANDRA"
+    version = "3.11.4"
+  }
+}
+
+resource "instaclustr_cluster" "example-redis" {
+  cluster_name = "testcluster"
+  node_size = "t3.small-20-r"
+  data_centre = "US_WEST_2"
+  sla_tier = "NON_PRODUCTION"
+  cluster_network = "192.168.0.0/18"
+  cluster_provider = {
+    name = "AWS_VPC"
+  }
+
+  bundle {
+    bundle = "REDIS"
+    version = "6.0.4"
+    options = {
+      master_nodes = 3,
+      replica_nodes = 3
+    }
+  }
+}
