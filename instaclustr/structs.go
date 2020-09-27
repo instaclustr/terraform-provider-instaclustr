@@ -47,6 +47,9 @@ type BundleOptions struct {
 	Truststore                    string `json:"truststore,omitempty" mapstructure:"truststore"`
 	RedisMasterNodes              string `json:"masterNodes,omitempty" mapstructure:"master_nodes"`
 	RedisReplicaNodes             string `json:"replicaNodes,omitempty" mapstructure:"replica_nodes"`
+	DedicatedZookeeper            string `json:"dedicatedZookeeper,omitempty" mapstructure:"dedicated_zookeeper"`
+	ZookeeperNodeSize             string `json:"zookeeperNodeSize,omitempty" mapstructure:"zookeeper_node_size"`
+	ZookeeperNodeCount            string `json:"zookeeperNodeCount,omitempty" mapstructure:"zookeeper_node_count"`
 }
 
 type ClusterProvider struct {

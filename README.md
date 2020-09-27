@@ -163,6 +163,9 @@ ssl_enabled_protocols, ssl_truststore_password, ssl_protocol, security_protocol,
 truststore|Base64 encoded version of the TLS trust store (in JKS format) used to connect to your Kafka Cluster. Only required if connecting to a Non-Instaclustr managed Kafka Cluster with TLS enabled|Kafka Connect
 master_nodes|The number of Master nodes in a generated Redis Cluster.|Redis|Required (Integers)
 replica_nodes|The number of Replica nodes in a generated Redis Cluster.|Redis|Required (Integers)
+dedicated_zookeeper|Indicate whether this Kafka cluster should allocate dedicated Zookeeper nodes|Kafka|false
+zookeeper_node_size|If `dedicated_zookeeper` is true, then it is the node size for the dedicated Zookeeper nodes. Have a look [here](https://www.instaclustr.com/support/api-integrations/api-reference/provisioning-api/#section-create-cluster) (Kafka bundle options table) for node size options. |Kafka
+zookeeper_node_count|If `dedicated_zookeeper` is true, then it indicates how many nodes are allocated to be Zookeeper nodes|Kafka
 
 ### Resource:  `instaclustr_firewall_rule`                             
 A resource for managing cluster firewall rules on Instaclustr Managed Platform. A firewall rule allows access to your Instaclustr cluster.

@@ -109,9 +109,12 @@ resource "instaclustr_cluster" "example_kafka" {
 
   bundle {
     bundle = "KAFKA"
-    version = "2.3.1"
+    version = "2.5.1"
     options = {
       auth_n_authz = true
+      dedicated_zookeeper = true
+      zookeeper_node_size = "zk-production-m5.large-60"
+      zookeeper_node_count = 3
     }
   }
 
