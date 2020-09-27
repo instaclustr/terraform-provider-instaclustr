@@ -6,7 +6,6 @@ import (
 	"os"
 	"testing"
 	"time"
-	"strings"
 	"strconv"
 
 	"github.com/hashicorp/terraform/helper/resource"
@@ -19,23 +18,22 @@ func TestKafkaUserResource(t *testing.T) {
 		"instaclustr": instaclustr.Provider(),
 	}
 
-	tfFile, _ := ioutil.ReadFile("data/kafka_user.tf")
-	oriConfig := string(tfFile)
+	configBytes1, _ := ioutil.ReadFile("data/kafka_user_create_cluster.tf")
+	configBytes2, _ := ioutil.ReadFile("data/kafka_user_create_user.tf")
+	configBytes3, _ := ioutil.ReadFile("data/kafka_user_user_list.tf")
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 	
-	kafka_username := "charlie"
+	kafkaUsername := "charlie"
 	oldPassword := "charlie123!"
 	newPassword := "charlie123standard!"
-	const KAFKA_USERNAME_PATTERN = "@@KAFKA_USERNAME@@"
-	const KAFKA_USER_PASSWORD_PATTERN = "@@KAFKA_USER_PASSWORD@@"	
+	zookeeperNodeSize := "zk-developer-t3.small-20"
 
-	createClusterConfig := fmt.Sprintf(oriConfig, username, apiKey, hostname)
-	createKafkaUserConfigRaw := strings.Replace(strings.Replace(createClusterConfig, "/*", "", 1), "*/", "", 1)
-	createKafkaUserConfig := strings.ReplaceAll(strings.ReplaceAll(createKafkaUserConfigRaw, KAFKA_USERNAME_PATTERN, kafka_username), KAFKA_USER_PASSWORD_PATTERN, oldPassword) 
-	createKafkaUserListConfig := strings.Replace(strings.Replace(createKafkaUserConfig, "/*", "", 1), "*/", "", 1)
-	updateKafkaUserConfig := strings.Replace(createKafkaUserConfig, oldPassword, newPassword, 1)
+	createClusterConfig := fmt.Sprintf(string(configBytes1), username, apiKey, hostname, zookeeperNodeSize)
+	createKafkaUserConfig := fmt.Sprintf(string(configBytes2), username, apiKey, hostname, zookeeperNodeSize, kafkaUsername, oldPassword)
+	createKafkaUserListConfig := fmt.Sprintf(string(configBytes3), username, apiKey, hostname, zookeeperNodeSize, kafkaUsername, oldPassword)
+	updateKafkaUserConfig := fmt.Sprintf(string(configBytes3), username, apiKey, hostname, zookeeperNodeSize, kafkaUsername, newPassword)
 
 	resource.Test(t, resource.TestCase{
 		Providers:    testProviders,
@@ -71,7 +69,7 @@ func TestKafkaUserResource(t *testing.T) {
 			// i.e., we need to destroy the kafka user resources first.
 			{
 				Config: createClusterConfig,
-				Check: checkKafkaUserDeleted(kafka_username, hostname, username, apiKey),
+				Check: checkKafkaUserDeleted(kafkaUsername, hostname, username, apiKey),
 			},
 		},
 	})
