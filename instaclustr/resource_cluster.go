@@ -110,7 +110,7 @@ func resourceCluster() *schema.Resource {
 
 			"rack_allocation": {
 				Type:     schema.TypeMap,
-				Required: true,
+				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"number_of_racks": {
@@ -254,6 +254,26 @@ func resourceCluster() *schema.Resource {
 										Type:     schema.TypeString,
 										Optional: true,
 									},
+									"dedicated_zookeeper": {
+										Type:     schema.TypeBool,
+										Optional: true,
+									},
+									"zookeeper_node_size": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"zookeeper_node_count": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+									"master_nodes": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
+									"replica_nodes": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
 								},
 							},
 						},
@@ -279,12 +299,6 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
-	var rackAllocation RackAllocation
-	err = mapstructure.Decode(d.Get("rack_allocation").(map[string]interface{}), &rackAllocation)
-	if err != nil {
-		return err
-	}
-
 	createData := CreateRequest{
 		ClusterName:           d.Get("cluster_name").(string),
 		Bundles:               bundles,
@@ -295,7 +309,17 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		ClusterNetwork:        d.Get("cluster_network").(string),
 		PrivateNetworkCluster: fmt.Sprintf("%v", d.Get("private_network_cluster")),
 		PCICompliantCluster:   fmt.Sprintf("%v", d.Get("pci_compliant_cluster")),
-		RackAllocation:        rackAllocation,
+	}
+
+	// Some Bundles do not use Rack Allocation so add that separately if needed. (Redis for example)
+	if checkIfBundleRequiresRackAllocation(bundles) {
+		var rackAllocation RackAllocation
+		err = mapstructure.Decode(d.Get("rack_allocation").(map[string]interface{}), &rackAllocation)
+		if err != nil {
+			return err
+		}
+
+		createData.RackAllocation = &rackAllocation
 	}
 
 	var jsonStr []byte
@@ -359,7 +383,17 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("cluster_id", cluster.ID)
 	d.Set("cluster_name", cluster.ClusterName)
 
-	nodeSize := cluster.DataCentres[0].Nodes[0].Size
+	nodeSize := ""
+	/* 
+	*  Ideally, we would like this information to be coming directly from the API cluster status.
+	*  Hence, this is a slightly hacky way of ignoring zookeeper node sizes (Kafka bundle specific).
+	*/
+	for _, node := range(cluster.DataCentres[0].Nodes) {
+		nodeSize = node.Size
+		if (!strings.HasPrefix(nodeSize, "zk-")) {
+			break
+		}
+	}
 	if len(cluster.DataCentres[0].ResizeTargetNodeSize) > 0 {
 		nodeSize = cluster.DataCentres[0].ResizeTargetNodeSize
 	}
@@ -420,4 +454,20 @@ func getBundles(d *schema.ResourceData) ([]Bundle, error) {
 
 func formatCreateErrMsg(err error) error {
 	return fmt.Errorf("[Error] Error creating cluster: %s", err)
+}
+
+func checkIfBundleRequiresRackAllocation(bundles []Bundle) bool {
+	var noRackAllocationBundles = []string{
+		"REDIS",
+	}
+
+	for i := 0; i < len(bundles); i++ {
+		for j := 0; j < len(noRackAllocationBundles); j++ {
+			if strings.ToLower(bundles[i].Bundle) == strings.ToLower(noRackAllocationBundles[j]) {
+				return false
+			}
+		}
+	}
+
+	return true
 }

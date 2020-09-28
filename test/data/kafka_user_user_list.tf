@@ -1,3 +1,4 @@
+// This is part of testing "kafka user" suite, 3 of 3
 provider "instaclustr" {
   username = "%s"
   api_key = "%s"
@@ -20,19 +21,22 @@ resource "instaclustr_cluster" "kafka_cluster" {
 
   bundle {
     bundle = "KAFKA"
-    version = "2.3.1"
+    version = "2.5.1"
+    options = {
+      dedicated_zookeeper = true
+      zookeeper_node_size = "%s"
+      zookeeper_node_count = 3
+    }
   }
 }
-/*
+
 resource "instaclustr_kafka_user" "kafka_user_charlie" {
   cluster_id = "${instaclustr_cluster.kafka_cluster.cluster_id}"
-  username = "@@KAFKA_USERNAME@@"
-  password = "@@KAFKA_USER_PASSWORD@@"
+  username = "%s"
+  password = "%s"
   initial_permissions = "none"
 }
-*/
-/*
+
 data "instaclustr_kafka_user_list" "kafka_user_list" {
   cluster_id = "${instaclustr_cluster.kafka_cluster.cluster_id}"
 }
-*/
