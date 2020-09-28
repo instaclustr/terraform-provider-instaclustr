@@ -155,7 +155,7 @@ type EncryptionKey struct {
 	ID    string `json:"id,omitempty"`
 	Alias string `json:"alias,omitempty"`
 	ARN   string `json:"arn,omitempty"`
-	PROVIDER string `json:"provider,omitempty"`
+	Provider string `json:"provider,omitempty"`
 }
 
 type CreateKafkaUserRequest struct {
