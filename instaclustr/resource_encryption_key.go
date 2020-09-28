@@ -28,6 +28,11 @@ func resourceEncryptionKey() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
+			"provider": {
+				Type:     schema.TypeString,
+				Optional: true,
+				Default: "INSTACLUSTR"
+			}
 		},
 	}
 }
@@ -39,6 +44,7 @@ func resourceEncryptionKeyCreate(d *schema.ResourceData, meta interface{}) error
 	createData := EncryptionKey{
 		Alias: d.Get("alias").(string),
 		ARN:   d.Get("arn").(string),
+		PROVIDER: d.Get("provider").(string)
 	}
 
 	var jsonStr []byte
@@ -70,6 +76,7 @@ func resourceEncryptionKeyRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("key_id", keyResource.ID)
 	d.Set("alias", keyResource.Alias)
 	d.Set("arn", keyResource.ARN)
+	d.Set("provider", keyResource.PROVIDER)
 	log.Printf("[INFO] Read encyption key %s.", id)
 	return nil
 }
