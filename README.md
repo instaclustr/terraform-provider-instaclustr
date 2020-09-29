@@ -233,13 +233,22 @@ Property | Description | Default
 key_id|Internal ID of the KMS encryption key. Can be found via GET to `https://api.instaclustr.com/provisioning/v1/encryption-keys`|""
 alias|KMS key alias, a human-readibly identifier specified alongside your KMS ARN|""
 arn|KMS ARN, identifier specifying provider, location and key in a ':' value seperated string|""
-key_provider|value specifying the the provider account, same as the cluster_provider|INSTACLUSTR
+key_provider|value specifying the the provider account, referrences the `instaclustr_cluster.cluster_provider.account_name` object, used when creating clusters|INSTACLUSTR
 
 #### Example
 ```
 resource "instaclustr_encryption_key" "example_encryption_key" {
     alias: "virginia 1"
     arn: "arn:aws:kms:us-east-1:123456789012:key12345678-1234-1234-1234-123456789abc"
+}
+```
+
+Example of an additional provider:
+```
+resource "instaclustr_encryption_key" "example_encryption_key" {
+    alias: "virginia 1"
+    arn: "arn:aws:kms:us-east-1:123456789012:key12345678-1234-1234-1234-123456789abc"
+    key_provider: "INSTACLUSTR"
 }
 ```
 
