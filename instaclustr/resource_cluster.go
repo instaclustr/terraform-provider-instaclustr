@@ -104,10 +104,6 @@ func resourceCluster() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"tags": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
 						"resource_group": {
 							Type:     schema.TypeString,
 							Optional: true,
@@ -118,6 +114,11 @@ func resourceCluster() *schema.Resource {
 						},
 					},
 				},
+			},
+
+			"tags": {
+				Type:     schema.TypeMap,
+				Optional: true,
 			},
 
 			"rack_allocation": {
@@ -310,6 +311,8 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 	if err != nil {
 		return err
 	}
+
+	clusterProvider.Tags = d.Get("tags").(map[string]interface{})
 
 	createData := CreateRequest{
 		ClusterName:           d.Get("cluster_name").(string),
