@@ -56,7 +56,7 @@ type ClusterProvider struct {
 	Name                   *string `json:"name" mapstructure:"name"`
 	AccountName            *string `json:"accountName, omitempty" mapstructure:"account_name"`
 	CustomVirtualNetworkId *string `json:"customVirtualNetworkId, omitempty" mapstructure:"custom_virtual_network_id"`
-	Tags                   *string `json:"tags,omitempty" mapstructure:"tags"`
+	Tags                   map[string]interface{} `json:"tags,omitempty"`
 	ResourceGroup          *string `json:"resourceGroup,omitempty" mapstructure:"resource_group"`
 	DiskEncryptionKey      *string `json:"diskEncryptionKey,omitempty" mapstructure:"disk_encryption_key"`
 }

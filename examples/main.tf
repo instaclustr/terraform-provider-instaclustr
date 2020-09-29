@@ -19,6 +19,9 @@ resource "instaclustr_cluster" "example2" {
   cluster_provider = {
     name = "AWS_VPC",
     disk_encryption_key = "${instaclustr_encryption_key.add_ebs_key.key_id}"
+    tags = {
+      "myTag" = "myTagValue"
+    }
   }
   rack_allocation = {
     number_of_racks = 3
