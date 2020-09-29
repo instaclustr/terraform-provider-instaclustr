@@ -238,17 +238,8 @@ key_provider|For customers running in their own account. Value specifying the th
 #### Example
 ```
 resource "instaclustr_encryption_key" "example_encryption_key" {
-    alias: "virginia 1"
-    arn: "arn:aws:kms:us-east-1:123456789012:key12345678-1234-1234-1234-123456789abc"
-}
-```
-
-Example of an additional provider:
-```
-resource "instaclustr_encryption_key" "example_encryption_key" {
-    alias: "virginia 1"
-    arn: "arn:aws:kms:us-east-1:123456789012:key12345678-1234-1234-1234-123456789abc"
-    key_provider: "INSTACLUSTR"
+    alias = "virginia 1"
+    arn = "arn:aws:kms:us-east-1:123456789012:key12345678-1234-1234-1234-123456789abc"
 }
 ```
 
