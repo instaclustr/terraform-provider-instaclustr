@@ -69,10 +69,22 @@ func resourceCluster() *schema.Resource {
 				Optional: true,
 			},
 
+			"public_contact_addresses": {
+				Type:     schema.TypeList,
+				Computed: true,
+				Elem:     &schema.Schema{Type: schema.TypeString},
+			},
+
 			"private_contact_point": {
 				Type:     schema.TypeString,
 				Computed: true,
 				Optional: true,
+			},
+
+			"private_contact_addresses": {
+				Type:     schema.TypeList,
+				Computed: true,
+				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
 
 			"cluster_provider": {
@@ -344,33 +356,31 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 func resourceClusterUpdate(d *schema.ResourceData, meta interface{}) error {
 	d.Partial(true)
 	// currently only cluster resize is supported
-	if !d.HasChange("node_size") {
-		return fmt.Errorf("[Error] The cluster doesn't support update")
-	}
+	if d.HasChange("node_size") {
+		before, after := d.GetChange("node_size")
+		regex := regexp.MustCompile(`resizeable-(small|large)`)
+		oldNodeClass := regex.FindString(before.(string))
+		newNodeClass := regex.FindString(after.(string))
 
-	before, after := d.GetChange("node_size")
-	regex := regexp.MustCompile(`resizeable-(small|large)`)
-	oldNodeClass := regex.FindString(before.(string))
-	newNodeClass := regex.FindString(after.(string))
+		isNotResizable := (oldNodeClass == "")
+		isNotSameSizeClass := (newNodeClass != oldNodeClass)
+		if isNotResizable || isNotSameSizeClass {
+			return fmt.Errorf("[Error] Cannot resize nodes from %s to %s", before, after)
+		}
 
-	isNotResizable := (oldNodeClass == "")
-	isNotSameSizeClass := (newNodeClass != oldNodeClass)
-	if isNotResizable || isNotSameSizeClass {
-		return fmt.Errorf("[Error] Cannot resize nodes from %s to %s", before, after)
-	}
+		client := meta.(*Config).Client
+		clusterID := d.Get("cluster_id").(string)
+		cluster, err := client.ReadCluster(clusterID)
+		if err != nil {
+			return fmt.Errorf("[Error] Error reading cluster: %s", err)
+		}
+		err = client.ResizeCluster(clusterID, cluster.DataCentres[0].ID, after.(string))
+		if err != nil {
+			return fmt.Errorf("[Error] Error resizing cluster %s with error %s", clusterID, err)
+		}
 
-	client := meta.(*Config).Client
-	clusterID := d.Get("cluster_id").(string)
-	cluster, err := client.ReadCluster(clusterID)
-	if err != nil {
-		return fmt.Errorf("[Error] Error reading cluster: %s", err)
+		d.SetPartial("node_size")
 	}
-	err = client.ResizeCluster(clusterID, cluster.DataCentres[0].ID, after.(string))
-	if err != nil {
-		return fmt.Errorf("[Error] Error resizing cluster %s with error %s", clusterID, err)
-	}
-
-	d.SetPartial("node_size")
 	return nil
 }
 
@@ -410,11 +420,20 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 
 	if len(cluster.DataCentres[0].Nodes[0].PublicAddress) != 0 {
 		err = d.Set("public_contact_point", cluster.DataCentres[0].Nodes[0].PublicAddress)
-
+		var nodes []string
+		for _, node := range cluster.DataCentres[0].Nodes {
+			nodes = append(nodes, node.PublicAddress)
+		}
+		err = d.Set("public_contact_addresses", nodes)
 	}
 
 	if len(cluster.DataCentres[0].Nodes[0].PrivateAddress) != 0 {
 		err = d.Set("private_contact_point", cluster.DataCentres[0].Nodes[0].PrivateAddress)
+		var nodes []string
+		for _, node := range cluster.DataCentres[0].Nodes {
+			nodes = append(nodes, node.PrivateAddress)
+		}
+		err = d.Set("private_contact_addresses", nodes)
 	}
 
 	var before interface{}
