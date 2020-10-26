@@ -29,3 +29,13 @@ resource "instaclustr_vpc_peering" "valid_with_vpc_peering" {
     peer_account_id = "494111121110"
     peer_subnet = "10.128.176.0/20"
 }
+
+resource "instaclustr_firewall_rule" "valid_with_firewall_rule_sg" {
+    cluster_id = "${instaclustr_cluster.valid_with_firewall_rule.id}"
+    rule_security_group_id = "sg-fa3dE817"
+    rules = [
+        { 
+            type = "CASSANDRA"
+        }
+    ]
+}
