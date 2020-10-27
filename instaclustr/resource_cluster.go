@@ -82,6 +82,7 @@ func resourceCluster() *schema.Resource {
 			"public_contact_addresses": {
 				Type:     schema.TypeList,
 				Computed: true,
+				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
 
@@ -94,6 +95,7 @@ func resourceCluster() *schema.Resource {
 			"private_contact_addresses": {
 				Type:     schema.TypeList,
 				Computed: true,
+				Optional: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
 
@@ -450,13 +452,13 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("cluster_name", cluster.ClusterName)
 
 	nodeSize := ""
-	/* 
+	/*
 	*  Ideally, we would like this information to be coming directly from the API cluster status.
 	*  Hence, this is a slightly hacky way of ignoring zookeeper node sizes (Kafka bundle specific).
-	*/
-	for _, node := range(cluster.DataCentres[0].Nodes) {
+	 */
+	for _, node := range cluster.DataCentres[0].Nodes {
 		nodeSize = node.Size
-		if (!strings.HasPrefix(nodeSize, "zk-")) {
+		if !strings.HasPrefix(nodeSize, "zk-") {
 			break
 		}
 	}
