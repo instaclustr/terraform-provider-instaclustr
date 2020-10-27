@@ -46,6 +46,12 @@ func resourceFirewallRuleCreate(d *schema.ResourceData, meta interface{}) error 
 	log.Printf("[INFO] Creating firewall rule.")
 	client := meta.(*Config).Client
 
+	ruleTarget, ruleTargetError := getRuleTarget(d)
+
+	if ruleTargetError != nil {
+		return fmt.Errorf("[Error] Error creating firewall rule: %s", ruleTargetError)
+	}
+
 	rules := make([]RuleType, 0)
 
 	for _, rule := range d.Get("rules").([]interface{}) {
@@ -57,19 +63,12 @@ func resourceFirewallRuleCreate(d *schema.ResourceData, meta interface{}) error 
 
 		rules = append(rules, RuleType{Type: aRule})
 	}
-	var rule FirewallRule
-	if d.Get("rule_cidr") != "" && d.Get("rule_security_group_id") != "" {
-		return fmt.Errorf("[Error] Error creating firewall rule: Only one of Security Group of Rule Cidr can be provided per rule")
-	} else if d.Get("rule_cidr") == "" && d.Get("rule_security_group_id") == ""{
-		return fmt.Errorf("[Error] Error creating firewall rule: either one of Security Group of Rule Cidr is required")
-	}else {
-		rule = FirewallRule{
-			Network: d.Get("rule_cidr").(string),
-			SecurityGroupId: d.Get("rule_security_group_id").(string),
-			Rules:   rules,
-		}
+
+	rule := FirewallRule{
+		Network:         d.Get("rule_cidr").(string),
+		SecurityGroupId: d.Get("rule_security_group_id").(string),
+		Rules:           rules,
 	}
-	
 
 	var jsonStr []byte
 	jsonStr, err := json.Marshal(rule)
@@ -82,7 +81,7 @@ func resourceFirewallRuleCreate(d *schema.ResourceData, meta interface{}) error 
 		return fmt.Errorf("[Error] Error creating firewall fule: %s", err)
 	}
 	log.Printf("[INFO] Firewall rule %s has been created.", d.Get("cluster_id").(string))
-	d.SetId(d.Get("rule_cidr").(string))
+	d.SetId(ruleTarget)
 	return nil
 
 }
@@ -90,19 +89,25 @@ func resourceFirewallRuleCreate(d *schema.ResourceData, meta interface{}) error 
 func resourceFirewallRuleRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*Config).Client
 	id := d.Get("cluster_id").(string)
-	rule := d.Get("rule_cidr").(string)
+
+	ruleTarget, ruleTargetError := getRuleTarget(d)
+
+	if ruleTargetError != nil {
+		return fmt.Errorf("[Error] Error reading firewall rule: %s", ruleTargetError)
+	}
+
 	log.Printf("[INFO] Reading the status of cluster %s.", id)
 	firewallRules, err := client.ReadFirewallRules(id)
 	if err != nil {
 		return fmt.Errorf("[Error] Error reading firewall rules: %s", err)
 	}
 	for _, value := range *firewallRules {
-		if value.Network == rule {
-			log.Printf("[INFO] Read rule %s from cluster %s", value.Network, id)
+		if value.Network == ruleTarget || value.SecurityGroupId == ruleTarget {
+			log.Printf("[INFO] Read rule %s from cluster %s", ruleTarget, id)
 			d.Set("cluster_id", id)
 			d.Set("rule_cidr", value.Network)
 			d.Set("rule_security_group_id", value.SecurityGroupId)
-			d.SetId(value.Network)
+			d.SetId(ruleTarget)
 			d.Set("rules", value.Rules)
 		}
 	}
@@ -150,4 +155,23 @@ func resourceFirewallRuleDelete(d *schema.ResourceData, meta interface{}) error 
 	log.Printf("[INFO] Firewall rule %s has been deleted.", rule)
 	d.SetId("")
 	return nil
+}
+
+func getRuleTarget(d *schema.ResourceData) (string, error) {
+	cidrRuleTarget := d.Get("rule_cidr").(string)
+	securityGroupRuleTarget := d.Get("rule_security_group_id").(string)
+
+	if len(cidrRuleTarget) == 0 && len(securityGroupRuleTarget) == 0 {
+		return "", fmt.Errorf("Either one of Security Group or Rule Cidr is required.")
+	}
+
+	if len(cidrRuleTarget) > 0 && len(securityGroupRuleTarget) > 0 {
+		return "", fmt.Errorf("Only one of Security Group or Rule Cidr can be provided per rule.")
+	}
+
+	if len(cidrRuleTarget) > 0 {
+		return cidrRuleTarget, nil
+	}
+
+	return securityGroupRuleTarget, nil
 }

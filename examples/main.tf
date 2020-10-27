@@ -82,7 +82,7 @@ resource "instaclustr_firewall_rule" "example_firewall_rule" {
 
 resource "instaclustr_firewall_rule" "example_firewall_rule_sg" {
   cluster_id = "${instaclustr_cluster.example2.id}"
-  securityGroupId = "sg-0123abcde456ffabc"
+  rule_security_group_id = "sg-0123abcde456ffabc"
   rules = [
     {
       type = "CASSANDRA"
