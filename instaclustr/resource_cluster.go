@@ -324,13 +324,6 @@ func resourceCluster() *schema.Resource {
 					},
 				},
 			},
-
-			"wait": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				ForceNew: false,
-				Default:  false,
-			},
 		},
 	}
 }
@@ -389,23 +382,23 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 	d.Set("cluster_id", id)
 	log.Printf("[INFO] Cluster %s has been created.", id)
 
-	if d.Get("wait").(bool) {
-		return resource.Retry(d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
-			cluster, err := client.ReadCluster(id)
 
-			if err != nil {
+	return resource.Retry(d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
+		cluster, err := client.ReadCluster(id)
+
+		if err != nil {
 				return resource.NonRetryableError(fmt.Errorf("[Error] Error retrieving cluster info: %s", err))
 			}
 
-			if cluster.ClusterStatus == "RUNNING" {
+		if cluster.ClusterStatus == "RUNNING" {
 				return resource.NonRetryableError(resourceClusterRead(d, meta))
 			}
 
-			return resource.RetryableError(fmt.Errorf("[Error] Cluster is in state %s", cluster.ClusterStatus))
-		})
-	} else {
-		return resourceClusterRead(d, meta)
-	}
+		return resource.RetryableError(fmt.Errorf("[Error] Cluster is in state %s", cluster.ClusterStatus))
+	})
+
+	return resourceClusterRead(d, meta)
+
 }
 
 func resourceClusterUpdate(d *schema.ResourceData, meta interface{}) error {
