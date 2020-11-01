@@ -480,6 +480,9 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 			nodes = append(nodes, node.PublicAddress)
 		}
 		err = d.Set("public_contact_addresses", nodes)
+	} else {
+		var a []int = nil
+		err = d.Set("public_contact_addresses", a)
 	}
 
 	if len(cluster.DataCentres[0].Nodes[0].PrivateAddress) != 0 {
