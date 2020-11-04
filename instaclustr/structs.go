@@ -158,6 +158,11 @@ type EncryptionKey struct {
 	Provider string `json:"provider,omitempty"`
 }
 
+type ClusterCredentials struct {
+	ClusterPassword	string `json:"instaclustrUserPassword,omitempty"`
+	ClusterCertificateDownload string `json:"clusterCertificateDownload,omitempty"`
+}
+
 type CreateKafkaUserRequest struct {
 	Username           string `json:"username"`
 	Password           string `json:"password"`
