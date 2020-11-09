@@ -12,8 +12,8 @@ func dataSourceClusterCredentials() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"cluster_id": {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:     	schema.TypeString,
+				Required: 	true,
 			},
 			"cluster_password": {
 				Type:		schema.TypeString,
@@ -42,7 +42,7 @@ func dataSourceClusterCredentialsRead(d *schema.ResourceData, meta interface{}) 
 	d.SetId(fmt.Sprintf("%s-credentials", id))
 	d.Set("cluster_id", id)
 	d.Set("cluster_password", clusterCredentials.ClusterPassword)
-	d.Set("cluster_certificate_download", clusterCredentials.ClusterCertificateDownload)
+	d.Set("certificate_download", clusterCredentials.ClusterCertificateDownload)
 
 	return nil
 }
