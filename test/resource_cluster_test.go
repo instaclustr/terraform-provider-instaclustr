@@ -21,9 +21,9 @@ func TestAccCluster(t *testing.T) {
 	validConfig, _ := ioutil.ReadFile("data/valid.tf")
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
-	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey)
-	updatedConfig := strings.Replace(oriConfig, "testcluster", "newcluster", 1)
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
+	updatedConfig := strings.Replace(oriConfig, "testcluster", "newcluster", 1)
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
 		PreCheck:     func() { AccTestEnvVarsCheck(t) },
@@ -59,8 +59,8 @@ func TestKafkaConnectClusterCreateInstaclustrAWS(t *testing.T) {
 	awsAccessKey := os.Getenv("IC_AWS_ACCESS_KEY")
 	awsSecretKey := os.Getenv("IC_AWS_SECRET_KEY")
 	S3BucketName := os.Getenv("IC_S3_BUCKET_NAME")
-	oriKCConfig := fmt.Sprintf(string(validKCConfig), username, apiKey, kafkaClusterId, awsAccessKey, awsSecretKey, S3BucketName)
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+	oriKCConfig := fmt.Sprintf(string(validKCConfig), username, apiKey, hostname, kafkaClusterId, awsAccessKey, awsSecretKey, S3BucketName)
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
 		PreCheck:     func() { AccTestEnvVarsCheck(t) },
@@ -99,10 +99,10 @@ func TestKafkaConnectClusterCreateNonInstaclustrAZURE(t *testing.T) {
 	saslJaasConfig := os.Getenv("IC_SASL_JAAS_CONFIG")
 	bootstrapServers := os.Getenv("IC_BOOTSTRAP_SERVER")
 	truststore := os.Getenv("IC_TRUSTSTORE")
-	oriKCConfig := fmt.Sprintf(string(validKCConfig), username, apiKey, azureStorageAccountName,
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+	oriKCConfig := fmt.Sprintf(string(validKCConfig), username, apiKey, hostname, azureStorageAccountName,
 		azureStorageAccountKey, azureStorageContainerName, sslEnabledProtocols, sslTruststorePassword,
 		sslProtocol, securityProtocol, saslMechanism, saslJaasConfig, bootstrapServers, truststore)
-	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
 		PreCheck:     func() { AccTestEnvVarsCheck(t) },
@@ -114,29 +114,6 @@ func TestKafkaConnectClusterCreateNonInstaclustrAZURE(t *testing.T) {
 					testCheckResourceValid("validKC"),
 					testCheckResourceCreated("validKC", hostname, username, apiKey),
 				),
-			},
-		},
-	})
-}
-
-func TestKafkaConnectClusterInvalid(t *testing.T) {
-	testAccProvider := instaclustr.Provider()
-	testAccProviders := map[string]terraform.ResourceProvider{
-		"instaclustr": testAccProvider,
-	}
-	readConfig, _ := ioutil.ReadFile("data/invalid_kafka_connect.tf")
-	username := os.Getenv("IC_USERNAME")
-	apiKey := os.Getenv("IC_API_KEY")
-	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
-	invalidConfig := fmt.Sprintf(string(readConfig), username, apiKey, hostname)
-	fmt.Printf("Config : %s", invalidConfig)
-	resource.Test(t, resource.TestCase{
-		Providers: testAccProviders,
-		PreCheck:  func() { AccTestEnvVarsCheck(t) },
-		Steps: []resource.TestStep{
-			{
-				Config:      invalidConfig,
-				ExpectError: regexp.MustCompile("Error creating cluster"),
 			},
 		},
 	})
@@ -242,7 +219,7 @@ func TestAccClusterCustomVPC(t *testing.T) {
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 	providerAccountName := os.Getenv("IC_PROV_ACC_NAME")
 	providerVpcId := os.Getenv("IC_PROV_VPC_ID")
-	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, providerAccountName, providerVpcId)
+	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname, providerAccountName, providerVpcId)
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
 		PreCheck:     func() { AccTestEnvVarsCheck(t) },
@@ -267,13 +244,14 @@ func TestAccClusterCustomVPCInvalid(t *testing.T) {
 	validConfig, _ := ioutil.ReadFile("data/invalid_with_custom_vpc.tf")
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 	providerAccountName := os.Getenv("IC_PROV_ACC_NAME")
 	resource.Test(t, resource.TestCase{
 		Providers: testAccProviders,
 		PreCheck:  func() { AccTestEnvVarsCheck(t) },
 		Steps: []resource.TestStep{
 			{
-				Config:      fmt.Sprintf(string(validConfig), username, apiKey, providerAccountName),
+				Config:      fmt.Sprintf(string(validConfig), username, hostname, apiKey, providerAccountName),
 				ExpectError: regexp.MustCompile("Error creating cluster"),
 			},
 		},
@@ -353,8 +331,8 @@ func TestValidRedisClusterCreate(t *testing.T) {
 	validConfig, _ := ioutil.ReadFile("data/valid_redis_cluster_create.tf")
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
-	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey)
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
 	resource.Test(t, resource.TestCase{
 		Providers: testAccProviders,
 		PreCheck: func() {
@@ -374,4 +352,58 @@ func TestValidRedisClusterCreate(t *testing.T) {
 			},
 		},
 	})
+}
+
+func TestAccClusterCredentials(t *testing.T) {
+	testAccProviders := map[string]terraform.ResourceProvider{
+		"instaclustr": instaclustr.Provider(),
+	}
+	validConfig, _ := ioutil.ReadFile("data/valid_with_password_and_client_encryption.tf")
+	username := os.Getenv("IC_USERNAME")
+	apiKey := os.Getenv("IC_API_KEY")
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
+
+	resource.Test(t, resource.TestCase{
+		Providers:    testAccProviders,
+		PreCheck:     func() { AccTestEnvVarsCheck(t) },
+		CheckDestroy: testCheckResourceDeleted("valid_with_password_and_client_encryption", hostname, username, apiKey),
+		Steps: []resource.TestStep{
+			{
+				Config: oriConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckClusterCredentials(hostname, username, apiKey),
+				),
+			},
+		},
+	})
+}
+
+func testCheckClusterCredentials(hostname, username, apiKey string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		resourceState := s.Modules[0].Resources["data.instaclustr_cluster_credentials.cluster_credentials"]
+
+		client := new(instaclustr.APIClient)
+		client.InitClient(hostname, username, apiKey)
+		clusterId := resourceState.Primary.Attributes["cluster_id"]
+
+		clusterCredentials, err := client.ReadClusterCredentials(clusterId)
+		if err != nil {
+			return fmt.Errorf("Failed to read Cluster Credentials from %s: %s", clusterId, err)
+		}
+
+		if clusterCredentials.ClusterPassword != resourceState.Primary.Attributes["cluster_password"] {
+			return fmt.Errorf("Password of the cluster and resource are different")
+		}
+
+		if clusterCredentials.ClusterCertificateDownload != resourceState.Primary.Attributes["certificate_download"] {
+			return fmt.Errorf("Certificate download link of the cluster and resource are different")
+		}
+
+		if clusterCredentials.ClusterCertificateDownload == "disabled" {
+			return fmt.Errorf("Client encryption is disabled")
+		}
+
+		return nil
+	}
 }
