@@ -297,27 +297,6 @@ func (c *APIClient) DeleteEncryptionKey(keyID string) error {
 	return nil
 }
 
-func (c *APIClient) ReadClusterCredentials(clusterID string) (*ClusterCredentials, error) {
-	url := fmt.Sprintf("%s/provisioning/v1/%s", c.apiServerHostname, clusterID)
-	resp, err := c.MakeRequest(url, "GET", nil)
-	if err != nil {
-		return nil, err
-	}
-
-	bodyText, err := ioutil.ReadAll(resp.Body)
-	var clusterCredentials ClusterCredentials
-	if resp.StatusCode != 202 {
-		return nil, errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
-	}
-	err = json.Unmarshal(bodyText, &clusterCredentials)
-
-	if err != nil {
-		return nil, errors.New(fmt.Sprintf("Could not unmarshal JSON - Status code: %d, message: %s", resp.StatusCode, bodyText))
-	}
-
-	return &clusterCredentials, nil
-}
-
 func (c *APIClient) CreateKafkaUser(clusterID string, data []byte) error {
 	url := fmt.Sprintf("%s/provisioning/v1/%s/kafka/users", c.apiServerHostname, clusterID)
 	resp, err := c.MakeRequest(url, "POST", data)

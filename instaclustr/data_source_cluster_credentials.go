@@ -33,7 +33,7 @@ func dataSourceClusterCredentialsRead(d *schema.ResourceData, meta interface{}) 
 	id := d.Get("cluster_id").(string)
 
 	log.Printf("[INFO] Reading credentials of cluster %s.", id)
-	clusterCredentials, err := client.ReadClusterCredentials(id)
+	cluster, err := client.ReadCluster(id)
 
 	if err != nil {
 		return fmt.Errorf("[Error] Error reading cluster credentials: #{err}")
@@ -41,8 +41,8 @@ func dataSourceClusterCredentialsRead(d *schema.ResourceData, meta interface{}) 
 
 	d.SetId(fmt.Sprintf("%s-credentials", id))
 	d.Set("cluster_id", id)
-	d.Set("cluster_password", clusterCredentials.ClusterPassword)
-	d.Set("certificate_download", clusterCredentials.ClusterCertificateDownload)
+	d.Set("cluster_password", cluster.InstaclustrUserPassword)
+	d.Set("certificate_download", cluster.ClusterCertificateDownload)
 
 	return nil
 }
