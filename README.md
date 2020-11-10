@@ -96,7 +96,7 @@ resource "instaclustr_cluster" "example" {
 
 ## Configuration
 ### Resources
-### Resource:  `instaclustr_cluster`  
+### Resource:  `instaclustr_cluster`
 A resource for managing clusters on Instaclustr Managed Platform. A cluster contains a base application and several add-ons.
 
 #### Properties
@@ -166,6 +166,15 @@ replica_nodes|The number of Replica nodes in a generated Redis Cluster.|Redis|Re
 dedicated_zookeeper|Indicate whether this Kafka cluster should allocate dedicated Zookeeper nodes|Kafka|false
 zookeeper_node_size|If `dedicated_zookeeper` is true, then it is the node size for the dedicated Zookeeper nodes. Have a look [here](https://www.instaclustr.com/support/api-integrations/api-reference/provisioning-api/#section-create-cluster) (Kafka bundle options table) for node size options. |Kafka
 zookeeper_node_count|If `dedicated_zookeeper` is true, then it indicates how many nodes are allocated to be Zookeeper nodes|Kafka
+
+### Data Source `instaclustr_cluster_credentials`
+A read-only data source used to get the password and certificate download link of a cluster.
+
+Property | Description | Default
+---------|-------------|--------
+cluster_id|The ID of an existing Instaclustr cluster.|Required
+cluster_password|The password of the existing Instaclustr cluster.|Computed
+certificate_download|The certificate download link of the existing Instaclustr cluster.|Computed
 
 ### Resource:  `instaclustr_firewall_rule`                             
 A resource for managing cluster firewall rules on Instaclustr Managed Platform. A firewall rule allows access to your Instaclustr cluster.

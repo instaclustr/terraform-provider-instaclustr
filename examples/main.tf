@@ -9,6 +9,7 @@ resource "instaclustr_encryption_key" "add_ebs_key" {
     provider = "INSTACLUSTR"
 }
 
+
 resource "instaclustr_cluster" "example2" {
   cluster_name = "testcluster"
   node_size = "t3.small"
@@ -45,6 +46,10 @@ resource "instaclustr_cluster" "example2" {
     bundle = "ZEPPELIN"
     version = "apache-zeppelin:0.8.0-spark-2.3.2"
   }
+}
+
+data "instaclustr_cluster_credentials" "example_credentials" {
+  cluster_id = "${instaclustr_cluster.example2.id}"
 }
 
 resource "instaclustr_cluster" "custom_vpc_example" {
