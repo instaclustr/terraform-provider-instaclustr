@@ -96,10 +96,14 @@ resource "instaclustr_cluster" "example" {
 
 ## Configuration
 ### Resources
-### Resource:  `instaclustr_cluster`  
-A resource for managing clusters on Instaclustr Managed Platform. A cluster contains a base application and several add-ons.
+### Resource:  `instaclustr_cluster` and Data Source `instaclustr_cluster_credentials`
+Resources for managing clusters on Instaclustr Managed Platform. 
+A cluster contains a base application and several add-ons.
+Cluster credentials is a read-only data source used to get the password and certifcate download link of a cluster.
 
 #### Properties
+`instaclustr_cluster`
+
 Property | Description | Default
 ---------|-------------|--------
 cluster_name|The name of new cluster. May contain a combination of letters, numbers and underscores with a maximum length of 32 characters.|Required
@@ -166,6 +170,14 @@ replica_nodes|The number of Replica nodes in a generated Redis Cluster.|Redis|Re
 dedicated_zookeeper|Indicate whether this Kafka cluster should allocate dedicated Zookeeper nodes|Kafka|false
 zookeeper_node_size|If `dedicated_zookeeper` is true, then it is the node size for the dedicated Zookeeper nodes. Have a look [here](https://www.instaclustr.com/support/api-integrations/api-reference/provisioning-api/#section-create-cluster) (Kafka bundle options table) for node size options. |Kafka
 zookeeper_node_count|If `dedicated_zookeeper` is true, then it indicates how many nodes are allocated to be Zookeeper nodes|Kafka
+
+`instaclustr_cluster_credentials`
+
+Property | Description | Default
+---------|-------------|--------
+cluster_id|The ID of an existing Instaclustr cluster.|Required
+cluster_password|The password of the existing Instaclustr cluster.|Computed
+certificate_download|The certifiacte download link of the existing Instaclustr cluster.|Computed
 
 ### Resource:  `instaclustr_firewall_rule`                             
 A resource for managing cluster firewall rules on Instaclustr Managed Platform. A firewall rule allows access to your Instaclustr cluster.
