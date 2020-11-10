@@ -174,7 +174,7 @@ Property | Description | Default
 ---------|-------------|--------
 cluster_id|The ID of an existing Instaclustr cluster.|Required
 cluster_password|The password of the existing Instaclustr cluster.|Computed
-certificate_download|The certifiacte download link of the existing Instaclustr cluster.|Computed
+certificate_download|The certificate download link of the existing Instaclustr cluster.|Computed
 
 ### Resource:  `instaclustr_firewall_rule`                             
 A resource for managing cluster firewall rules on Instaclustr Managed Platform. A firewall rule allows access to your Instaclustr cluster.
