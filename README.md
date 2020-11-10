@@ -97,7 +97,7 @@ resource "instaclustr_cluster" "example" {
 ## Configuration
 ### Resources
 ### Resource:  `instaclustr_cluster`
-A resource for managing clusters on Instaclustr Managed Platform.  A cluster contains a base application and several add-ons.
+A resource for managing clusters on Instaclustr Managed Platform. A cluster contains a base application and several add-ons.
 
 #### Properties
 Property | Description | Default
