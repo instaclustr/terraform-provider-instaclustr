@@ -172,3 +172,13 @@ type UpdateKafkaUserRequest struct {
 type DeleteKafkaUserRequest struct {
 	Username string `json:"username"`
 }
+
+type UpdateKafkaSchemaRegistryUserRequest struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+type UpdateKafkaRestProxyUserRequest struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
