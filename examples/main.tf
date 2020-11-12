@@ -241,3 +241,58 @@ resource "instaclustr_cluster" "example-redis" {
     }
   }
 }
+
+resource "instaclustr_cluster" "example_kafka_schema_reg_and_reg_proxy" {
+  cluster_name = "<cluster name>"
+  node_size = "t3.small-20-gp2"
+  data_centre = "US_WEST_2"
+  sla_tier = "NON_PRODUCTION"
+  cluster_network = "192.168.0.0/18"
+  cluster_provider = {
+    name = "AWS_VPC"
+  }
+  rack_allocation = {
+    number_of_racks = 3
+    nodes_per_rack = 1
+  }
+  bundle {
+    bundle = "KAFKA"
+    version = "2.5.1"
+  }
+  bundle {
+    bundle = "KAFKA_REST_PROXY"
+    version = "5.0.0"
+  }
+
+  bundle {
+    bundle = "KAFKA_SCHEMA_REGISTRY"
+    version = "5.0.0"
+  }
+}
+
+data "instaclustr_kafka_schema_registry_user_list" "kafka_schema_reg_user_list" {
+  cluster_id = "${instaclustr_clustr.example_kafka_schema_reg_and_reg_proxy.cluster_id}"
+}
+
+data "instaclustr_kafka_rest_proxy_user_list" "kafka_rest_proxy_user_list" {
+  cluster_id = "${instaclustr_clustr.example_kafka_schema_reg_and_reg_proxy.cluster_id}"
+}
+
+
+resource "instaclustr_kafka_schema_registry_user" "example_user_test1" {
+  cluster_id = instaclustr_cluster.example_kafka_schema_reg_and_reg_proxy.cluster_id
+  username = "ickafkaschema"
+  password = "Test123test!"
+  initial_permissions = "standard"
+}
+
+resource "instaclustr_kafka_rest_proxy_userr" "example_user_test2" {
+  cluster_id = instaclustr_cluster.example_kafka_schema_reg_and_reg_proxy.cluster_id
+  username = "ickafkarest"
+  password = "Test123test!"
+  initial_permissions = "standard"
+}
+
+
+
+
