@@ -31,7 +31,7 @@ func dataSourceKafkaSchemaRegistryUserList() *schema.Resource {
 func dataSourceKafkaSchemaRegistryUserListRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*Config).Client
 
-	usernameList, err := client.ReadKafkaUserList(d.Get("cluster_id").(string))
+	usernameList, err := client.ReadKafkaSchemaRegistryUserList(d.Get("cluster_id").(string))
 	if err != nil {
 		return fmt.Errorf("[Error] Error fetching the kafka schema registry user list: %s", err)
 	}

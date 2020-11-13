@@ -60,7 +60,7 @@ func resourceKafkaSchemaRegistryUserUpdate(d *schema.ResourceData, meta interfac
 		return fmt.Errorf("[Error] Error creating kafka schema registry user update request: %s", err)
 	}
 
-	err = client.UpdateKafkaUser(d.Get("cluster_id").(string), jsonStr)
+	err = client.UpdateKafkaSchemaRegistryUser(d.Get("cluster_id").(string), jsonStr)
 	if err != nil {
 		return fmt.Errorf("[Error] Error updating the password for kafka schema registry user: %s", err)
 	}

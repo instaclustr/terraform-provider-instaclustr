@@ -381,3 +381,43 @@ func (c *APIClient) UpdateKafkaRestProxyUser(clusterID string, data []byte) erro
 	}
 	return nil
 }
+
+func (c *APIClient) ReadKafkaSchemaRegistryUserList(clusterID string) ([]string, error) {
+	url := fmt.Sprintf("%s/provisioning/v1/%s/kafka_schema_registry/users", c.apiServerHostname, clusterID)
+	resp, err := c.MakeRequest(url, "GET", nil)
+	if err != nil {
+		return nil, err
+	}
+	bodyText, err := ioutil.ReadAll(resp.Body)
+	if resp.StatusCode != 200 {
+		return nil, errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
+	}
+
+	usernameList := []string {}
+	err = json.Unmarshal(bodyText, &usernameList)
+	if err != nil {
+		return nil, err
+	}
+
+	return usernameList, nil
+}
+
+func (c *APIClient) ReadKafkaRestProxyUserList(clusterID string) ([]string, error) {
+	url := fmt.Sprintf("%s/provisioning/v1/%s/kafka_rest_proxy/users", c.apiServerHostname, clusterID)
+	resp, err := c.MakeRequest(url, "GET", nil)
+	if err != nil {
+		return nil, err
+	}
+	bodyText, err := ioutil.ReadAll(resp.Body)
+	if resp.StatusCode != 200 {
+		return nil, errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
+	}
+
+	usernameList := []string {}
+	err = json.Unmarshal(bodyText, &usernameList)
+	if err != nil {
+		return nil, err
+	}
+
+	return usernameList, nil
+}

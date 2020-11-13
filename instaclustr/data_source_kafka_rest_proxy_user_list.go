@@ -31,7 +31,7 @@ func dataSourceKafkaRestProxyUserList() *schema.Resource {
 func dataSourceKafkaRestProxyUserListRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*Config).Client
 
-	usernameList, err := client.ReadKafkaUserList(d.Get("cluster_id").(string))
+	usernameList, err := client.ReadKafkaRestProxyUserList(d.Get("cluster_id").(string))
 	if err != nil {
 		return fmt.Errorf("[Error] Error fetching the kafka rest proxy user list: %s", err)
 	}
