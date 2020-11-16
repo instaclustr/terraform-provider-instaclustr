@@ -278,18 +278,17 @@ data "instaclustr_kafka_rest_proxy_user_list" "kafka_rest_proxy_user_list" {
   cluster_id = "${instaclustr_clustr.example_kafka_schema_reg_and_reg_proxy.cluster_id}"
 }
 
-
 resource "instaclustr_kafka_schema_registry_user" "example_user_test1" {
   cluster_id = instaclustr_cluster.example_kafka_schema_reg_and_reg_proxy.cluster_id
   username = "ickafkaschema"
-  password = "Test123test!"
+  password = "SchemaRegistryTest123test!"
   initial_permissions = "standard"
 }
 
-resource "instaclustr_kafka_rest_proxy_userr" "example_user_test2" {
+resource "instaclustr_kafka_rest_proxy_user" "example_user_test2" {
   cluster_id = instaclustr_cluster.example_kafka_schema_reg_and_reg_proxy.cluster_id
   username = "ickafkarest"
-  password = "Test123test!"
+  password = "RestProxyTest123test!"
   initial_permissions = "standard"
 }
 
