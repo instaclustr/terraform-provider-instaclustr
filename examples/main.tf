@@ -242,7 +242,7 @@ resource "instaclustr_cluster" "example-redis" {
   }
 }
 
-resource "instaclustr_cluster" "example_kafka_schema_reg_and_reg_proxy" {
+resource "instaclustr_cluster" "example_kafka_schema_reg_and_rest_proxy" {
   cluster_name = "<cluster name>"
   node_size = "t3.small-20-gp2"
   data_centre = "US_WEST_2"
