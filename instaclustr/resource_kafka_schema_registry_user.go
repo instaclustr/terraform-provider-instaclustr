@@ -12,6 +12,7 @@ func resourceKafkaSchemaRegistry() *schema.Resource {
 	return &schema.Resource{
 		Read:   resourceKafkaSchemaRegistryUserRead,
 		Update: resourceKafkaSchemaRegistryUserUpdate,
+		Delete: resourceKafkaSchemaRegistryUserDelete,
 
 		Schema: map[string]*schema.Schema{
 			"cluster_id": {
@@ -66,5 +67,10 @@ func resourceKafkaSchemaRegistryUserUpdate(d *schema.ResourceData, meta interfac
 	}
 
 	log.Printf("[INFO] The password for Kafka Schema Registry user %s has been updated.", d.Get("username").(string))
+	return nil
+}
+
+func resourceKafkaSchemaRegistryUserDelete(d *schema.ResourceData, meta interface{}) error {
+	// there is almost no point in reading, because the API only returns the username
 	return nil
 }

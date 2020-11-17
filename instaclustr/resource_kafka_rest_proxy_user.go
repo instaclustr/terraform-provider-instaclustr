@@ -12,6 +12,7 @@ func resourceKafkaRestProxyUser() *schema.Resource {
 	return &schema.Resource{
 		Read:   resourceKafkaRestProxyUserRead,
 		Update: resourceKafkaRestProxyUserUpdate,
+		Delete: resourceKafkaRestProxyUserDelete,
 
 		Schema: map[string]*schema.Schema{
 			"cluster_id": {
@@ -66,5 +67,10 @@ func resourceKafkaRestProxyUserUpdate(d *schema.ResourceData, meta interface{}) 
 	}
 
 	log.Printf("[INFO] The password for Kafka Rest Proxy user %s has been updated.", d.Get("username").(string))
+	return nil
+}
+
+func resourceKafkaRestProxyUserDelete(d *schema.ResourceData, meta interface{}) error {
+	// there is almost no point in reading, because the API only returns the username
 	return nil
 }
