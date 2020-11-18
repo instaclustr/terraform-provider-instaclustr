@@ -118,7 +118,7 @@ func checkKafkaClusterRunning(hostname, username, apiKey string) resource.TestCh
 				return fmt.Errorf("[Error] Timed out waiting for cluster to have the status 'RUNNING'. Current cluster status is '%s'", latestStatus)
 			}
 			timePassed += ClusterReadInterval
-			fmt.Printf("\033[u\033[K%ds has elapsed while waiting for the cluster to reach RUNNING.", timePassed)
+			fmt.Printf("\033[u\033[K%ds has elapsed while waiting for the cluster to reach RUNNING.\n", timePassed)
 			time.Sleep(ClusterReadInterval * time.Second)
 		}
 		fmt.Printf("\n")

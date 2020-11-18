@@ -446,7 +446,7 @@ func getBundles(d *schema.ResourceData) ([]Bundle, error) {
 	bundles := make([]Bundle, 0)
 	for _, inBundle := range d.Get("bundle").([]interface{}) {
 		var bundle Bundle
-		err := mapstructure.Decode(inBundle.(map[string]interface{}), &bundle)
+		err := mapstructure.WeakDecode(inBundle.(map[string]interface{}), &bundle)
 		if err != nil {
 			return nil, err
 		}
