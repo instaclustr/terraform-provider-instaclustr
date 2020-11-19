@@ -158,27 +158,17 @@ type EncryptionKey struct {
 	Provider string `json:"provider,omitempty"`
 }
 
-type CreateKafkaUserRequest struct {
+type CreateBundleUserRequest struct {
 	Username           string `json:"username"`
 	Password           string `json:"password"`
 	InitialPermissions string `json:"initial-permissions"`
 }
 
-type UpdateKafkaUserRequest struct {
+type UpdateBundleUserRequest struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
-type DeleteKafkaUserRequest struct {
+type DeleteBundleUserRequest struct {
 	Username string `json:"username"`
-}
-
-type UpdateKafkaSchemaRegistryUserRequest struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
-
-type UpdateKafkaRestProxyUserRequest struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
 }
