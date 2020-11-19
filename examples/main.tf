@@ -1,12 +1,15 @@
+//I should add my new content for THIS FILE and then push the changes
+
+
 provider "instaclustr" {
   username = "<Your instaclustr username here>"
   api_key = "<Your provisioning API key here>"
 }
 
 resource "instaclustr_encryption_key" "add_ebs_key" {
-    alias = "testkey"
-    arn = "<Your KMS key ARN here>"
-    provider = "INSTACLUSTR"
+  alias = "testkey"
+  arn = "<Your KMS key ARN here>"
+  provider = "INSTACLUSTR"
 }
 
 
@@ -166,41 +169,41 @@ resource "instaclustr_cluster" "example-elasticsearch" {
 }
 
 resource "instaclustr_cluster" "validKC" {
-    cluster_name = "testcluster"
-    node_size = "t3.medium-10-gp2"
-    data_centre = "US_WEST_2"
-    sla_tier = "NON_PRODUCTION"
-    cluster_network = "192.168.0.0/18"
-    private_network_cluster = false
-    pci_compliant_cluster = false
-    cluster_provider = {
-        name = "AWS_VPC"
-    }
-    rack_allocation = {
-        number_of_racks = 3
-        nodes_per_rack = 1
-    }
+  cluster_name = "testcluster"
+  node_size = "t3.medium-10-gp2"
+  data_centre = "US_WEST_2"
+  sla_tier = "NON_PRODUCTION"
+  cluster_network = "192.168.0.0/18"
+  private_network_cluster = false
+  pci_compliant_cluster = false
+  cluster_provider = {
+    name = "AWS_VPC"
+  }
+  rack_allocation = {
+    number_of_racks = 3
+    nodes_per_rack = 1
+  }
 
-    bundle {
-        bundle = "KAFKA_CONNECT"
-        version = "2.3.1"
-        options = {
-            target_kafka_cluster_id = "${instaclustr_cluster.example_kafka.cluster_id}"
-            vpc_id = "SEPARATE_VPC"
-        }
+  bundle {
+    bundle = "KAFKA_CONNECT"
+    version = "2.3.1"
+    options = {
+      target_kafka_cluster_id = "${instaclustr_cluster.example_kafka.id}"
+      vpc_id = "SEPARATE_VPC"
     }
+  }
 }
 
 resource "instaclustr_kafka_user" "kafka_user_charlie" {
-  cluster_id = "${instaclustr_clustr.example_kafka.cluster_id}"
+  cluster_id = "${instaclustr_cluster.example_kafka.id}"
   username = "charlie"
   password = "charlie123!"
   initial_permissions = "none"
-}                       
-                              
-data "instaclustr_kafka_user_list" "kafka_user_list" { 
-  cluster_id = "${instaclustr_clustr.example_kafka.cluster_id}"
-}  
+}
+
+data "instaclustr_kafka_user_list" "kafka_user_list" {
+  cluster_id = "${instaclustr_cluster.example_kafka.id}"
+}
 
 resource "instaclustr_cluster" "private_cluster_example" {
   cluster_name = "testcluster"
@@ -242,56 +245,32 @@ resource "instaclustr_cluster" "example-redis" {
   }
 }
 
-resource "instaclustr_cluster" "example_kafka_schema_reg_and_rest_proxy" {
-  cluster_name = "<cluster name>"
-  node_size = "t3.small-20-gp2"
-  data_centre = "US_WEST_2"
-  sla_tier = "NON_PRODUCTION"
-  cluster_network = "192.168.0.0/18"
-  cluster_provider = {
-    name = "AWS_VPC"
-  }
-  rack_allocation = {
-    number_of_racks = 3
-    nodes_per_rack = 1
-  }
-  bundle {
-    bundle = "KAFKA"
-    version = "2.5.1"
-  }
-  bundle {
-    bundle = "KAFKA_REST_PROXY"
-    version = "5.0.0"
-  }
-
-  bundle {
-    bundle = "KAFKA_SCHEMA_REGISTRY"
-    version = "5.0.0"
-  }
-}
-
-data "instaclustr_kafka_schema_registry_user_list" "kafka_schema_reg_user_list" {
-  cluster_id = "${instaclustr_clustr.example_kafka_schema_reg_and_reg_proxy.cluster_id}"
-}
-
 data "instaclustr_kafka_rest_proxy_user_list" "kafka_rest_proxy_user_list" {
-  cluster_id = "${instaclustr_clustr.example_kafka_schema_reg_and_reg_proxy.cluster_id}"
+  cluster_id = "${instaclustr_cluster.example_kafka.id}"
 }
 
-resource "instaclustr_kafka_schema_registry_user" "example_user_test1" {
-  cluster_id = instaclustr_cluster.example_kafka_schema_reg_and_reg_proxy.cluster_id
+data "instaclustr_kafka_schema_registry_user_list" "kafka_rest_proxy_user_list" {
+  cluster_id = "${instaclustr_cluster.example_kafka.id}"
+}
+
+resource "instaclustr_kafka_schema_registry_user" "update_kafka_schema_registry_user" {
+  cluster_id = "${instaclustr_cluster.example_kafka.id}"
   username = "ickafkaschema"
   password = "SchemaRegistryTest123test!"
-  initial_permissions = "standard"
+  initial_permissions = "none"
 }
 
-resource "instaclustr_kafka_rest_proxy_user" "example_user_test2" {
-  cluster_id = instaclustr_cluster.example_kafka_schema_reg_and_reg_proxy.cluster_id
+resource "instaclustr_kafka_rest_proxy_user" "update_kafka_rest_proxy_user" {
+  cluster_id = "${instaclustr_cluster.example_kafka.id}"
   username = "ickafkarest"
   password = "RestProxyTest123test!"
-  initial_permissions = "standard"
+  initial_permissions = "none"
 }
 
+data "instaclustr_kafka_rest_proxy_user_list" "kafka_rest_proxy_user_list_2" {
+  cluster_id = "${instaclustr_cluster.example_kafka.id}"
+}
 
-
-
+data "instaclustr_kafka_schema_registry_user_list" "kafka_rest_proxy_user_list_2" {
+  cluster_id = "${instaclustr_cluster.example_kafka.id}"
+}
