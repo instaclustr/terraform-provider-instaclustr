@@ -52,6 +52,8 @@ func resourceBundleUserCreate(d *schema.ResourceData, meta interface{}) error {
 	username := d.Get("username").(string)
 	bundle_name := d.Get("bundle_name").(string)
 
+	//todo: check if rest proxy or schema reg and then return nill, because those 2 bundles don't allow user creation
+
 	log.Printf("[INFO] Creating %s user in %s.", bundle_name,cluster_id)
 	client := meta.(*Config).Client
 
