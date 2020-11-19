@@ -90,7 +90,7 @@ func resourceBundleUserCreate(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("[Error] Error creating %s user creation request: %s", bundle_name, err)
 	}
 
-	err = client.CreateKafkaUser(cluster_id, jsonStr)
+	err = client.CreateBundleUser(cluster_id, bundle_name, jsonStr)
 	if err != nil {
 		return fmt.Errorf("[Error] Error creating %s user: %s", bundle_name, err)
 	}
