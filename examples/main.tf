@@ -194,15 +194,17 @@ resource "instaclustr_cluster" "validKC" {
   }
 }
 
-resource "instaclustr_kafka_user" "kafka_user_charlie" {
+resource "instaclustr_bundle_user" "kafka_user_tom" {
   cluster_id = "${instaclustr_cluster.example_kafka.id}"
-  username = "charlie"
-  password = "charlie123!"
+  username = "tom"
+  password = "tom123test!"
+  bundle_name = "kafka"
   initial_permissions = "none"
 }
 
-data "instaclustr_kafka_user_list" "kafka_user_list" {
+data "instaclustr_bundle_user" "kafka_user_list" {
   cluster_id = "${instaclustr_cluster.example_kafka.id}"
+  bundle_name = "kafka"
 }
 
 resource "instaclustr_cluster" "private_cluster_example" {
@@ -245,32 +247,28 @@ resource "instaclustr_cluster" "example-redis" {
   }
 }
 
-data "instaclustr_kafka_rest_proxy_user_list" "kafka_rest_proxy_user_list" {
+data "instaclustr_bundle_user_list" "kafka_rest_proxy_user_list" {
   cluster_id = "${instaclustr_cluster.example_kafka.id}"
+  bundle_name = "kafka_rest_proxy"
 }
 
-data "instaclustr_kafka_schema_registry_user_list" "kafka_rest_proxy_user_list" {
+data "instaclustr_bundle_user_list" "kafka_schema_registry_user_list" {
   cluster_id = "${instaclustr_cluster.example_kafka.id}"
+  bundle_name = "kafka_schema_registry"
 }
 
-resource "instaclustr_kafka_schema_registry_user" "update_kafka_schema_registry_user" {
+resource "instaclustr_bundle_user" "update_kafka_schema_registry_user" {
   cluster_id = "${instaclustr_cluster.example_kafka.id}"
   username = "ickafkaschema"
   password = "SchemaRegistryTest123test!"
   initial_permissions = "none"
+  bundle_name = "kafka_schema_registry"
 }
 
-resource "instaclustr_kafka_rest_proxy_user" "update_kafka_rest_proxy_user" {
+resource "instaclustr_bundle_user" "update_kafka_rest_proxy_user" {
   cluster_id = "${instaclustr_cluster.example_kafka.id}"
   username = "ickafkarest"
   password = "RestProxyTest123test!"
   initial_permissions = "none"
-}
-
-data "instaclustr_kafka_rest_proxy_user_list" "kafka_rest_proxy_user_list_2" {
-  cluster_id = "${instaclustr_cluster.example_kafka.id}"
-}
-
-data "instaclustr_kafka_schema_registry_user_list" "kafka_rest_proxy_user_list_2" {
-  cluster_id = "${instaclustr_cluster.example_kafka.id}"
+  bundle_name = "kafka_rest_proxy"
 }
