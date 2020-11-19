@@ -10,6 +10,7 @@ import (
 
 func resourceKafkaSchemaRegistry() *schema.Resource {
 	return &schema.Resource{
+		Create: resourceKafkaSchemaRegistryUserCreate,
 		Read:   resourceKafkaSchemaRegistryUserRead,
 		Update: resourceKafkaSchemaRegistryUserUpdate,
 		Delete: resourceKafkaSchemaRegistryUserDelete,
@@ -39,6 +40,11 @@ func resourceKafkaSchemaRegistry() *schema.Resource {
 			},
 		},
 	}
+}
+
+func resourceKafkaSchemaRegistryUserCreate(d *schema.ResourceData, meta interface{}) error {
+	// we do not support create user feature for kafka schema registry at the moment
+	return nil
 }
 
 func resourceKafkaSchemaRegistryUserRead(d *schema.ResourceData, meta interface{}) error {

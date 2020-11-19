@@ -10,6 +10,7 @@ import (
 
 func resourceKafkaRestProxyUser() *schema.Resource {
 	return &schema.Resource{
+		Create: resourceKafkaRestProxyUserCreate,
 		Read:   resourceKafkaRestProxyUserRead,
 		Update: resourceKafkaRestProxyUserUpdate,
 		Delete: resourceKafkaRestProxyUserDelete,
@@ -39,6 +40,11 @@ func resourceKafkaRestProxyUser() *schema.Resource {
 			},
 		},
 	}
+}
+
+func resourceKafkaRestProxyUserCreate(d *schema.ResourceData, meta interface{}) error {
+	// we do not support create user feature for kafka rest proxy at the moment
+	return nil
 }
 
 func resourceKafkaRestProxyUserRead(d *schema.ResourceData, meta interface{}) error {
