@@ -172,3 +172,18 @@ type UpdateBundleUserRequest struct {
 type DeleteBundleUserRequest struct {
 	Username string `json:"username"`
 }
+
+type CreateKafkaUserRequest struct {
+	Username           string `json:"username"`
+	Password           string `json:"password"`
+	InitialPermissions string `json:"initial-permissions"`
+}
+
+type UpdateKafkaUserRequest struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+type DeleteKafkaUserRequest struct {
+	Username string `json:"username"`
+}
