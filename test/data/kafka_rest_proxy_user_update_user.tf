@@ -34,7 +34,7 @@ resource "instaclustr_cluster" "kafka_rest_proxy_cluster" {
   }
 }
 
-resource "instaclustr_kafka_rest_proxy_user" "kafka_rest_proxy_user_update" {
+resource "instaclustr_bundle_user" "kafka_rest_proxy_user_update" {
   cluster_id = "${instaclustr_cluster.kafka_rest_proxy_cluster.cluster_id}"
   username = "ickafkarest"
   password = "%s"

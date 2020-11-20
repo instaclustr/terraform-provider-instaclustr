@@ -101,9 +101,9 @@ func checkKafkaRestProxyClusterRunning(hostname, username, apiKey string) resour
 
 func checkKafkaRestProxyUserUpdated(newPassword string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		resourceState := s.Modules[0].Resources["instaclustr_kafka_rest_proxy_user.kafka_rest_proxy_user_update"]
+		resourceState := s.Modules[0].Resources["instaclustr_bundle_user.kafka_rest_proxy_user_update"]
 		if resourceState == nil {
-			return fmt.Errorf("instaclustr_kafka_rest_proxy_user.kafka_rest_proxy_user_update resource not found in state")
+			return fmt.Errorf("instaclustr_bundle_user.kafka_rest_proxy_user_update resource not found in state")
 		}
 
 		instanceState := resourceState.Primary
