@@ -30,11 +30,8 @@ func Provider() *schema.Provider {
 			"instaclustr_bundle_user": 			resourceBundleUser(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
-			"instaclustr_kafka_user_list": dataSourceKafkaUserList(),
-			"instaclustr_cluster_credentials":	dataSourceClusterCredentials(),
-			"instaclustr_kafka_rest_proxy_user_list": dataSourceKafkaRestProxyUserList(),
-			"instaclustr_kafka_schema_registry_user_list": dataSourceKafkaSchemaRegistryUserList(),
 			"instaclustr_bundle_user_list": dataSourceBundleUserList(),
+			"instaclustr_cluster_credentials":	dataSourceClusterCredentials(),
 		},
 	}
 	provider.ConfigureFunc = providerConfigure
