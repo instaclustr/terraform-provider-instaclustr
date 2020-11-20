@@ -34,9 +34,10 @@ resource "instaclustr_cluster" "kafka_schema_registry_cluster" {
   }
 }
 
-resource "instaclustr_kafka_schema_registry_user" "kafka_schema_registry_user_update" {
-  cluster_id = "${instaclustr_cluster.kafka_schema_registry_cluster.cluster_id}"
+resource "instaclustr_bundle_user" "kafka_schema_registry_user_update" {
+  cluster_id = "${instaclustr_cluster.kafka_schema_registry_cluster.id}"
   username = "ickafkaschema"
   password = "%s"
   initial_permissions = "none"
+  bundle_name = "kafka_schema_registry"
 }

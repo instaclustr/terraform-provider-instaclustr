@@ -101,9 +101,9 @@ func checkKafkaSchemaRegistryClusterRunning(hostname, username, apiKey string) r
 
 func checkKafkaSchemaRegistryUserUpdated(newPassword string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		resourceState := s.Modules[0].Resources["instaclustr_kafka_schema_registry_user.kafka_schema_registry_user_update"]
+		resourceState := s.Modules[0].Resources["instaclustr_bundle_user.kafka_schema_registry_user_update"]
 		if resourceState == nil {
-			return fmt.Errorf("instaclustr_kafka_schema_registry_user.kafka_schema_registry_user_update resource not found in state")
+			return fmt.Errorf("instaclustr_bundle_user.kafka_schema_registry_user_update resource not found in state")
 		}
 
 		instanceState := resourceState.Primary

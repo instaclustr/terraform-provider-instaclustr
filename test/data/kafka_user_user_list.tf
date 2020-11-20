@@ -30,13 +30,15 @@ resource "instaclustr_cluster" "kafka_cluster" {
   }
 }
 
-resource "instaclustr_kafka_user" "kafka_user_charlie" {
-  cluster_id = "${instaclustr_cluster.kafka_cluster.cluster_id}"
+resource "instaclustr_bundle_user" "kafka_user_charlie" {
+  cluster_id = "${instaclustr_cluster.kafka_cluster.id}"
   username = "%s"
   password = "%s"
   initial_permissions = "none"
+  bundle_name = "kafka"
 }
 
-data "instaclustr_kafka_user_list" "kafka_user_list" {
-  cluster_id = "${instaclustr_cluster.kafka_cluster.cluster_id}"
+data "instaclustr_bundle_user_list" "kafka_user_list" {
+  cluster_id = "${instaclustr_cluster.kafka_cluster.id}"
+  bundle_name = "kafka"
 }
