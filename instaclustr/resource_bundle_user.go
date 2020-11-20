@@ -154,9 +154,9 @@ func resourceBundleUserDelete(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("[Error] Error creating %s user update request: %s", d.Get("bundle_name"), err)
 	}
 
-	err = client.DeleteBundleUser(d.Get("cluster_id").(string), d.Get("bundle_name"), jsonStr)
+	err = client.DeleteBundleUser(d.Get("cluster_id").(string), []byte(d.Get("bundle_name").(string)), jsonStr)
 	if err != nil {
-		return fmt.Errorf("[Error] Error deleting %s user: %s", d.Get("bundle_name"), err)
+		return fmt.Errorf("[Error] Error deleting %s user: %s", d.Get("bundle_name").(string), err)
 	}
 
 	removeBundleUserResource(d)
