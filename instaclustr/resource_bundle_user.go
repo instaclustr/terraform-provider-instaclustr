@@ -30,6 +30,7 @@ func resourceBundleUser() *schema.Resource {
 			"password": {
 				Type:     schema.TypeString,
 				Required: true,
+				Sensitive: true,
 			},
 
 			"initial_permissions": {
