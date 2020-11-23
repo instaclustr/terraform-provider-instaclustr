@@ -19,6 +19,7 @@ func resourceBundleUser() *schema.Resource {
 			"cluster_id": {
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
 			},
 
 			"username": {
@@ -43,6 +44,7 @@ func resourceBundleUser() *schema.Resource {
 			"bundle_name": {
 				Type: 	  schema.TypeString,
 				Required: true,
+				ForceNew: true,
 			},
 		},
 	}
