@@ -56,7 +56,7 @@ func resourceBundleUserCreate(d *schema.ResourceData, meta interface{}) error {
 	bundle_name := d.Get("bundle_name").(string)
 
 	if (bundle_name == "kafka_schema_registry") || (bundle_name == "kafka_rest_proxy") {
-		log.Printf("[Error] User rceation is currently not supported for %s bundle", bundle_name)
+		log.Printf("[Error] User creation is currently not supported for %s bundle", bundle_name)
 		return nil
 	}
 
