@@ -298,7 +298,7 @@ func (c *APIClient) DeleteEncryptionKey(keyID string) error {
 }
 
 func (c *APIClient) CreateBundleUser(clusterID string, bundleName string, data []byte) error {
-	url := fmt.Sprintf("%s/provisioning/v1/%s/%s/users", c.apiServerHostname, bundleName, clusterID)
+	url := fmt.Sprintf("%s/provisioning/v1/%s/%s/users", c.apiServerHostname, clusterID, bundleName)
 	resp, err := c.MakeRequest(url, "POST", data)
 	if err != nil {
 		return err
