@@ -343,7 +343,7 @@ func (c *APIClient) UpdateBundleUser(clusterID string, bundleName string, data [
 	return nil
 }
 
-func (c *APIClient) DeleteBundleUser(clusterID string, bundleName, data []byte) error {
+func (c *APIClient) DeleteBundleUser(clusterID string, bundleName string, data []byte) error {
 	url := fmt.Sprintf("%s/provisioning/v1/%s/%s/users", c.apiServerHostname, bundleName, clusterID)
 	resp, err := c.MakeRequest(url, "DELETE", data)
 	if err != nil {
