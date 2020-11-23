@@ -267,19 +267,3 @@ data "instaclustr_bundle_user_list" "kafka_schema_registry_user_list" {
   cluster_id = "${instaclustr_cluster.example_kafka.id}"
   bundle_name = "kafka_schema_registry"
 }
-
-resource "instaclustr_bundle_user" "update_kafka_schema_registry_user" {
-  cluster_id = "${instaclustr_cluster.example_kafka.id}"
-  username = "ickafkaschema"
-  password = "SchemaRegistryTest123test!"
-  initial_permissions = "none"
-  bundle_name = "kafka_schema_registry"
-}
-
-resource "instaclustr_bundle_user" "update_kafka_rest_proxy_user" {
-  cluster_id = "${instaclustr_cluster.example_kafka.id}"
-  username = "ickafkarest"
-  password = "RestProxyTest123test!"
-  initial_permissions = "none"
-  bundle_name = "kafka_rest_proxy"
-}
