@@ -92,10 +92,6 @@ func resourceCluster() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"tags": {
-							Type:     schema.TypeString,
-							Optional: true,
-						},
 						"resource_group": {
 							Type:     schema.TypeString,
 							Optional: true,
@@ -106,6 +102,11 @@ func resourceCluster() *schema.Resource {
 						},
 					},
 				},
+			},
+
+			"tags": {
+				Type:     schema.TypeMap,
+				Optional: true,
 			},
 
 			"rack_allocation": {
@@ -254,6 +255,18 @@ func resourceCluster() *schema.Resource {
 										Type:     schema.TypeString,
 										Optional: true,
 									},
+									"dedicated_zookeeper": {
+										Type:     schema.TypeBool,
+										Optional: true,
+									},
+									"zookeeper_node_size": {
+										Type:     schema.TypeString,
+										Optional: true,
+									},
+									"zookeeper_node_count": {
+										Type:     schema.TypeInt,
+										Optional: true,
+									},
 									"master_nodes": {
 										Type:     schema.TypeInt,
 										Optional: true,
@@ -286,6 +299,8 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 	if err != nil {
 		return err
 	}
+
+	clusterProvider.Tags = d.Get("tags").(map[string]interface{})
 
 	createData := CreateRequest{
 		ClusterName:           d.Get("cluster_name").(string),
@@ -371,7 +386,17 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("cluster_id", cluster.ID)
 	d.Set("cluster_name", cluster.ClusterName)
 
-	nodeSize := cluster.DataCentres[0].Nodes[0].Size
+	nodeSize := ""
+	/* 
+	*  Ideally, we would like this information to be coming directly from the API cluster status.
+	*  Hence, this is a slightly hacky way of ignoring zookeeper node sizes (Kafka bundle specific).
+	*/
+	for _, node := range(cluster.DataCentres[0].Nodes) {
+		nodeSize = node.Size
+		if (!strings.HasPrefix(nodeSize, "zk-")) {
+			break
+		}
+	}
 	if len(cluster.DataCentres[0].ResizeTargetNodeSize) > 0 {
 		nodeSize = cluster.DataCentres[0].ResizeTargetNodeSize
 	}
@@ -421,7 +446,7 @@ func getBundles(d *schema.ResourceData) ([]Bundle, error) {
 	bundles := make([]Bundle, 0)
 	for _, inBundle := range d.Get("bundle").([]interface{}) {
 		var bundle Bundle
-		err := mapstructure.Decode(inBundle.(map[string]interface{}), &bundle)
+		err := mapstructure.WeakDecode(inBundle.(map[string]interface{}), &bundle)
 		if err != nil {
 			return nil, err
 		}

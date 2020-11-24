@@ -96,7 +96,7 @@ resource "instaclustr_cluster" "example" {
 
 ## Configuration
 ### Resources
-### Resource:  `instaclustr_cluster`  
+### Resource:  `instaclustr_cluster`
 A resource for managing clusters on Instaclustr Managed Platform. A cluster contains a base application and several add-ons.
 
 #### Properties
@@ -163,6 +163,18 @@ ssl_enabled_protocols, ssl_truststore_password, ssl_protocol, security_protocol,
 truststore|Base64 encoded version of the TLS trust store (in JKS format) used to connect to your Kafka Cluster. Only required if connecting to a Non-Instaclustr managed Kafka Cluster with TLS enabled|Kafka Connect
 master_nodes|The number of Master nodes in a generated Redis Cluster.|Redis|Required (Integers)
 replica_nodes|The number of Replica nodes in a generated Redis Cluster.|Redis|Required (Integers)
+dedicated_zookeeper|Indicate whether this Kafka cluster should allocate dedicated Zookeeper nodes|Kafka|false
+zookeeper_node_size|If `dedicated_zookeeper` is true, then it is the node size for the dedicated Zookeeper nodes. Have a look [here](https://www.instaclustr.com/support/api-integrations/api-reference/provisioning-api/#section-create-cluster) (Kafka bundle options table) for node size options. |Kafka
+zookeeper_node_count|If `dedicated_zookeeper` is true, then it indicates how many nodes are allocated to be Zookeeper nodes|Kafka
+
+### Data Source `instaclustr_cluster_credentials`
+A read-only data source used to get the password and certificate download link of a cluster.
+
+Property | Description | Default
+---------|-------------|--------
+cluster_id|The ID of an existing Instaclustr cluster.|Required
+cluster_password|The password of the existing Instaclustr cluster.|Computed
+certificate_download|The certificate download link of the existing Instaclustr cluster.|Computed
 
 ### Resource:  `instaclustr_firewall_rule`                             
 A resource for managing cluster firewall rules on Instaclustr Managed Platform. A firewall rule allows access to your Instaclustr cluster.
@@ -230,12 +242,13 @@ Property | Description | Default
 key_id|Internal ID of the KMS encryption key. Can be found via GET to `https://api.instaclustr.com/provisioning/v1/encryption-keys`|""
 alias|KMS key alias, a human-readibly identifier specified alongside your KMS ARN|""
 arn|KMS ARN, identifier specifying provider, location and key in a ':' value seperated string|""
+key_provider|For customers running in their own account. Value specifying the provider account’s name, similar to `instaclustr_cluster.cluster_provider.account_name`|INSTACLUSTR
 
 #### Example
 ```
 resource "instaclustr_encryption_key" "example_encryption_key" {
-    alias: "virginia 1"
-    arn: "arn:aws:kms:us-east-1:123456789012:key12345678-1234-1234-1234-123456789abc"
+    alias = "virginia 1"
+    arn = "arn:aws:kms:us-east-1:123456789012:key12345678-1234-1234-1234-123456789abc"
 }
 ```
 

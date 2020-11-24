@@ -17,18 +17,18 @@ type Bundle struct {
 }
 
 type BundleOptions struct {
-	AuthnAuthz                    string `json:"authnAuthz,omitempty" mapstructure:"auth_n_authz"`
-	ClientEncryption              string `json:"clientEncryption,omitempty" mapstructure:"client_encryption"`
-	DedicatedMasterNodes          string `json:"dedicatedMasterNodes,omitempty" mapstructure:"dedicated_master_nodes"`
+	AuthnAuthz                    bool `json:"authnAuthz,omitempty" mapstructure:"auth_n_authz"`
+	ClientEncryption              bool `json:"clientEncryption,omitempty" mapstructure:"client_encryption"`
+	DedicatedMasterNodes          bool `json:"dedicatedMasterNodes,omitempty" mapstructure:"dedicated_master_nodes"`
 	MasterNodeSize                string `json:"masterNodeSize,omitempty" mapstructure:"master_node_size"`
-	SecurityPlugin                string `json:"securityPlugin,omitempty" mapstructure:"security_plugin"`
-	UsePrivateBroadcastRpcAddress string `json:"usePrivateBroadcastRPCAddress,omitempty" mapstructure:"use_private_broadcast_rpc_address"`
-	LuceneEnabled                 string `json:"luceneEnabled,omitempty" mapstructure:"lucene_enabled"`
-	ContinuousBackupEnabled       string `json:"continuousBackupEnabled,omitempty" mapstructure:"continuous_backup_enabled"`
+	SecurityPlugin                bool `json:"securityPlugin,omitempty" mapstructure:"security_plugin"`
+	UsePrivateBroadcastRpcAddress bool `json:"usePrivateBroadcastRPCAddress,omitempty" mapstructure:"use_private_broadcast_rpc_address"`
+	LuceneEnabled                 bool `json:"luceneEnabled,omitempty" mapstructure:"lucene_enabled"`
+	ContinuousBackupEnabled       bool `json:"continuousBackupEnabled,omitempty" mapstructure:"continuous_backup_enabled"`
 	NumberPartitions              string `json:"numberPartitions,omitempty" mapstructure:"number_partitions"`
-	AutoCreateTopics              string `json:"autoCreateTopics,omitempty" mapstructure:"auto_create_topics"`
-	DeleteTopics                  string `json:"deleteTopics,omitempty" mapstructure:"delete_topics"`
-	PasswordAuthentication        string `json:"passwordAuthentication,omitempty" mapstructure:"password_authentication"`
+	AutoCreateTopics              bool `json:"autoCreateTopics,omitempty" mapstructure:"auto_create_topics"`
+	DeleteTopics                  bool `json:"deleteTopics,omitempty" mapstructure:"delete_topics"`
+	PasswordAuthentication        bool `json:"passwordAuthentication,omitempty" mapstructure:"password_authentication"`
 	TargetKafkaClusterId          string `json:"targetKafkaClusterId,omitempty" mapstructure:"target_kafka_cluster_id"`
 	VPCType                       string `json:"vpcType,omitempty" mapstructure:"vpc_type"`
 	AWSAccessKeyId                string `json:"aws.access.key.id,omitempty" mapstructure:"aws_access_key"`
@@ -47,13 +47,16 @@ type BundleOptions struct {
 	Truststore                    string `json:"truststore,omitempty" mapstructure:"truststore"`
 	RedisMasterNodes              string `json:"masterNodes,omitempty" mapstructure:"master_nodes"`
 	RedisReplicaNodes             string `json:"replicaNodes,omitempty" mapstructure:"replica_nodes"`
+	DedicatedZookeeper            bool `json:"dedicatedZookeeper,omitempty" mapstructure:"dedicated_zookeeper"`
+	ZookeeperNodeSize             string `json:"zookeeperNodeSize,omitempty" mapstructure:"zookeeper_node_size"`
+	ZookeeperNodeCount            string `json:"zookeeperNodeCount,omitempty" mapstructure:"zookeeper_node_count"`
 }
 
 type ClusterProvider struct {
 	Name                   *string `json:"name" mapstructure:"name"`
 	AccountName            *string `json:"accountName, omitempty" mapstructure:"account_name"`
 	CustomVirtualNetworkId *string `json:"customVirtualNetworkId, omitempty" mapstructure:"custom_virtual_network_id"`
-	Tags                   *string `json:"tags,omitempty" mapstructure:"tags"`
+	Tags                   map[string]interface{} `json:"tags,omitempty"`
 	ResourceGroup          *string `json:"resourceGroup,omitempty" mapstructure:"resource_group"`
 	DiskEncryptionKey      *string `json:"diskEncryptionKey,omitempty" mapstructure:"disk_encryption_key"`
 }
@@ -152,6 +155,7 @@ type EncryptionKey struct {
 	ID    string `json:"id,omitempty"`
 	Alias string `json:"alias,omitempty"`
 	ARN   string `json:"arn,omitempty"`
+	Provider string `json:"provider,omitempty"`
 }
 
 type CreateKafkaUserRequest struct {

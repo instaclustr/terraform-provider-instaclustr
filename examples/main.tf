@@ -6,7 +6,9 @@ provider "instaclustr" {
 resource "instaclustr_encryption_key" "add_ebs_key" {
     alias = "testkey"
     arn = "<Your KMS key ARN here>"
+    provider = "INSTACLUSTR"
 }
+
 
 resource "instaclustr_cluster" "example2" {
   cluster_name = "testcluster"
@@ -18,6 +20,9 @@ resource "instaclustr_cluster" "example2" {
   cluster_provider = {
     name = "AWS_VPC",
     disk_encryption_key = "${instaclustr_encryption_key.add_ebs_key.key_id}"
+    tags = {
+      "myTag" = "myTagValue"
+    }
   }
   rack_allocation = {
     number_of_racks = 3
@@ -41,6 +46,10 @@ resource "instaclustr_cluster" "example2" {
     bundle = "ZEPPELIN"
     version = "apache-zeppelin:0.8.0-spark-2.3.2"
   }
+}
+
+data "instaclustr_cluster_credentials" "example_credentials" {
+  cluster_id = "${instaclustr_cluster.example2.id}"
 }
 
 resource "instaclustr_cluster" "custom_vpc_example" {
@@ -78,7 +87,7 @@ resource "instaclustr_firewall_rule" "example_firewall_rule" {
 
 resource "instaclustr_firewall_rule" "example_firewall_rule_sg" {
   cluster_id = "${instaclustr_cluster.example2.id}"
-  securityGroupId = "sg-0123abcde456ffabc"
+  rule_security_group_id = "sg-0123abcde456ffabc"
   rules = [
     {
       type = "CASSANDRA"
@@ -109,9 +118,12 @@ resource "instaclustr_cluster" "example_kafka" {
 
   bundle {
     bundle = "KAFKA"
-    version = "2.3.1"
+    version = "2.5.1"
     options = {
       auth_n_authz = true
+      dedicated_zookeeper = true
+      zookeeper_node_size = "zk-production-m5.large-60"
+      zookeeper_node_count = 3
     }
   }
 
