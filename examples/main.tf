@@ -198,24 +198,63 @@ resource "instaclustr_kafka_user" "kafka_user_charlie" {
   cluster_id = "${instaclustr_cluster.example_kafka.id}"
   username = "charlie"
   password = "charlie123!"
-  initial_permissions = "none"
 }
 
 data "instaclustr_kafka_user_list" "kafka_user_list" {
   cluster_id = "${instaclustr_cluster.example_kafka.id}"
 }
 
-resource "instaclustr_bundle_user" "kafka_user_tom" {
+ creating kafka bundle user example
+resource "instaclustr_bundle_user" "kafka_user_charlie" {
   cluster_id = "${instaclustr_cluster.example_kafka.id}"
-  username = "tom"
-  password = "tom123test!"
+  username = "charlie"
+  password = "charlie123!"
   bundle_name = "kafka"
-  initial_permissions = "none"
 }
 
 data "instaclustr_bundle_user" "kafka_user_list" {
   cluster_id = "${instaclustr_cluster.example_kafka.id}"
   bundle_name = "kafka"
+}
+
+ creating the kafka bundle-user resource to be used in the user password update example
+ after creating this resource, change the password and apply the plan again to modify the bundle user password
+resource "instaclustr_bundle_user" "kafka_user_schema_registry" {
+    cluster_id = "${instaclustr_cluster.example_kafka.id}"
+  username = "ickafka"
+  password = "ickafka123test!"
+  bundle_name = "kafka"
+  initial_permissions = "none"
+}
+
+// creating the kafka schema registry bundle-user resource to be used in the user password update example
+// after creating this resource, change the password and apply the plan again to modify the bundle user password
+resource "instaclustr_bundle_user" "kafka_user_schema_registry" {
+  cluster_id = "${instaclustr_cluster.example_kafka.id}"
+  username = "ickafkaschema"
+  password = "ickafkaschema123test!blaaaaaah"
+  bundle_name = "kafka_schema_registry"
+  initial_permissions = "none"
+}
+
+// creating the kafka rest proxy bundle-user resource to be used in the user password update example
+// after creating this resource, change the password and apply the plan again to modify the bundle user password
+resource "instaclustr_bundle_user" "kafka_user_schema_registry_update" {
+  cluster_id = "${instaclustr_cluster.example_kafka.id}"
+  username = "ickafkarest"
+  password = "ickafkarest123test!blaaaaaaaaah"
+  bundle_name = "kafka_rest_proxy"
+  initial_permissions = "none"
+}
+
+data "instaclustr_bundle_user_list" "kafka_rest_proxy_user_list" {
+  cluster_id = "${instaclustr_cluster.example_kafka.id}"
+  bundle_name = "kafka_rest_proxy"
+}
+
+data "instaclustr_bundle_user_list" "kafka_schema_registry_user_list" {
+  cluster_id = "${instaclustr_cluster.example_kafka.id}"
+  bundle_name = "kafka_schema_registry"
 }
 
 resource "instaclustr_cluster" "private_cluster_example" {
@@ -256,14 +295,4 @@ resource "instaclustr_cluster" "example-redis" {
       replica_nodes = 3
     }
   }
-}
-
-data "instaclustr_bundle_user_list" "kafka_rest_proxy_user_list" {
-  cluster_id = "${instaclustr_cluster.example_kafka.id}"
-  bundle_name = "kafka_rest_proxy"
-}
-
-data "instaclustr_bundle_user_list" "kafka_schema_registry_user_list" {
-  cluster_id = "${instaclustr_cluster.example_kafka.id}"
-  bundle_name = "kafka_schema_registry"
 }
