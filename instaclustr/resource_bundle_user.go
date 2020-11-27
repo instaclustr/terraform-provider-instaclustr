@@ -144,6 +144,11 @@ func removeBundleUserResource(d *schema.ResourceData) {
 
 func resourceBundleUserDelete(d *schema.ResourceData, meta interface{}) error {
 
+	if (d.Get("bundle_name").(string) == "kafka_schema_registry") || (d.Get("bundle_name").(string) == "kafka_rest_proxy") {
+		log.Printf("[Error] User deletion is currently not supported for %s bundle", d.Get("bundle_name").(string))
+		return nil
+	}
+
 	log.Printf("[INFO] Deleting %s user %s in %s.", d.Get("bundle_name"), d.Get("username").(string), d.Get("cluster_id"))
 	client := meta.(*Config).Client
 
