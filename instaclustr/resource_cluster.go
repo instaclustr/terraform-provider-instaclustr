@@ -281,6 +281,16 @@ func resourceCluster() *schema.Resource {
 					},
 				},
 			},
+			"kafka_rest_proxy_user_password": {
+				Type:     schema.TypeString,
+				Sensitive: true,
+				Optional: true,
+			},
+			"kafka_schema_registry_user_password": {
+				Type:     schema.TypeString,
+				Sensitive: true,
+				Optional: true,
+			},
 		},
 	}
 }
