@@ -450,7 +450,7 @@ func resourceClusterUpdate(d *schema.ResourceData, meta interface{}) error {
 	var jsonStrUpdate []byte
 	jsonStrUpdate, err := json.Marshal(updateData)
 	if err != nil {
-		return resource.NonRetryableError(fmt.Errorf("[Error] Error creating the bundle user update request : %s", err))
+		return fmt.Errorf("[Error] Error creating the bundle user update request : %s", err)
 	}
 
 	if kafkaSchemaRegistryUserUpdate {
