@@ -113,13 +113,13 @@ func resourceBundleUserUpdate(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Changing %s user password in %s.", d.Get("bundle_name").(string), d.Get("cluster_id").(string))
 	client := meta.(*Config).Client
 
-	createData := UpdateBundleUserRequest{
+	updateData := UpdateBundleUserRequest{
 		Username:              d.Get("username").(string),
 		Password:              d.Get("password").(string),
 	}
 
 	var jsonStr []byte
-	jsonStr, err := json.Marshal(createData)
+	jsonStr, err := json.Marshal(updateData)
 	if err != nil {
 		return fmt.Errorf("[Error] Error creating %s user update request: %s", d.Get("bundle_name").(string), err)
 	}

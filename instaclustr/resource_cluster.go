@@ -365,13 +365,13 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		createData.RackAllocation = &rackAllocation
 	}
 
-	var jsonStr []byte
-	jsonStr, err = json.Marshal(createData)
+	var jsonStrCreate []byte
+	jsonStrCreate, err = json.Marshal(createData)
 	if err != nil {
 		return formatCreateErrMsg(err)
 	}
 
-	id, err := client.CreateCluster(jsonStr)
+	id, err := client.CreateCluster(jsonStrCreate)
 	if err != nil {
 		return formatCreateErrMsg(err)
 	}
@@ -396,14 +396,22 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 
 				if primaryBundle == "KAFKA" {
 
-					var err error
+					updateData := UpdateBundleUserRequest{
+						Username:              d.Get("username").(string),
+						Password:              d.Get("password").(string),
+					}
+					var jsonStrUpdate []byte
+					jsonStrUpdate, err := json.Marshal(updateData)
+					if err != nil {
+						return resource.NonRetryableError(fmt.Errorf("[Error] Error creating the bundle user update request : %s", err))
+					}
 
 					if len(kafkaSchemaRegistryUserPassword) > 0 {
-						err = client.UpdateBundleUser(d.Get("cluster_id").(string), "kafka_schema_registry", jsonStr)
+						err = client.UpdateBundleUser(d.Get("cluster_id").(string), "kafka_schema_registry", jsonStrUpdate)
 					}
 
 					if len(kafkaRestProxyUserPassword) > 0 {
-						err = client.UpdateBundleUser(d.Get("cluster_id").(string), "kafka_rest_proxy", jsonStr)
+						err = client.UpdateBundleUser(d.Get("cluster_id").(string), "kafka_rest_proxy", jsonStrUpdate)
 					}
 					if err != nil {
 						return resource.NonRetryableError(fmt.Errorf("[Error] Error updating the bundle user passwords : %s", err))
@@ -426,11 +434,44 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 
 func resourceClusterUpdate(d *schema.ResourceData, meta interface{}) error {
 	d.Partial(true)
-	// currently only cluster resize is supported
-	if !d.HasChange("node_size") {
-		return fmt.Errorf("[Error] The cluster doesn't support update")
+	// currently only cluster resize, kafka-schema-registry user password update and kafka-rest-proxy user password update are supported
+
+	client := meta.(*Config).Client
+	clusterID := d.Get("cluster_id").(string)
+
+	clusterResize := d.HasChange("node_size")
+	kafkaSchemaRegistryUserUpdate := d.HasChange("kafka_schema_registry_user_password")
+	kafkaRestProxyUerUpdate := d.HasChange("kafka_rest_proxy_user_password")
+
+	updateData := UpdateBundleUserRequest{
+		Username:              d.Get("username").(string),
+		Password:              d.Get("password").(string),
+	}
+	var jsonStrUpdate []byte
+	jsonStrUpdate, err := json.Marshal(updateData)
+	if err != nil {
+		return resource.NonRetryableError(fmt.Errorf("[Error] Error creating the bundle user update request : %s", err))
 	}
 
+	if kafkaSchemaRegistryUserUpdate {
+		err = client.UpdateBundleUser(clusterID, "kafka_schema_registry", jsonStrUpdate)
+		if err != nil {
+			return fmt.Errorf("[Error] Error updating the password for kafka_schema_registry bundle user : %s", err)
+		}
+	}
+
+	if kafkaRestProxyUerUpdate {
+		err = client.UpdateBundleUser(clusterID, "kafka_rest_proxy", jsonStrUpdate)
+		if err != nil {
+			return fmt.Errorf("[Error] Error updating the password for kafka_rest_proxy bundle user : %s", err)
+		}
+	}
+
+	if !clusterResize {
+		//this means in order to proceed to cluster resize, the customer should define a new node size
+		return fmt.Errorf("[Error] The cluster doesn't support update")
+	} 
+	
 	before, after := d.GetChange("node_size")
 	regex := regexp.MustCompile(`resizeable-(small|large)`)
 	oldNodeClass := regex.FindString(before.(string))
@@ -442,8 +483,6 @@ func resourceClusterUpdate(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("[Error] Cannot resize nodes from %s to %s", before, after)
 	}
 
-	client := meta.(*Config).Client
-	clusterID := d.Get("cluster_id").(string)
 	cluster, err := client.ReadCluster(clusterID)
 	if err != nil {
 		return fmt.Errorf("[Error] Error reading cluster: %s", err)
@@ -454,6 +493,8 @@ func resourceClusterUpdate(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	d.SetPartial("node_size")
+	d.SetPartial("kafka_schema_registry_user_password")
+	d.SetPartial("kafka_rest_proxy_user_password")
 	return nil
 }
 
