@@ -378,7 +378,6 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 	d.SetId(id)
 	d.Set("cluster_id", id)
 	log.Printf("[INFO] Cluster %s has been created.", id)
-	return nil
 
 	waitForClusterState := d.Get("minimum_required_cluster_state").(string)
 
@@ -396,6 +395,8 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 
 			return resource.RetryableError(fmt.Errorf("[Error] Cluster is in state %s", cluster.ClusterStatus))
 		})
+	} else {
+		return resourceClusterRead(d, meta)
 	}
 }
 
