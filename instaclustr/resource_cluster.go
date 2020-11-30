@@ -6,9 +6,18 @@ import (
 	"log"
 	"regexp"
 	"strings"
+	"time"
 
+	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/mitchellh/mapstructure"
+)
+
+var (
+	validClusterStates = map[string]bool{
+		"RUNNING":     true,
+		"PROVISIONED": true,
+	}
 )
 
 func resourceCluster() *schema.Resource {
@@ -17,6 +26,9 @@ func resourceCluster() *schema.Resource {
 		Read:   resourceClusterRead,
 		Update: resourceClusterUpdate,
 		Delete: resourceClusterDelete,
+		Timeouts: &schema.ResourceTimeout{
+			Create: schema.DefaultTimeout(15 * time.Minute),
+		},
 
 		Schema: map[string]*schema.Schema{
 			"cluster_id": {
@@ -285,11 +297,29 @@ func resourceCluster() *schema.Resource {
 				Type:     schema.TypeString,
 				Sensitive: true,
 				Optional: true,
+				ForceNew: false,
 			},
 			"kafka_schema_registry_user_password": {
 				Type:     schema.TypeString,
 				Sensitive: true,
 				Optional: true,
+				ForceNew: false,
+			},
+			"minimum_required_cluster_state": {
+				Type:     schema.TypeString,
+				Optional: true,
+				ForceNew: false,
+				Default:  "",
+
+				ValidateFunc: func(i interface{}, s string) (ws []string, errors []error) {
+					state := i.(string)
+
+					if len(state) != 0 && !validClusterStates[strings.ToUpper(state)] {
+						errors = append(errors, fmt.Errorf("%s is not valid cluster state. Use RUNNING or PROVISIONED.", state))
+					}
+
+					return
+				},
 			},
 		},
 	}
@@ -349,6 +379,24 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 	d.Set("cluster_id", id)
 	log.Printf("[INFO] Cluster %s has been created.", id)
 	return nil
+
+	waitForClusterState := d.Get("minimum_required_cluster_state").(string)
+
+	if len(waitForClusterState) > 0 {
+		return resource.Retry(d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
+			cluster, err := client.ReadCluster(id)
+
+			if err != nil {
+				return resource.NonRetryableError(fmt.Errorf("[Error] Error retrieving cluster info: %s", err))
+			}
+
+			if cluster.ClusterStatus == waitForClusterState {
+				return resource.NonRetryableError(resourceClusterRead(d, meta))
+			}
+
+			return resource.RetryableError(fmt.Errorf("[Error] Cluster is in state %s", cluster.ClusterStatus))
+		})
+	}
 }
 
 func resourceClusterUpdate(d *schema.ResourceData, meta interface{}) error {
