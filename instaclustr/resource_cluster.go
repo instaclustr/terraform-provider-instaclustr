@@ -393,6 +393,7 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 			}
 
 			if cluster.ClusterStatus == waitForClusterState {
+
 				if primaryBundle == "KAFKA" {
 
 					var err error
@@ -405,13 +406,15 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 						err = client.UpdateBundleUser(d.Get("cluster_id").(string), "kafka_rest_proxy", jsonStr)
 					}
 					if err != nil {
-						return resource.NonRetryableError(fmt.Errorf("[Error] Error updating the password for bundle users: %s", err))
+						return resource.NonRetryableError(fmt.Errorf("[Error] Error updating the bundle user passwords : %s", err))
 					}
 
 					log.Printf("[INFO] The password(s) of bundle user(s) has been updated.")
-				}
+					return resource.NonRetryableError(resourceClusterRead(d, meta))
 
-				return resource.NonRetryableError(resourceClusterRead(d, meta))
+				} else if len(kafkaSchemaRegistryUserPassword) > 0 || len(kafkaRestProxyUserPassword) > 0 {
+					return resource.NonRetryableError(fmt.Errorf("[Error] Error updating the bundle user passwords, because it should be a KAFKA cluster to update the schema-registry or rest-proxy user passwords"))
+				}
 			}
 
 			return resource.RetryableError(fmt.Errorf("[Error] Cluster is in state %s", cluster.ClusterStatus))
