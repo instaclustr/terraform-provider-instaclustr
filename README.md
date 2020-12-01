@@ -112,6 +112,11 @@ pci_compliant_cluster|Accepts true/false. Creates the cluster with PCI complianc
 cluster_provider|The information of infrastructure provider. See below for its properties.|Required
 rack_allocation|The number of resources to use. See below for its properties.|Optional, but Required for all Bundle types excluding Redis.
 bundle|Array of bundle information. See below for its properties.|Required
+kafka_rest_proxy_user_password|The password of kafka rest proxy bundle user, if it's a Kafka cluster with rest-proxy addon|Optional
+kafka_schema_registry_user_password|The password of kafka schema registry bundle user, if it's a Kafka cluster with schema-registry addon|Optional
+minimum_required_cluster_state|The expected state of the cluster before proceeding to do any updates on the cluster|Optional (valid states are RUNNING and PROVISIONED)
+
+Note : The user can either specify the new passwords of kafka-schema-registry and(or) kafka-rest-proxy bundle users at the cluster creation time or later when doing a cluster update (i.e, cluster resize, kafka-schema-registry user update or kafka-rest-proxy-user-update)
 
 `cluster_provider`
 
