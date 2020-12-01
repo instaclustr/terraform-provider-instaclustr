@@ -382,22 +382,21 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 	kafkaSchemaRegistryUserPassword := d.Get("kafka_schema_registry_user_password").(string)
 	kafkaRestProxyUserPassword := d.Get("kafka_rest_proxy_user_password").(string)
 	waitForClusterState := d.Get("minimum_required_cluster_state").(string)
-	bundles = d.Get("bundle").([] Bundle)
 
 	isKafkaCluster := false
 	hasRestProxy := false
 	hasSchemaRegistry := false
 
-	index := 0
-	for index <= len(bundles) {
-		if bundles[index].Bundle == "KAFKA" {
+	for i := 0; i < len(bundles); i++ {
+
+		if bundles[i].Bundle == "KAFKA" {
 			isKafkaCluster = true
-			if bundles[index].Bundle == "KAFKA_REST_PROXY" {
-				hasRestProxy = true
-			}
-			if bundles[index].Bundle == "KAFKA_SCHEMA_REGISTRY" {
-				hasSchemaRegistry = true
-			}
+		}
+		if bundles[i].Bundle == "KAFKA_REST_PROXY" {
+			hasRestProxy = true
+		}
+		if bundles[i].Bundle == "KAFKA_SCHEMA_REGISTRY" {
+			hasSchemaRegistry = true
 		}
 	}
 
@@ -448,6 +447,7 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 							return resource.NonRetryableError(fmt.Errorf("[Error] Error creating the kafka schema registry bundle user update request : %s", err))
 						}
 
+						//updating the kafka schema registry bundle user
 						if len(kafkaSchemaRegistryUserPassword) > 0 {
 							err = client.UpdateBundleUser(d.Get("cluster_id").(string), "kafka_schema_registry", jsonStrUpdateSchemaRegistry)
 						}
@@ -480,25 +480,45 @@ func resourceClusterUpdate(d *schema.ResourceData, meta interface{}) error {
 	kafkaSchemaRegistryUserUpdate := d.HasChange("kafka_schema_registry_user_password")
 	kafkaRestProxyUerUpdate := d.HasChange("kafka_rest_proxy_user_password")
 
-	updateData := UpdateBundleUserRequest{
-		Username:              d.Get("username").(string),
-		Password:              d.Get("password").(string),
-	}
-	var jsonStrUpdate []byte
-	jsonStrUpdate, err := json.Marshal(updateData)
-	if err != nil {
-		return fmt.Errorf("[Error] Error creating the bundle user update request : %s", err)
-	}
+	var err error
 
 	if kafkaSchemaRegistryUserUpdate {
-		err = client.UpdateBundleUser(clusterID, "kafka_schema_registry", jsonStrUpdate)
+
+		// preparing the kafka schema registry bundle user update request
+		updateSchemaRegistryData := UpdateBundleUserRequest{
+			Username: "ickafkaschema",
+			Password: d.Get("kafka_schema_registry_user_password").(string),
+		}
+		var jsonStrUpdateSchemaRegistry []byte
+		jsonStrUpdateSchemaRegistry, err = json.Marshal(updateSchemaRegistryData)
+
+		if err != nil {
+			return fmt.Errorf("[Error] Error creating the kafka schema registry bundle user update request : %s", err)
+		}
+
+		//updating the kafka schema registry bundle user
+		err = client.UpdateBundleUser(clusterID, "kafka_schema_registry", jsonStrUpdateSchemaRegistry)
 		if err != nil {
 			return fmt.Errorf("[Error] Error updating the password for kafka_schema_registry bundle user : %s", err)
 		}
 	}
 
 	if kafkaRestProxyUerUpdate {
-		err = client.UpdateBundleUser(clusterID, "kafka_rest_proxy", jsonStrUpdate)
+
+		// preparing the kafka rest proxy bundle user update request
+		updateRestProxyData := UpdateBundleUserRequest{
+			Username: "ickafkarest",
+			Password: d.Get("kafka_rest_proxy_user_password").(string),
+		}
+		var jsonStrUpdateRestProxy []byte
+		jsonStrUpdateRestProxy, err := json.Marshal(updateRestProxyData)
+
+		if err != nil {
+			return fmt.Errorf("[Error] Error creating the kafka rest proxy bundle user update request : %s", err)
+		}
+
+		//updating the kafka rest proxy bundle user
+		err = client.UpdateBundleUser(clusterID, "kafka_rest_proxy", jsonStrUpdateRestProxy)
 		if err != nil {
 			return fmt.Errorf("[Error] Error updating the password for kafka_rest_proxy bundle user : %s", err)
 		}
