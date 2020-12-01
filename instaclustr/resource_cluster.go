@@ -480,14 +480,40 @@ func resourceClusterUpdate(d *schema.ResourceData, meta interface{}) error {
 	kafkaSchemaRegistryUserUpdate := d.HasChange("kafka_schema_registry_user_password")
 	kafkaRestProxyUerUpdate := d.HasChange("kafka_rest_proxy_user_password")
 
-	if kafkaSchemaRegistryUserUpdate {
-		return doBundleUserPasswordUpdate(client, clusterID, "kafka_schema_registry", "ickafkaschema", "kafka_schema_registry_user_password", d)
-	} else if kafkaRestProxyUerUpdate {
-		return doBundleUserPasswordUpdate(client, clusterID, "kafka_rest_proxy", "ickafkarest", "kafka_rest_proxy_user_password", d)
-	} else if clusterResize {
-		return doClusterResize(client, clusterID, d)
-	} else {
-		return fmt.Errorf("[Error] The cluster doesn't support update")
+	bundles, err := getBundles(d)
+	if err != nil {
+		return formatCreateErrMsg(err)
+	}
+
+	isKafkaCluster := false
+	hasRestProxy := false
+	hasSchemaRegistry := false
+
+	for i := 0; i < len(bundles); i++ {
+
+		if bundles[i].Bundle == "KAFKA" {
+			isKafkaCluster = true
+		}
+		if bundles[i].Bundle == "KAFKA_REST_PROXY" {
+			hasRestProxy = true
+		}
+		if bundles[i].Bundle == "KAFKA_SCHEMA_REGISTRY" {
+			hasSchemaRegistry = true
+		}
+	}
+
+	if isKafkaCluster && hasSchemaRegistry && kafkaSchemaRegistryUserUpdate {
+		doBundleUserPasswordUpdate(client, clusterID, "kafka_schema_registry", "ickafkaschema", "kafka_schema_registry_user_password", d)
+	}
+	if isKafkaCluster && hasRestProxy && kafkaRestProxyUerUpdate {
+		doBundleUserPasswordUpdate(client, clusterID, "kafka_rest_proxy", "ickafkarest", "kafka_rest_proxy_user_password", d)
+	}
+	if clusterResize {
+		doClusterResize(client, clusterID, d)
+	}
+
+	if !isKafkaCluster && (kafkaSchemaRegistryUserUpdate || kafkaRestProxyUerUpdate) {
+		return fmt.Errorf("[Error] Error updating the bundle user passwords, because it should be a KAFKA cluster in order to update the schema-registry or rest-proxy users")
 	}
 
 	d.SetPartial("node_size")
