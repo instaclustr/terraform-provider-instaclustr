@@ -480,55 +480,24 @@ func resourceClusterUpdate(d *schema.ResourceData, meta interface{}) error {
 	kafkaSchemaRegistryUserUpdate := d.HasChange("kafka_schema_registry_user_password")
 	kafkaRestProxyUerUpdate := d.HasChange("kafka_rest_proxy_user_password")
 
-	var err error
-
 	if kafkaSchemaRegistryUserUpdate {
-
-		// preparing the kafka schema registry bundle user update request
-		updateSchemaRegistryData := UpdateBundleUserRequest{
-			Username: "ickafkaschema",
-			Password: d.Get("kafka_schema_registry_user_password").(string),
-		}
-		var jsonStrUpdateSchemaRegistry []byte
-		jsonStrUpdateSchemaRegistry, err = json.Marshal(updateSchemaRegistryData)
-
-		if err != nil {
-			return fmt.Errorf("[Error] Error creating the kafka schema registry bundle user update request : %s", err)
-		}
-
-		//updating the kafka schema registry bundle user
-		err = client.UpdateBundleUser(clusterID, "kafka_schema_registry", jsonStrUpdateSchemaRegistry)
-		if err != nil {
-			return fmt.Errorf("[Error] Error updating the password for kafka_schema_registry bundle user : %s", err)
-		}
-	}
-
-	if kafkaRestProxyUerUpdate {
-
-		// preparing the kafka rest proxy bundle user update request
-		updateRestProxyData := UpdateBundleUserRequest{
-			Username: "ickafkarest",
-			Password: d.Get("kafka_rest_proxy_user_password").(string),
-		}
-		var jsonStrUpdateRestProxy []byte
-		jsonStrUpdateRestProxy, err := json.Marshal(updateRestProxyData)
-
-		if err != nil {
-			return fmt.Errorf("[Error] Error creating the kafka rest proxy bundle user update request : %s", err)
-		}
-
-		//updating the kafka rest proxy bundle user
-		err = client.UpdateBundleUser(clusterID, "kafka_rest_proxy", jsonStrUpdateRestProxy)
-		if err != nil {
-			return fmt.Errorf("[Error] Error updating the password for kafka_rest_proxy bundle user : %s", err)
-		}
-	}
-
-	if !clusterResize {
-		//this means in order to proceed to cluster resize, the customer should define a new node size
+		return doBundleUserPasswordUpdate(client, clusterID, "kafka_schema_registry", "ickafkaschema", "kafka_schema_registry_user_password", d)
+	} else if kafkaRestProxyUerUpdate {
+		return doBundleUserPasswordUpdate(client, clusterID, "kafka_rest_proxy", "ickafkarest", "kafka_rest_proxy_user_password", d)
+	} else if clusterResize {
+		return doClusterResize(client, clusterID, d)
+	} else {
 		return fmt.Errorf("[Error] The cluster doesn't support update")
-	} 
-	
+	}
+
+	d.SetPartial("node_size")
+	d.SetPartial("kafka_schema_registry_user_password")
+	d.SetPartial("kafka_rest_proxy_user_password")
+	return nil
+}
+
+func doClusterResize(client *APIClient, clusterID string, d *schema.ResourceData) error {
+
 	before, after := d.GetChange("node_size")
 	regex := regexp.MustCompile(`resizeable-(small|large)`)
 	oldNodeClass := regex.FindString(before.(string))
@@ -548,10 +517,30 @@ func resourceClusterUpdate(d *schema.ResourceData, meta interface{}) error {
 	if err != nil {
 		return fmt.Errorf("[Error] Error resizing cluster %s with error %s", clusterID, err)
 	}
+	return nil
+}
 
-	d.SetPartial("node_size")
-	d.SetPartial("kafka_schema_registry_user_password")
-	d.SetPartial("kafka_rest_proxy_user_password")
+func doBundleUserPasswordUpdate(client *APIClient, clusterID string, bundleName string, bundleUserName string, bundleUserPasswordIdentifier string, d *schema.ResourceData) error {
+
+	var err error
+
+	// preparing the bundle user password update request
+	updateBundleUserData := UpdateBundleUserRequest{
+		Username: bundleUserName,
+		Password: d.Get(bundleUserPasswordIdentifier).(string),
+	}
+	var jsonStrUpdateBundleUser []byte
+	jsonStrUpdateBundleUser, err = json.Marshal(updateBundleUserData)
+
+	if err != nil {
+		return fmt.Errorf("[Error] Error creating the bundle user update request : %s", err)
+	}
+
+	//updating the bundle user
+	err = client.UpdateBundleUser(clusterID, bundleName, jsonStrUpdateBundleUser)
+	if err != nil {
+		return fmt.Errorf("[Error] Error updating the password for bundle user : %s", err)
+	}
 	return nil
 }
 
