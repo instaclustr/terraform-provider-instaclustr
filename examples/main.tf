@@ -217,33 +217,13 @@ data "instaclustr_bundle_user" "kafka_user_list" {
   bundle_name = "kafka"
 }
 
- creating the kafka bundle-user resource to be used in the user password update example
- after creating this resource, change the password and apply the plan again to modify the bundle user password
-resource "instaclustr_bundle_user" "kafka_user_schema_registry" {
+// creating the kafka bundle-user resource to be used in the user password update example
+// after creating this resource, change the password and apply the plan again to modify the bundle user password
+resource "instaclustr_bundle_user" "kafka_user" {
     cluster_id = "${instaclustr_cluster.example_kafka.id}"
   username = "ickafka"
   password = "ickafka123test!"
   bundle_name = "kafka"
-  initial_permissions = "none"
-}
-
-// creating the kafka schema registry bundle-user resource to be used in the user password update example
-// after creating this resource, change the password and apply the plan again to modify the bundle user password
-resource "instaclustr_bundle_user" "kafka_user_schema_registry" {
-  cluster_id = "${instaclustr_cluster.example_kafka.id}"
-  username = "ickafkaschema"
-  password = "ickafkaschema123test!blaaaaaah"
-  bundle_name = "kafka_schema_registry"
-  initial_permissions = "none"
-}
-
-// creating the kafka rest proxy bundle-user resource to be used in the user password update example
-// after creating this resource, change the password and apply the plan again to modify the bundle user password
-resource "instaclustr_bundle_user" "kafka_user_schema_registry_update" {
-  cluster_id = "${instaclustr_cluster.example_kafka.id}"
-  username = "ickafkarest"
-  password = "ickafkarest123test!blaaaaaaaaah"
-  bundle_name = "kafka_rest_proxy"
   initial_permissions = "none"
 }
 
@@ -295,4 +275,46 @@ resource "instaclustr_cluster" "example-redis" {
       replica_nodes = 3
     }
   }
+}
+
+resource "instaclustr_cluster" "delete-cluster" {
+  cluster_id = "ddace3f3-a017-4cad-8516-47f22ef5c412"
+}
+
+// Updating the kafka-schema-registry and the kafka-rest-proxy bundle user passwords at the cluster creation time
+resource "instaclustr_cluster" "example_kafka_bundle_user_update" {
+  cluster_name = "test_kafka"
+  node_size = "r5.large-500-gp2"
+  data_centre = "US_WEST_2"
+  sla_tier = "NON_PRODUCTION"
+  cluster_network = "192.168.0.0/18"
+  cluster_provider = {
+    name = "AWS_VPC"
+  }
+  rack_allocation = {
+    number_of_racks = 3
+    nodes_per_rack = 1
+  }
+  bundle {
+    bundle = "KAFKA"
+    version = "2.5.1"
+    options = {
+      auth_n_authz = true
+      dedicated_zookeeper = true
+      zookeeper_node_size = "zk-production-m5.large-60"
+      zookeeper_node_count = 3
+    }
+  }
+  bundle {
+    bundle = "KAFKA_REST_PROXY"
+    version = "5.0.0"
+  }
+  bundle {
+    bundle = "KAFKA_SCHEMA_REGISTRY"
+    version = "5.0.0"
+  }
+  kafka_rest_proxy_user_password = "RestProxyTest123test!" // new password for rest proxy bundle user
+  kafka_schema_registry_user_password = "SchemaRegistryTest123test!" // new password for schema registry bundle user
+
+  minimum_required_cluster_state = "RUNNING" // the required state of the cluster before doing the bundle user password updates
 }
