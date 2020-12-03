@@ -185,22 +185,55 @@ resource "instaclustr_cluster" "validKC" {
         bundle = "KAFKA_CONNECT"
         version = "2.3.1"
         options = {
-            target_kafka_cluster_id = "${instaclustr_cluster.example_kafka.cluster_id}"
+            target_kafka_cluster_id = "${instaclustr_cluster.example_kafka.id}"
             vpc_id = "SEPARATE_VPC"
         }
     }
 }
 
 resource "instaclustr_kafka_user" "kafka_user_charlie" {
-  cluster_id = "${instaclustr_clustr.example_kafka.cluster_id}"
+  cluster_id = "${instaclustr_cluster.example_kafka.id}"
   username = "charlie"
   password = "charlie123!"
+}
+
+data "instaclustr_kafka_user_list" "kafka_user_list" {
+  cluster_id = "${instaclustr_cluster.example_kafka.id}"
+}
+
+// creating kafka bundle user example
+resource "instaclustr_bundle_user" "kafka_user_charlie" {
+  cluster_id = "${instaclustr_cluster.example_kafka.id}"
+  username = "charlie"
+  password = "charlie123!"
+  bundle_name = "kafka"
+}
+
+data "instaclustr_bundle_user" "kafka_user_list" {
+  cluster_id = "${instaclustr_cluster.example_kafka.id}"
+  bundle_name = "kafka"
+}
+
+ creating the kafka bundle-user resource to be used in the user password update example
+ after creating this resource, change the password and apply the plan again to modify the bundle user password
+resource "instaclustr_bundle_user" "kafka_user" {
+  cluster_id = "${instaclustr_cluster.example_kafka.id}"
+  username = "ickafka"
+  password = "ickafka123test!blah"
+  bundle_name = "kafka"
   initial_permissions = "none"
-}                       
-                              
-data "instaclustr_kafka_user_list" "kafka_user_list" { 
-  cluster_id = "${instaclustr_clustr.example_kafka.cluster_id}"
-}  
+}
+
+
+data "instaclustr_bundle_user_list" "kafka_rest_proxy_user_list" {
+  cluster_id = "${instaclustr_cluster.example_kafka.id}"
+  bundle_name = "kafka_rest_proxy"
+}
+
+data "instaclustr_bundle_user_list" "kafka_schema_registry_user_list" {
+  cluster_id = "${instaclustr_cluster.example_kafka.id}"
+  bundle_name = "kafka_schema_registry"
+}
 
 resource "instaclustr_cluster" "private_cluster_example" {
   cluster_name = "testcluster"
@@ -240,4 +273,8 @@ resource "instaclustr_cluster" "example-redis" {
       replica_nodes = 3
     }
   }
+}
+
+resource "instaclustr_cluster" "delete-cluster" {
+  cluster_id = "ddace3f3-a017-4cad-8516-47f22ef5c412"
 }
