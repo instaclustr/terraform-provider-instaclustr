@@ -297,18 +297,15 @@ func resourceCluster() *schema.Resource {
 				Type:     schema.TypeString,
 				Sensitive: true,
 				Optional: true,
-				ForceNew: false,
 			},
 			"kafka_schema_registry_user_password": {
 				Type:     schema.TypeString,
 				Sensitive: true,
 				Optional: true,
-				ForceNew: false,
 			},
 			"minimum_required_cluster_state": {
 				Type:     schema.TypeString,
 				Optional: true,
-				ForceNew: false,
 				Default:  "",
 
 				ValidateFunc: func(i interface{}, s string) (ws []string, errors []error) {
