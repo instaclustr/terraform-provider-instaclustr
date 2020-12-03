@@ -219,7 +219,7 @@ data "instaclustr_bundle_user" "kafka_user_list" {
 resource "instaclustr_bundle_user" "kafka_user" {
   cluster_id = "${instaclustr_cluster.example_kafka.id}"
   username = "ickafka"
-  password = "ickafka123test!blah"
+  password = "ickafka123test!"
   bundle_name = "kafka"
   initial_permissions = "none"
 }
