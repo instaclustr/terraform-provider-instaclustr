@@ -204,7 +204,7 @@ data "instaclustr_kafka_user_list" "kafka_user_list" {
   cluster_id = "${instaclustr_cluster.example_kafka.id}"
 }
 
- creating kafka bundle user example
+// creating kafka bundle user example
 resource "instaclustr_bundle_user" "kafka_user_charlie" {
   cluster_id = "${instaclustr_cluster.example_kafka.id}"
   username = "charlie"
