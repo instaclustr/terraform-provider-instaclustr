@@ -515,7 +515,7 @@ func resourceClusterUpdate(d *schema.ResourceData, meta interface{}) error {
 
 	//preparing the kafka rest proxy bundle user update request
 	updateKafkaRestProxyUserData := UpdateBundleUserRequest{
-		Username: "ickafkaschema",
+		Username: "ickafkarest",
 		Password: d.Get("kafka_rest_proxy_user_password").(string),
 	}
 	var jsonStrUpdateKafkaRestProxyUser []byte
