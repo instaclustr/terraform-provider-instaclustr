@@ -214,8 +214,8 @@ data "instaclustr_bundle_user" "kafka_user_list" {
   bundle_name = "kafka"
 }
 
- creating the kafka bundle-user resource to be used in the user password update example
- after creating this resource, change the password and apply the plan again to modify the bundle user password
+// creating the kafka bundle-user resource to be used in the user password update example
+// after creating this resource, change the password and apply the plan again to modify the bundle user password
 resource "instaclustr_bundle_user" "kafka_user" {
   cluster_id = "${instaclustr_cluster.example_kafka.id}"
   username = "ickafka"
@@ -273,8 +273,4 @@ resource "instaclustr_cluster" "example-redis" {
       replica_nodes = 3
     }
   }
-}
-
-resource "instaclustr_cluster" "delete-cluster" {
-  cluster_id = "ddace3f3-a017-4cad-8516-47f22ef5c412"
 }
