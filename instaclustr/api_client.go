@@ -297,6 +297,21 @@ func (c *APIClient) DeleteEncryptionKey(keyID string) error {
 	return nil
 }
 
+//generic function
+func (c *APIClient) CreateBundleUser(clusterID string, bundleName string, data []byte) error {
+	url := fmt.Sprintf("%s/provisioning/v1/%s/%s/users", c.apiServerHostname, clusterID, bundleName)
+	resp, err := c.MakeRequest(url, "POST", data)
+	if err != nil {
+		return err
+	}
+	bodyText, err := ioutil.ReadAll(resp.Body)
+	if resp.StatusCode != 201 {
+		return errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
+	}
+	return nil
+}
+
+//bundle specific function - to be deprecated
 func (c *APIClient) CreateKafkaUser(clusterID string, data []byte) error {
 	url := fmt.Sprintf("%s/provisioning/v1/%s/kafka/users", c.apiServerHostname, clusterID)
 	resp, err := c.MakeRequest(url, "POST", data)
@@ -310,6 +325,21 @@ func (c *APIClient) CreateKafkaUser(clusterID string, data []byte) error {
 	return nil
 }
 
+//generic function
+func (c *APIClient) UpdateBundleUser(clusterID string, bundleName string, data []byte) error {
+	url := fmt.Sprintf("%s/provisioning/v1/%s/%s/users/reset-password", c.apiServerHostname, clusterID, bundleName)
+	resp, err := c.MakeRequest(url, "POST", data)
+	if err != nil {
+		return err
+	}
+	bodyText, err := ioutil.ReadAll(resp.Body)
+	if resp.StatusCode != 200 {
+		return errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
+	}
+	return nil
+}
+
+//bundle specific function - to be deprecated
 func (c *APIClient) UpdateKafkaUser(clusterID string, data []byte) error {
 	url := fmt.Sprintf("%s/provisioning/v1/%s/kafka/users/reset-password", c.apiServerHostname, clusterID)
 	resp, err := c.MakeRequest(url, "POST", data)
@@ -323,6 +353,21 @@ func (c *APIClient) UpdateKafkaUser(clusterID string, data []byte) error {
 	return nil
 }
 
+//generic function
+func (c *APIClient) DeleteBundleUser(clusterID string, bundleName string, data []byte) error {
+	url := fmt.Sprintf("%s/provisioning/v1/%s/%s/users", c.apiServerHostname, clusterID, bundleName)
+	resp, err := c.MakeRequest(url, "DELETE", data)
+	if err != nil {
+		return err
+	}
+	bodyText, err := ioutil.ReadAll(resp.Body)
+	if resp.StatusCode != 200 {
+		return errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
+	}
+	return nil
+}
+
+//bundle specific function - to be deprecated
 func (c *APIClient) DeleteKafkaUser(clusterID string, data []byte) error {
 	url := fmt.Sprintf("%s/provisioning/v1/%s/kafka/users", c.apiServerHostname, clusterID)
 	resp, err := c.MakeRequest(url, "DELETE", data)
@@ -336,6 +381,28 @@ func (c *APIClient) DeleteKafkaUser(clusterID string, data []byte) error {
 	return nil
 }
 
+//generic function
+func (c *APIClient) ReadBundleUserList(clusterID string, bundleName string) ([]string, error) {
+	url := fmt.Sprintf("%s/provisioning/v1/%s/%s/users", c.apiServerHostname, clusterID, bundleName)
+	resp, err := c.MakeRequest(url, "GET", nil)
+	if err != nil {
+		return nil, err
+	}
+	bodyText, err := ioutil.ReadAll(resp.Body)
+	if resp.StatusCode != 200 {
+		return nil, errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
+	}
+
+	usernameList := []string {}
+	err = json.Unmarshal(bodyText, &usernameList)
+	if err != nil {
+		return nil, err
+	}
+
+	return usernameList, nil
+}
+
+//bundle specific function - to be deprecated
 func (c *APIClient) ReadKafkaUserList(clusterID string) ([]string, error) {
 	url := fmt.Sprintf("%s/provisioning/v1/%s/kafka/users", c.apiServerHostname, clusterID)
 	resp, err := c.MakeRequest(url, "GET", nil)
