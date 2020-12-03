@@ -257,7 +257,3 @@ resource "instaclustr_cluster" "example-redis" {
     }
   }
 }
-
-resource "instaclustr_cluster" "delete-cluster" {
-  cluster_id = "ddace3f3-a017-4cad-8516-47f22ef5c412"
-}
