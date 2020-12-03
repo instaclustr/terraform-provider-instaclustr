@@ -158,6 +158,21 @@ type EncryptionKey struct {
 	Provider string `json:"provider,omitempty"`
 }
 
+type CreateBundleUserRequest struct {
+	Username           string `json:"username"`
+	Password           string `json:"password"`
+	InitialPermissions string `json:"initial-permissions"`
+}
+
+type UpdateBundleUserRequest struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+type DeleteBundleUserRequest struct {
+	Username string `json:"username"`
+}
+
 type CreateKafkaUserRequest struct {
 	Username           string `json:"username"`
 	Password           string `json:"password"`
