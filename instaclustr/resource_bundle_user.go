@@ -55,6 +55,10 @@ func resourceBundleUserCreate(d *schema.ResourceData, meta interface{}) error {
 	username := d.Get("username").(string)
 	bundle_name := d.Get("bundle_name").(string)
 
+	if bundle_name == "kafka_rest_proxy" || bundle_name == "kafka_schema_registry" {
+		return fmt.Errorf("[Error] User creation is not supported for kafka_rest_proxy and kafka_schema_registry bundles at the moment")
+	}
+
 	log.Printf("[INFO] Creating %s user in %s.", bundle_name,cluster_id)
 	client := meta.(*Config).Client
 
@@ -143,6 +147,12 @@ func removeBundleUserResource(d *schema.ResourceData) {
 }
 
 func resourceBundleUserDelete(d *schema.ResourceData, meta interface{}) error {
+
+	bundle_name := d.Get("bundle_name").(string)
+
+	if bundle_name == "kafka_rest_proxy" || bundle_name == "kafka_schema_registry" {
+		return fmt.Errorf("[Error] User creation is not supported for kafka_rest_proxy and kafka_schema_registry bundles at the moment")
+	}
 
 	log.Printf("[INFO] Deleting %s user %s in %s.", d.Get("bundle_name"), d.Get("username").(string), d.Get("cluster_id"))
 	client := meta.(*Config).Client

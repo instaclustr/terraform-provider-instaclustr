@@ -209,6 +209,7 @@ resource "instaclustr_bundle_user" "kafka_user_charlie" {
   bundle_name = "kafka"
 }
 
+//deleting kafka bundle user example
 data "instaclustr_bundle_user" "kafka_user_list" {
   cluster_id = "${instaclustr_cluster.example_kafka.id}"
   bundle_name = "kafka"
