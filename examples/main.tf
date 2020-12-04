@@ -107,7 +107,7 @@ resource "instaclustr_vpc_peering" "example_vpc_peering" {
 
 // Updating the kafka-schema-registry and the kafka-rest-proxy bundle user passwords at the cluster creation time
 resource "instaclustr_cluster" "example_kafka" {
-  cluster_name = "subhani-test_kafka"
+  cluster_name = "test_kafka"
   node_size = "r5.large-500-gp2"
   data_centre = "US_WEST_2"
   sla_tier = "NON_PRODUCTION"
