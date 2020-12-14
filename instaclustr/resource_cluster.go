@@ -388,6 +388,8 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 
 	if len(waitForClusterState) < 0 {
 		return resourceClusterRead(d, meta)
+	} else if (len(kafkaSchemaRegistryUserPassword) > 0 || len(kafkaRestProxyUserPassword) > 0) && waitForClusterState != "RUNNING" {
+		return fmt.Errorf("[Error] Please specify the cluster to reach the RUNNING state before updating the kafka-schema-registry or kafka-rest-proxy user password with minimum_required_cluster_state property")
 	} else {
 		return waitForClusterStateAndDoUpdate(client, waitForClusterState, isKafkaCluster, hasRestProxy, hasSchemaRegistry, kafkaRestProxyUserPassword, kafkaSchemaRegistryUserPassword, d, id, meta)
 	}
