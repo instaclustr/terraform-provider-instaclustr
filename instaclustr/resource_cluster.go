@@ -437,7 +437,7 @@ func waitForClusterStateAndDoUpdate(client *APIClient,
 			}
 		}
 
-		return resource.RetryableError(fmt.Errorf("[Error] Cluster is in state %s", cluster.ClusterStatus))
+		return resource.RetryableError(fmt.Errorf("[DEBUG] Cluster is in state %s, waiting for it to reach state %s", cluster.ClusterStatus, waitForClusterState))
 	})
 }
 
