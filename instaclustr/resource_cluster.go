@@ -344,19 +344,16 @@ func resourceCluster() *schema.Resource {
 				Type:     schema.TypeString,
 				Sensitive: true,
 				Optional: true,
-				ForceNew: true,
 			},
 			"kafka_schema_registry_user_password": {
 				Type:     schema.TypeString,
 				Sensitive: true,
 				Optional: true,
-				ForceNew: true,
 			},
 			"minimum_required_cluster_state": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Default:  "",
-				ForceNew: true,
 
 				ValidateFunc: func(i interface{}, s string) (ws []string, errors []error) {
 					state := i.(string)
@@ -446,16 +443,18 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 }
 
 func waitForClusterStateAndDoUpdate(client *APIClient,
-									waitForClusterState string,
-									isKafkaCluster bool,
-									hasRestProxy bool,
-									hasSchemaRegistry bool,
-									kafkaRestProxyUserPassword string,
-									kafkaSchemaRegistryUserPassword string,
-									d *schema.ResourceData,
-									id string,
-									meta interface{}) error {
+	waitForClusterState string,
+	isKafkaCluster bool,
+	hasRestProxy bool,
+	hasSchemaRegistry bool,
+	kafkaRestProxyUserPassword string,
+	kafkaSchemaRegistryUserPassword string,
+	d *schema.ResourceData,
+	id string,
+	meta interface{}) error {
 	return resource.Retry(d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
+
+		//reading cluster details
 		cluster, err := client.ReadCluster(id)
 
 		if err != nil {
@@ -467,19 +466,11 @@ func waitForClusterStateAndDoUpdate(client *APIClient,
 			if isKafkaCluster {
 
 				if hasRestProxy && (len(kafkaRestProxyUserPassword) > 0) {
-					//updating the kafka rest proxy bundle user
-					err = client.UpdateKafkaRestProxyUser(d.Get("cluster_id").(string), createBundleUserUpdateRequest("ickafkarest", d.Get("kafka_rest_proxy_user_password").(string)))
-					if err != nil {
-						return resource.NonRetryableError(fmt.Errorf("[Error] Error updating the kafka rest proxy bundle user password : %s", err))
-					}
+					updateKafkaRestProxyPassword(d, client)
 				}
 
 				if hasSchemaRegistry && (len(kafkaSchemaRegistryUserPassword) > 0) {
-					//updating the kafka schema registry bundle user
-					err = client.UpdateKafkaSchemaRegistryUser(d.Get("cluster_id").(string), createBundleUserUpdateRequest("ickafkaschema", d.Get("kafka_schema_registry_user_password").(string)))
-					if err != nil {
-						return resource.NonRetryableError(fmt.Errorf("[Error] Error updating the kafka schema registry bundle user password : %s", err))
-					}
+					updateKafkaSchemaRegistryPassword(d, client)
 				}
 
 				return resource.NonRetryableError(resourceClusterRead(d, meta))
@@ -491,6 +482,28 @@ func waitForClusterStateAndDoUpdate(client *APIClient,
 
 		return resource.RetryableError(fmt.Errorf("[DEBUG] Cluster is in state %s, waiting for it to reach state %s", cluster.ClusterStatus, waitForClusterState))
 	})
+}
+
+func updateKafkaRestProxyPassword(d *schema.ResourceData, client *APIClient) error {
+	//updating the kafka rest proxy bundle user
+	var err error
+	err = client.UpdateKafkaRestProxyUser(d.Get("cluster_id").(string), createBundleUserUpdateRequest("ickafkarest", d.Get("kafka_rest_proxy_user_password").(string)))
+	if err != nil {
+		return fmt.Errorf("[Error] Error updating the kafka rest proxy bundle user password : %s", err)
+	}
+
+	return nil
+}
+
+func updateKafkaSchemaRegistryPassword(d *schema.ResourceData, client *APIClient) error {
+	//updating the kafka schema registry bundle user
+	var err error
+	err = client.UpdateKafkaSchemaRegistryUser(d.Get("cluster_id").(string), createBundleUserUpdateRequest("ickafkaschema", d.Get("kafka_schema_registry_user_password").(string)))
+	if err != nil {
+		return fmt.Errorf("[Error] Error updating the kafka schema registry bundle user password : %s", err)
+	}
+
+	return nil
 }
 
 func resourceClusterUpdate(d *schema.ResourceData, meta interface{}) error {
