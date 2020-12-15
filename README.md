@@ -296,52 +296,6 @@ data "instaclustr_kafka_user_list" "kafka_user_list" {
   cluster_id = "${instaclustr_cluster.kafka_cluster.id}"
 }
 ```
-### Resource  `instaclustr_bundle_user` and Data Source `instaclustr_bundle_user_list`                             
-Resources for managing bundle users for any cluster. 
-Bundle user list is a read-only data source used to get the list of bundle user in a cluster, 
-while Bundle user is a resource used to create, update password, and delete bundle users.
-
-Note 1: There is a possibility that someone else delete the bundle user through other means, e.g., instaclustr console and API.
-This will cause the bundle user resource to be not in sync because it does not have read.
-In such case, to recreate the user just remove the bundle user resource, and then create a new one.
-
-Note 2: Please note that the terraform-provider-instaclustr currently doesn't support the deletion or creation of kafka_schema_registry anf kafka_rest_proxy bundle users.
-
-#### Properties
-`instaclustr_bundle_user`
-
-Property | Description | Default
----------|-------------|--------
-cluster_id|The ID of an existing Instaclustr managed cluster|Required
-username|User name for the Kafka user|Required
-password|Password for the Kafka user|Required
-bundle_name|User bundle name|Required
-initial_permissions|Initial permission set (ACL) associated with this user. Possible values are: `standard`, `read-only`, and `none`. | `none`
-
-`instaclustr_bundle_user_list`
-
-Property | Description | Default
----------|-------------|--------
-cluster_id|The ID of an existing Instaclustr managed cluster|Required
-bundle_name|User bundle name|Required
-
-
-#### Example
-```
-resource "instaclustr_bundle_user" "kafka_user_tom" {
-  cluster_id = "${instaclustr_cluster.example_kafka.id}"
-  username = "tom"
-  password = "tom123test!"
-  bundle_name = "kafka"
-  initial_permissions = "none"
-}
-
-
-data "instaclustr_bundle_user" "kafka_user_list" {
-  cluster_id = "${instaclustr_cluster.example_kafka.id}"
-  bundle_name = "kafka"
-}
-```
 
 ## Bundles and Versions
 
