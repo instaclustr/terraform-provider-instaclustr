@@ -460,22 +460,22 @@ func waitForClusterStateAndDoUpdate(client *APIClient,
 			return resource.NonRetryableError(fmt.Errorf("[Error] Error retrieving cluster info: %s", err))
 		}
 
-		if cluster.ClusterStatus == waitForClusterState {
-
-			if !isKafkaCluster && (len(kafkaSchemaRegistryUserPassword) > 0 || len(kafkaRestProxyUserPassword) > 0) {
-				return resource.NonRetryableError(fmt.Errorf("[Error] Error updating the bundle user passwords, because it should be a KAFKA cluster in order to update the schema-registry or rest-proxy users"))
-			}
-
-			if isKafkaCluster && hasRestProxy && (len(kafkaRestProxyUserPassword) > 0) {
-				updateKafkaRestProxyPassword(d, client)
-			}
-
-			if isKafkaCluster && hasSchemaRegistry && (len(kafkaSchemaRegistryUserPassword) > 0) {
-				updateKafkaSchemaRegistryPassword(d, client)
-			}
-		} else {
+		if cluster.ClusterStatus != waitForClusterState {
 			return resource.RetryableError(fmt.Errorf("[DEBUG] Cluster is in state %s, waiting for it to reach state %s", cluster.ClusterStatus, waitForClusterState))
 		}
+
+		if !isKafkaCluster && (len(kafkaSchemaRegistryUserPassword) > 0 || len(kafkaRestProxyUserPassword) > 0) {
+			return resource.NonRetryableError(fmt.Errorf("[Error] Error updating the bundle user passwords, because it should be a KAFKA cluster in order to update the schema-registry or rest-proxy users"))
+		}
+
+		if isKafkaCluster && hasRestProxy && (len(kafkaRestProxyUserPassword) > 0) {
+			updateKafkaRestProxyPassword(d, client)
+		}
+
+		if isKafkaCluster && hasSchemaRegistry && (len(kafkaSchemaRegistryUserPassword) > 0) {
+			updateKafkaSchemaRegistryPassword(d, client)
+		}
+
 		return nil
 	})
 }
@@ -652,10 +652,12 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 
 	toCheck := [3]string{"cluster_provider","rack_allocation","bundle"}
 	for _, changing := range toCheck {
-		if d.HasChange(changing) {
-			_, after := d.GetChange(changing)
-			d.Set(changing, after)
+
+		if !d.HasChange(changing) {
+			continue
 		}
+		_, after := d.GetChange(changing)
+		d.Set(changing, after)
 	}
 
 	log.Printf("[INFO] Fetched cluster %s info from the remote server.", cluster.ID)
