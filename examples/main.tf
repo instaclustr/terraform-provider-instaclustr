@@ -206,15 +206,6 @@ data "instaclustr_kafka_user_list" "kafka_user_list" {
   cluster_id = "${instaclustr_cluster.example_kafka.id}"
 }
 
-// creating the kafka bundle-user resource to be used in the user password update example
-// after creating this resource, change the password and apply the plan again to modify the bundle user password
-resource "instaclustr_kafka_user" "kafka_user" {
-  cluster_id = "${instaclustr_cluster.example_kafka.id}"
-  username = "ickafka"
-  password = "ickafka123test!"
-  initial_permissions = "none"
-}
-
 resource "instaclustr_cluster" "private_cluster_example" {
   cluster_name = "testcluster"
   node_size = "m5l-250-v2"
