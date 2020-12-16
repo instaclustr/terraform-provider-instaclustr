@@ -1,6 +1,3 @@
-//I should add my new content for THIS FILE and then push the changes
-
-
 provider "instaclustr" {
   username = "<Your instaclustr username here>"
   api_key = "<Your provisioning API key here>"
