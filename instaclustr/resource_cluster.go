@@ -438,7 +438,7 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 	} else if (len(kafkaSchemaRegistryUserPassword) > 0 || len(kafkaRestProxyUserPassword) > 0) && waitForClusterState != "RUNNING" {
 		return fmt.Errorf("[Error] Please specify the cluster to reach the RUNNING state before updating the kafka-schema-registry or kafka-rest-proxy user password with minimum_required_cluster_state property")
 	} else {
-		return waitForClusterStateAndDoUpdate(client, waitForClusterState, isKafkaCluster, hasRestProxy, hasSchemaRegistry, kafkaRestProxyUserPassword, kafkaSchemaRegistryUserPassword, d, id, meta)
+		return waitForClusterStateAndDoUpdate(client, waitForClusterState, isKafkaCluster, hasRestProxy, hasSchemaRegistry, kafkaRestProxyUserPassword, kafkaSchemaRegistryUserPassword, d, id)
 	}
 }
 
@@ -450,8 +450,7 @@ func waitForClusterStateAndDoUpdate(client *APIClient,
 	kafkaRestProxyUserPassword string,
 	kafkaSchemaRegistryUserPassword string,
 	d *schema.ResourceData,
-	id string,
-	meta interface{}) error {
+	id string) error {
 	return resource.Retry(d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
 
 		//reading cluster details
@@ -463,24 +462,21 @@ func waitForClusterStateAndDoUpdate(client *APIClient,
 
 		if cluster.ClusterStatus == waitForClusterState {
 
-			if isKafkaCluster {
-
-				if hasRestProxy && (len(kafkaRestProxyUserPassword) > 0) {
-					updateKafkaRestProxyPassword(d, client)
-				}
-
-				if hasSchemaRegistry && (len(kafkaSchemaRegistryUserPassword) > 0) {
-					updateKafkaSchemaRegistryPassword(d, client)
-				}
-
-				return resource.NonRetryableError(resourceClusterRead(d, meta))
-
-			} else if !isKafkaCluster && (len(kafkaSchemaRegistryUserPassword) > 0 || len(kafkaRestProxyUserPassword) > 0) {
+			if !isKafkaCluster && (len(kafkaSchemaRegistryUserPassword) > 0 || len(kafkaRestProxyUserPassword) > 0) {
 				return resource.NonRetryableError(fmt.Errorf("[Error] Error updating the bundle user passwords, because it should be a KAFKA cluster in order to update the schema-registry or rest-proxy users"))
 			}
-		}
 
-		return resource.RetryableError(fmt.Errorf("[DEBUG] Cluster is in state %s, waiting for it to reach state %s", cluster.ClusterStatus, waitForClusterState))
+			if isKafkaCluster && hasRestProxy && (len(kafkaRestProxyUserPassword) > 0) {
+				updateKafkaRestProxyPassword(d, client)
+			}
+
+			if isKafkaCluster && hasSchemaRegistry && (len(kafkaSchemaRegistryUserPassword) > 0) {
+				updateKafkaSchemaRegistryPassword(d, client)
+			}
+		} else {
+			return resource.RetryableError(fmt.Errorf("[DEBUG] Cluster is in state %s, waiting for it to reach state %s", cluster.ClusterStatus, waitForClusterState))
+		}
+		return nil
 	})
 }
 
@@ -653,8 +649,6 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	if len(cluster.DataCentres[0].Nodes[0].PrivateAddress) != 0 {
 		err = d.Set("private_contact_point", cluster.DataCentres[0].Nodes[0].PrivateAddress)
 	}
-
-	//var before interface{}
 
 	toCheck := [3]string{"cluster_provider","rack_allocation","bundle"}
 	for _, changing := range toCheck {
