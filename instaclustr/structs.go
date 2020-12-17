@@ -177,3 +177,9 @@ type UpdateKafkaUserRequest struct {
 type DeleteKafkaUserRequest struct {
 	Username string `json:"username"`
 }
+
+type AdditionalClusterConfigs struct {
+	IsKafkaCluster bool
+	HasRestProxy bool
+	HasSchemaRegistry bool
+}
