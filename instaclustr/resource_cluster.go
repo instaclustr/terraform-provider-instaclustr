@@ -517,7 +517,6 @@ func resourceClusterUpdate(d *schema.ResourceData, meta interface{}) error {
 	updatedAdditionalConfigs := getBundleAvailability(bundles, additionalClusterConfigs)
 
 	if updatedAdditionalConfigs.IsKafkaCluster && updatedAdditionalConfigs.HasSchemaRegistry && kafkaSchemaRegistryUserUpdate {
-
 		//updating the bundle user
 		err = client.UpdateBundleUser(clusterID, "kafka_schema_registry", createBundleUserUpdateRequest("ickafkaschema", d.Get("kafka_schema_registry_user_password").(string)))
 		if err != nil {
@@ -532,7 +531,11 @@ func resourceClusterUpdate(d *schema.ResourceData, meta interface{}) error {
 		}
 	}
 	if clusterResize {
-		doClusterResize(client, clusterID, d)
+		//resizing the cluster (i.e, upgrading from one node size to another node size)
+		err = doClusterResize(client, clusterID, d)
+		if err != nil {
+			return fmt.Errorf("[Error] Error resizing the cluster : %s", err)
+		}
 	}
 
 	if !updatedAdditionalConfigs.IsKafkaCluster && (kafkaSchemaRegistryUserUpdate || kafkaRestProxyUserUpdate) {
