@@ -411,11 +411,13 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		HasSchemaRegistry: false,
 	}
 
+	updatedAdditionalConfigs := getBundleAvailability(bundles, additionalClusterConfigs)
+
 	if (len(kafkaSchemaRegistryUserPassword) > 0 || len(kafkaRestProxyUserPassword) > 0) && waitForClusterState != "RUNNING" {
 		return fmt.Errorf("[Error] Please specify the cluster to reach the RUNNING state before updating the kafka-schema-registry or kafka-rest-proxy user password with wait_for_state property")
 	}
 
-	if !additionalClusterConfigs.IsKafkaCluster && (len(kafkaSchemaRegistryUserPassword) > 0 || len(kafkaRestProxyUserPassword) > 0) {
+	if !updatedAdditionalConfigs.IsKafkaCluster && (len(kafkaSchemaRegistryUserPassword) > 0 || len(kafkaRestProxyUserPassword) > 0) {
 		return fmt.Errorf("[Error] Error updating the bundle user passwords, because it should be a KAFKA cluster in order to update the schema-registry or rest-proxy users")
 	}
 
@@ -444,12 +446,10 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 	d.Set("cluster_id", id)
 	log.Printf("[INFO] Cluster %s has been created.", id)
 
-	getForBundleAvailability(bundles, additionalClusterConfigs)
-
 	if len(waitForClusterState) == 0 {
 		return nil
 	} else {
-		return waitForClusterStateAndDoUpdate(client, waitForClusterState, additionalClusterConfigs, kafkaRestProxyUserPassword, kafkaSchemaRegistryUserPassword, d, id)
+		return waitForClusterStateAndDoUpdate(client, waitForClusterState, updatedAdditionalConfigs, kafkaRestProxyUserPassword, kafkaSchemaRegistryUserPassword, d, id)
 	}
 }
 
@@ -530,9 +530,9 @@ func resourceClusterUpdate(d *schema.ResourceData, meta interface{}) error {
 		HasSchemaRegistry: false,
 	}
 
-	getForBundleAvailability(bundles, additionalClusterConfigs)
+	updatedAdditionalConfigs := getBundleAvailability(bundles, additionalClusterConfigs)
 
-	if additionalClusterConfigs.IsKafkaCluster && additionalClusterConfigs.HasSchemaRegistry && kafkaSchemaRegistryUserUpdate {
+	if updatedAdditionalConfigs.IsKafkaCluster && updatedAdditionalConfigs.HasSchemaRegistry && kafkaSchemaRegistryUserUpdate {
 
 		//updating the bundle user
 		err = client.UpdateBundleUser(clusterID, "kafka_schema_registry", createBundleUserUpdateRequest("ickafkaschema", d.Get("kafka_schema_registry_user_password").(string)))
@@ -540,7 +540,7 @@ func resourceClusterUpdate(d *schema.ResourceData, meta interface{}) error {
 			return fmt.Errorf("[Error] Error updating the password for kafka schema registry user : %s", err)
 		}
 	}
-	if additionalClusterConfigs.IsKafkaCluster && additionalClusterConfigs.HasRestProxy && kafkaRestProxyUserUpdate {
+	if updatedAdditionalConfigs.IsKafkaCluster && updatedAdditionalConfigs.HasRestProxy && kafkaRestProxyUserUpdate {
 		//updating the bundle user
 		err = client.UpdateBundleUser(clusterID, "kafka_rest_proxy", createBundleUserUpdateRequest("ickafkarest", d.Get("kafka_rest_proxy_user_password").(string)))
 		if err != nil {
@@ -551,7 +551,7 @@ func resourceClusterUpdate(d *schema.ResourceData, meta interface{}) error {
 		doClusterResize(client, clusterID, d)
 	}
 
-	if !additionalClusterConfigs.IsKafkaCluster && (kafkaSchemaRegistryUserUpdate || kafkaRestProxyUserUpdate) {
+	if !updatedAdditionalConfigs.IsKafkaCluster && (kafkaSchemaRegistryUserUpdate || kafkaRestProxyUserUpdate) {
 		return fmt.Errorf("[Error] Error updating the bundle user passwords, because it should be a KAFKA cluster in order to update the schema-registry or rest-proxy users")
 	}
 
@@ -580,7 +580,7 @@ func createBundleUserUpdateRequest(bundleUsername string, bundleUserPassword str
 	}
 }
 
-func getForBundleAvailability(bundles []Bundle, configs AdditionalClusterConfigs) {
+func getBundleAvailability(bundles []Bundle, configs AdditionalClusterConfigs) AdditionalClusterConfigs {
 	for i := 0; i < len(bundles); i++ {
 
 		if bundles[i].Bundle == "KAFKA" {
@@ -593,6 +593,7 @@ func getForBundleAvailability(bundles []Bundle, configs AdditionalClusterConfigs
 			configs.HasSchemaRegistry = true
 		}
 	}
+	return configs
 }
 
 func doClusterResize(client *APIClient, clusterID string, d *schema.ResourceData) error {
