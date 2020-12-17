@@ -331,16 +331,7 @@ func (c *APIClient) CreateKafkaUser(clusterID string, data []byte) error {
 }
 
 func (c *APIClient) UpdateKafkaUser(clusterID string, data []byte) error {
-	url := fmt.Sprintf("%s/provisioning/v1/%s/kafka/users/reset-password", c.apiServerHostname, clusterID)
-	resp, err := c.MakeRequest(url, "POST", data)
-	if err != nil {
-		return err
-	}
-	bodyText, err := ioutil.ReadAll(resp.Body)
-	if resp.StatusCode != 200 {
-		return errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
-	}
-	return nil
+	return c.UpdateBundleUser(clusterID, "kafka", data)
 }
 
 func (c *APIClient) DeleteKafkaUser(clusterID string, data []byte) error {
