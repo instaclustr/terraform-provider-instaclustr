@@ -103,7 +103,7 @@ A resource for managing clusters on Instaclustr Managed Platform. A cluster cont
 Property | Description | Default
 ---------|-------------|--------
 cluster_name|The name of new cluster. May contain a combination of letters, numbers and underscores with a maximum length of 32 characters.|Required
-node_size|Desired node size. See [here](https://www.instaclustr.com/support/api-integrations/api-reference/provisioning-api/#section-reference-data-data-centres-and-node-sizes) for more details.|Required
+node_size|Desired node size. See [here](https://www.instaclustr.com/support/api-integrations/api-reference/provisioning-api/#section-reference-data-data-centres-and-node-sizes) for more details. This field is updatable.|Required
 data_centre|Desired data centre. See [here](https://www.instaclustr.com/support/api-integrations/api-reference/provisioning-api/#section-reference-data-data-centres-and-node-sizes) for more details.|Required
 sla_tier|Accepts PRODUCTION/NON_PRODUCTION. The SLA Tier feature on the Instaclustr console is used to classify clusters as either production and non_production. See [here](https://www.instaclustr.com/support/documentation/useful-information/sla-tier/) for more details.|NON_PRODUCTION
 cluster_network|The private network address block for the cluster specified using CIDR address notation. The network must have a prefix length between /12 and /22 and must be part of a private address space.|10.224.0.0/12
@@ -112,13 +112,9 @@ pci_compliant_cluster|Accepts true/false. Creates the cluster with PCI complianc
 cluster_provider|The information of infrastructure provider. See below for its properties.|Required
 rack_allocation|The number of resources to use. See below for its properties.|Optional, but Required for all Bundle types excluding Redis.
 bundle|Array of bundle information. See below for its properties.|Required
-kafka_rest_proxy_user_password|The password of kafka rest proxy bundle user, if it's a Kafka cluster with rest-proxy addon|Optional
-kafka_schema_registry_user_password|The password of kafka schema registry bundle user, if it's a Kafka cluster with schema-registry addon|Optional
+kafka_rest_proxy_user_password|The password of kafka rest proxy bundle user, if it is a Kafka cluster with rest-proxy addon. This field is updatable and requires `wait_for_state` to be `RUNNING`.|Optional
+kafka_schema_registry_user_password|The password of kafka schema registry bundle user, if it is a Kafka cluster with schema-registry addon. This field is updatable and requires `wait_for_state` to be `RUNNING`.|Optional
 wait_for_state|The expected state of the cluster before completing the resource creation. Skipping this field will asynchronously create the cluster.|Optional (valid states are RUNNING and PROVISIONED)
-
-Note : 
-1. The user can either specify the new passwords of kafka-schema-registry and(or) kafka-rest-proxy bundle users at the cluster creation time or later when doing a cluster update (i.e, cluster resize, kafka-schema-registry user update or kafka-rest-proxy-user-update). 
-2. You should be setting the value of `wait_for_state` to `RUNNING` if you are updating passwords of kafka-schema-registry or kafka-rest-proxy passwords using `kafka_rest_proxy_user_password` or `kafka_schema_registry_user_password`
 
 `cluster_provider`
 
