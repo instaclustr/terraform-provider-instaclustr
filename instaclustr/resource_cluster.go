@@ -350,7 +350,7 @@ func resourceCluster() *schema.Resource {
 				Sensitive: true,
 				Optional: true,
 			},
-			"minimum_required_cluster_state": {
+			"wait_for_state": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Default:  "",
@@ -429,14 +429,14 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 
 	kafkaSchemaRegistryUserPassword := d.Get("kafka_schema_registry_user_password").(string)
 	kafkaRestProxyUserPassword := d.Get("kafka_rest_proxy_user_password").(string)
-	waitForClusterState := d.Get("minimum_required_cluster_state").(string)
+	waitForClusterState := d.Get("wait_for_state").(string)
 
 	checkForBundleAvailability(bundles)
 
 	if len(waitForClusterState) == 0 {
 		return nil
 	} else if (len(kafkaSchemaRegistryUserPassword) > 0 || len(kafkaRestProxyUserPassword) > 0) && waitForClusterState != "RUNNING" {
-		return fmt.Errorf("[Error] Please specify the cluster to reach the RUNNING state before updating the kafka-schema-registry or kafka-rest-proxy user password with minimum_required_cluster_state property")
+		return fmt.Errorf("[Error] Please specify the cluster to reach the RUNNING state before updating the kafka-schema-registry or kafka-rest-proxy user password with wait_for_state property")
 	} else {
 		return waitForClusterStateAndDoUpdate(client, waitForClusterState, isKafkaCluster, hasRestProxy, hasSchemaRegistry, kafkaRestProxyUserPassword, kafkaSchemaRegistryUserPassword, d, id)
 	}

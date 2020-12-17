@@ -114,11 +114,11 @@ rack_allocation|The number of resources to use. See below for its properties.|Op
 bundle|Array of bundle information. See below for its properties.|Required
 kafka_rest_proxy_user_password|The password of kafka rest proxy bundle user, if it's a Kafka cluster with rest-proxy addon|Optional
 kafka_schema_registry_user_password|The password of kafka schema registry bundle user, if it's a Kafka cluster with schema-registry addon|Optional
-minimum_required_cluster_state|The expected state of the cluster before completing the resource creation. Skipping this field will asynchronously create the cluster.|Optional (valid states are RUNNING and PROVISIONED)
+wait_for_state|The expected state of the cluster before completing the resource creation. Skipping this field will asynchronously create the cluster.|Optional (valid states are RUNNING and PROVISIONED)
 
 Note : 
 1. The user can either specify the new passwords of kafka-schema-registry and(or) kafka-rest-proxy bundle users at the cluster creation time or later when doing a cluster update (i.e, cluster resize, kafka-schema-registry user update or kafka-rest-proxy-user-update). 
-2. You should be setting the value of `minimum_required_cluster_state` to `RUNNING` if you are updating passwords of kafka-schema-registry or kafka-rest-proxy passwords using `kafka_rest_proxy_user_password` or `kafka_schema_registry_user_password`
+2. You should be setting the value of `wait_for_state` to `RUNNING` if you are updating passwords of kafka-schema-registry or kafka-rest-proxy passwords using `kafka_rest_proxy_user_password` or `kafka_schema_registry_user_password`
 
 `cluster_provider`
 

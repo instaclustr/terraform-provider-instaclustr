@@ -140,7 +140,7 @@ resource "instaclustr_cluster" "example_kafka" {
     kafka_rest_proxy_user_password = "RestProxyTest123test!" // new password for rest proxy bundle user
     kafka_schema_registry_user_password = "SchemaRegistryTest123test!" // new password for schema registry bundle user
 
-    minimum_required_cluster_state = "RUNNING" // the required state of the cluster before doing the bundle user password updates
+    wait_for_state = "RUNNING" // the required state of the cluster before doing the bundle user password updates
 }
 
 resource "instaclustr_cluster" "example-elasticsearch" {
