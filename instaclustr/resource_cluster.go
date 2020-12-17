@@ -583,9 +583,8 @@ func createBundleUserUpdateRequest(bundleUsername string, bundleUserPassword str
 	if err != nil {
 		log.Printf("[ERROR] Error creating the bundle user update request : %s", err)
 		return nil
-	} else {
-		return jsonStrUpdateBundleUser
 	}
+	return jsonStrUpdateBundleUser
 }
 
 func getBundleAvailability(bundles []Bundle, configs AdditionalClusterConfigs) AdditionalClusterConfigs {
