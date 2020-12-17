@@ -356,21 +356,8 @@ func (c *APIClient) DeleteKafkaUser(clusterID string, data []byte) error {
 	return nil
 }
 
-func (c *APIClient) UpdateKafkaRestProxyUser(clusterID string, data []byte) error {
-	url := fmt.Sprintf("%s/provisioning/v1/%s/kafka_rest_proxy/users/reset-password", c.apiServerHostname, clusterID)
-	resp, err := c.MakeRequest(url, "POST", data)
-	if err != nil {
-		return err
-	}
-	bodyText, err := ioutil.ReadAll(resp.Body)
-	if resp.StatusCode != 200 {
-		return errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
-	}
-	return nil
-}
-
-func (c *APIClient) UpdateKafkaSchemaRegistryUser(clusterID string, data []byte) error {
-	url := fmt.Sprintf("%s/provisioning/v1/%s/kafka_schema_registry/users/reset-password", c.apiServerHostname, clusterID)
+func (c *APIClient) UpdateBundleUser(clusterID string, bundle string, data []byte) error {
+	url := fmt.Sprintf("%s/provisioning/v1/%s/%s/users/reset-password", c.apiServerHostname, clusterID, bundle)
 	resp, err := c.MakeRequest(url, "POST", data)
 	if err != nil {
 		return err
