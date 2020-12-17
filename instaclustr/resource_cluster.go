@@ -474,11 +474,19 @@ func waitForClusterStateAndDoUpdate(client *APIClient,
 		}
 
 		if additionalClusterConfigs.IsKafkaCluster && additionalClusterConfigs.HasRestProxy && (len(kafkaRestProxyUserPassword) > 0) {
-			updateKafkaRestProxyPassword(d, client)
+
+			err = updateKafkaRestProxyPassword(d, client)
+			if err != nil {
+				return resource.RetryableError(fmt.Errorf("[DEBUG] Error updating the kafka rest proxy bundle user password : %s", err))
+			}
 		}
 
 		if additionalClusterConfigs.IsKafkaCluster && additionalClusterConfigs.HasSchemaRegistry && (len(kafkaSchemaRegistryUserPassword) > 0) {
-			updateKafkaSchemaRegistryPassword(d, client)
+
+			err = updateKafkaSchemaRegistryPassword(d, client)
+			if err != nil {
+				return resource.RetryableError(fmt.Errorf("[DEBUG] Error updating the kafka schema registry bundle user password : %s", err))
+			}
 		}
 
 		return nil
