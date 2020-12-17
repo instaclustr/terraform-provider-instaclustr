@@ -404,6 +404,14 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		PCICompliantCluster:   fmt.Sprintf("%v", d.Get("pci_compliant_cluster")),
 	}
 
+	kafkaSchemaRegistryUserPassword := d.Get("kafka_schema_registry_user_password").(string)
+	kafkaRestProxyUserPassword := d.Get("kafka_rest_proxy_user_password").(string)
+	waitForClusterState := d.Get("wait_for_state").(string)
+
+	if (len(kafkaSchemaRegistryUserPassword) > 0 || len(kafkaRestProxyUserPassword) > 0) && waitForClusterState != "RUNNING" {
+		return fmt.Errorf("[Error] Please specify the cluster to reach the RUNNING state before updating the kafka-schema-registry or kafka-rest-proxy user password with wait_for_state property")
+	}
+
 	// Some Bundles do not use Rack Allocation so add that separately if needed. (Redis for example)
 	if checkIfBundleRequiresRackAllocation(bundles) {
 		var rackAllocation RackAllocation
@@ -429,11 +437,6 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 	d.Set("cluster_id", id)
 	log.Printf("[INFO] Cluster %s has been created.", id)
 
-	kafkaSchemaRegistryUserPassword := d.Get("kafka_schema_registry_user_password").(string)
-	kafkaRestProxyUserPassword := d.Get("kafka_rest_proxy_user_password").(string)
-	waitForClusterState := d.Get("wait_for_state").(string)
-
-
 	additionalClusterConfigs := AdditionalClusterConfigs{
 
 		IsKafkaCluster: false,
@@ -445,8 +448,6 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 
 	if len(waitForClusterState) == 0 {
 		return nil
-	} else if (len(kafkaSchemaRegistryUserPassword) > 0 || len(kafkaRestProxyUserPassword) > 0) && waitForClusterState != "RUNNING" {
-		return fmt.Errorf("[Error] Please specify the cluster to reach the RUNNING state before updating the kafka-schema-registry or kafka-rest-proxy user password with wait_for_state property")
 	} else {
 		return waitForClusterStateAndDoUpdate(client, waitForClusterState, additionalClusterConfigs, kafkaRestProxyUserPassword, kafkaSchemaRegistryUserPassword, d, id)
 	}
