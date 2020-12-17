@@ -353,6 +353,7 @@ func resourceCluster() *schema.Resource {
 			"wait_for_state": {
 				Type:     schema.TypeString,
 				Optional: true,
+				ForceNew: true,
 				Default:  "",
 
 				ValidateFunc: func(i interface{}, s string) (ws []string, errors []error) {
