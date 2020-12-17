@@ -474,16 +474,14 @@ func waitForClusterStateAndDoUpdate(client *APIClient,
 		}
 
 		if additionalClusterConfigs.IsKafkaCluster && additionalClusterConfigs.HasRestProxy && (len(kafkaRestProxyUserPassword) > 0) {
-
-			err = updateKafkaRestProxyPassword(d, client)
+			err = client.UpdateBundleUser(d.Get("cluster_id").(string), "kafka_rest_proxy", createBundleUserUpdateRequest("ickafkarest", d.Get("kafka_rest_proxy_user_password").(string)))
 			if err != nil {
 				return resource.RetryableError(fmt.Errorf("[DEBUG] Error updating the kafka rest proxy bundle user password : %s", err))
 			}
 		}
 
 		if additionalClusterConfigs.IsKafkaCluster && additionalClusterConfigs.HasSchemaRegistry && (len(kafkaSchemaRegistryUserPassword) > 0) {
-
-			err = updateKafkaSchemaRegistryPassword(d, client)
+			err = client.UpdateBundleUser(d.Get("cluster_id").(string), "kafka_schema_registry", createBundleUserUpdateRequest("ickafkaschema", d.Get("kafka_schema_registry_user_password").(string)))
 			if err != nil {
 				return resource.RetryableError(fmt.Errorf("[DEBUG] Error updating the kafka schema registry bundle user password : %s", err))
 			}
@@ -491,28 +489,6 @@ func waitForClusterStateAndDoUpdate(client *APIClient,
 
 		return nil
 	})
-}
-
-func updateKafkaRestProxyPassword(d *schema.ResourceData, client *APIClient) error {
-	//updating the kafka rest proxy bundle user
-	var err error
-	err = client.UpdateBundleUser(d.Get("cluster_id").(string), "kafka_rest_proxy", createBundleUserUpdateRequest("ickafkarest", d.Get("kafka_rest_proxy_user_password").(string)))
-	if err != nil {
-		return fmt.Errorf("[Error] Error updating the kafka rest proxy bundle user password : %s", err)
-	}
-
-	return nil
-}
-
-func updateKafkaSchemaRegistryPassword(d *schema.ResourceData, client *APIClient) error {
-	//updating the kafka schema registry bundle user
-	var err error
-	err = client.UpdateBundleUser(d.Get("cluster_id").(string), "kafka_schema_registry", createBundleUserUpdateRequest("ickafkaschema", d.Get("kafka_schema_registry_user_password").(string)))
-	if err != nil {
-		return fmt.Errorf("[Error] Error updating the kafka schema registry bundle user password : %s", err)
-	}
-
-	return nil
 }
 
 func resourceClusterUpdate(d *schema.ResourceData, meta interface{}) error {
