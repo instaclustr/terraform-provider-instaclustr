@@ -6,9 +6,18 @@ import (
 	"log"
 	"regexp"
 	"strings"
+	"time"
 
+	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/mitchellh/mapstructure"
+)
+
+var (
+	validClusterStates = map[string]bool{
+		"RUNNING":     true,
+		"PROVISIONED": true,
+	}
 )
 
 func resourceCluster() *schema.Resource {
@@ -17,6 +26,9 @@ func resourceCluster() *schema.Resource {
 		Read:   resourceClusterRead,
 		Update: resourceClusterUpdate,
 		Delete: resourceClusterDelete,
+		Timeouts: &schema.ResourceTimeout{
+			Create: schema.DefaultTimeout(30 * time.Minute),
+		},
 
 		Schema: map[string]*schema.Schema{
 			"cluster_id": {
@@ -27,6 +39,7 @@ func resourceCluster() *schema.Resource {
 			"cluster_name": {
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
 			},
 
 			"node_size": {
@@ -37,30 +50,35 @@ func resourceCluster() *schema.Resource {
 			"data_centre": {
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
 			},
 
 			"sla_tier": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Default:  "NON_PRODUCTION",
+				ForceNew: true,
 			},
 
 			"cluster_network": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Default:  "10.224.0.0/12",
+				ForceNew: true,
 			},
 
 			"private_network_cluster": {
 				Type:     schema.TypeBool,
 				Optional: true,
 				Default:  false,
+				ForceNew: true,
 			},
 
 			"pci_compliant_cluster": {
 				Type:     schema.TypeBool,
 				Optional: true,
 				Default:  false,
+				ForceNew: true,
 			},
 
 			"public_contact_point": {
@@ -83,22 +101,27 @@ func resourceCluster() *schema.Resource {
 						"name": {
 							Type:     schema.TypeString,
 							Required: true,
+							ForceNew: true,
 						},
 						"account_name": {
 							Type:     schema.TypeString,
 							Optional: true,
+							ForceNew: true,
 						},
 						"custom_virtual_network_id": {
 							Type:     schema.TypeString,
 							Optional: true,
+							ForceNew: true,
 						},
 						"resource_group": {
 							Type:     schema.TypeString,
 							Optional: true,
+							ForceNew: true,
 						},
 						"disk_encryption_key": {
 							Type:     schema.TypeString,
 							Optional: true,
+							ForceNew: true,
 						},
 					},
 				},
@@ -107,6 +130,7 @@ func resourceCluster() *schema.Resource {
 			"tags": {
 				Type:     schema.TypeMap,
 				Optional: true,
+				ForceNew: true,
 			},
 
 			"rack_allocation": {
@@ -117,10 +141,12 @@ func resourceCluster() *schema.Resource {
 						"number_of_racks": {
 							Type:     schema.TypeInt,
 							Required: true,
+							ForceNew: true,
 						},
 						"nodes_per_rack": {
 							Type:     schema.TypeInt,
 							Required: true,
+							ForceNew: true,
 						},
 					},
 				},
@@ -132,6 +158,7 @@ func resourceCluster() *schema.Resource {
 				Elem: &schema.Schema{
 					Type: schema.TypeMap,
 					Elem: schema.TypeString,
+					ForceNew: true,
 				},
 				Removed: "Please change bundles argument -> bundle blocks (example under example/main.tf), and to avoid causing an update to the existing tfstate - replace all keys named 'bundles' with 'bundle' in resources with the provider 'provider.instaclustr'",
 			},
@@ -145,10 +172,12 @@ func resourceCluster() *schema.Resource {
 						"bundle": {
 							Type:     schema.TypeString,
 							Required: true,
+							ForceNew: true,
 						},
 						"version": {
 							Type:     schema.TypeString,
 							Required: true,
+							ForceNew: true,
 						},
 						"options": {
 							Type:     schema.TypeMap,
@@ -158,122 +187,152 @@ func resourceCluster() *schema.Resource {
 									"auth_n_authz": {
 										Type:     schema.TypeBool,
 										Optional: true,
+										ForceNew: true,
 									},
 									"client_encryption": {
 										Type:     schema.TypeBool,
 										Optional: true,
+										ForceNew: true,
 									},
 									"use_private_broadcast_rpc_address": {
 										Type:     schema.TypeBool,
 										Optional: true,
+										ForceNew: true,
 									},
 									"lucene_enabled": {
 										Type:     schema.TypeBool,
 										Optional: true,
+										ForceNew: true,
 									},
 									"continuous_backup_enabled": {
 										Type:     schema.TypeBool,
 										Optional: true,
+										ForceNew: true,
 									},
 									"number_partitions": {
 										Type:     schema.TypeInt,
 										Optional: true,
+										ForceNew: true,
 									},
 									"auto_create_topics": {
 										Type:     schema.TypeBool,
 										Optional: true,
+										ForceNew: true,
 									},
 									"delete_topics": {
 										Type:     schema.TypeBool,
 										Optional: true,
+										ForceNew: true,
 									},
 									"password_authentication": {
 										Type:     schema.TypeBool,
 										Optional: true,
+										ForceNew: true,
 									},
 									"target_kafka_cluster_id": {
 										Type:     schema.TypeString,
 										Optional: true,
+										ForceNew: true,
 									},
 									"vpc_type": {
 										Type:     schema.TypeString,
 										Optional: true,
+										ForceNew: true,
 									},
 									"aws_access_key": {
 										Type:     schema.TypeString,
 										Optional: true,
+										ForceNew: true,
 									},
 									"aws_secret_key": {
 										Type:     schema.TypeString,
 										Optional: true,
+										ForceNew: true,
 									},
 									"s3_bucket_name": {
 										Type:     schema.TypeString,
 										Optional: true,
+										ForceNew: true,
 									},
 									"azure_storage_account_name": {
 										Type:     schema.TypeString,
 										Optional: true,
+										ForceNew: true,
 									},
 									"azure_storage_account_key": {
 										Type:     schema.TypeString,
 										Optional: true,
+										ForceNew: true,
 									},
 									"azure_storage_container_name": {
 										Type:     schema.TypeString,
 										Optional: true,
+										ForceNew: true,
 									},
 									"ssl_enabled_protocols": {
 										Type:     schema.TypeString,
 										Optional: true,
+										ForceNew: true,
 									},
 									"ssl_truststore_password": {
 										Type:     schema.TypeString,
 										Optional: true,
+										ForceNew: true,
 									},
 									"ssl_protocol": {
 										Type:     schema.TypeString,
 										Optional: true,
+										ForceNew: true,
 									},
 									"security_protocol": {
 										Type:     schema.TypeString,
 										Optional: true,
+										ForceNew: true,
 									},
 									"sasl_mechanism": {
 										Type:     schema.TypeString,
 										Optional: true,
+										ForceNew: true,
 									},
 									"sasl_jaas_config": {
 										Type:     schema.TypeString,
 										Optional: true,
+										ForceNew: true,
 									},
 									"bootstrap_servers": {
 										Type:     schema.TypeString,
 										Optional: true,
+										ForceNew: true,
 									},
 									"truststore": {
 										Type:     schema.TypeString,
 										Optional: true,
+										ForceNew: true,
 									},
 									"dedicated_zookeeper": {
 										Type:     schema.TypeBool,
 										Optional: true,
+										ForceNew: true,
 									},
 									"zookeeper_node_size": {
 										Type:     schema.TypeString,
 										Optional: true,
+										ForceNew: true,
 									},
 									"zookeeper_node_count": {
 										Type:     schema.TypeInt,
 										Optional: true,
+										ForceNew: true,
 									},
 									"master_nodes": {
 										Type:     schema.TypeInt,
 										Optional: true,
+										ForceNew: true,
 									},
 									"replica_nodes": {
 										Type:     schema.TypeInt,
 										Optional: true,
+										ForceNew: true,
 									},
 								},
 							},
@@ -281,11 +340,38 @@ func resourceCluster() *schema.Resource {
 					},
 				},
 			},
+			"kafka_rest_proxy_user_password": {
+				Type:     schema.TypeString,
+				Sensitive: true,
+				Optional: true,
+			},
+			"kafka_schema_registry_user_password": {
+				Type:     schema.TypeString,
+				Sensitive: true,
+				Optional: true,
+			},
+			"wait_for_state": {
+				Type:     schema.TypeString,
+				Optional: true,
+				ForceNew: true,
+				Default:  "",
+
+				ValidateFunc: func(i interface{}, s string) (ws []string, errors []error) {
+					state := i.(string)
+
+					if len(state) != 0 && !validClusterStates[strings.ToUpper(state)] {
+						errors = append(errors, fmt.Errorf("%s is not valid cluster state. Use RUNNING or PROVISIONED.", state))
+					}
+
+					return
+				},
+			},
 		},
 	}
 }
 
 func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
+
 	log.Printf("[INFO] Creating cluster.")
 	client := meta.(*Config).Client
 
@@ -314,6 +400,20 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		PCICompliantCluster:   fmt.Sprintf("%v", d.Get("pci_compliant_cluster")),
 	}
 
+	kafkaSchemaRegistryUserPassword := d.Get("kafka_schema_registry_user_password").(string)
+	kafkaRestProxyUserPassword := d.Get("kafka_rest_proxy_user_password").(string)
+	waitForClusterState := d.Get("wait_for_state").(string)
+
+	bundleConfig := getBundleConfig(bundles)
+
+	if (len(kafkaSchemaRegistryUserPassword) > 0 || len(kafkaRestProxyUserPassword) > 0) && waitForClusterState != "RUNNING" {
+		return fmt.Errorf("[Error] wait_for_state must be set as RUNNING when providing the kafka-schema-registry or kafka-rest-proxy user password")
+	}
+
+	if !bundleConfig.IsKafkaCluster && (len(kafkaSchemaRegistryUserPassword) > 0 || len(kafkaRestProxyUserPassword) > 0) {
+		return fmt.Errorf("[Error] kafka-schema-registry or kafka-rest-proxy user passwords may only be provided for Kafka clusters")
+	}
+
 	// Some Bundles do not use Rack Allocation so add that separately if needed. (Redis for example)
 	if checkIfBundleRequiresRackAllocation(bundles) {
 		var rackAllocation RackAllocation
@@ -325,28 +425,158 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		createData.RackAllocation = &rackAllocation
 	}
 
-	var jsonStr []byte
-	jsonStr, err = json.Marshal(createData)
+	var jsonStrCreate []byte
+	jsonStrCreate, err = json.Marshal(createData)
 	if err != nil {
 		return formatCreateErrMsg(err)
 	}
 
-	id, err := client.CreateCluster(jsonStr)
+	id, err := client.CreateCluster(jsonStrCreate)
 	if err != nil {
 		return formatCreateErrMsg(err)
 	}
 	d.SetId(id)
 	d.Set("cluster_id", id)
 	log.Printf("[INFO] Cluster %s has been created.", id)
-	return nil
+
+	if len(waitForClusterState) == 0 {
+		return nil
+	}
+
+	return waitForClusterStateAndDoUpdate(client, waitForClusterState, bundleConfig, kafkaRestProxyUserPassword, kafkaSchemaRegistryUserPassword, d, id)
+}
+
+func waitForClusterStateAndDoUpdate(client *APIClient,
+	waitForClusterState string,
+	bundleConfig BundleConfig,
+	kafkaRestProxyUserPassword string,
+	kafkaSchemaRegistryUserPassword string,
+	d *schema.ResourceData,
+	id string) error {
+	return resource.Retry(d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
+
+		//reading cluster details
+		cluster, err := client.ReadCluster(id)
+
+		if err != nil {
+			return resource.NonRetryableError(fmt.Errorf("[Error] Error retrieving cluster info: %s", err))
+		}
+
+		if cluster.ClusterStatus != waitForClusterState {
+			return resource.RetryableError(fmt.Errorf("[DEBUG] Cluster is in state %s, waiting for it to reach state %s", cluster.ClusterStatus, waitForClusterState))
+		}
+
+		if bundleConfig.IsKafkaCluster && bundleConfig.HasRestProxy && (len(kafkaRestProxyUserPassword) > 0) {
+			err = client.UpdateBundleUser(d.Get("cluster_id").(string), "kafka_rest_proxy", createBundleUserUpdateRequest("ickafkarest", d.Get("kafka_rest_proxy_user_password").(string)))
+			if err != nil {
+				return resource.RetryableError(fmt.Errorf("[DEBUG] Error updating the kafka rest proxy bundle user password : %s", err))
+			}
+		}
+
+		if bundleConfig.IsKafkaCluster && bundleConfig.HasSchemaRegistry && (len(kafkaSchemaRegistryUserPassword) > 0) {
+			err = client.UpdateBundleUser(d.Get("cluster_id").(string), "kafka_schema_registry", createBundleUserUpdateRequest("ickafkaschema", d.Get("kafka_schema_registry_user_password").(string)))
+			if err != nil {
+				return resource.RetryableError(fmt.Errorf("[DEBUG] Error updating the kafka schema registry bundle user password : %s", err))
+			}
+		}
+
+		return nil
+	})
 }
 
 func resourceClusterUpdate(d *schema.ResourceData, meta interface{}) error {
 	d.Partial(true)
-	// currently only cluster resize is supported
-	if !d.HasChange("node_size") {
-		return fmt.Errorf("[Error] The cluster doesn't support update")
+	// currently only cluster resize, kafka-schema-registry user password update and kafka-rest-proxy user password update are supported
+
+	client := meta.(*Config).Client
+	clusterID := d.Get("cluster_id").(string)
+
+	clusterResize := d.HasChange("node_size")
+	kafkaSchemaRegistryUserUpdate := d.HasChange("kafka_schema_registry_user_password")
+	kafkaRestProxyUserUpdate := d.HasChange("kafka_rest_proxy_user_password")
+
+	bundles, err := getBundles(d)
+	if err != nil {
+		return formatCreateErrMsg(err)
 	}
+
+	bundleConfig := getBundleConfig(bundles)
+
+	if bundleConfig.IsKafkaCluster && bundleConfig.HasSchemaRegistry && kafkaSchemaRegistryUserUpdate {
+		//updating the bundle user
+		err = client.UpdateBundleUser(clusterID, "kafka_schema_registry", createBundleUserUpdateRequest("ickafkaschema", d.Get("kafka_schema_registry_user_password").(string)))
+		if err != nil {
+			return fmt.Errorf("[Error] Error updating the password for kafka schema registry user : %s", err)
+		}
+	}
+
+	if bundleConfig.IsKafkaCluster && bundleConfig.HasRestProxy && kafkaRestProxyUserUpdate {
+		//updating the bundle user
+		err = client.UpdateBundleUser(clusterID, "kafka_rest_proxy", createBundleUserUpdateRequest("ickafkarest", d.Get("kafka_rest_proxy_user_password").(string)))
+		if err != nil {
+			return fmt.Errorf("[Error] Error updating the password for kafka rest proxy user : %s", err)
+		}
+	}
+
+	if clusterResize {
+		//resizing the cluster (i.e, upgrading from one node size to another node size)
+		err = doClusterResize(client, clusterID, d)
+		if err != nil {
+			return fmt.Errorf("[Error] Error resizing the cluster : %s", err)
+		}
+	}
+
+	if !bundleConfig.IsKafkaCluster && (kafkaSchemaRegistryUserUpdate || kafkaRestProxyUserUpdate) {
+		return fmt.Errorf("[Error] Error updating the bundle user passwords, because it should be a KAFKA cluster in order to update the schema-registry or rest-proxy users")
+	}
+
+	d.SetPartial("node_size")
+	d.SetPartial("kafka_schema_registry_user_password")
+	d.SetPartial("kafka_rest_proxy_user_password")
+	return nil
+}
+
+func createBundleUserUpdateRequest(bundleUsername string, bundleUserPassword string) []byte {
+
+	var err error
+	//preparing the bundle user update request
+	updateBundleUserData := UpdateBundleUserRequest{
+		Username: bundleUsername,
+		Password: bundleUserPassword,
+	}
+	var jsonStrUpdateBundleUser []byte
+	jsonStrUpdateBundleUser, err = json.Marshal(updateBundleUserData)
+
+	if err != nil {
+		log.Printf("[ERROR] Error creating the bundle user update request : %s", err)
+		return nil
+	}
+	return jsonStrUpdateBundleUser
+}
+
+func getBundleConfig(bundles []Bundle) BundleConfig {
+	configs := BundleConfig{
+		IsKafkaCluster:    false,
+		HasRestProxy:      false,
+		HasSchemaRegistry: false,
+	}
+
+	for i := 0; i < len(bundles); i++ {
+
+		if bundles[i].Bundle == "KAFKA" {
+			configs.IsKafkaCluster = true
+		}
+		if bundles[i].Bundle == "KAFKA_REST_PROXY" {
+			configs.HasRestProxy = true
+		}
+		if bundles[i].Bundle == "KAFKA_SCHEMA_REGISTRY" {
+			configs.HasSchemaRegistry = true
+		}
+	}
+	return configs
+}
+
+func doClusterResize(client *APIClient, clusterID string, d *schema.ResourceData) error {
 
 	before, after := d.GetChange("node_size")
 	regex := regexp.MustCompile(`resizeable-(small|large)`)
@@ -359,8 +589,6 @@ func resourceClusterUpdate(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("[Error] Cannot resize nodes from %s to %s", before, after)
 	}
 
-	client := meta.(*Config).Client
-	clusterID := d.Get("cluster_id").(string)
 	cluster, err := client.ReadCluster(clusterID)
 	if err != nil {
 		return fmt.Errorf("[Error] Error reading cluster: %s", err)
@@ -369,8 +597,6 @@ func resourceClusterUpdate(d *schema.ResourceData, meta interface{}) error {
 	if err != nil {
 		return fmt.Errorf("[Error] Error resizing cluster %s with error %s", clusterID, err)
 	}
-
-	d.SetPartial("node_size")
 	return nil
 }
 
@@ -417,13 +643,16 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		err = d.Set("private_contact_point", cluster.DataCentres[0].Nodes[0].PrivateAddress)
 	}
 
-	var before interface{}
-	before, _ = d.GetChange("cluster_provider")
-	d.Set("cluster_provider", before)
-	before, _ = d.GetChange("rack_allocation")
-	d.Set("rack_allocation", before)
-	before, _ = d.GetChange("bundle")
-	d.Set("bundle", before)
+	toCheck := [3]string{"cluster_provider","rack_allocation","bundle"}
+	for _, changing := range toCheck {
+
+		if !d.HasChange(changing) {
+			continue
+		}
+		_, after := d.GetChange(changing)
+		d.Set(changing, after)
+	}
+
 	log.Printf("[INFO] Fetched cluster %s info from the remote server.", cluster.ID)
 	return nil
 }

@@ -58,7 +58,7 @@ func resourceKafkaUserCreate(d *schema.ResourceData, meta interface{}) error {
 	if cluster.ClusterStatus != "RUNNING" {
 		return fmt.Errorf("[Error] Cluster %s is not RUNNING.", cluster_id)
 	}
-		
+
 	// just use linear search for now to check if the user going to be created is already in the system
 	usernameList, err := client.ReadKafkaUserList(cluster_id)
 	if err != nil {
@@ -89,7 +89,7 @@ func resourceKafkaUserCreate(d *schema.ResourceData, meta interface{}) error {
 	if err != nil {
 		return fmt.Errorf("[Error] Error creating kafka user: %s", err)
 	}
-	
+
 	d.SetId(fmt.Sprintf("%s-%s", cluster_id, username))
 
 	log.Printf("[INFO] Kafka user %s has been created.", username)
@@ -140,18 +140,18 @@ func resourceKafkaUserDelete(d *schema.ResourceData, meta interface{}) error {
 	createData := DeleteKafkaUserRequest{
 		Username:              d.Get("username").(string),
 	}
-	
+
 	var jsonStr []byte
 	jsonStr, err := json.Marshal(createData)
 	if err != nil {
 		return fmt.Errorf("[Error] Error creating kafka user update request: %s", err)
 	}
-	
+
 	err = client.DeleteKafkaUser(d.Get("cluster_id").(string), jsonStr)
 	if err != nil {
 		return fmt.Errorf("[Error] Error deleting Kafka user: %s", err)
 	}
-	
+
 	removeKafkaUserResource(d)
 
 	log.Printf("[INFO] Kafka user %s has been deleted.", d.Get("username").(string))

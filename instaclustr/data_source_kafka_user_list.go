@@ -20,8 +20,8 @@ func dataSourceKafkaUserList() *schema.Resource {
 			"username_list":  &schema.Schema {
 				Type:     schema.TypeList,
 				Elem:     &schema.Schema {
-				              Type: schema.TypeString,
-				          },
+					Type: schema.TypeString,
+				},
 				Computed: true,
 			},
 		},
