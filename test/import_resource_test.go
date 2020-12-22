@@ -41,3 +41,36 @@ func TestAccCluster_importBasic(t *testing.T) {
 		},
 	})
 }
+
+func TestAccEncryptionKey_importBasic(t *testing.T) {
+	testAccEBSKeyProvider := instaclustr.Provider()
+	testAccEBSKeyProviders := map[string]terraform.ResourceProvider{
+		"instaclustr": testAccEBSKeyProvider,
+	}
+	validConfig, _ := ioutil.ReadFile("data/valid_encryption_key.tf")
+	username := os.Getenv("IC_USERNAME")
+	apiKey := os.Getenv("IC_API_KEY")
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+	kmsArn := os.Getenv("KMS_ARN")
+	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname, kmsArn)
+	resource.Test(t, resource.TestCase{
+		Providers:    testAccEBSKeyProviders,
+		PreCheck:     func() { AccTestEnvVarsCheck(t) },
+		CheckDestroy: testCheckAccEBSResourceDeleted("valid", hostname, username, apiKey),
+		Steps: []resource.TestStep{
+			{
+				Config: oriConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckAccEBSResourceValid("valid"),
+					testCheckAccEBSResourceCreated("valid", hostname, username, apiKey),
+				),
+			},
+			{
+				Config:            oriConfig,
+				ResourceName:      "instaclustr_encryption_key.valid",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
