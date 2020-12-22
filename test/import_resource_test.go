@@ -74,3 +74,46 @@ func TestAccEncryptionKey_importBasic(t *testing.T) {
 		},
 	})
 }
+
+func TestAccFirewallRule_importBasic(t *testing.T) {
+	testProviders := map[string]terraform.ResourceProvider{
+		"instaclustr": instaclustr.Provider(),
+	}
+	tfFile, _ := ioutil.ReadFile("data/valid_with_firewall_rule.tf")
+	username := os.Getenv("IC_USERNAME")
+	apiKey := os.Getenv("IC_API_KEY")
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+	config := fmt.Sprintf(string(tfFile), username, apiKey, hostname)
+
+	resource.Test(t, resource.TestCase{
+		Providers:    testProviders,
+		CheckDestroy: checkFirewallRuleDeleted(hostname, username, apiKey),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					checkFirewallRuleState,
+					checkFirewallRuleCreated(hostname, username, apiKey),
+				),
+			},
+			{
+				Config:            config,
+				ResourceName:      "instaclustr_firewall_rule.valid_with_firewall_rule",
+				ImportState:       true,
+				ImportStateIdFunc: testAccFirewallRuleImportStateIdFunc("instaclustr_firewall_rule.valid_with_firewall_rule"),
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func testAccFirewallRuleImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		rs, ok := s.RootModule().Resources[resourceName]
+		if !ok {
+			return "", fmt.Errorf("Not found: %s", resourceName)
+		}
+
+		return fmt.Sprintf("%s&%s", rs.Primary.Attributes["cluster_id"], rs.Primary.Attributes["rule_cidr"]), nil
+	}
+}
