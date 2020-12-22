@@ -17,6 +17,9 @@ func resourceCluster() *schema.Resource {
 		Read:   resourceClusterRead,
 		Update: resourceClusterUpdate,
 		Delete: resourceClusterDelete,
+		Importer: &schema.ResourceImporter{
+			State: resourceClusterStateImport,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"cluster_id": {
@@ -387,13 +390,13 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("cluster_name", cluster.ClusterName)
 
 	nodeSize := ""
-	/* 
+	/*
 	*  Ideally, we would like this information to be coming directly from the API cluster status.
 	*  Hence, this is a slightly hacky way of ignoring zookeeper node sizes (Kafka bundle specific).
-	*/
-	for _, node := range(cluster.DataCentres[0].Nodes) {
+	 */
+	for _, node := range cluster.DataCentres[0].Nodes {
 		nodeSize = node.Size
-		if (!strings.HasPrefix(nodeSize, "zk-")) {
+		if !strings.HasPrefix(nodeSize, "zk-") {
 			break
 		}
 	}
@@ -410,7 +413,6 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 
 	if len(cluster.DataCentres[0].Nodes[0].PublicAddress) != 0 {
 		err = d.Set("public_contact_point", cluster.DataCentres[0].Nodes[0].PublicAddress)
-
 	}
 
 	if len(cluster.DataCentres[0].Nodes[0].PrivateAddress) != 0 {
@@ -440,6 +442,12 @@ func resourceClusterDelete(d *schema.ResourceData, meta interface{}) error {
 	d.Set("cluster_id", "")
 	log.Printf("[INFO] Cluster %s has been marked for deletion.", id)
 	return nil
+}
+
+func resourceClusterStateImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	clusterId := d.Id()
+	d.Set("cluster_id", clusterId)
+	return []*schema.ResourceData{d}, nil
 }
 
 func getBundles(d *schema.ResourceData) ([]Bundle, error) {
