@@ -3,9 +3,8 @@ package instaclustr
 import (
 	"encoding/json"
 	"fmt"
-	"log"
-
 	"github.com/hashicorp/terraform/helper/schema"
+	"log"
 )
 
 func resourceEncryptionKey() *schema.Resource {
@@ -14,6 +13,10 @@ func resourceEncryptionKey() *schema.Resource {
 		Read:   resourceEncryptionKeyRead,
 		Update: resourceEncryptionKeyUpdate,
 		Delete: resourceEncryptionKeyDelete,
+
+		Importer: &schema.ResourceImporter{
+			State: resourceEncryptionKeyStateImport,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"key_id": {
@@ -31,7 +34,7 @@ func resourceEncryptionKey() *schema.Resource {
 			"key_provider": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default: "INSTACLUSTR",
+				Default:  "INSTACLUSTR",
 			},
 		},
 	}
@@ -42,8 +45,8 @@ func resourceEncryptionKeyCreate(d *schema.ResourceData, meta interface{}) error
 	client := meta.(*Config).Client
 
 	createData := EncryptionKey{
-		Alias: d.Get("alias").(string),
-		ARN:   d.Get("arn").(string),
+		Alias:    d.Get("alias").(string),
+		ARN:      d.Get("arn").(string),
 		Provider: d.Get("key_provider").(string),
 	}
 
@@ -98,4 +101,10 @@ func resourceEncryptionKeyDelete(d *schema.ResourceData, meta interface{}) error
 	d.Set("key_id", "")
 	log.Printf("[INFO] Encryption key %s has been deleted.", id)
 	return nil
+}
+
+func resourceEncryptionKeyStateImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	keyId := d.Id()
+	d.Set("key_id", keyId)
+	return []*schema.ResourceData{d}, nil
 }
