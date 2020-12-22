@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -14,6 +15,10 @@ func resourceFirewallRule() *schema.Resource {
 		Read:   resourceFirewallRuleRead,
 		Update: resourceFirewallRuleUpdate,
 		Delete: resourceFirewallRuleDelete,
+
+		Importer: &schema.ResourceImporter{
+			State: resourceFirewallRuleStateImport,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"cluster_id": {
@@ -114,6 +119,18 @@ func resourceFirewallRuleRead(d *schema.ResourceData, meta interface{}) error {
 	return nil
 }
 
+func resourceFirewallRuleStateImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	idParts := strings.Split(d.Id(), "&")
+	if len(idParts) != 2 || idParts[0] == "" || idParts[1] == "" {
+		return nil, fmt.Errorf("Unexpected format of ID (%q), expected CLUSTER-ID&RULE-CIDR", d.Id())
+	}
+	cluster_id := idParts[0]
+	rule_cidr := idParts[1]
+	d.Set("cluster_id", cluster_id)
+	d.Set("rule_cidr", rule_cidr)
+	return []*schema.ResourceData{d}, nil
+}
+
 func resourceFirewallRuleUpdate(d *schema.ResourceData, meta interface{}) error {
 	return nil
 }
@@ -133,12 +150,12 @@ func resourceFirewallRuleDelete(d *schema.ResourceData, meta interface{}) error 
 
 		rules = append(rules, RuleType{Type: aRule})
 	}
-	
+
 	rule := FirewallRule{
 		SecurityGroupId: d.Get("rule_security_group_id").(string),
-		Network: d.Get("rule_cidr").(string),
-		Rules:   rules,
-		}
+		Network:         d.Get("rule_cidr").(string),
+		Rules:           rules,
+	}
 
 	var jsonStr []byte
 	jsonStr, err := json.Marshal(rule)
