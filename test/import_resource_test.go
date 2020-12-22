@@ -117,3 +117,37 @@ func testAccFirewallRuleImportStateIdFunc(resourceName string) resource.ImportSt
 		return fmt.Sprintf("%s&%s", rs.Primary.Attributes["cluster_id"], rs.Primary.Attributes["rule_cidr"]), nil
 	}
 }
+
+func TestKafkaUserResource_importBasic(t *testing.T) {
+	testProviders := map[string]terraform.ResourceProvider{
+		"instaclustr": instaclustr.Provider(),
+	}
+
+	configBytes1, _ := ioutil.ReadFile("data/kafka_user_create_cluster.tf")
+	username := os.Getenv("IC_USERNAME")
+	apiKey := os.Getenv("IC_API_KEY")
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+
+	zookeeperNodeSize := "zk-developer-t3.small-20"
+
+	createClusterConfig := fmt.Sprintf(string(configBytes1), username, apiKey, hostname, zookeeperNodeSize)
+
+	resource.Test(t, resource.TestCase{
+		Providers: testProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: createClusterConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValidKafka("instaclustr_cluster.kafka_cluster"),
+					checkKafkaClusterRunning(hostname, username, apiKey),
+				),
+			},
+			{
+				Config:            createClusterConfig,
+				ResourceName:      "instaclustr_cluster.kafka_cluster",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
