@@ -151,3 +151,45 @@ func TestKafkaUserResource_importBasic(t *testing.T) {
 		},
 	})
 }
+
+func TestAccVpcPeering_importBasic(t *testing.T) {
+	testProviders := map[string]terraform.ResourceProvider{
+		"instaclustr": instaclustr.Provider(),
+	}
+	tfFile, _ := ioutil.ReadFile("data/valid_with_vpc_peering.tf")
+	username := os.Getenv("IC_USERNAME")
+	apiKey := os.Getenv("IC_API_KEY")
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+	config := fmt.Sprintf(string(tfFile), username, apiKey, hostname)
+	resource.Test(t, resource.TestCase{
+		Providers:    testProviders,
+		CheckDestroy: checkVpcPeeringDeleted(hostname, username, apiKey),
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: resource.ComposeTestCheckFunc(
+					checkVpcPeeringState,
+					checkVpcPeeringCreated(hostname, username, apiKey),
+				),
+			},
+			{
+				Config:            config,
+				ResourceName:      "instaclustr_vpc_peering.valid_with_vpc_peering",
+				ImportState:       true,
+				ImportStateIdFunc: testAccVpcPeeringImportStateIdFunc("instaclustr_vpc_peering.valid_with_vpc_peering"),
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func testAccVpcPeeringImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
+	return func(s *terraform.State) (string, error) {
+		rs, ok := s.RootModule().Resources[resourceName]
+		if !ok {
+			return "", fmt.Errorf("Not found: %s", resourceName)
+		}
+
+		return fmt.Sprintf("%s&%s", rs.Primary.Attributes["cluster_id"], rs.Primary.Attributes["vpc_peering_id"]), nil
+	}
+}
