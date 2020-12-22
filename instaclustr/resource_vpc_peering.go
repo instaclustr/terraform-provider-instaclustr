@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/hashicorp/terraform/helper/schema"
@@ -15,6 +16,10 @@ func resourceVpcPeering() *schema.Resource {
 		Read:   resourceVpcPeeringRead,
 		Update: resourceVpcPeeringUpdate,
 		Delete: resourceVpcPeeringDelete,
+
+		Importer: &schema.ResourceImporter{
+			State: resourceVpcPeeringStateImport,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"vpc_peering_id": {
@@ -172,4 +177,16 @@ func resourceVpcPeeringDelete(d *schema.ResourceData, meta interface{}) error {
 	d.Set("cdc_id", "")
 	log.Printf("[INFO] VPC peering connection %s has been marked for deletion.", vpcPeeringID)
 	return nil
+}
+
+func resourceVpcPeeringStateImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	idParts := strings.Split(d.Id(), "&")
+	if len(idParts) != 2 || idParts[0] == "" || idParts[1] == "" {
+		return nil, fmt.Errorf("Unexpected format of ID (%q), expected CLUSTER-ID&VPC-PEERING-ID", d.Id())
+	}
+	cluster_id := idParts[0]
+	vpc_peering_id := idParts[1]
+	d.Set("cluster_id", cluster_id)
+	d.Set("vpc_peering_id", vpc_peering_id)
+	return []*schema.ResourceData{d}, nil
 }
