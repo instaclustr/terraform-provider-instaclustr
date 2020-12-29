@@ -113,7 +113,17 @@ func resourceFirewallRuleRead(d *schema.ResourceData, meta interface{}) error {
 			d.Set("rule_cidr", value.Network)
 			d.Set("rule_security_group_id", value.SecurityGroupId)
 			d.SetId(ruleTarget)
-			d.Set("rules", value.Rules)
+
+			rules := make([]map[string]interface{}, 0)
+			for _, rule := range value.Rules {
+				ruleMap := make(map[string]interface{})
+				ruleMap["type"] = rule.Type
+				rules = append(rules, ruleMap)
+			}
+
+			if err := d.Set("rules", rules); err != nil {
+				return fmt.Errorf("error setting rules: %s", err)
+			}
 		}
 	}
 	return nil
@@ -134,6 +144,7 @@ func resourceFirewallRuleStateImport(d *schema.ResourceData, meta interface{}) (
 func resourceFirewallRuleUpdate(d *schema.ResourceData, meta interface{}) error {
 	return nil
 }
+
 func resourceFirewallRuleDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*Config).Client
 	id := d.Get("cluster_id").(string)
