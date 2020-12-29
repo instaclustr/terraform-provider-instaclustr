@@ -144,9 +144,7 @@ func resourceVpcPeeringRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("peer_vpc_id", vpcPeering.PeerVpcID)
 	d.Set("peer_account_id", vpcPeering.PeerAccountID)
 	d.Set("aws_vpc_connection_id", vpcPeering.AWSVpcConnectionID)
-
-	before, _ := d.GetChange("peer_subnet")
-	d.Set("peer_subnet", before)
+	d.Set("peer_subnet", vpcPeering.PeerSubnet)
 	d.Set("peer_region", vpcPeering.PeerRegion)
 
 	log.Printf("[INFO] Fetched VPC peering %s info from the remote server.", vpcPeering.ID)
