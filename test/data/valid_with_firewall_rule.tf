@@ -20,7 +20,7 @@ resource "instaclustr_cluster" "valid_with_firewall_rule" {
     }
     bundle {
         bundle = "APACHE_CASSANDRA"
-        version = "3.11.4"
+        version = "4.0"
     }
 }
 
@@ -28,7 +28,7 @@ resource "instaclustr_firewall_rule" "valid_with_firewall_rule" {
     cluster_id = "${instaclustr_cluster.valid_with_firewall_rule.id}"
     rule_cidr = "10.1.0.0/16"
     rules = [
-        { 
+        {
             type = "CASSANDRA"
         }
     ]
