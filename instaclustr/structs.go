@@ -158,6 +158,11 @@ type EncryptionKey struct {
 	Provider string `json:"provider,omitempty"`
 }
 
+type UpdateBundleUserRequest struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
 type CreateKafkaUserRequest struct {
 	Username           string `json:"username"`
 	Password           string `json:"password"`
@@ -171,4 +176,10 @@ type UpdateKafkaUserRequest struct {
 
 type DeleteKafkaUserRequest struct {
 	Username string `json:"username"`
+}
+
+type BundleConfig struct {
+	IsKafkaCluster    bool
+	HasRestProxy      bool
+	HasSchemaRegistry bool
 }

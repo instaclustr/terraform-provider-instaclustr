@@ -31,12 +31,12 @@ resource "instaclustr_cluster" "kafka_cluster" {
 }
 
 resource "instaclustr_kafka_user" "kafka_user_charlie" {
-  cluster_id = "${instaclustr_cluster.kafka_cluster.cluster_id}"
+  cluster_id = "${instaclustr_cluster.kafka_cluster.id}"
   username = "%s"
   password = "%s"
   initial_permissions = "none"
 }
 
 data "instaclustr_kafka_user_list" "kafka_user_list" {
-  cluster_id = "${instaclustr_cluster.kafka_cluster.cluster_id}"
+  cluster_id = "${instaclustr_cluster.kafka_cluster.id}"
 }
