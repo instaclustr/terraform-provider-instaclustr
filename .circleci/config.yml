@@ -8,18 +8,50 @@ jobs:
       - checkout
       - run: go get -v -t -d ./...
       - run:
-          name: "Build for Windows, Linux and OSX"
+          name: "Import GPG key"
           command: |
-            FULL_BIN_NAME="terraform-provider-instaclustr_${CIRCLE_TAG}"
-            env GOOS=darwin GOARCH=amd64 make build BIN_NAME="terraform-provider-instaclustr" VERSION=${CIRCLE_TAG}
+            echo ${GPG_PRIVATE_KEY} | base64 --decode > private.key
+            gpg --batch --import --yes private.key
+            rm private.key
+      - run:
+          name: "Configure GPG Agent"
+          command: |
+            echo allow-preset-passphrase > ~/.gnupg/gpg-agent.conf
+            gpg-connect-agent "RELOADAGENT" /bye
+      - run:
+          name: "Preset passphrase"
+          command: |
+            for keygrip in $(gpg --batch --yes --with-colons --with-keygrip --list-secret-keys hailkim299@gmail.com | grep grp | sed 's|[grp:,]||g'); do
+              /usr/lib/gnupg2/gpg-preset-passphrase --preset --passphrase ${GPG_PASSPHRASE} ${keygrip}
+            done
+      - run:
+          name: "Build for Windows, Linux and OSX and sign the assets"
+          command: |
+            BIN_NAME="terraform-provider-instaclustr"
+            FULL_BIN_NAME="${BIN_NAME}_${CIRCLE_TAG}"
+            env GOOS=darwin GOARCH=amd64 make build VERSION=${CIRCLE_TAG}
             zip -j bin/${FULL_BIN_NAME}_macOS_x64.zip bin/${FULL_BIN_NAME}
-            env GOOS=linux GOARCH=amd64 make build BIN_NAME="terraform-provider-instaclustr" VERSION=${CIRCLE_TAG}
+            env GOOS=linux GOARCH=amd64 make build VERSION=${CIRCLE_TAG}
             zip -j bin/${FULL_BIN_NAME}_linux_x64.zip bin/${FULL_BIN_NAME}
-            env GOOS=windows GOARCH=amd64 make build BIN_NAME="terraform-provider-instaclustr" VERSION=${CIRCLE_TAG}
+            env GOOS=linux GOARCH=arm64 make build VERSION=${CIRCLE_TAG}
+            zip -j bin/${FULL_BIN_NAME}_linux_arm64.zip bin/${FULL_BIN_NAME}
+            env GOOS=linux GOARCH=arm GOARM=6 make build VERSION=${CIRCLE_TAG}
+            zip -j bin/${FULL_BIN_NAME}_linux_arm.zip bin/${FULL_BIN_NAME}
+            env GOOS=windows GOARCH=amd64 make build VERSION=${CIRCLE_TAG}
             zip -j bin/${FULL_BIN_NAME}_windows_x64.zip bin/${FULL_BIN_NAME}
-            env GOOS=windows GOARCH=386 make build BIN_NAME="terraform-provider-instaclustr" VERSION=${CIRCLE_TAG}
+            env GOOS=windows GOARCH=386 make build VERSION=${CIRCLE_TAG}
             zip -j bin/${FULL_BIN_NAME}_windows_x86.zip bin/${FULL_BIN_NAME}
             rm bin/${FULL_BIN_NAME}
+            cd bin
+            shasum -a 256 *.zip > ${FULL_BIN_NAME}_SHA256SUMS
+            gpg --batch --detach-sign --yes ${FULL_BIN_NAME}_SHA256SUMS
+      - run:
+          name: "Clean up GPG keys and kill agent"
+          command: |
+            for fingerprint in $(gpg --batch --yes --with-colons --fingerprint --list-secret-keys hailkim299@gmail.com | grep fpr | sed 's|[fpr:,]||g'); do
+              gpg --batch --delete-secret-keys --yes ${fingerprint} || true
+            done
+            gpg-connect-agent "KILLAGENT" /bye
       - run:
           name: "Publish Release on GitHub"
           command: |
