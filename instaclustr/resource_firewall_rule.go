@@ -116,8 +116,8 @@ func resourceFirewallRuleRead(d *schema.ResourceData, meta interface{}) error {
 
 			rules := make([]map[string]interface{}, 0)
 			for _, rule := range value.Rules {
-				ruleMap := make(map[string]interface{})
-				ruleMap["type"] = rule.Type
+				ruleMapStruct := &RuleType{Type: rule.Type}
+				ruleMap, _ := StructToMap(ruleMapStruct)
 				rules = append(rules, ruleMap)
 			}
 
