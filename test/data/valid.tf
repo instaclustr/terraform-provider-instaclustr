@@ -5,8 +5,8 @@ provider "instaclustr" {
 }
 
 resource "instaclustr_cluster" "valid" {
-    cluster_name = "testcluster"
-    node_size = "t3.small"
+    cluster_name = "test_cluster"
+    node_size = "t3.small-v2"
     data_centre = "US_WEST_2"
     sla_tier = "NON_PRODUCTION"
     cluster_network = "192.168.0.0/18"
@@ -16,13 +16,13 @@ resource "instaclustr_cluster" "valid" {
         name = "AWS_VPC"
     }
     rack_allocation = {
-        number_of_racks = 3
-        nodes_per_rack = 1
+        number_of_racks = 5
+        nodes_per_rack = 2
     }
 
     bundle {
         bundle = "APACHE_CASSANDRA"
-        version = "3.11.4"
+        version = "3.11.8"
         options = {
             auth_n_authz = true
             use_private_broadcast_rpc_address = true
@@ -34,10 +34,5 @@ resource "instaclustr_cluster" "valid" {
     bundle {
         bundle = "SPARK"
         version = "apache-spark:2.3.2"
-    }
-
-    bundle {
-        bundle = "ZEPPELIN"
-        version = "apache-zeppelin:0.8.0-spark-2.3.2"
     }
 }
