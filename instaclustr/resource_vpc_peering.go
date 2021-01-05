@@ -180,7 +180,7 @@ func resourceVpcPeeringDelete(d *schema.ResourceData, meta interface{}) error {
 func resourceVpcPeeringStateImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	idParts := strings.Split(d.Id(), "&")
 	if len(idParts) != 2 || idParts[0] == "" || idParts[1] == "" {
-		return nil, fmt.Errorf("Unexpected format of ID (%q), expected CLUSTER-ID&VPC-PEERING-ID", d.Id())
+		return nil, fmt.Errorf("Unexpected format of ID (%q), expected <CLUSTER-ID>&<VPC-PEERING-ID>", d.Id())
 	}
 	cluster_id := idParts[0]
 	vpc_peering_id := idParts[1]
