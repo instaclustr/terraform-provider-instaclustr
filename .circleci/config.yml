@@ -21,7 +21,7 @@ jobs:
       - run:
           name: "Preset passphrase"
           command: |
-            for keygrip in $(gpg --batch --yes --with-colons --with-keygrip --list-secret-keys admin+tfprovider@instaclustr.com | grep grp | sed 's|[grp:,]||g'); do
+            for keygrip in $(gpg --batch --yes --with-colons --with-keygrip --list-secret-keys ${GIT_EMAIL} | grep grp | sed 's|[grp:,]||g'); do
               /usr/lib/gnupg2/gpg-preset-passphrase --preset --passphrase ${GPG_PASSPHRASE} ${keygrip}
             done
       - run:
@@ -48,7 +48,7 @@ jobs:
       - run:
           name: "Clean up GPG keys and kill agent"
           command: |
-            for fingerprint in $(gpg --batch --yes --with-colons --fingerprint --list-secret-keys admin+tfprovider@instaclustr.com | grep fpr | sed 's|[fpr:,]||g'); do
+            for fingerprint in $(gpg --batch --yes --with-colons --fingerprint --list-secret-keys ${GIT_EMAIL} | grep fpr | sed 's|[fpr:,]||g'); do
               gpg --batch --delete-secret-keys --yes ${fingerprint} || true
             done
             gpg-connect-agent "KILLAGENT" /bye
