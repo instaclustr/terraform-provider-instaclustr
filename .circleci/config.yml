@@ -30,7 +30,7 @@ jobs:
             BIN_NAME="terraform-provider-instaclustr"
             FULL_BIN_NAME="${BIN_NAME}_${CIRCLE_TAG}"
             env GOOS=darwin GOARCH=amd64 make build VERSION=${CIRCLE_TAG}
-            zip -j bin/${FULL_BIN_NAME}_macOS_x64.zip bin/${FULL_BIN_NAME}
+            zip -j bin/${FULL_BIN_NAME}_darwin_amd64.zip bin/${FULL_BIN_NAME}
             env GOOS=linux GOARCH=amd64 make build VERSION=${CIRCLE_TAG}
             zip -j bin/${FULL_BIN_NAME}_linux_x64.zip bin/${FULL_BIN_NAME}
             env GOOS=linux GOARCH=arm64 make build VERSION=${CIRCLE_TAG}
