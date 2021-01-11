@@ -637,7 +637,12 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("sla_tier", strings.ToUpper(cluster.SlaTier))
 	d.Set("cluster_network", cluster.DataCentres[0].CdcNetwork)
 	d.Set("private_network_cluster", cluster.DataCentres[0].PrivateIPOnly)
-	d.Set("pci_compliant_cluster", cluster.PciCompliance)
+
+	pciCompliance := false
+	if cluster.PciCompliance == "ENABLED" {
+		pciCompliance = true
+	}
+	d.Set("pci_compliant_cluster", pciCompliance)
 
 	if len(cluster.DataCentres[0].Nodes[0].PublicAddress) != 0 {
 		err = d.Set("public_contact_point", cluster.DataCentres[0].Nodes[0].PublicAddress)
