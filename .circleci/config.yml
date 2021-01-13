@@ -33,15 +33,15 @@ jobs:
             env GOOS=darwin GOARCH=amd64 make build VERSION=${CIRCLE_TAG}
             zip -j bin/${FULL_BIN_NAME}_darwin_amd64.zip bin/${FULL_BIN_NAME}
             env GOOS=linux GOARCH=amd64 make build VERSION=${CIRCLE_TAG}
-            zip -j bin/${FULL_BIN_NAME}_linux_x64.zip bin/${FULL_BIN_NAME}
+            zip -j bin/${FULL_BIN_NAME}_linux_amd64.zip bin/${FULL_BIN_NAME}
             env GOOS=linux GOARCH=arm64 make build VERSION=${CIRCLE_TAG}
             zip -j bin/${FULL_BIN_NAME}_linux_arm64.zip bin/${FULL_BIN_NAME}
             env GOOS=linux GOARCH=arm GOARM=6 make build VERSION=${CIRCLE_TAG}
             zip -j bin/${FULL_BIN_NAME}_linux_arm.zip bin/${FULL_BIN_NAME}
             env GOOS=windows GOARCH=amd64 make build VERSION=${CIRCLE_TAG}
-            zip -j bin/${FULL_BIN_NAME}_windows_x64.zip bin/${FULL_BIN_NAME}
+            zip -j bin/${FULL_BIN_NAME}_windows_amd64.zip bin/${FULL_BIN_NAME}
             env GOOS=windows GOARCH=386 make build VERSION=${CIRCLE_TAG}
-            zip -j bin/${FULL_BIN_NAME}_windows_x86.zip bin/${FULL_BIN_NAME}
+            zip -j bin/${FULL_BIN_NAME}_windows_386.zip bin/${FULL_BIN_NAME}
             rm bin/${FULL_BIN_NAME}
             cd bin
             shasum -a 256 *.zip > ${SHASUM_NAME}_SHA256SUMS
