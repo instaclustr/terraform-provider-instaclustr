@@ -1,3 +1,14 @@
+# required for terraform version >= 13.
+# Remove the terraform block if you're using a terraform version lower
+terraform {
+  required_providers {
+    instaclustr = {
+      source = "instaclustr/instaclustr"
+      version = ">= 1.0.0"
+    }
+  }
+}
+
 provider "instaclustr" {
   username = "<Your instaclustr username here>"
   api_key = "<Your provisioning API key here>"
@@ -6,7 +17,7 @@ provider "instaclustr" {
 resource "instaclustr_encryption_key" "add_ebs_key" {
   alias = "testkey"
   arn = "<Your KMS key ARN here>"
-  provider = "INSTACLUSTR"
+  provider = "instaclustr"
 }
 
 
