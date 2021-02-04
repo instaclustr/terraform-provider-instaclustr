@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"reflect"
 	"regexp"
 	"strings"
 	"time"
@@ -624,17 +625,14 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error{
 	baseBundle["bundle"] = cluster.BundleType
 
 	baseBundleOptions := make(map[string]interface{}, 0)
-	err = mapstructure.WeakDecode(cluster.BundleOption, &baseBundleOptions)
+	err = mapstructure.Decode(cluster.BundleOption, &baseBundleOptions)
 	if err != nil {
 		return fmt.Errorf("[Error] Error decoding bundles option: %s", err)
 	}
 
 	for k, v := range baseBundleOptions {
-		if v == "" {
-			delete(baseBundleOptions, k)
-			continue
-		}
-		baseBundleOptions[k] = fmt.Sprintf("%v", v)
+		//terraform expects strings for everything, so in order to turn an interface which contains a pointer to a bool we have to do this.
+		baseBundleOptions[k] = fmt.Sprintf("%v",reflect.Indirect(reflect.ValueOf(v).Elem()).Interface())
 	}
 
 	baseBundle["options"] = baseBundleOptions

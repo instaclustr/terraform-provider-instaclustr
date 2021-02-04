@@ -81,7 +81,7 @@ func TestAccKafkaCluster_importBasic(t *testing.T) {
 					//"bundle",
 					//"cluster_provider",
 					//"pci_compliant_cluster",
-					"rack_allocation",
+					//"rack_allocation",
 				},
 			},
 		},

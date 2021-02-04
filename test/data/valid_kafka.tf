@@ -23,10 +23,10 @@ resource "instaclustr_cluster" "valid" {
         bundle = "KAFKA"
         version = "apache-kafka:2.5.1"
         options = {
-            clientEncryption = false
-            autoCreateTopics = true
-            deleteTopic = true
-            dedicatedZookeeper = false
+            client_encryption = false
+            auto_create_topics = true
+            delete_topics = true
+            dedicated_zookeeper = false
         }
     }
 }

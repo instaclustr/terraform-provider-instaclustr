@@ -25,7 +25,7 @@ resource "instaclustr_cluster" "valid" {
         version = "3.11.8"
         options = {
             auth_n_authz = true
-            use_private_broadcast_rpc_address = true
+            use_private_broadcast_rpc_address = false
             lucene_enabled = true
             continuous_backup_enabled = true
         }
