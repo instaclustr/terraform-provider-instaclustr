@@ -605,7 +605,7 @@ func doClusterResize(client *APIClient, clusterID string, d *schema.ResourceData
 	return nil
 }
 
-func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
+func resourceClusterRead(d *schema.ResourceData, meta interface{}) error{
 	client := meta.(*Config).Client
 	id := d.Get("cluster_id").(string)
 	log.Printf("[INFO] Reading status of cluster %s.", id)
@@ -616,11 +616,50 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	d.SetId(cluster.ID)
 	d.Set("cluster_id", cluster.ID)
 	d.Set("cluster_name", cluster.ClusterName)
+	clusterProvider := make(map[string]interface{}, 0)
+	clusterProvider["name"] = cluster.DataCentres[0].Provider
+	d.Set("cluster_provider", clusterProvider)
+
+	baseBundle := make(map[string]interface{}, 0)
+	baseBundle["bundle"] = cluster.BundleType
+
+	baseBundleOptions := make(map[string]interface{}, 0)
+	err = mapstructure.WeakDecode(cluster.BundleOption, &baseBundleOptions)
+	if err != nil {
+		return fmt.Errorf("[Error] Error decoding bundles option: %s", err)
+	}
+
+	for k, v := range baseBundleOptions {
+		if v == "" {
+			delete(baseBundleOptions, k)
+			continue
+		}
+		baseBundleOptions[k] = fmt.Sprintf("%v", v)
+	}
+
+	baseBundle["options"] = baseBundleOptions
+	baseBundle["version"] = cluster.BundleVersion
+
+	//originalBundle := d.Get("bundles")
+	//d.Set("bundles", originalBundle)
+
+	bundles := make([]map[string]interface{}, 0)
+	bundles = append(bundles, baseBundle)
+
+	//bundles = append(bundles, cluster.DataCentres[0].Bundles)
+
+	if err:= d.Set("bundle", bundles); err != nil {
+		return fmt.Errorf("[Error] Error reading cluster: %s", err)
+	}
+
+	//base_bundle_options := cluster.BundleOption.(map[string]interface{})
 
 	nodeSize := ""
+
+
 	/*
 	*  Ideally, we would like this information to be coming directly from the API cluster status.
-	*  Hence, this is a slightly hacky way of ignoring zookeeper node sizes (Kafka bundle specific).
+	*  Hence, this is a slightly hacky way of ignoring zookeeper node sizes (Kafka bundles specific).
 	 */
 	for _, node := range cluster.DataCentres[0].Nodes {
 		nodeSize = node.Size
@@ -632,11 +671,11 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		nodeSize = cluster.DataCentres[0].ResizeTargetNodeSize
 	}
 	d.Set("node_size", nodeSize)
-
 	d.Set("data_centre", cluster.DataCentres[0].Name)
 	d.Set("sla_tier", strings.ToUpper(cluster.SlaTier))
 	d.Set("cluster_network", cluster.DataCentres[0].CdcNetwork)
 	d.Set("private_network_cluster", cluster.DataCentres[0].PrivateIPOnly)
+
 
 	pciCompliance := false
 	if cluster.PciCompliance == "ENABLED" {
@@ -652,7 +691,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		err = d.Set("private_contact_point", cluster.DataCentres[0].Nodes[0].PrivateAddress)
 	}
 
-	toCheck := [3]string{"cluster_provider", "rack_allocation", "bundle"}
+	toCheck := [3]string{"cluster_provider", "rack_allocation"}
 	for _, changing := range toCheck {
 
 		if !d.HasChange(changing) {

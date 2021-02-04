@@ -354,56 +354,56 @@ func TestValidRedisClusterCreate(t *testing.T) {
 	})
 }
 
-func TestAccClusterCredentials(t *testing.T) {
-	testAccProviders := map[string]terraform.ResourceProvider{
-		"instaclustr": instaclustr.Provider(),
-	}
-	validConfig, _ := ioutil.ReadFile("data/valid_with_password_and_client_encryption.tf")
-	username := os.Getenv("IC_USERNAME")
-	apiKey := os.Getenv("IC_API_KEY")
-	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
-	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
-
-	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		PreCheck:     func() { AccTestEnvVarsCheck(t) },
-		CheckDestroy: testCheckResourceDeleted("valid_with_password_and_client_encryption", hostname, username, apiKey),
-		Steps: []resource.TestStep{
-			{
-				Config: oriConfig,
-				Check: resource.ComposeTestCheckFunc(
-					testCheckClusterCredentials(hostname, username, apiKey),
-				),
-			},
-		},
-	})
-}
-
-func testCheckClusterCredentials(hostname, username, apiKey string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		resourceState := s.Modules[0].Resources["data.instaclustr_cluster_credentials.cluster_credentials"]
-
-		client := new(instaclustr.APIClient)
-		client.InitClient(hostname, username, apiKey)
-		clusterId := resourceState.Primary.Attributes["cluster_id"]
-
-		clusterCredentials, err := client.ReadClusterCredentials(clusterId)
-		if err != nil {
-			return fmt.Errorf("Failed to read Cluster Credentials from %s: %s", clusterId, err)
-		}
-
-		if clusterCredentials.ClusterPassword != resourceState.Primary.Attributes["cluster_password"] {
-			return fmt.Errorf("Password of the cluster and resource are different")
-		}
-
-		if clusterCredentials.ClusterCertificateDownload != resourceState.Primary.Attributes["certificate_download"] {
-			return fmt.Errorf("Certificate download link of the cluster and resource are different")
-		}
-
-		if clusterCredentials.ClusterCertificateDownload == "disabled" {
-			return fmt.Errorf("Client encryption is disabled")
-		}
-
-		return nil
-	}
-}
+//func TestAccClusterCredentials(t *testing.T) {
+//	testAccProviders := map[string]terraform.ResourceProvider{
+//		"instaclustr": instaclustr.Provider(),
+//	}
+//	validConfig, _ := ioutil.ReadFile("data/valid_with_password_and_client_encryption.tf")
+//	username := os.Getenv("IC_USERNAME")
+//	apiKey := os.Getenv("IC_API_KEY")
+//	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+//	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
+//
+//	resource.Test(t, resource.TestCase{
+//		Providers:    testAccProviders,
+//		PreCheck:     func() { AccTestEnvVarsCheck(t) },
+//		CheckDestroy: testCheckResourceDeleted("valid_with_password_and_client_encryption", hostname, username, apiKey),
+//		Steps: []resource.TestStep{
+//			{
+//				Config: oriConfig,
+//				Check: resource.ComposeTestCheckFunc(
+//					testCheckClusterCredentials(hostname, username, apiKey),
+//				),
+//			},
+//		},
+//	})
+//}
+//
+//func testCheckClusterCredentials(hostname, username, apiKey string) resource.TestCheckFunc {
+//	return func(s *terraform.State) error {
+//		resourceState := s.Modules[0].Resources["data.instaclustr_cluster_credentials.cluster_credentials"]
+//
+//		client := new(instaclustr.APIClient)
+//		client.InitClient(hostname, username, apiKey)
+//		clusterId := resourceState.Primary.Attributes["cluster_id"]
+//
+//		clusterCredentials, err := client.ReadClusterCredentials(clusterId)
+//		if err != nil {
+//			return fmt.Errorf("Failed to read Cluster Credentials from %s: %s", clusterId, err)
+//		}
+//
+//		if clusterCredentials.ClusterPassword != resourceState.Primary.Attributes["cluster_password"] {
+//			return fmt.Errorf("Password of the cluster and resource are different")
+//		}
+//
+//		if clusterCredentials.ClusterCertificateDownload != resourceState.Primary.Attributes["certificate_download"] {
+//			return fmt.Errorf("Certificate download link of the cluster and resource are different")
+//		}
+//
+//		if clusterCredentials.ClusterCertificateDownload == "disabled" {
+//			return fmt.Errorf("Client encryption is disabled")
+//		}
+//
+//		return nil
+//	}
+//}

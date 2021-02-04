@@ -11,6 +11,7 @@ import (
 )
 
 func TestAccCluster_importBasic(t *testing.T) {
+
 	testAccProvider := instaclustr.Provider()
 	testAccProviders := map[string]terraform.ResourceProvider{
 		"instaclustr": testAccProvider,
@@ -40,8 +41,46 @@ func TestAccCluster_importBasic(t *testing.T) {
 				ImportStateVerifyIgnore: []string{
 					// waiting cluster APIs to be refined to supply those attributes.
 					"bundle",
-					"cluster_provider",
-					"pci_compliant_cluster",
+					//"cluster_provider",
+					//"pci_compliant_cluster",
+					//"rack_allocation",
+				},
+			},
+		},
+	})
+}
+func TestAccKafkaCluster_importBasic(t *testing.T) {
+	testAccProvider := instaclustr.Provider()
+	testAccProviders := map[string]terraform.ResourceProvider{
+		"instaclustr": testAccProvider,
+	}
+	validConfig, _ := ioutil.ReadFile("data/valid_kafka.tf")
+	username := os.Getenv("IC_USERNAME")
+	apiKey := os.Getenv("IC_API_KEY")
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
+	resource.Test(t, resource.TestCase{
+		PreCheck:     func() { AccTestEnvVarsCheck(t) },
+		Providers:    testAccProviders,
+		CheckDestroy: testCheckResourceDeleted("valid", hostname, username, apiKey),
+		Steps: []resource.TestStep{
+			{
+				Config: oriConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid("valid"),
+					testCheckResourceCreated("valid", hostname, username, apiKey),
+				),
+			},
+			{
+				Config:            oriConfig,
+				ResourceName:      "instaclustr_cluster.valid",
+				ImportState:       true,
+				ImportStateVerify: true,
+				ImportStateVerifyIgnore: []string{
+					// waiting cluster APIs to be refined to supply those attributes.
+					//"bundle",
+					//"cluster_provider",
+					//"pci_compliant_cluster",
 					"rack_allocation",
 				},
 			},
