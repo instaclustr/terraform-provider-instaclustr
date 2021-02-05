@@ -582,6 +582,16 @@ func getBundleConfig(bundles []Bundle) BundleConfig {
 	return configs
 }
 
+func AppendIfMissing(slice []string, i string) []string {
+	for _, ele := range slice {
+		if ele == i {
+			return slice
+		}
+	}
+	return append(slice, i)
+}
+
+
 func doClusterResize(client *APIClient, clusterID string, d *schema.ResourceData) error {
 
 	before, after := d.GetChange("node_size")
@@ -638,23 +648,20 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error{
 	baseBundle["options"] = baseBundleOptions
 	baseBundle["version"] = cluster.BundleVersion
 
-	//originalBundle := d.Get("bundles")
-	//d.Set("bundles", originalBundle)
-
 	bundles := make([]map[string]interface{}, 0)
 	bundles = append(bundles, baseBundle)
 
-	//bundles = append(bundles, cluster.DataCentres[0].Bundles)
+	nextBundle := make(map[string]interface{}, 0)
+	for _, bundle := range cluster.DataCentres[0].Bundles {
+		nextBundle["bundle"] = bundle
+		bundles = append(bundles, nextBundle)
+	}
 
 	if err:= d.Set("bundle", bundles); err != nil {
 		return fmt.Errorf("[Error] Error reading cluster: %s", err)
 	}
 
-	//base_bundle_options := cluster.BundleOption.(map[string]interface{})
-
 	nodeSize := ""
-
-
 	/*
 	*  Ideally, we would like this information to be coming directly from the API cluster status.
 	*  Hence, this is a slightly hacky way of ignoring zookeeper node sizes (Kafka bundles specific).
@@ -665,6 +672,27 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error{
 			break
 		}
 	}
+
+	//loop over each data centre to determine nodes and racks for rack allocation
+	nodeCount := 0
+	rackList := make([]string, 0)
+	for _, dataCentre := range cluster.DataCentres {
+		for _, node := range dataCentre.Nodes {
+			nodeCount += 1
+			rackList = AppendIfMissing(rackList, node.Rack)
+		}
+	}
+	rackCount := len(rackList)
+	nodesPerRack := nodeCount/rackCount
+
+	rackAllocation := make(map[string]interface{}, 0)
+	rackAllocation["number_of_racks"] = fmt.Sprintf("%v", rackCount)
+	rackAllocation["nodes_per_rack"] = fmt.Sprintf("%v", nodesPerRack)
+
+
+	if err:= d.Set("rack_allocation", rackAllocation); err != nil {
+		return fmt.Errorf("[Error] Error reading cluster: %s", err)
+	}
 	if len(cluster.DataCentres[0].ResizeTargetNodeSize) > 0 {
 		nodeSize = cluster.DataCentres[0].ResizeTargetNodeSize
 	}
@@ -673,6 +701,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error{
 	d.Set("sla_tier", strings.ToUpper(cluster.SlaTier))
 	d.Set("cluster_network", cluster.DataCentres[0].CdcNetwork)
 	d.Set("private_network_cluster", cluster.DataCentres[0].PrivateIPOnly)
+
 
 
 	pciCompliance := false
