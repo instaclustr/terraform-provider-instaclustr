@@ -26,7 +26,6 @@ resource "instaclustr_cluster" "valid" {
             client_encryption = false
             auto_create_topics = true
             delete_topics = true
-            dedicated_zookeeper = false
         }
     }
 }
