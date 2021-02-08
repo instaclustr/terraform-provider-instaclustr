@@ -26,13 +26,14 @@ resource "instaclustr_cluster" "valid" {
         options = {
             auth_n_authz = true
             use_private_broadcast_rpc_address = false
+            client_encryption = false
             lucene_enabled = false
             continuous_backup_enabled = true
         }
     }
 
-//    bundle {
-//        bundle = "SPARK"
-//        version = "apache-spark:2.3.2"
-//    }
+    bundle {
+        bundle = "SPARK"
+        version = "apache-spark:2.3.2"
+    }
 }

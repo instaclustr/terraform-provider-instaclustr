@@ -10,8 +10,7 @@ provider "instaclustr" {
 //}
 
 resource "instaclustr_cluster" "foo" {
-  bundle{
-    bundle = "APACHE_CASSANDRA"
+  bundle{    bundle = "APACHE_CASSANDRA"
     version = "3.11.4"
   }
   cluster_name = "foo"

@@ -650,12 +650,10 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error{
 
 	bundles := make([]map[string]interface{}, 0)
 	bundles = append(bundles, baseBundle)
-
-	nextBundle := make(map[string]interface{}, 0)
-	for _, bundle := range cluster.DataCentres[0].Bundles {
-		nextBundle["bundle"] = bundle
-		bundles = append(bundles, nextBundle)
+	if cluster.AddonBundles != nil {
+		bundles = append(bundles, cluster.AddonBundles)
 	}
+
 
 	if err:= d.Set("bundle", bundles); err != nil {
 		return fmt.Errorf("[Error] Error reading cluster: %s", err)
