@@ -21,6 +21,13 @@ resource "instaclustr_cluster" "valid_with_firewall_rule" {
     bundle {
         bundle = "APACHE_CASSANDRA"
         version = "3.11.8"
+        options = {
+            auth_n_authz = true
+            use_private_broadcast_rpc_address = false
+            client_encryption = false
+            lucene_enabled = false
+            continuous_backup_enabled = true
+        }
     }
 }
 

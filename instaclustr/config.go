@@ -1,7 +1,7 @@
 package instaclustr
 
 const (
-    DefaultApiHostname string = "http://localhost:8090"
+    DefaultApiHostname string = "https://api.instaclustr.com"
 )
 
 type Config struct {
