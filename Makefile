@@ -10,7 +10,7 @@ clean:
 	rm -fr vendor
 
 build:
-	go build -o bin/$(BIN_NAME)_$(VERSION) main.go
+	go build $(FLAGS) -o bin/$(BIN_NAME)_$(VERSION) main.go
 
 test:
 	cd test && go test -v -timeout 120m -count=1
