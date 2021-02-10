@@ -38,13 +38,6 @@ func TestAccCluster_importBasic(t *testing.T) {
 				ResourceName:      "instaclustr_cluster.valid",
 				ImportState:       true,
 				ImportStateVerify: true,
-				ImportStateVerifyIgnore: []string{
-					// waiting cluster APIs to be refined to supply those attributes.
-					"bundle",
-					//"cluster_provider",
-					//"pci_compliant_cluster",
-					//"rack_allocation",
-				},
 			},
 		},
 	})
@@ -76,13 +69,6 @@ func TestAccKafkaCluster_importBasic(t *testing.T) {
 				ResourceName:      "instaclustr_cluster.valid",
 				ImportState:       true,
 				ImportStateVerify: true,
-				ImportStateVerifyIgnore: []string{
-					// waiting cluster APIs to be refined to supply those attributes.
-					//"bundle",
-					//"cluster_provider",
-					//"pci_compliant_cluster",
-					//"rack_allocation",
-				},
 			},
 		},
 	})

@@ -378,7 +378,7 @@ func TestValidRedisClusterCreate(t *testing.T) {
 //		},
 //	})
 //}
-//
+
 //func testCheckClusterCredentials(hostname, username, apiKey string) resource.TestCheckFunc {
 //	return func(s *terraform.State) error {
 //		resourceState := s.Modules[0].Resources["data.instaclustr_cluster_credentials.cluster_credentials"]
