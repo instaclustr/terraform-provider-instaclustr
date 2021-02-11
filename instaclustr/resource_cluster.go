@@ -6,6 +6,7 @@ import (
 	"log"
 	"reflect"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -641,7 +642,8 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error{
 	}
 
 	for k, v := range baseBundleOptions {
-		//terraform expects strings for everything, so in order to turn an interface which contains a pointer to a bool we have to do this.
+		//terraform expects strings for everything
+		//This line changes interface{*bool} -> *bool -> bool -> interface{bool} -> String
 		baseBundleOptions[k] = fmt.Sprintf("%v",reflect.Indirect(reflect.ValueOf(v).Elem()).Interface())
 	}
 
@@ -684,8 +686,8 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error{
 	nodesPerRack := nodeCount/rackCount
 
 	rackAllocation := make(map[string]interface{}, 0)
-	rackAllocation["number_of_racks"] = fmt.Sprintf("%v", rackCount)
-	rackAllocation["nodes_per_rack"] = fmt.Sprintf("%v", nodesPerRack)
+	rackAllocation["number_of_racks"] = strconv.Itoa(rackCount)//fmt.Sprintf("%v", rackCount)
+	rackAllocation["nodes_per_rack"] = strconv.Itoa(nodesPerRack)//fmt.Sprintf("%v", nodesPerRack)
 
 
 	if err:= d.Set("rack_allocation", rackAllocation); err != nil {
@@ -699,14 +701,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error{
 	d.Set("sla_tier", strings.ToUpper(cluster.SlaTier))
 	d.Set("cluster_network", cluster.DataCentres[0].CdcNetwork)
 	d.Set("private_network_cluster", cluster.DataCentres[0].PrivateIPOnly)
-
-
-
-	pciCompliance := false
-	if cluster.PciCompliance == "ENABLED" {
-		pciCompliance = true
-	}
-	d.Set("pci_compliant_cluster", pciCompliance)
+	d.Set("pci_compliant_cluster", cluster.PciCompliance == "ENABLED")
 
 	if len(cluster.DataCentres[0].Nodes[0].PublicAddress) != 0 {
 		err = d.Set("public_contact_point", cluster.DataCentres[0].Nodes[0].PublicAddress)
@@ -716,7 +711,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error{
 		err = d.Set("private_contact_point", cluster.DataCentres[0].Nodes[0].PrivateAddress)
 	}
 
-	toCheck := [3]string{"cluster_provider", "rack_allocation"}
+	toCheck := [2]string{"cluster_provider", "rack_allocation"}
 	for _, changing := range toCheck {
 
 		if !d.HasChange(changing) {

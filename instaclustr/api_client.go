@@ -69,7 +69,7 @@ func (c *APIClient) CreateCluster(data []byte) (string, error) {
 }
 
 func (c *APIClient) ReadCluster(clusterID string) (*Cluster, error) {
-	url := fmt.Sprintf("%s/provisioning/v2/%s", c.apiServerHostname, clusterID)
+	url := fmt.Sprintf("%s/provisioning/v1/%s/terraform-description", c.apiServerHostname, clusterID)
 	resp, err := c.MakeRequest(url, "GET", nil)
 	if err != nil {
 		return nil, err

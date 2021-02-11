@@ -1,27 +1,21 @@
 # required for terraform version >= 13.
 # Remove the terraform block if you're using a terraform version lower
-terraform {
-  required_providers {
-    instaclustr = {
-      source = "instaclustr/instaclustr"
-      version = ">= 1.0.0"
-    }
-  }
-}
+//terraform {
+//  required_providers {
+//    instaclustr = {
+//      source = "instaclustr/instaclustr"
+//      version = ">= 1.0.0"
+//    }
+//  }
+//}
 
 provider "instaclustr" {
   username = "<Your instaclustr username here>"
   api_key = "<Your provisioning API key here>"
 }
 
-resource "instaclustr_encryption_key" "add_ebs_key" {
-  alias = "testkey"
-  arn = "<Your KMS key ARN here>"
-  provider = "instaclustr"
-}
 
-
-resource "instaclustr_cluster" "example2" {
+resource "instaclustr_cluster" "example" {
   cluster_name = "testcluster"
   node_size = "t3.small"
   data_centre = "US_WEST_2"
@@ -30,7 +24,6 @@ resource "instaclustr_cluster" "example2" {
   private_network_cluster = false
   cluster_provider = {
     name = "AWS_VPC",
-    disk_encryption_key = "${instaclustr_encryption_key.add_ebs_key.key_id}"
     tags = {
       "myTag" = "myTagValue"
     }
@@ -60,7 +53,7 @@ resource "instaclustr_cluster" "example2" {
 }
 
 data "instaclustr_cluster_credentials" "example_credentials" {
-  cluster_id = "${instaclustr_cluster.example2.id}"
+  cluster_id = "${instaclustr_cluster.example.id}"
 }
 
 resource "instaclustr_cluster" "custom_vpc_example" {
@@ -87,7 +80,7 @@ resource "instaclustr_cluster" "custom_vpc_example" {
 }
 
 resource "instaclustr_firewall_rule" "example_firewall_rule" {
-  cluster_id = "${instaclustr_cluster.example2.id}"
+  cluster_id = "${instaclustr_cluster.example.id}"
   rule_cidr = "10.1.0.0/16"
   rules = [
     {
@@ -97,7 +90,7 @@ resource "instaclustr_firewall_rule" "example_firewall_rule" {
 }
 
 resource "instaclustr_firewall_rule" "example_firewall_rule_sg" {
-  cluster_id = "${instaclustr_cluster.example2.id}"
+  cluster_id = "${instaclustr_cluster.example.id}"
   rule_security_group_id = "sg-0123abcde456ffabc"
   rules = [
     {
@@ -107,7 +100,7 @@ resource "instaclustr_firewall_rule" "example_firewall_rule_sg" {
 }
 
 resource "instaclustr_vpc_peering" "example_vpc_peering" {
-  cluster_id = "${instaclustr_cluster.example.cluster_id}"
+  cluster_id = "${instaclustr_cluster.example.id}"
   peer_vpc_id = "vpc-123456"
   peer_account_id = "1234567890"
   peer_subnet = "10.0.0.0/20"
