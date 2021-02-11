@@ -583,13 +583,13 @@ func getBundleConfig(bundles []Bundle) BundleConfig {
 	return configs
 }
 
-func AppendIfMissing(slice []string, i string) []string {
-	for _, ele := range slice {
-		if ele == i {
+func AppendIfMissing(slice []string, toAppend string) []string {
+	for _, element := range slice {
+		if element == toAppend {
 			return slice
 		}
 	}
-	return append(slice, i)
+	return append(slice, toAppend)
 }
 
 

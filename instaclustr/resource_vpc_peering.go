@@ -182,9 +182,8 @@ func resourceVpcPeeringStateImport(d *schema.ResourceData, meta interface{}) ([]
 	if len(idParts) != 2 || idParts[0] == "" || idParts[1] == "" {
 		return nil, fmt.Errorf("Unexpected format of ID (%q), expected <CLUSTER-ID>&<VPC-PEERING-ID>", d.Id())
 	}
-	cluster_id := idParts[0]
-	vpc_peering_id := idParts[1]
-	d.Set("cluster_id", cluster_id)
-	d.Set("vpc_peering_id", vpc_peering_id)
+
+	d.Set("cluster_id", idParts[0])
+	d.Set("vpc_peering_id", idParts[1])
 	return []*schema.ResourceData{d}, nil
 }

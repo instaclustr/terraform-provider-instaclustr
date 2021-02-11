@@ -134,10 +134,8 @@ func resourceFirewallRuleStateImport(d *schema.ResourceData, meta interface{}) (
 	if len(idParts) != 2 || idParts[0] == "" || idParts[1] == "" {
 		return nil, fmt.Errorf("Unexpected format of ID (%q), expected <CLUSTER-ID>&<RULE-CIDR>", d.Id())
 	}
-	cluster_id := idParts[0]
-	rule_cidr := idParts[1]
-	d.Set("cluster_id", cluster_id)
-	d.Set("rule_cidr", rule_cidr)
+	d.Set("cluster_id", idParts[0])
+	d.Set("rule_cidr", idParts[1])
 	return []*schema.ResourceData{d}, nil
 }
 
