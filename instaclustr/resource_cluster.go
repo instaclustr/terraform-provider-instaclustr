@@ -583,7 +583,7 @@ func getBundleConfig(bundles []Bundle) BundleConfig {
 	return configs
 }
 
-func AppendIfMissing(slice []string, toAppend string) []string {
+func appendIfMissing(slice []string, toAppend string) []string {
 	for _, element := range slice {
 		if element == toAppend {
 			return slice
@@ -679,19 +679,19 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error{
 	for _, dataCentre := range cluster.DataCentres {
 		for _, node := range dataCentre.Nodes {
 			nodeCount += 1
-			rackList = AppendIfMissing(rackList, node.Rack)
+			rackList = appendIfMissing(rackList, node.Rack)
 		}
 	}
 	rackCount := len(rackList)
 	nodesPerRack := nodeCount/rackCount
 
 	rackAllocation := make(map[string]interface{}, 0)
-	rackAllocation["number_of_racks"] = strconv.Itoa(rackCount)//fmt.Sprintf("%v", rackCount)
-	rackAllocation["nodes_per_rack"] = strconv.Itoa(nodesPerRack)//fmt.Sprintf("%v", nodesPerRack)
+	rackAllocation["number_of_racks"] = strconv.Itoa(rackCount)
+	rackAllocation["nodes_per_rack"] = strconv.Itoa(nodesPerRack)
 
 
 	if err:= d.Set("rack_allocation", rackAllocation); err != nil {
-		return fmt.Errorf("[Error] Error reading cluster: %s", err)
+		return fmt.Errorf("[Error] Error reading cluster, rack allocation could not be derived: %s", err)
 	}
 	if len(cluster.DataCentres[0].ResizeTargetNodeSize) > 0 {
 		nodeSize = cluster.DataCentres[0].ResizeTargetNodeSize

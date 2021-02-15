@@ -20,9 +20,6 @@ type OmitEmptyBool struct {
 	value bool
 }
 
-//func (b *OmitEmptyBool) UnmarshalJSON(data []byte) error {
-//
-//}
 
 type BundleOptions struct {
 	AuthnAuthz                    *bool   `json:"authnAuthz,omitempty" mapstructure:"auth_n_authz,omitempty"`
