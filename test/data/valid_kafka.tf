@@ -5,12 +5,13 @@ provider "instaclustr" {
 }
 resource "instaclustr_cluster" "valid" {
     cluster_name = "test_cluster"
-    node_size = "t3.small-20-gp2"
+    node_size = "r5.large-500-gp2"
     data_centre = "US_WEST_2"
     sla_tier = "NON_PRODUCTION"
     cluster_network = "192.168.0.0/18"
     private_network_cluster = false
     pci_compliant_cluster = false
+
     cluster_provider = {
         name = "AWS_VPC"
     }
@@ -28,4 +29,10 @@ resource "instaclustr_cluster" "valid" {
             delete_topics = true
         }
     }
+
+    bundle {
+        bundle = "KAFKA_SCHEMA_REGISTRY"
+        version = "kafka-schema-registry:5.0.0"
+    }
+
 }
