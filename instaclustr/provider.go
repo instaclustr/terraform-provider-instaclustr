@@ -18,20 +18,20 @@ func Provider() *schema.Provider {
 			"api_hostname": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default: DefaultApiHostname,
+				Default:  DefaultApiHostname,
 			},
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
-			"instaclustr_cluster":				resourceCluster(),
-			"instaclustr_encryption_key":		resourceEncryptionKey(),
-			"instaclustr_firewall_rule":		resourceFirewallRule(),
-			"instaclustr_vpc_peering":			resourceVpcPeering(),
-			"instaclustr_kafka_user": 			resourceKafkaUser(),
+			"instaclustr_cluster":        resourceCluster(),
+			"instaclustr_encryption_key": resourceEncryptionKey(),
+			"instaclustr_firewall_rule":  resourceFirewallRule(),
+			"instaclustr_vpc_peering":    resourceVpcPeering(),
+			"instaclustr_kafka_user":     resourceKafkaUser(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
-			"instaclustr_cluster_credentials":	dataSourceClusterCredentials(),
-			"instaclustr_kafka_user_list": dataSourceKafkaUserList(),
+			"instaclustr_cluster_credentials": dataSourceClusterCredentials(),
+			"instaclustr_kafka_user_list":     dataSourceKafkaUserList(),
 		},
 	}
 	provider.ConfigureFunc = providerConfigure
@@ -41,9 +41,9 @@ func Provider() *schema.Provider {
 
 func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	config := Config{
-		Username: 				d.Get("username").(string),
-		ApiKey:   				d.Get("api_key").(string),
-		apiServerHostname:      d.Get("api_hostname").(string),
+		Username:          d.Get("username").(string),
+		ApiKey:            d.Get("api_key").(string),
+		apiServerHostname: d.Get("api_hostname").(string),
 	}
 
 	config.Init()

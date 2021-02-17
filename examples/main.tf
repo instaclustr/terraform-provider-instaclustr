@@ -21,7 +21,7 @@ resource "instaclustr_encryption_key" "add_ebs_key" {
 }
 
 
-resource "instaclustr_cluster" "example2" {
+resource "instaclustr_cluster" "example" {
   cluster_name = "testcluster"
   node_size = "t3.small"
   data_centre = "US_WEST_2"
@@ -30,7 +30,6 @@ resource "instaclustr_cluster" "example2" {
   private_network_cluster = false
   cluster_provider = {
     name = "AWS_VPC",
-    disk_encryption_key = "${instaclustr_encryption_key.add_ebs_key.key_id}"
     tags = {
       "myTag" = "myTagValue"
     }
@@ -60,7 +59,7 @@ resource "instaclustr_cluster" "example2" {
 }
 
 data "instaclustr_cluster_credentials" "example_credentials" {
-  cluster_id = "${instaclustr_cluster.example2.id}"
+  cluster_id = "${instaclustr_cluster.example.id}"
 }
 
 resource "instaclustr_cluster" "custom_vpc_example" {
@@ -87,7 +86,7 @@ resource "instaclustr_cluster" "custom_vpc_example" {
 }
 
 resource "instaclustr_firewall_rule" "example_firewall_rule" {
-  cluster_id = "${instaclustr_cluster.example2.id}"
+  cluster_id = "${instaclustr_cluster.example.id}"
   rule_cidr = "10.1.0.0/16"
   rules = [
     {
@@ -97,7 +96,7 @@ resource "instaclustr_firewall_rule" "example_firewall_rule" {
 }
 
 resource "instaclustr_firewall_rule" "example_firewall_rule_sg" {
-  cluster_id = "${instaclustr_cluster.example2.id}"
+  cluster_id = "${instaclustr_cluster.example.id}"
   rule_security_group_id = "sg-0123abcde456ffabc"
   rules = [
     {
@@ -107,7 +106,7 @@ resource "instaclustr_firewall_rule" "example_firewall_rule_sg" {
 }
 
 resource "instaclustr_vpc_peering" "example_vpc_peering" {
-  cluster_id = "${instaclustr_cluster.example.cluster_id}"
+  cluster_id = "${instaclustr_cluster.example.id}"
   peer_vpc_id = "vpc-123456"
   peer_account_id = "1234567890"
   peer_subnet = "10.0.0.0/20"
@@ -148,10 +147,10 @@ resource "instaclustr_cluster" "example_kafka" {
     bundle = "KAFKA_SCHEMA_REGISTRY"
     version = "5.0.0"
   }
-    kafka_rest_proxy_user_password = "RestProxyTest123test!" // new password for rest proxy bundle user
-    kafka_schema_registry_user_password = "SchemaRegistryTest123test!" // new password for schema registry bundle user
+  kafka_rest_proxy_user_password = "RestProxyTest123test!" // new password for rest proxy bundle user
+  kafka_schema_registry_user_password = "SchemaRegistryTest123test!" // new password for schema registry bundle user
 
-    wait_for_state = "RUNNING" // the required state of the cluster before doing the bundle user password updates
+  wait_for_state = "RUNNING" // the required state of the cluster before doing the bundle user password updates
 }
 
 resource "instaclustr_cluster" "example-elasticsearch" {

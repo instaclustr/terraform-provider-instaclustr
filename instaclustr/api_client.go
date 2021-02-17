@@ -69,7 +69,7 @@ func (c *APIClient) CreateCluster(data []byte) (string, error) {
 }
 
 func (c *APIClient) ReadCluster(clusterID string) (*Cluster, error) {
-	url := fmt.Sprintf("%s/provisioning/v1/%s", c.apiServerHostname, clusterID)
+	url := fmt.Sprintf("%s/provisioning/v1/%s/terraform-description", c.apiServerHostname, clusterID)
 	resp, err := c.MakeRequest(url, "GET", nil)
 	if err != nil {
 		return nil, err
@@ -308,7 +308,7 @@ func (c *APIClient) ReadKafkaUserList(clusterID string) ([]string, error) {
 		return nil, errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
 	}
 
-	usernameList := []string {}
+	usernameList := []string{}
 	err = json.Unmarshal(bodyText, &usernameList)
 	if err != nil {
 		return nil, err

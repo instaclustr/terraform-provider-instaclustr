@@ -9,7 +9,7 @@ import (
 
 func dataSourceKafkaUserList() *schema.Resource {
 	return &schema.Resource{
-		Read:   dataSourceKafkaUserListRead,
+		Read: dataSourceKafkaUserListRead,
 
 		Schema: map[string]*schema.Schema{
 			"cluster_id": {
@@ -17,9 +17,9 @@ func dataSourceKafkaUserList() *schema.Resource {
 				Required: true,
 			},
 
-			"username_list":  &schema.Schema {
-				Type:     schema.TypeList,
-				Elem:     &schema.Schema {
+			"username_list": &schema.Schema{
+				Type: schema.TypeList,
+				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
 				Computed: true,

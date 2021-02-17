@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -14,6 +15,10 @@ func resourceFirewallRule() *schema.Resource {
 		Read:   resourceFirewallRuleRead,
 		Update: resourceFirewallRuleUpdate,
 		Delete: resourceFirewallRuleDelete,
+
+		Importer: &schema.ResourceImporter{
+			State: resourceFirewallRuleStateImport,
+		},
 
 		Schema: map[string]*schema.Schema{
 			"cluster_id": {
@@ -108,15 +113,36 @@ func resourceFirewallRuleRead(d *schema.ResourceData, meta interface{}) error {
 			d.Set("rule_cidr", value.Network)
 			d.Set("rule_security_group_id", value.SecurityGroupId)
 			d.SetId(ruleTarget)
-			d.Set("rules", value.Rules)
+
+			rules := make([]map[string]interface{}, 0)
+			for _, rule := range value.Rules {
+				ruleMapStruct := &RuleType{Type: rule.Type}
+				ruleMap, _ := StructToMap(ruleMapStruct)
+				rules = append(rules, ruleMap)
+			}
+
+			if err := d.Set("rules", rules); err != nil {
+				return fmt.Errorf("error setting rules: %s", err)
+			}
 		}
 	}
 	return nil
 }
 
+func resourceFirewallRuleStateImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	idParts := strings.Split(d.Id(), "&")
+	if len(idParts) != 2 || idParts[0] == "" || idParts[1] == "" {
+		return nil, fmt.Errorf("Unexpected format of ID (%q), expected <CLUSTER-ID>&<RULE-CIDR>", d.Id())
+	}
+	d.Set("cluster_id", idParts[0])
+	d.Set("rule_cidr", idParts[1])
+	return []*schema.ResourceData{d}, nil
+}
+
 func resourceFirewallRuleUpdate(d *schema.ResourceData, meta interface{}) error {
 	return nil
 }
+
 func resourceFirewallRuleDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*Config).Client
 	id := d.Get("cluster_id").(string)
@@ -133,12 +159,12 @@ func resourceFirewallRuleDelete(d *schema.ResourceData, meta interface{}) error 
 
 		rules = append(rules, RuleType{Type: aRule})
 	}
-	
+
 	rule := FirewallRule{
 		SecurityGroupId: d.Get("rule_security_group_id").(string),
-		Network: d.Get("rule_cidr").(string),
-		Rules:   rules,
-		}
+		Network:         d.Get("rule_cidr").(string),
+		Rules:           rules,
+	}
 
 	var jsonStr []byte
 	jsonStr, err := json.Marshal(rule)

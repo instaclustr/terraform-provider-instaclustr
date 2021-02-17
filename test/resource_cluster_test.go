@@ -387,12 +387,12 @@ func testCheckClusterCredentials(hostname, username, apiKey string) resource.Tes
 		client.InitClient(hostname, username, apiKey)
 		clusterId := resourceState.Primary.Attributes["cluster_id"]
 
-		clusterCredentials, err := client.ReadClusterCredentials(clusterId)
+		clusterCredentials, err := client.ReadCluster(clusterId)
 		if err != nil {
 			return fmt.Errorf("Failed to read Cluster Credentials from %s: %s", clusterId, err)
 		}
 
-		if clusterCredentials.ClusterPassword != resourceState.Primary.Attributes["cluster_password"] {
+		if clusterCredentials.InstaclustrUserPassword != resourceState.Primary.Attributes["cluster_password"] {
 			return fmt.Errorf("Password of the cluster and resource are different")
 		}
 

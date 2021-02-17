@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"reflect"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -26,6 +28,11 @@ func resourceCluster() *schema.Resource {
 		Read:   resourceClusterRead,
 		Update: resourceClusterUpdate,
 		Delete: resourceClusterDelete,
+
+		Importer: &schema.ResourceImporter{
+			State: resourceClusterStateImport,
+		},
+
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(30 * time.Minute),
 		},
@@ -156,8 +163,8 @@ func resourceCluster() *schema.Resource {
 				Type:     schema.TypeList,
 				Optional: true,
 				Elem: &schema.Schema{
-					Type: schema.TypeMap,
-					Elem: schema.TypeString,
+					Type:     schema.TypeMap,
+					Elem:     schema.TypeString,
 					ForceNew: true,
 				},
 				Removed: "Please change bundles argument -> bundle blocks (example under example/main.tf), and to avoid causing an update to the existing tfstate - replace all keys named 'bundles' with 'bundle' in resources with the provider 'provider.instaclustr'",
@@ -341,14 +348,14 @@ func resourceCluster() *schema.Resource {
 				},
 			},
 			"kafka_rest_proxy_user_password": {
-				Type:     schema.TypeString,
+				Type:      schema.TypeString,
 				Sensitive: true,
-				Optional: true,
+				Optional:  true,
 			},
 			"kafka_schema_registry_user_password": {
-				Type:     schema.TypeString,
+				Type:      schema.TypeString,
 				Sensitive: true,
-				Optional: true,
+				Optional:  true,
 			},
 			"wait_for_state": {
 				Type:     schema.TypeString,
@@ -576,6 +583,16 @@ func getBundleConfig(bundles []Bundle) BundleConfig {
 	return configs
 }
 
+func appendIfMissing(slice []string, toAppend string) []string {
+	for _, element := range slice {
+		if element == toAppend {
+			return slice
+		}
+	}
+	return append(slice, toAppend)
+}
+
+
 func doClusterResize(client *APIClient, clusterID string, d *schema.ResourceData) error {
 
 	before, after := d.GetChange("node_size")
@@ -600,7 +617,7 @@ func doClusterResize(client *APIClient, clusterID string, d *schema.ResourceData
 	return nil
 }
 
-func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
+func resourceClusterRead(d *schema.ResourceData, meta interface{}) error{
 	client := meta.(*Config).Client
 	id := d.Get("cluster_id").(string)
 	log.Printf("[INFO] Reading status of cluster %s.", id)
@@ -611,39 +628,90 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	d.SetId(cluster.ID)
 	d.Set("cluster_id", cluster.ID)
 	d.Set("cluster_name", cluster.ClusterName)
+	clusterProvider := make(map[string]interface{}, 0)
+	clusterProvider["name"] = cluster.DataCentres[0].Provider
+	d.Set("cluster_provider", clusterProvider)
+
+	baseBundle := make(map[string]interface{}, 0)
+	baseBundle["bundle"] = cluster.BundleType
+
+	baseBundleOptions := make(map[string]interface{}, 0)
+	err = mapstructure.Decode(cluster.BundleOption, &baseBundleOptions)
+	if err != nil {
+		return fmt.Errorf("[Error] Error decoding bundles option: %s", err)
+	}
+
+	for k, v := range baseBundleOptions {
+		//terraform expects strings for everything
+		//This line changes interface{*bool} -> *bool -> bool -> interface{bool} -> String
+		baseBundleOptions[k] = fmt.Sprintf("%v",reflect.Indirect(reflect.ValueOf(v).Elem()).Interface())
+	}
+
+	baseBundle["options"] = baseBundleOptions
+	baseBundle["version"] = cluster.BundleVersion
+
+	bundles := make([]map[string]interface{}, 0)
+	bundles = append(bundles, baseBundle)
+	if cluster.AddonBundles != nil {
+		bundles = append(bundles, cluster.AddonBundles)
+	}
+
+
+	if err:= d.Set("bundle", bundles); err != nil {
+		return fmt.Errorf("[Error] Error reading cluster: %s", err)
+	}
 
 	nodeSize := ""
-	/* 
+	/*
 	*  Ideally, we would like this information to be coming directly from the API cluster status.
-	*  Hence, this is a slightly hacky way of ignoring zookeeper node sizes (Kafka bundle specific).
-	*/
-	for _, node := range(cluster.DataCentres[0].Nodes) {
+	*  Hence, this is a slightly hacky way of ignoring zookeeper node sizes (Kafka bundles specific).
+	 */
+	for _, node := range cluster.DataCentres[0].Nodes {
 		nodeSize = node.Size
-		if (!strings.HasPrefix(nodeSize, "zk-")) {
+		if !strings.HasPrefix(nodeSize, "zk-") {
 			break
 		}
+	}
+
+	//loop over each data centre to determine nodes and racks for rack allocation
+	nodeCount := 0
+	rackList := make([]string, 0)
+	for _, dataCentre := range cluster.DataCentres {
+		for _, node := range dataCentre.Nodes {
+			nodeCount += 1
+			rackList = appendIfMissing(rackList, node.Rack)
+		}
+	}
+	rackCount := len(rackList)
+	nodesPerRack := nodeCount/rackCount
+
+	rackAllocation := make(map[string]interface{}, 0)
+	rackAllocation["number_of_racks"] = strconv.Itoa(rackCount)
+	rackAllocation["nodes_per_rack"] = strconv.Itoa(nodesPerRack)
+
+
+	if err:= d.Set("rack_allocation", rackAllocation); err != nil {
+		return fmt.Errorf("[Error] Error reading cluster, rack allocation could not be derived: %s", err)
 	}
 	if len(cluster.DataCentres[0].ResizeTargetNodeSize) > 0 {
 		nodeSize = cluster.DataCentres[0].ResizeTargetNodeSize
 	}
 	d.Set("node_size", nodeSize)
-
 	d.Set("data_centre", cluster.DataCentres[0].Name)
 	d.Set("sla_tier", strings.ToUpper(cluster.SlaTier))
 	d.Set("cluster_network", cluster.DataCentres[0].CdcNetwork)
 	d.Set("private_network_cluster", cluster.DataCentres[0].PrivateIPOnly)
-	d.Set("pci_compliant_cluster", cluster.PciCompliance)
+	d.Set("pci_compliant_cluster", cluster.PciCompliance == "ENABLED")
 
 	if len(cluster.DataCentres[0].Nodes[0].PublicAddress) != 0 {
 		err = d.Set("public_contact_point", cluster.DataCentres[0].Nodes[0].PublicAddress)
-
 	}
 
 	if len(cluster.DataCentres[0].Nodes[0].PrivateAddress) != 0 {
 		err = d.Set("private_contact_point", cluster.DataCentres[0].Nodes[0].PrivateAddress)
 	}
 
-	toCheck := [3]string{"cluster_provider","rack_allocation","bundle"}
+	toCheck := [2]string{"cluster_provider", "rack_allocation"}
 	for _, changing := range toCheck {
 
 		if !d.HasChange(changing) {
@@ -669,6 +737,12 @@ func resourceClusterDelete(d *schema.ResourceData, meta interface{}) error {
 	d.Set("cluster_id", "")
 	log.Printf("[INFO] Cluster %s has been marked for deletion.", id)
 	return nil
+}
+
+func resourceClusterStateImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+	clusterId := d.Id()
+	d.Set("cluster_id", clusterId)
+	return []*schema.ResourceData{d}, nil
 }
 
 func getBundles(d *schema.ResourceData) ([]Bundle, error) {

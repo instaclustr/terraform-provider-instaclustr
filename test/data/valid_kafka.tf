@@ -3,15 +3,15 @@ provider "instaclustr" {
     api_key = "%s"
     api_hostname = "%s"
 }
-
 resource "instaclustr_cluster" "valid" {
     cluster_name = "test_cluster"
-    node_size = "t3.small-v2"
+    node_size = "r5.large-500-gp2"
     data_centre = "US_WEST_2"
     sla_tier = "NON_PRODUCTION"
     cluster_network = "192.168.0.0/18"
     private_network_cluster = false
     pci_compliant_cluster = false
+
     cluster_provider = {
         name = "AWS_VPC"
     }
@@ -21,18 +21,18 @@ resource "instaclustr_cluster" "valid" {
     }
 
     bundle {
-        bundle = "APACHE_CASSANDRA"
-        version = "apache-cassandra-3.11.8.ic2"
+        bundle = "KAFKA"
+        version = "apache-kafka:2.5.1"
         options = {
-            auth_n_authz = true
-            use_private_broadcast_rpc_address = false
             client_encryption = false
-            lucene_enabled = false
-            continuous_backup_enabled = true
+            auto_create_topics = true
+            delete_topics = true
         }
     }
+
     bundle {
-        bundle = "SPARK"
-        version = "apache-spark:2.3.2"
+        bundle = "KAFKA_SCHEMA_REGISTRY"
+        version = "kafka-schema-registry:5.0.0"
     }
+
 }
