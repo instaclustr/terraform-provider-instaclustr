@@ -20,15 +20,22 @@ resource "instaclustr_cluster" "valid_with_firewall_rule" {
     }
     bundle {
         bundle = "APACHE_CASSANDRA"
-        version = "3.11.4"
+        version = "3.11.8"
+        options = {
+            auth_n_authz = true
+            use_private_broadcast_rpc_address = false
+            client_encryption = false
+            lucene_enabled = false
+            continuous_backup_enabled = true
+        }
     }
 }
 
 resource "instaclustr_firewall_rule" "valid_with_firewall_rule" {
     cluster_id = "${instaclustr_cluster.valid_with_firewall_rule.id}"
-    rule_cidr = "10.1.0.0/16"
+    rule_cidr = "10.220.0.0/21"
     rules = [
-        { 
+        {
             type = "CASSANDRA"
         }
     ]

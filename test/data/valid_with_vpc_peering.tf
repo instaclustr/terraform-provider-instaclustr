@@ -20,7 +20,7 @@ resource "instaclustr_cluster" "valid_with_vpc_peering" {
     }
     bundle {
         bundle = "APACHE_CASSANDRA"
-        version = "3.11.4"
+        version = "3.11.8"
     }
 }
 
