@@ -682,7 +682,9 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error{
 	rackList := make([]string, 0)
 	for _, dataCentre := range cluster.DataCentres {
 		for _, node := range dataCentre.Nodes {
-			nodeCount += 1
+			if !strings.HasPrefix(node.Size, "zk-") {
+				nodeCount += 1
+			}
 			rackList = appendIfMissing(rackList, node.Rack)
 		}
 	}
