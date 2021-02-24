@@ -27,6 +27,7 @@ resource "instaclustr_cluster" "kafka_cluster" {
       client_encryption = false
       dedicated_zookeeper = true
       delete_topics = true
+      number_partitions = 3
       zookeeper_node_size = "%s"
       zookeeper_node_count = 3
     }

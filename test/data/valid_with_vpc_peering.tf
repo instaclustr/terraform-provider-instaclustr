@@ -25,7 +25,7 @@ resource "instaclustr_cluster" "valid_with_vpc_peering" {
             auth_n_authz = false
             client_encryption = false
             continuous_backup_enabled = false
-            lecene_enabled = false
+            lucene_enabled = false
             use_private_broadcast_rpc_address = false
         }
     }

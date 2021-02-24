@@ -23,6 +23,6 @@ resource "instaclustr_cluster" "vpc_cluster" {
 
     bundle {
         bundle = "APACHE_CASSANDRA"
-        version = "3.11.4"
+        version = "apache-cassandra-3.11.8.ic2"
     }
 }
