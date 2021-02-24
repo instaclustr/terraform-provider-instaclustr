@@ -27,6 +27,8 @@ resource "instaclustr_cluster" "valid" {
             client_encryption = false
             auto_create_topics = true
             delete_topics = true
+            number_partitions = 10
+            zookeeper_node_count = 3
         }
     }
 
