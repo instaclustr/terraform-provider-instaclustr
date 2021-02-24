@@ -8,6 +8,12 @@ jobs:
       - checkout
       - run: go get -v -t -d ./...
       - run:
+          name: "Run tests"
+          command: |
+            make build
+            make install
+            make testacc
+      - run:
           name: "Import GPG key"
           command: |
             echo ${GPG_PRIVATE_KEY} | base64 --decode > private.key
