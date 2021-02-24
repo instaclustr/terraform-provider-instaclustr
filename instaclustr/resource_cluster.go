@@ -646,7 +646,6 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error{
 		// This block iterates through the bundle options map and checks for an interface of a pointer
 		// For each interface{*type} value, it changes: interface{*type} -> *type -> type -> interface{type} -> String
 		// For a non-pointer, it directly formats to a string
-		print(fmt.Sprintf("%s: %s of %s\n", k, reflect.ValueOf(v), reflect.ValueOf(v).Kind()))
 		valueOfV := reflect.ValueOf(v)
 		if valueOfV.Kind() == reflect.Ptr {
 			baseBundleOptions[k] = fmt.Sprintf("%v", reflect.Indirect(valueOfV.Elem()).Interface())
