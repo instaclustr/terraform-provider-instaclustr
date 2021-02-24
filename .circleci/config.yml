@@ -10,7 +10,7 @@ jobs:
       - run:
           name: "Run Project Tests"
           command: |
-            IC_API_URL='https://api.dev.instaclustr.com'
+            export IC_API_URL='https://api.dev.instaclustr.com'
             make build
             make testacc
       - run:
