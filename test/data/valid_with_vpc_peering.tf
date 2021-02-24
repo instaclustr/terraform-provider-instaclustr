@@ -21,11 +21,13 @@ resource "instaclustr_cluster" "valid_with_vpc_peering" {
     bundle {
         bundle = "APACHE_CASSANDRA"
         version = "apache-cassandra-3.11.8.ic2"
-        auth_n_authz = false
-        client_encryption = false
-        continuous_backup_enabled = false
-        lecene_enabled = false
-        use_private_broadcast_rpc_address = false
+        options = {
+            auth_n_authz = false
+            client_encryption = false
+            continuous_backup_enabled = false
+            lecene_enabled = false
+            use_private_broadcast_rpc_address = false
+        }
     }
 }
 
