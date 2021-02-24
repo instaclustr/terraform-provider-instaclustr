@@ -21,7 +21,7 @@ resource "instaclustr_cluster" "kafka_cluster" {
 
   bundle {
     bundle = "KAFKA"
-    version = "2.5.1"
+    version = "apache-kafka:2.5.1"
     options = {
       dedicated_zookeeper = true
       zookeeper_node_size = "%s"
