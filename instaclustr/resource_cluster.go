@@ -642,9 +642,13 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error{
 	}
 
 	for k, v := range baseBundleOptions {
-		//terraform expects strings for everything
-		//This line changes interface{*bool} -> *bool -> bool -> interface{bool} -> String
-		baseBundleOptions[k] = fmt.Sprintf("%v",reflect.Indirect(reflect.ValueOf(v).Elem()).Interface())
+		// Terraform expects strings for everything
+		// This block iterates through the map and checks for an interface of a pointer to a boolean
+		// For each interface{*bool} value, it changes: interface{*bool} -> *bool -> bool -> interface{bool} -> String
+		valueOfV := reflect.ValueOf(v)
+		if valueOfV.Kind() == reflect.Ptr && reflect.Indirect(valueOfV).Kind() == reflect.Bool {
+			baseBundleOptions[k] = fmt.Sprintf("%v", reflect.Indirect(valueOfV.Elem()).Interface())
+		}
 	}
 
 	baseBundle["options"] = baseBundleOptions
