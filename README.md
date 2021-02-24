@@ -85,7 +85,7 @@ resource "instaclustr_cluster" "example" {
       }
       bundle {
         bundle = "SPARK"
-        version = "apache-spark:2.3.2"
+        version = "2.3.2"
       }
       bundle {
         bundle = "ZEPPELIN"
