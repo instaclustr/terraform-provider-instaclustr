@@ -13,10 +13,14 @@ resource "instaclustr_cluster" "validRedis" {
   cluster_provider = {
     name = "AWS_VPC"
   }
+  rack_allocation = {
+    nodes_per_rack = 1
+    number_of_racks = 4
+  }
 
   bundle {
     bundle = "REDIS"
-    version = "6.0.4"
+    version = "redis:6.0.9"
     options = {
       master_nodes = 3,
       replica_nodes = 3

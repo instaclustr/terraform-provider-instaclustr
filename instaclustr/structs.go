@@ -50,8 +50,8 @@ type BundleOptions struct {
 	SaslJaasConfig                string	`json:"sasl.jaas.config,omitempty" mapstructure:"sasl_jaas_config,omitempty"`
 	BootstrapServers              string	`json:"bootstrap.servers,omitempty" mapstructure:"bootstrap_servers,omitempty"`
 	Truststore                    string	`json:"truststore,omitempty" mapstructure:"truststore,omitempty"`
-	RedisMasterNodes              string	`json:"masterNodes,omitempty" mapstructure:"master_nodes,omitempty"`
-	RedisReplicaNodes             string	`json:"replicaNodes,omitempty" mapstructure:"replica_nodes,omitempty"`
+	RedisMasterNodes              int	`json:"masterNodes,omitempty" mapstructure:"master_nodes,omitempty"`
+	RedisReplicaNodes             int	`json:"replicaNodes,omitempty" mapstructure:"replica_nodes,omitempty"`
 	DedicatedZookeeper            *bool		`json:"dedicatedZookeeper,omitempty" mapstructure:"dedicated_zookeeper,omitempty"`
 	ZookeeperNodeSize             string	`json:"zookeeperNodeSize,omitempty" mapstructure:"zookeeper_node_size,omitempty"`
 	ZookeeperNodeCount            int		`json:"zookeeperNodeCount,omitempty" mapstructure:"zookeeper_node_count,omitempty"`
