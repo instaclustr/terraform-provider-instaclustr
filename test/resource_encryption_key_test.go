@@ -25,7 +25,6 @@ func TestAccEBSKey(t *testing.T) {
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname, kmsArn)
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccEBSKeyProviders,
-		PreCheck:     func() { AccTestEnvVarsCheck(t) },
 		CheckDestroy: testCheckAccEBSResourceDeleted("valid", hostname, username, apiKey),
 		Steps: []resource.TestStep{
 			{
@@ -51,7 +50,6 @@ func TestAccEBSKeyInvalid(t *testing.T) {
 	kmsArn := os.Getenv("KMS_ARN")
 	resource.Test(t, resource.TestCase{
 		Providers: testAccEBSKeyProviders,
-		PreCheck:  func() { AccTestEnvVarsCheck(t) },
 		Steps: []resource.TestStep{
 			{
 				Config:      fmt.Sprintf(string(validConfig), username, apiKey, hostname, kmsArn),
