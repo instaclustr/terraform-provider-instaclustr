@@ -21,11 +21,13 @@ resource "instaclustr_cluster" "resizable_pci_cluster" {
     }
     bundle {
         bundle = "APACHE_CASSANDRA"
-        version = "3.11.4"
+        version = "apache-cassandra-3.11.8.ic2"
         options = {
             auth_n_authz = true
             use_private_broadcast_rpc_address = true
             client_encryption = true
+            lucene_enabled = false
+            continuous_backup_enabled = true
         }
     }
 }

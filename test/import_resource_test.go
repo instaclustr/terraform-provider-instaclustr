@@ -22,7 +22,6 @@ func TestAccCluster_importBasic(t *testing.T) {
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { AccTestEnvVarsCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckResourceDeleted("valid", hostname, username, apiKey),
 		Steps: []resource.TestStep{
@@ -53,7 +52,6 @@ func TestAccKafkaCluster_importBasic(t *testing.T) {
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
 	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { AccTestEnvVarsCheck(t) },
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckResourceDeleted("valid", hostname, username, apiKey),
 		Steps: []resource.TestStep{
@@ -87,7 +85,6 @@ func TestAccEncryptionKey_importBasic(t *testing.T) {
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname, kmsArn)
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccEBSKeyProviders,
-		PreCheck:     func() { AccTestEnvVarsCheck(t) },
 		CheckDestroy: testCheckAccEBSResourceDeleted("valid", hostname, username, apiKey),
 		Steps: []resource.TestStep{
 			{
@@ -171,7 +168,7 @@ func TestKafkaUserResource_importBasic(t *testing.T) {
 				Config: createClusterConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckResourceValidKafka("instaclustr_cluster.kafka_cluster"),
-					checkKafkaClusterRunning(hostname, username, apiKey),
+					checkClusterRunning("kafka_cluster", hostname, username, apiKey),
 				),
 			},
 			{

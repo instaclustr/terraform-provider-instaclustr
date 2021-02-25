@@ -204,32 +204,32 @@ func TestAccClusterInvalidBundleOptionCombo(t *testing.T) {
 	})
 }
 
-func TestAccClusterCustomVPC(t *testing.T) {
-	testAccProvider := instaclustr.Provider()
-	testAccProviders := map[string]terraform.ResourceProvider{
-		"instaclustr": testAccProvider,
-	}
-	validConfig, _ := ioutil.ReadFile("data/valid_with_custom_vpc.tf")
-	username := os.Getenv("IC_USERNAME")
-	apiKey := os.Getenv("IC_API_KEY")
-	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
-	providerAccountName := os.Getenv("IC_PROV_ACC_NAME")
-	providerVpcId := os.Getenv("IC_PROV_VPC_ID")
-	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname, providerAccountName, providerVpcId)
-	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		CheckDestroy: testCheckResourceDeleted("vpc_cluster", hostname, username, apiKey),
-		Steps: []resource.TestStep{
-			{
-				Config: oriConfig,
-				Check: resource.ComposeTestCheckFunc(
-					testCheckResourceValid("vpc_cluster"),
-					testCheckResourceCreated("vpc_cluster", hostname, username, apiKey),
-				),
-			},
-		},
-	})
-}
+//func TestAccClusterCustomVPC(t *testing.T) {
+//	testAccProvider := instaclustr.Provider()
+//	testAccProviders := map[string]terraform.ResourceProvider{
+//		"instaclustr": testAccProvider,
+//	}
+//	validConfig, _ := ioutil.ReadFile("data/valid_with_custom_vpc.tf")
+//	username := os.Getenv("IC_USERNAME")
+//	apiKey := os.Getenv("IC_API_KEY")
+//	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+//	providerAccountName := os.Getenv("IC_PROV_ACC_NAME")
+//	providerVpcId := os.Getenv("IC_PROV_VPC_ID")
+//	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname, providerAccountName, providerVpcId)
+//	resource.Test(t, resource.TestCase{
+//		Providers:    testAccProviders,
+//		CheckDestroy: testCheckResourceDeleted("vpc_cluster", hostname, username, apiKey),
+//		Steps: []resource.TestStep{
+//			{
+//				Config: oriConfig,
+//				Check: resource.ComposeTestCheckFunc(
+//					testCheckResourceValid("vpc_cluster"),
+//					testCheckResourceCreated("vpc_cluster", hostname, username, apiKey),
+//				),
+//			},
+//		},
+//	})
+//}
 
 func TestAccClusterCustomVPCInvalid(t *testing.T) {
 	testAccProvider := instaclustr.Provider()

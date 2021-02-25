@@ -2,14 +2,13 @@ package test
 
 import (
 	"fmt"
+	"github.com/hashicorp/terraform/helper/resource"
+	"github.com/hashicorp/terraform/terraform"
+	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 	"io/ioutil"
 	"os"
 	"strconv"
 	"testing"
-
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
-	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 )
 
 func TestKafkaUserResource(t *testing.T) {
@@ -23,7 +22,7 @@ func TestKafkaUserResource(t *testing.T) {
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
-	
+
 	kafkaUsername := "charlie"
 	oldPassword := "charlie123!"
 	newPassword := "charlie123standard!"
@@ -44,7 +43,7 @@ func TestKafkaUserResource(t *testing.T) {
 					checkClusterRunning("kafka_cluster", hostname, username, apiKey),
 				),
 			},
- 			{
+			{
 				Config: createKafkaUserConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckResourceValidKafka("instaclustr_kafka_user.kafka_user_charlie"),
@@ -72,7 +71,6 @@ func TestKafkaUserResource(t *testing.T) {
 			},
 		},
 	})
-	
 }
 
 func testCheckResourceValidKafka(resourceName string) resource.TestCheckFunc {
