@@ -4,9 +4,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"testing"
-	"time"
 	"strconv"
+	"testing"
 
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
@@ -42,7 +41,7 @@ func TestKafkaUserResource(t *testing.T) {
 				Config: createClusterConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckResourceValidKafka("instaclustr_cluster.kafka_cluster"),
-					checkKafkaClusterRunning(hostname, username, apiKey),
+					checkClusterRunning("kafka_cluster", hostname, username, apiKey),
 				),
 			},
  			{
@@ -87,41 +86,6 @@ func testCheckResourceValidKafka(resourceName string) resource.TestCheckFunc {
 		if instanceState == nil {
 			return fmt.Errorf("resource has no primary instance")
 		}
-		return nil
-	}
-}
-
-func checkKafkaClusterRunning(hostname, username, apiKey string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		resourceState := s.Modules[0].Resources["instaclustr_cluster.kafka_cluster"]
-		id := resourceState.Primary.Attributes["cluster_id"]
-		client := new(instaclustr.APIClient)
-		client.InitClient(hostname, username, apiKey)
-
-		const ClusterReadInterval = 5
-		const WaitForClusterTimeout = 30 * 60
-		var latestStatus string
-		timePassed := 0
-		fmt.Print("\033[s")
-		for {
-			cluster, err := client.ReadCluster(id)
-			if err != nil {
-				fmt.Printf("\n")
-				return fmt.Errorf("[Error] Error retrieving cluster info: %s", err)
-			}
-			latestStatus = cluster.ClusterStatus
-			if cluster.ClusterStatus == "RUNNING" {
-				break
-			}
-			if timePassed > WaitForClusterTimeout {
-				fmt.Printf("\n")
-				return fmt.Errorf("[Error] Timed out waiting for cluster to have the status 'RUNNING'. Current cluster status is '%s'", latestStatus)
-			}
-			timePassed += ClusterReadInterval
-			fmt.Printf("\033[u\033[K%ds has elapsed while waiting for the cluster to reach RUNNING.\n", timePassed)
-			time.Sleep(ClusterReadInterval * time.Second)
-		}
-		fmt.Printf("\n")
 		return nil
 	}
 }

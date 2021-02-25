@@ -2,15 +2,14 @@ package test
 
 import (
 	"fmt"
+	"github.com/hashicorp/terraform/helper/resource"
+	"github.com/hashicorp/terraform/terraform"
+	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 	"io/ioutil"
 	"os"
 	"regexp"
 	"strings"
 	"testing"
-
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
-	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 )
 
 func TestAccCluster(t *testing.T) {
@@ -38,7 +37,10 @@ func TestAccCluster(t *testing.T) {
 			},
 			{
 				Config:      updatedConfig,
-				ExpectError: regexp.MustCompile("The cluster doesn't support update"),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid("valid"),
+					testCheckResourceCreated("valid", hostname, username, apiKey),
+				),
 			},
 		},
 	})
@@ -127,6 +129,7 @@ func TestAccClusterResize(t *testing.T) {
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+	resourceName := "resizable_cluster"
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
 	validResizeConfig := strings.Replace(oriConfig, "resizeable-small(r5-l)", "resizeable-small(r5-xl)", 1)
 	validResizeConfig = strings.Replace(validResizeConfig, "tf-resizable-test", "tf-resizable-partial-test", 1)
@@ -136,19 +139,20 @@ func TestAccClusterResize(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
 		PreCheck:     func() { AccTestEnvVarsCheck(t) },
-		CheckDestroy: testCheckResourceDeleted("resizable_cluster", hostname, username, apiKey),
+		CheckDestroy: testCheckResourceDeleted(resourceName, hostname, username, apiKey),
 		Steps: []resource.TestStep{
 			{
 				Config: oriConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckResourceValid("resizable_cluster"),
-					testCheckResourceCreated("resizable_cluster", hostname, username, apiKey),
+					testCheckResourceValid(resourceName),
+					testCheckResourceCreated(resourceName, hostname, username, apiKey),
+					checkClusterRunning(resourceName, hostname, username, apiKey),
 				),
 			},
 			{
 				Config: validResizeConfig,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_cluster", "cluster_name", "tf-resizable-test"),
+					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_cluster", "cluster_name", "tf-resizable-partial-test"),
 					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_cluster", "node_size", "resizeable-small(r5-xl)"),
 					testCheckClusterResize(hostname, username, apiKey, "resizeable-small(r5-xl)"),
 				),
