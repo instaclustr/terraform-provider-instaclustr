@@ -132,7 +132,6 @@ func TestAccClusterResize(t *testing.T) {
 	resourceName := "resizable_cluster"
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
 	validResizeConfig := strings.Replace(oriConfig, "resizeable-small(r5-l)-v2", "resizeable-small(r5-xl)-v2", 1)
-	println(fmt.Sprintf("%s", validResizeConfig))
 	invalidResizeClassConfig := strings.Replace(oriConfig, "resizeable-small(r5-l)-v2", "resizeable-large(r5-xl)-v2", 1)
 	invalidResizeConfig := strings.Replace(oriConfig, "resizeable-small(r5-l)-v2", "t3.medium", 1)
 
