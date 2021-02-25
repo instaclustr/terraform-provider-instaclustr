@@ -131,10 +131,10 @@ func TestAccClusterResize(t *testing.T) {
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 	resourceName := "resizable_cluster"
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
-	validResizeConfig := strings.Replace(oriConfig, "resizeable-small(r5-l)", "resizeable-small(r5-xl)", 1)
-	validResizeConfig = strings.Replace(validResizeConfig, "tf-resizable-test", "tf-resizable-partial-test", 1)
-	invalidResizeClassConfig := strings.Replace(oriConfig, "resizeable-small(r5-l)", "resizeable-large(r5-xl)", 1)
-	invalidResizeConfig := strings.Replace(oriConfig, "resizeable-small(r5-l)", "t3.medium", 1)
+	validResizeConfig := strings.Replace(oriConfig, "resizeable-small(r5-l)-v2", "resizeable-small(r5-xl)-v2", 1)
+	println(fmt.Sprintf("%s", validResizeConfig))
+	invalidResizeClassConfig := strings.Replace(oriConfig, "resizeable-small(r5-l)-v2", "resizeable-large(r5-xl)-v2", 1)
+	invalidResizeConfig := strings.Replace(oriConfig, "resizeable-small(r5-l)-v2", "t3.medium", 1)
 
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
@@ -152,11 +152,10 @@ func TestAccClusterResize(t *testing.T) {
 			{
 				Config: validResizeConfig,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_cluster", "cluster_name", "tf-resizable-partial-test"),
-					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_cluster", "node_size", "resizeable-small(r5-xl)"),
-					testCheckClusterResize(hostname, username, apiKey, "resizeable-small(r5-xl)"),
+					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_cluster", "cluster_name", "tf-resizable-test"),
+					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_cluster", "node_size", "resizeable-small(r5-xl)-v2"),
+					testCheckClusterResize(hostname, username, apiKey, "resizeable-small(r5-xl)-v2"),
 				),
-				ExpectNonEmptyPlan: true,
 			},
 			{
 				Config:      invalidResizeClassConfig,
@@ -319,6 +318,7 @@ func testCheckClusterResize(hostname, username, apiKey, expectedNodeSize string)
 		if err != nil {
 			return fmt.Errorf("Failed to read cluster %s: %s", id, err)
 		}
+
 		targetNodeSize := cluster.DataCentres[0].ResizeTargetNodeSize
 		if targetNodeSize != expectedNodeSize {
 			return fmt.Errorf("Expected cluster to be resized to %s", expectedNodeSize)

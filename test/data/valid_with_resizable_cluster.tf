@@ -6,7 +6,7 @@ provider "instaclustr" {
 
 resource "instaclustr_cluster" "resizable_cluster" {
     cluster_name = "tf-resizable-test"
-    node_size = "resizeable-small(r5-l)"
+    node_size = "resizeable-small(r5-l)-v2"
     data_centre = "US_EAST_1"
     sla_tier = "NON_PRODUCTION"
     cluster_network = "192.168.0.0/18"
