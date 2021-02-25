@@ -22,7 +22,7 @@ resource "instaclustr_cluster" "valid_with_password_and_client_encryption" {
 
   bundle {
     bundle = "APACHE_CASSANDRA"
-    version = "3.11.4"
+    version = "apache-cassandra-3.11.8"
     options = {
       auth_n_authz = true
       use_private_broadcast_rpc_address = true
