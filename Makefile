@@ -1,3 +1,4 @@
+
 BIN_NAME="terraform-provider-instaclustr"
 VERSION=v1.8.0
 
@@ -78,7 +79,7 @@ ifndef IC_PROV_VPC_ID
 endif
 endif
 
-	cd test && go test -run ${TARGET}
+	cd test && TF_ACC=1 go test -v -run ${TARGET}
 
 install:
 	@if [ ! -d "$(HOME)/.terraform.d/plugins/" ]; then \
