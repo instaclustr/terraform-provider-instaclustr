@@ -629,7 +629,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error{
 	d.Set("cluster_id", cluster.ID)
 	d.Set("cluster_name", cluster.ClusterName)
 	clusterProvider := make(map[string]interface{}, 0)
-	clusterProvider["name"] = cluster.DataCentres[0].Provider
+	mapstructure.Decode(cluster.Provider, &clusterProvider)
 	d.Set("cluster_provider", clusterProvider)
 
 	baseBundle := make(map[string]interface{}, 0)
