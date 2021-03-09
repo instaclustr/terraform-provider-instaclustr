@@ -592,7 +592,6 @@ func appendIfMissing(slice []string, toAppend string) []string {
 	return append(slice, toAppend)
 }
 
-
 func doClusterResize(client *APIClient, clusterID string, d *schema.ResourceData) error {
 
 	before, after := d.GetChange("node_size")
@@ -617,7 +616,7 @@ func doClusterResize(client *APIClient, clusterID string, d *schema.ResourceData
 	return nil
 }
 
-func resourceClusterRead(d *schema.ResourceData, meta interface{}) error{
+func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*Config).Client
 	id := d.Get("cluster_id").(string)
 	log.Printf("[INFO] Reading status of cluster %s.", id)
@@ -644,7 +643,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error{
 	for k, v := range baseBundleOptions {
 		//terraform expects strings for everything
 		//This line changes interface{*bool} -> *bool -> bool -> interface{bool} -> String
-		baseBundleOptions[k] = fmt.Sprintf("%v",reflect.Indirect(reflect.ValueOf(v).Elem()).Interface())
+		baseBundleOptions[k] = fmt.Sprintf("%v", reflect.Indirect(reflect.ValueOf(v).Elem()).Interface())
 	}
 
 	baseBundle["options"] = baseBundleOptions
@@ -653,11 +652,13 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error{
 	bundles := make([]map[string]interface{}, 0)
 	bundles = append(bundles, baseBundle)
 	if cluster.AddonBundles != nil {
-		bundles = append(bundles, cluster.AddonBundles)
+		for _, addOnBundle := range cluster.AddonBundles {
+			bundles = append(bundles, addOnBundle)
+		}
+
 	}
 
-
-	if err:= d.Set("bundle", bundles); err != nil {
+	if err := d.Set("bundle", bundles); err != nil {
 		return fmt.Errorf("[Error] Error reading cluster: %s", err)
 	}
 
@@ -683,14 +684,13 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error{
 		}
 	}
 	rackCount := len(rackList)
-	nodesPerRack := nodeCount/rackCount
+	nodesPerRack := nodeCount / rackCount
 
 	rackAllocation := make(map[string]interface{}, 0)
 	rackAllocation["number_of_racks"] = strconv.Itoa(rackCount)
 	rackAllocation["nodes_per_rack"] = strconv.Itoa(nodesPerRack)
 
-
-	if err:= d.Set("rack_allocation", rackAllocation); err != nil {
+	if err := d.Set("rack_allocation", rackAllocation); err != nil {
 		return fmt.Errorf("[Error] Error reading cluster, rack allocation could not be derived: %s", err)
 	}
 	if len(cluster.DataCentres[0].ResizeTargetNodeSize) > 0 {

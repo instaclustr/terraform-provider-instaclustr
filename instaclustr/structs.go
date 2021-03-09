@@ -95,7 +95,7 @@ type Cluster struct {
 	ClusterStatus              string        `json:"clusterStatus"`
 	BundleType                 string        `json:"bundleType"`
 	BundleVersion              string        `json:"bundleVersion"`
-	AddonBundles			   map[string]interface{}	 `json:"addonBundles"`
+	AddonBundles			   []map[string]interface{}	 `json:"addonBundles"`
 	Username                   string        `json:"username"`
 	InstaclustrUserPassword    string        `json:"instaclustrUserPassword"`
 	SlaTier                    string        `json:"slaTier"`
