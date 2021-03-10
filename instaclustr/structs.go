@@ -58,12 +58,12 @@ type BundleOptions struct {
 }
 
 type ClusterProvider struct {
-	Name                   string                `json:"name" mapstructure:"name"`
-	AccountName            string                `json:"accountName, omitempty" mapstructure:"account_name"`
-	CustomVirtualNetworkId string                `json:"customVirtualNetworkId, omitempty" mapstructure:"custom_virtual_network_id"`
+	Name                   *string                `json:"name" mapstructure:"name"`
+	AccountName            *string                `json:"accountName, omitempty" mapstructure:"account_name"`
+	CustomVirtualNetworkId *string                `json:"customVirtualNetworkId, omitempty" mapstructure:"custom_virtual_network_id"`
 	Tags                   map[string]interface{} `json:"tags,omitempty"`
-	ResourceGroup          string                `json:"resourceGroup,omitempty" mapstructure:"resource_group"`
-	DiskEncryptionKey      string                `json:"diskEncryptionKey,omitempty" mapstructure:"disk_encryption_key"`
+	ResourceGroup          *string                `json:"resourceGroup,omitempty" mapstructure:"resource_group"`
+	DiskEncryptionKey      *string                `json:"diskEncryptionKey,omitempty" mapstructure:"disk_encryption_key"`
 }
 
 type RackAllocation struct {
@@ -101,7 +101,7 @@ type Cluster struct {
 	SlaTier                    string        	`json:"slaTier"`
 	ClusterCertificateDownload string        	`json:"clusterCertificateDownload"`
 	PciCompliance              string        	`json:"pciCompliance"`
-	BundleOption               BundleOptions 	`json:"bundleOptions"`
+	BundleOption               *BundleOptions 	`json:"bundleOptions"`
 	DataCentres                []DataCentre  	`json:"dataCentres"`
 	Provider				   ClusterProvider	`json:"clusterProvider"`
 }
