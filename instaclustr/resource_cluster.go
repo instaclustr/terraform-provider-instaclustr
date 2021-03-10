@@ -759,7 +759,7 @@ func processProvider(d *schema.ResourceData, data map[string]interface{}) (newDa
 		resource := d.Get(fmt.Sprintf("cluster_provider.%s", k))
 		// Store the required field "name"
 		// There doesn't seem to be a way to programmatically get the "required" schemas with ResourceData
-		if resource != "" || k == "name"{
+		if resource != "" || k == "name" {
 			newData[k] = v
 		}
 	}
