@@ -756,7 +756,10 @@ func processProvider(d *schema.ResourceData, data map[string]interface{}) (newDa
 	// into the state and result a diff between the state and resource (plan)
 	newData = make(map[string]interface{})
 	for k, v := range data {
-		if d.Get(fmt.Sprintf("cluster_provider.%s", k)) != "" {
+		resource := d.Get(fmt.Sprintf("cluster_provider.%s", k))
+		// Store the required field "name"
+		// There doesn't seem to be a way to programmatically get the "required" schemas with ResourceData
+		if resource != "" || k == "name"{
 			newData[k] = v
 		}
 	}
