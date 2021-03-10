@@ -48,6 +48,9 @@ func checkClusterRunning(resourceName, hostname, username, apiKey string) resour
 			time.Sleep(ClusterReadInterval * time.Second)
 		}
 		fmt.Printf("\n")
+		// wait another few seconds after cluster goes to RUNNING to make sure all operations will work
+		// sometimes says cluster is not ready for resizing
+		time.Sleep(20 * time.Second)
 		return nil
 	}
 }
