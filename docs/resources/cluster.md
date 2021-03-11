@@ -53,6 +53,20 @@ bundle| See [Bundles and Versions below](#bundles-and-versions)|Required
 version| See [Bundles and Versions below](#bundles-and-versions)|Required
 options|Options and add-ons for the given bundle. See `bundle.options` below for its properties|{} (empty)
 
+## Bundles and Versions
+
+Bundle | Versions | Compatible With
+---------|-------------|---------------
+APACHE_CASSANDRA|2.2.18, 3.0.19, 3.11.8, 4.0 (preview)|
+SPARK|2.1.3, 2.3.2|APACHE_CASSANDRA
+KAFKA|2.1.1, 2.3.1, 2.4.1, 2.5.1, 2.6.1|
+KAFKA_REST_PROXY|5.0.0|KAFKA
+KAFKA_SCHEMA_REGISTRY|5.0.0|KAFKA
+ELASTICSEARCH|opendistro-for-elasticsearch:1.4.0
+KAFKA_CONNECT|2.3.1, 2.4.1, 2.5.1, 2.6.1|
+REDIS|6.0.9|
+
+
 `bundle.options` - _all properties listed are optional_
 
 Property | Description | For Bundles | Default
