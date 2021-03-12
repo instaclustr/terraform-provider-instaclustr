@@ -13,12 +13,12 @@ When creating this resource, the process will wait for target cluster to be in t
 #### Properties
 Property | Description | Default
 ---------|-------------|--------
-cluster_id|The ID of an existing Instaclustr managed cluster|Required
-peer_vpc_id|The ID of the VPC with which you are creating the VPC peering connection|Required
-peer_account_id|The account ID of the owner of the accepter VPC|Required
-peer_subnet|The subnet for the VPC|Required
-peer_region| The Region code for the accepter VPC, if the accepter VPC is located in a Region other than the Region in which you make the request. | Not Required
-aws_vpc_connection_id| The ID of the VPC peering connection. | Computed
+`cluster_id`|The ID of an existing Instaclustr managed cluster|Required
+`peer_vpc_id`|The ID of the VPC with which you are creating the VPC peering connection|Required
+`peer_account_id`|The account ID of the owner of the accepter VPC|Required
+`peer_subnet`|The subnet for the VPC|Required
+`peer_region`| The Region code for the accepter VPC, if the accepter VPC is located in a Region other than the Region in which you make the request. | Not Required
+`aws_vpc_connection_id`| The ID of the VPC peering connection. | Computed
 
 
 #### Example

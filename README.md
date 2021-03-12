@@ -98,15 +98,14 @@ Configuration documentation can be found at the [Instacluster Terraform Registry
 
 Bundle | Versions | Compatible With
 ---------|-------------|---------------
-APACHE_CASSANDRA|2.1.19, 2.2.13, 3.0.14, 3.0.17, 3.0.18, 3.11, 3.11.3, 3.11.4|
-SPARK|apache-spark:2.1.3, apache-spark:2.1.3.ic1, apache-spark:2.3.2|APACHE_CASSANDRA
-ZEPPELIN|apache-zeppelin:0.8.0-spark-2.3.2, apache-zeppelin:0.7.1-spark-2.1.1|APACHE_CASSANDRA
-KAFKA|2.1.1, 2.3.1, 2.4.1|
+APACHE_CASSANDRA|2.2.18, 3.0.19, 3.11.8, 4.0 (preview)|
+SPARK|2.1.3, 2.3.2|APACHE_CASSANDRA
+KAFKA|2.1.1, 2.3.1, 2.4.1, 2.5.1, 2.6.1|
 KAFKA_REST_PROXY|5.0.0|KAFKA
 KAFKA_SCHEMA_REGISTRY|5.0.0|KAFKA
 ELASTICSEARCH|opendistro-for-elasticsearch:1.4.0
-KAFKA_CONNECT|2.3.1, 2.4.1|
-REDIS|6.0.4|
+KAFKA_CONNECT|2.3.1, 2.4.1, 2.5.1, 2.6.1|
+REDIS|6.0.9|
 
 ### Migrating from 0.0.1 &rarr; 1.0.0+
 A schema change has been made from 0.0.1 which no longer supports the `bundles` argument and uses `bundle` blocks instead. This change can cause `terraform apply` to fail with a message that `bundles` has been removed and/or updating isn't supported. To resolve this -<br>

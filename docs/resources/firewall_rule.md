@@ -12,16 +12,16 @@ Note: Either `rule_cidr` OR `rule_security_group_id` must be provided per rule (
 #### Properties
 Property | Description | Default
 ---------|-------------|--------
-cluster_id|The ID of an existing Instaclustr managed cluster|Required
-rule_cidr|The network to add to your cluster firewall rule. Must be a valid IPv4 CIDR (e.g. 123.4.5.67/32) |Optional
-rule_security_group_id|The Peered AWS VPC Security Group id to your cluster firewall rule (e.g. sg-12345678) |Optional
-rules|List of rule types that the specified network is allowed access to. See below for rule options.|Required
+`cluster_id`|The ID of an existing Instaclustr managed cluster|Required
+`rule_cidr`|The network to add to your cluster firewall rule. Must be a valid IPv4 CIDR (e.g. 123.4.5.67/32) |Optional
+`rule_security_group_id`|The Peered AWS VPC Security Group id to your cluster firewall rule (e.g. sg-12345678) |Optional
+`rules`|List of rule types that the specified network is allowed access to. See below for rule options.|Required
 
-`rules`
+#### rules
 
 Property | Description | Default
 ---------|-------------|--------
-type|Accepts CASSANDRA, SPARK, SPARK_JOBSERVER|Required
+`type`|Accepts CASSANDRA, SPARK, SPARK_JOBSERVER|Required
 
 #### Example
 ```

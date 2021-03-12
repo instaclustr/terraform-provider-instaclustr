@@ -10,6 +10,6 @@ A read-only data source used to get the password and certificate download link o
 
 Property | Description | Default
 ---------|-------------|--------
-cluster_id|The ID of an existing Instaclustr cluster.|Required
-cluster_password|The password of the existing Instaclustr cluster.|Computed
-certificate_download|The certificate download link of the existing Instaclustr cluster.|Computed
+`cluster_id`|The ID of an existing Instaclustr cluster.|Required
+`cluster_password`|The password of the existing Instaclustr cluster.|Computed
+`certificate_download`|The certificate download link of the existing Instaclustr cluster.|Computed
