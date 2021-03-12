@@ -765,6 +765,7 @@ func formatCreateErrMsg(err error) error {
 func checkIfBundleRequiresRackAllocation(bundles []Bundle) bool {
 	var noRackAllocationBundles = []string{
 		"REDIS",
+		"APACHE_ZOOKEEPER",
 	}
 
 	for i := 0; i < len(bundles); i++ {

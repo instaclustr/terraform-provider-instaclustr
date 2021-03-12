@@ -54,7 +54,7 @@ type BundleOptions struct {
 	RedisReplicaNodes             string `json:"replicaNodes,omitempty" mapstructure:"replica_nodes,omitempty"`
 	DedicatedZookeeper            *bool   `json:"dedicatedZookeeper,omitempty" mapstructure:"dedicated_zookeeper,omitempty"`
 	ZookeeperNodeSize             string `json:"zookeeperNodeSize,omitempty" mapstructure:"zookeeper_node_size,omitempty"`
-	ZookeeperNodeCount            string `json:"zookeeperNodeCount,omitempty" mapstructure:"zookeeper_node_count,omitempty"`
+	ZookeeperNodeCount            int    `json:"zookeeperNodeCount,omitempty" mapstructure:"zookeeper_node_count,omitempty"`
 }
 
 type ClusterProvider struct {
