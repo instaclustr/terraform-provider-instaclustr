@@ -27,7 +27,8 @@ Property | Description | Default
 `kafka_schema_registry_user_password`|The password of kafka schema registry bundle user, if it is a Kafka cluster with schema-registry addon. This field is updatable and requires `wait_for_state` to be `RUNNING`.|Optional
 `wait_for_state`|The expected state of the cluster before completing the resource creation. Skipping this field will asynchronously create the cluster.|Optional (valid states are RUNNING and PROVISIONED)
 
-`cluster_provider`
+
+### cluster_provider
 
 Property | Description | Default
 ---------|-------------|--------
