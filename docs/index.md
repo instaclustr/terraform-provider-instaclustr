@@ -5,19 +5,67 @@ description: |-
   
 ---
 
-# instaclustr Provider
+# Instaclustr Provider
+
+A [Terraform](http://terraform.io) provider for managing Instaclustr Platform resources.  
+
+It provides a flexible set of resources for provisioning and managing [Instaclustr based clusters](http://instaclustr.com/) via the use of Terraform.  
+
+For installation instructions and source code visit the [Github project page](https://github.com/instaclustr/terraform-provider-instaclustr)
+
+For further information about Instaclustr, please see [FAQ](https://www.instaclustr.com/resources/faqs/) and [Support](https://support.instaclustr.com/hc/en-us) 
+
+Use the navigation to the left to read about the available resources.
 
 
+### Example Usage
+
+```
+terraform {
+  required_providers {
+    instaclustr = {
+      source = "instaclustr/instaclustr"
+      version = ">= 1.0.0"
+    }
+  }
+}
+
+provider "instaclustr" {
+  username = "<Your instaclustr username here>"
+  api_key = "<Your provisioning API key here>"
+}
+
+resource "instaclustr_cluster" "example" {
+  cluster_name = "testcluster"
+  node_size = "t3.small"
+  data_centre = "US_WEST_2"
+  sla_tier = "NON_PRODUCTION"
+  cluster_network = "192.168.0.0/18"
+  private_network_cluster = false
+  cluster_provider = {
+    name = "AWS_VPC",
+    tags = {
+      "myTag" = "myTagValue"
+    }
+  }
+  rack_allocation = {
+    number_of_racks = 3
+    nodes_per_rack = 1
+  }
+
+  bundle {
+    bundle = "APACHE_CASSANDRA"
+    version = "3.11.4"
+    options = {
+      auth_n_authz = true
+    }
+  }
+
+  bundle {
+    bundle = "SPARK"
+    version = "apache-spark:2.3.2"
+  }
+}
+```
 
 
-
-## Schema
-
-### Required
-
-- **api_key** (String)
-- **username** (String)
-
-### Optional
-
-- **api_hostname** (String)
