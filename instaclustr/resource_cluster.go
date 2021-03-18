@@ -719,7 +719,7 @@ func getBundlesFromCluster(cluster *Cluster) ([]map[string]interface{}, error) {
 		return nil, fmt.Errorf("[Error] Error decoding bundles option: %s", err)
 	}
 
-	convertedBundleOptions := convertInterface(baseBundleOptions)
+	convertedBundleOptions := dereferencePointerInStruct(baseBundleOptions)
 
 	baseBundle["options"] = convertedBundleOptions
 	baseBundle["version"] = cluster.BundleVersion
@@ -733,7 +733,7 @@ func getBundlesFromCluster(cluster *Cluster) ([]map[string]interface{}, error) {
 	return bundles, nil
 }
 
-func convertInterface(data map[string]interface{}) map[string]interface{} {
+func dereferencePointerInStruct(data map[string]interface{}) map[string]interface{} {
 	for k, v := range data {
 		// Terraform expects strings for everything
 		// This block iterates through the bundle options map and checks for an interface of a pointer
