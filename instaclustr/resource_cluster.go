@@ -710,7 +710,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error{
 }
 
 func getBundlesFromCluster(cluster *Cluster) ([]map[string]interface{}, error) {
-	baseBundle := make(map[string]interface{}, 0)
+	baseBundle := make(map[string]interface{}, 3)
 	baseBundle["bundle"] = cluster.BundleType
 
 	baseBundleOptions := make(map[string]interface{}, 0)
