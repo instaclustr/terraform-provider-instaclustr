@@ -17,7 +17,7 @@ resource "instaclustr_cluster" "validApacheZookeeper" {
     }
 
     rack_allocation = {
-        number_of_racks = 3
+        number_of_racks = 4
         nodes_per_rack = 1
     }
     
@@ -25,7 +25,7 @@ resource "instaclustr_cluster" "validApacheZookeeper" {
         bundle = "APACHE_ZOOKEEPER"
         version = "apache-zookeeper:3.5.8"
         options = {
-            zookeeper_node_count = 3
+            zookeeper_node_count = 5
         }
     }
 }
