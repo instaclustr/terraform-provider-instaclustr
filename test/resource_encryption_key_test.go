@@ -21,8 +21,9 @@ func TestAccEBSKey(t *testing.T) {
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+	providerAccountName := os.Getenv("IC_PROV_ACC_NAME")
 	kmsArn := os.Getenv("KMS_ARN")
-	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname, kmsArn)
+	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname, kmsArn, providerAccountName)
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccEBSKeyProviders,
 		CheckDestroy: testCheckAccEBSResourceDeleted("valid", hostname, username, apiKey),

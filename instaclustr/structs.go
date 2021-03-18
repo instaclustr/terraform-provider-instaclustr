@@ -90,19 +90,20 @@ type AddonBundles struct {
 }
 
 type Cluster struct {
-	ID                         string        `json:"id"`
-	ClusterName                string        `json:"clusterName"`
-	ClusterStatus              string        `json:"clusterStatus"`
-	BundleType                 string        `json:"bundleType"`
-	BundleVersion              string        `json:"bundleVersion"`
+	ID                         string        	`json:"id"`
+	ClusterName                string        	`json:"clusterName"`
+	ClusterStatus              string        	`json:"clusterStatus"`
+	BundleType                 string        	`json:"bundleType"`
+	BundleVersion              string        	`json:"bundleVersion"`
 	AddonBundles			   map[string]interface{}	 `json:"addonBundles"`
-	Username                   string        `json:"username"`
-	InstaclustrUserPassword    string        `json:"instaclustrUserPassword"`
-	SlaTier                    string        `json:"slaTier"`
-	ClusterCertificateDownload string        `json:"clusterCertificateDownload"`
-	PciCompliance              string        `json:"pciCompliance"`
-	BundleOption               BundleOptions `json:"bundleOptions"`
-	DataCentres                []DataCentre  `json:"dataCentres"`
+	Username                   string        	`json:"username"`
+	InstaclustrUserPassword    string        	`json:"instaclustrUserPassword"`
+	SlaTier                    string        	`json:"slaTier"`
+	ClusterCertificateDownload string        	`json:"clusterCertificateDownload"`
+	PciCompliance              string        	`json:"pciCompliance"`
+	BundleOption               *BundleOptions 	`json:"bundleOptions"`
+	DataCentres                []DataCentre  	`json:"dataCentres"`
+	Provider				   ClusterProvider	`json:"clusterProvider"`
 }
 
 type DataCentre struct {
