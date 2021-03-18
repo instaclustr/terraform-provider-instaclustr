@@ -1,11 +1,8 @@
 BIN_NAME="terraform-provider-instaclustr"
-<<<<<<< Updated upstream
-VERSION=v1.7.8
-=======
+
 VERSION=v1.7.9
 release_version:
 	@echo $(VERSION)
->>>>>>> Stashed changes
 
 .PHONY: install clean all build test testacc
 
