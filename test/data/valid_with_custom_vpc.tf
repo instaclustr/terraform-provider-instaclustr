@@ -6,7 +6,7 @@ provider "instaclustr" {
 
 resource "instaclustr_cluster" "vpc_cluster" {
     cluster_name = "vpc_cluster"
-    node_size = "t3.small"
+    node_size = "t3.small-v2"
     data_centre = "US_WEST_2"
     sla_tier = "NON_PRODUCTION"
     cluster_network = "192.168.0.0/18"
