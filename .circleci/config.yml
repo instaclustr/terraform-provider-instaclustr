@@ -10,11 +10,11 @@ jobs:
       - run:
           name: "Run Project Tests"
           command: |
-            IC_USERNAME=${IC_TEST_USERNAME}
-            IC_API_KEY=${IC_TEST_API_KEY}
-            KMS_ARN=${IC_TEST_KMS_ARN}
-            IC_PROV_ACC_NAME=${IC_TEST_PROV_ACC_NAME}
-            IC_PROV_VPC_ID=${IC_TEST_PROV_VPC_ID}
+            export IC_USERNAME=${IC_TEST_USERNAME}
+            export IC_API_KEY=${IC_TEST_API_KEY}
+            export KMS_ARN=${IC_TEST_KMS_ARN}
+            export IC_PROV_ACC_NAME=${IC_TEST_PROV_ACC_NAME}
+            export IC_PROV_VPC_ID=${IC_TEST_PROV_VPC_ID}
             make build
             make testacc
       - run:
