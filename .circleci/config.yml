@@ -8,6 +8,16 @@ jobs:
       - checkout
       - run: go get -v -t -d ./...
       - run:
+          name: "Run Project Tests"
+          command: |
+            export IC_USERNAME=${IC_TEST_USERNAME}
+            export IC_API_KEY=${IC_TEST_API_KEY}
+            export KMS_ARN=${IC_TEST_KMS_ARN}
+            export IC_PROV_ACC_NAME=${IC_TEST_PROV_ACC_NAME}
+            export IC_PROV_VPC_ID=${IC_TEST_PROV_VPC_ID}
+            make build
+            make testacc
+      - run:
           name: "Import GPG key"
           command: |
             echo ${GPG_PRIVATE_KEY} | base64 --decode > private.key

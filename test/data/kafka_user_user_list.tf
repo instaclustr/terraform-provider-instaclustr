@@ -21,9 +21,13 @@ resource "instaclustr_cluster" "kafka_cluster" {
 
   bundle {
     bundle = "KAFKA"
-    version = "2.5.1"
+    version = "apache-kafka:2.5.1"
     options = {
+      auto_create_topics = true
+      client_encryption = false
       dedicated_zookeeper = true
+      delete_topics = true
+      number_partitions = 3
       zookeeper_node_size = "%s"
       zookeeper_node_count = 3
     }
