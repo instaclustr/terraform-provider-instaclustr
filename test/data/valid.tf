@@ -33,6 +33,6 @@ resource "instaclustr_cluster" "valid" {
     }
     bundle {
         bundle = "SPARK"
-        version = "apache-spark:2.3.2"
+        version = "apache-spark:2.3.2.ic1"
     }
 }

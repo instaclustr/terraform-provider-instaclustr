@@ -7,5 +7,5 @@ provider "instaclustr" {
 resource "instaclustr_encryption_key" "valid" {
     alias = "ic_test_key"
     arn = "%s"
-    key_provider = "INSTACLUSTR"
+    key_provider = "%s"
 }
