@@ -628,34 +628,16 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error{
 	d.SetId(cluster.ID)
 	d.Set("cluster_id", cluster.ID)
 	d.Set("cluster_name", cluster.ClusterName)
+
 	clusterProvider := make(map[string]interface{}, 0)
-	clusterProvider["name"] = cluster.DataCentres[0].Provider
-	d.Set("cluster_provider", clusterProvider)
+	mapstructure.Decode(cluster.Provider, &clusterProvider)
+	processedClusterProvider := processProvider(d, clusterProvider)
+	d.Set("cluster_provider", processedClusterProvider)
 
-	baseBundle := make(map[string]interface{}, 0)
-	baseBundle["bundle"] = cluster.BundleType
-
-	baseBundleOptions := make(map[string]interface{}, 0)
-	err = mapstructure.Decode(cluster.BundleOption, &baseBundleOptions)
+	bundles, err := getBundlesFromCluster(cluster)
 	if err != nil {
-		return fmt.Errorf("[Error] Error decoding bundles option: %s", err)
+		return err
 	}
-
-	for k, v := range baseBundleOptions {
-		//terraform expects strings for everything
-		//This line changes interface{*bool} -> *bool -> bool -> interface{bool} -> String
-		baseBundleOptions[k] = fmt.Sprintf("%v",reflect.Indirect(reflect.ValueOf(v).Elem()).Interface())
-	}
-
-	baseBundle["options"] = baseBundleOptions
-	baseBundle["version"] = cluster.BundleVersion
-
-	bundles := make([]map[string]interface{}, 0)
-	bundles = append(bundles, baseBundle)
-	if cluster.AddonBundles != nil {
-		bundles = append(bundles, cluster.AddonBundles)
-	}
-
 
 	if err:= d.Set("bundle", bundles); err != nil {
 		return fmt.Errorf("[Error] Error reading cluster: %s", err)
@@ -678,7 +660,9 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error{
 	rackList := make([]string, 0)
 	for _, dataCentre := range cluster.DataCentres {
 		for _, node := range dataCentre.Nodes {
-			nodeCount += 1
+			if !strings.HasPrefix(node.Size, "zk-") {
+				nodeCount += 1
+			}
 			rackList = appendIfMissing(rackList, node.Rack)
 		}
 	}
@@ -723,6 +707,64 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error{
 
 	log.Printf("[INFO] Fetched cluster %s info from the remote server.", cluster.ID)
 	return nil
+}
+
+func getBundlesFromCluster(cluster *Cluster) ([]map[string]interface{}, error) {
+	baseBundle := make(map[string]interface{}, 3)
+	baseBundle["bundle"] = cluster.BundleType
+
+	baseBundleOptions := make(map[string]interface{}, 0)
+	err := mapstructure.Decode(cluster.BundleOption, &baseBundleOptions)
+	if err != nil {
+		return nil, fmt.Errorf("[Error] Error decoding bundles option: %s", err)
+	}
+
+	convertedBundleOptions := dereferencePointerInStruct(baseBundleOptions)
+
+	baseBundle["options"] = convertedBundleOptions
+	baseBundle["version"] = cluster.BundleVersion
+
+	bundles := make([]map[string]interface{}, 0)
+	bundles = append(bundles, baseBundle)
+	if cluster.AddonBundles != nil {
+		bundles = append(bundles, cluster.AddonBundles)
+	}
+
+	return bundles, nil
+}
+
+func dereferencePointerInStruct(data map[string]interface{}) map[string]interface{} {
+	for k, v := range data {
+		// Terraform expects strings for everything
+		// This block iterates through the bundle options map and checks for an interface of a pointer
+		// For each interface{*type} value, it changes: interface{*type} -> *type -> type -> interface{type} -> String
+		// For a non-pointer, it directly formats to a string
+		valueOfV := reflect.ValueOf(v)
+		if valueOfV.Kind() == reflect.Ptr {
+			data[k] = fmt.Sprintf("%v", reflect.Indirect(valueOfV.Elem()).Interface())
+		} else {
+			data[k] = fmt.Sprintf("%v", valueOfV)
+		}
+	}
+
+	return data
+}
+
+func processProvider(d *schema.ResourceData, data map[string]interface{}) (newData map[string]interface{}) {
+	// This is used to ignore values that are not set in the resource
+	// Otherwise terraform will store the default and generated values (e.g. Provider Account Name)
+	// into the state and result a diff between the state and resource (plan)
+	newData = make(map[string]interface{})
+	for k, v := range data {
+		resource := d.Get(fmt.Sprintf("cluster_provider.%s", k))
+		// Store the required field "name"
+		// There doesn't seem to be a way to programmatically get the "required" schemas with ResourceData
+		if resource != "" || k == "name" {
+			newData[k] = v
+		}
+	}
+
+	return newData
 }
 
 func resourceClusterDelete(d *schema.ResourceData, meta interface{}) error {
