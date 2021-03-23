@@ -355,12 +355,6 @@ func TestValidApacheZookeeperClusterCreate(t *testing.T) {
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
 	resource.Test(t, resource.TestCase{
 		Providers: testAccProviders,
-		PreCheck: func() {
-			checkAccVariablesSet(t, []string{
-				"IC_USERNAME",
-				"IC_API_KEY",
-			})
-		},
 		CheckDestroy: testCheckResourceDeleted("validApacheZookeeper", hostname, username, apiKey),
 		Steps: []resource.TestStep{
 			{
