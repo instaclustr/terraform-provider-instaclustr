@@ -21,9 +21,13 @@ resource "instaclustr_cluster" "kafka_cluster" {
 
   bundle {
     bundle = "KAFKA"
-    version = "2.5.1"
+    version = "apache-kafka:2.5.1"
     options = {
+      auto_create_topics = true
+      client_encryption = false
       dedicated_zookeeper = true
+      delete_topics = true
+      number_partitions = 3
       zookeeper_node_size = "%s"
       zookeeper_node_count = 3
     }
@@ -31,12 +35,12 @@ resource "instaclustr_cluster" "kafka_cluster" {
 }
 
 resource "instaclustr_kafka_user" "kafka_user_charlie" {
-  cluster_id = "${instaclustr_cluster.kafka_cluster.cluster_id}"
+  cluster_id = "${instaclustr_cluster.kafka_cluster.id}"
   username = "%s"
   password = "%s"
   initial_permissions = "none"
 }
 
 data "instaclustr_kafka_user_list" "kafka_user_list" {
-  cluster_id = "${instaclustr_cluster.kafka_cluster.cluster_id}"
+  cluster_id = "${instaclustr_cluster.kafka_cluster.id}"
 }

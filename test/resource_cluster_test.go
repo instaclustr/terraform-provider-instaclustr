@@ -2,15 +2,14 @@ package test
 
 import (
 	"fmt"
+	"github.com/hashicorp/terraform/helper/resource"
+	"github.com/hashicorp/terraform/terraform"
+	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 	"io/ioutil"
 	"os"
 	"regexp"
 	"strings"
 	"testing"
-
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
-	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 )
 
 func TestAccCluster(t *testing.T) {
@@ -26,7 +25,6 @@ func TestAccCluster(t *testing.T) {
 	updatedConfig := strings.Replace(oriConfig, "testcluster", "newcluster", 1)
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
-		PreCheck:     func() { AccTestEnvVarsCheck(t) },
 		CheckDestroy: testCheckResourceDeleted("valid", hostname, username, apiKey),
 		Steps: []resource.TestStep{
 			{
@@ -38,7 +36,10 @@ func TestAccCluster(t *testing.T) {
 			},
 			{
 				Config:      updatedConfig,
-				ExpectError: regexp.MustCompile("The cluster doesn't support update"),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid("valid"),
+					testCheckResourceCreated("valid", hostname, username, apiKey),
+				),
 			},
 		},
 	})
@@ -63,7 +64,6 @@ func TestKafkaConnectClusterCreateInstaclustrAWS(t *testing.T) {
 	oriKCConfig := fmt.Sprintf(string(validKCConfig), username, apiKey, hostname, kafkaClusterId, awsAccessKey, awsSecretKey, S3BucketName)
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
-		PreCheck:     func() { AccTestEnvVarsCheck(t) },
 		CheckDestroy: testCheckResourceDeleted("validKC", hostname, username, apiKey),
 		Steps: []resource.TestStep{
 			{
@@ -105,7 +105,6 @@ func TestKafkaConnectClusterCreateNonInstaclustrAZURE(t *testing.T) {
 		sslProtocol, securityProtocol, saslMechanism, saslJaasConfig, bootstrapServers, truststore)
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
-		PreCheck:     func() { AccTestEnvVarsCheck(t) },
 		CheckDestroy: testCheckResourceDeleted("validKC", hostname, username, apiKey),
 		Steps: []resource.TestStep{
 			{
@@ -127,32 +126,31 @@ func TestAccClusterResize(t *testing.T) {
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+	resourceName := "resizable_cluster"
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
-	validResizeConfig := strings.Replace(oriConfig, "resizeable-small(r5-l)", "resizeable-small(r5-xl)", 1)
-	validResizeConfig = strings.Replace(validResizeConfig, "tf-resizable-test", "tf-resizable-partial-test", 1)
-	invalidResizeClassConfig := strings.Replace(oriConfig, "resizeable-small(r5-l)", "resizeable-large(r5-xl)", 1)
-	invalidResizeConfig := strings.Replace(oriConfig, "resizeable-small(r5-l)", "t3.medium", 1)
+	validResizeConfig := strings.Replace(oriConfig, "resizeable-small(r5-l)-v2", "resizeable-small(r5-xl)-v2", 1)
+	invalidResizeClassConfig := strings.Replace(oriConfig, "resizeable-small(r5-l)-v2", "resizeable-large(r5-xl)-v2", 1)
+	invalidResizeConfig := strings.Replace(oriConfig, "resizeable-small(r5-l)-v2", "t3.medium", 1)
 
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
-		PreCheck:     func() { AccTestEnvVarsCheck(t) },
-		CheckDestroy: testCheckResourceDeleted("resizable_cluster", hostname, username, apiKey),
+		CheckDestroy: testCheckResourceDeleted(resourceName, hostname, username, apiKey),
 		Steps: []resource.TestStep{
 			{
 				Config: oriConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckResourceValid("resizable_cluster"),
-					testCheckResourceCreated("resizable_cluster", hostname, username, apiKey),
+					testCheckResourceValid(resourceName),
+					testCheckResourceCreated(resourceName, hostname, username, apiKey),
+					checkClusterRunning(resourceName, hostname, username, apiKey),
 				),
 			},
 			{
 				Config: validResizeConfig,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_cluster", "cluster_name", "tf-resizable-test"),
-					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_cluster", "node_size", "resizeable-small(r5-xl)"),
-					testCheckClusterResize(hostname, username, apiKey, "resizeable-small(r5-xl)"),
+					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_cluster", "node_size", "resizeable-small(r5-xl)-v2"),
+					testCheckClusterResize("resizable_cluster", hostname, username, apiKey, "resizeable-small(r5-xl)-v2"),
 				),
-				ExpectNonEmptyPlan: true,
 			},
 			{
 				Config:      invalidResizeClassConfig,
@@ -177,7 +175,6 @@ func TestAccClusterInvalid(t *testing.T) {
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 	resource.Test(t, resource.TestCase{
 		Providers: testAccProviders,
-		PreCheck:  func() { AccTestEnvVarsCheck(t) },
 		Steps: []resource.TestStep{
 			{
 				Config:      fmt.Sprintf(string(validConfig), username, apiKey, hostname),
@@ -198,7 +195,6 @@ func TestAccClusterInvalidBundleOptionCombo(t *testing.T) {
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 	resource.Test(t, resource.TestCase{
 		Providers: testAccProviders,
-		PreCheck:  func() { AccTestEnvVarsCheck(t) },
 		Steps: []resource.TestStep{
 			{
 				Config:      fmt.Sprintf(string(validConfig), username, apiKey, hostname),
@@ -222,7 +218,6 @@ func TestAccClusterCustomVPC(t *testing.T) {
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname, providerAccountName, providerVpcId)
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
-		PreCheck:     func() { AccTestEnvVarsCheck(t) },
 		CheckDestroy: testCheckResourceDeleted("vpc_cluster", hostname, username, apiKey),
 		Steps: []resource.TestStep{
 			{
@@ -248,7 +243,6 @@ func TestAccClusterCustomVPCInvalid(t *testing.T) {
 	providerAccountName := os.Getenv("IC_PROV_ACC_NAME")
 	resource.Test(t, resource.TestCase{
 		Providers: testAccProviders,
-		PreCheck:  func() { AccTestEnvVarsCheck(t) },
 		Steps: []resource.TestStep{
 			{
 				Config:      fmt.Sprintf(string(validConfig), username, hostname, apiKey, providerAccountName),
@@ -304,9 +298,9 @@ func testCheckResourceDeleted(resourceName, hostname, username, apiKey string) r
 	}
 }
 
-func testCheckClusterResize(hostname, username, apiKey, expectedNodeSize string) resource.TestCheckFunc {
+func testCheckClusterResize(resourceName, hostname, username, apiKey, expectedNodeSize string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		resourceState := s.Modules[0].Resources["instaclustr_cluster.resizable_cluster"]
+		resourceState := s.Modules[0].Resources["instaclustr_cluster." + resourceName]
 		id := resourceState.Primary.Attributes["cluster_id"]
 		client := new(instaclustr.APIClient)
 		client.InitClient(hostname, username, apiKey)
@@ -315,6 +309,7 @@ func testCheckClusterResize(hostname, username, apiKey, expectedNodeSize string)
 		if err != nil {
 			return fmt.Errorf("Failed to read cluster %s: %s", id, err)
 		}
+
 		targetNodeSize := cluster.DataCentres[0].ResizeTargetNodeSize
 		if targetNodeSize != expectedNodeSize {
 			return fmt.Errorf("Expected cluster to be resized to %s", expectedNodeSize)
@@ -335,12 +330,6 @@ func TestValidRedisClusterCreate(t *testing.T) {
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
 	resource.Test(t, resource.TestCase{
 		Providers: testAccProviders,
-		PreCheck: func() {
-			checkAccVariablesSet(t, []string{
-				"IC_USERNAME",
-				"IC_API_KEY",
-			})
-		},
 		CheckDestroy: testCheckResourceDeleted("validRedis", hostname, username, apiKey),
 		Steps: []resource.TestStep{
 			{
@@ -348,6 +337,31 @@ func TestValidRedisClusterCreate(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckResourceValid("validRedis"),
 					testCheckResourceCreated("validRedis", hostname, username, apiKey),
+				),
+			},
+		},
+	})
+}
+
+func TestValidApacheZookeeperClusterCreate(t *testing.T) {
+	testAccProvider := instaclustr.Provider()
+	testAccProviders := map[string]terraform.ResourceProvider{
+		"instaclustr": testAccProvider,
+	}
+	validConfig, _ := ioutil.ReadFile("data/valid_apache_zookeeper.tf")
+	username := os.Getenv("IC_USERNAME")
+	apiKey := os.Getenv("IC_API_KEY")
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
+	resource.Test(t, resource.TestCase{
+		Providers: testAccProviders,
+		CheckDestroy: testCheckResourceDeleted("validApacheZookeeper", hostname, username, apiKey),
+		Steps: []resource.TestStep{
+			{
+				Config: oriConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid("validApacheZookeeper"),
+					testCheckResourceCreated("validApacheZookeeper", hostname, username, apiKey),
 				),
 			},
 		},
@@ -366,7 +380,6 @@ func TestAccClusterCredentials(t *testing.T) {
 
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
-		PreCheck:     func() { AccTestEnvVarsCheck(t) },
 		CheckDestroy: testCheckResourceDeleted("valid_with_password_and_client_encryption", hostname, username, apiKey),
 		Steps: []resource.TestStep{
 			{
@@ -387,12 +400,12 @@ func testCheckClusterCredentials(hostname, username, apiKey string) resource.Tes
 		client.InitClient(hostname, username, apiKey)
 		clusterId := resourceState.Primary.Attributes["cluster_id"]
 
-		clusterCredentials, err := client.ReadClusterCredentials(clusterId)
+		clusterCredentials, err := client.ReadCluster(clusterId)
 		if err != nil {
 			return fmt.Errorf("Failed to read Cluster Credentials from %s: %s", clusterId, err)
 		}
 
-		if clusterCredentials.ClusterPassword != resourceState.Primary.Attributes["cluster_password"] {
+		if clusterCredentials.InstaclustrUserPassword != resourceState.Primary.Attributes["cluster_password"] {
 			return fmt.Errorf("Password of the cluster and resource are different")
 		}
 

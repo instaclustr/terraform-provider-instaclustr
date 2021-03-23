@@ -4,13 +4,13 @@ import (
     "fmt"
 	"io/ioutil"
 	"testing"
-
 	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 )
 
 func TestAPIClientRead(t *testing.T) {
     id := "77b5a4e1-c422-4a78-b551-d8fa5c42ad95"
-    client := SetupMock(t, id, fmt.Sprintf(`{"id":"%s"}`, id), 202)
+    request := fmt.Sprintf("%s/terraform-description", id)
+    client := SetupMock(t, request, fmt.Sprintf(`{"id":"%s"}`, id), 202)
 	cluster, err := client.ReadCluster(id)
 	if err != nil {
 		t.Fatalf("Failed to read cluster %s: %s", id, err)
@@ -22,7 +22,8 @@ func TestAPIClientRead(t *testing.T) {
 
 func TestAPIClientReadNull(t *testing.T) {
 	id := "Invalid_ID"
-	client := SetupMock(t, id, "", 404)
+	request := fmt.Sprintf("%s/terraform-description", id)
+	client := SetupMock(t, request, "", 404)
 	var _, err = client.ReadCluster(id)
 	if err == nil {
 		t.Fatalf("Read a cluster expected error but got null")

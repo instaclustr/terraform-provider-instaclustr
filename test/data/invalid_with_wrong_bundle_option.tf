@@ -29,7 +29,7 @@ resource "instaclustr_cluster" "invalid" {
 
     bundle {
         bundle = "SPARK"
-        version = "apache-spark:2.3.2"
+        version = "apache-spark:2.3.2.ic1"
     }
 
     bundle {

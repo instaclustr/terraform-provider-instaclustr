@@ -20,7 +20,14 @@ resource "instaclustr_cluster" "valid_with_vpc_peering" {
     }
     bundle {
         bundle = "APACHE_CASSANDRA"
-        version = "3.11.4"
+        version = "apache-cassandra-3.11.8.ic2"
+        options = {
+            auth_n_authz = false
+            client_encryption = false
+            continuous_backup_enabled = false
+            lucene_enabled = false
+            use_private_broadcast_rpc_address = false
+        }
     }
 }
 

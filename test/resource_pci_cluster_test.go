@@ -26,7 +26,6 @@ func TestAccPCICluster(t *testing.T) {
 	updatedConfig := strings.Replace(oriConfig, "testcluster", "newcluster", 1)
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
-		PreCheck:     func() { AccTestEnvVarsCheck(t) },
 		CheckDestroy: testCheckPCIResourceDeleted("valid", hostname, username, apiKey),
 		Steps: []resource.TestStep{
 			{
@@ -38,7 +37,10 @@ func TestAccPCICluster(t *testing.T) {
 			},
 			{
 				Config:      updatedConfig,
-				ExpectError: regexp.MustCompile("The cluster doesn't support update"),
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid("valid"),
+					testCheckResourceCreated("valid", hostname, username, apiKey),
+				),
 			},
 		},
 	})
@@ -53,15 +55,13 @@ func TestAccPCIClusterResize(t *testing.T) {
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 	originalConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
-	validResizeConfig := strings.Replace(originalConfig, "resizeable-small(r5-l)", "resizeable-small(r5-xl)", 1)
-	validResizeConfig = strings.Replace(validResizeConfig, "tf-resizable-test", "tf-resizable-partial-test", 1)
-	invalidResizeClassConfig := strings.Replace(originalConfig, "resizeable-small(r5-l)", "resizeable-large(r5-xl)", 1)
-	invalidResizeConfig := strings.Replace(originalConfig, "resizeable-small(r5-l)", "t3.medium", 1)
+	validResizeConfig := strings.Replace(originalConfig, "resizeable-small(r5-l)-v2", "resizeable-small(r5-xl)-v2", 1)
+	invalidResizeClassConfig := strings.Replace(originalConfig, "resizeable-small(r5-l)-v2", "resizeable-large(r5-xl)-v2", 1)
+	invalidResizeConfig := strings.Replace(originalConfig, "resizeable-small(r5-l)-v2", "t3.medium", 1)
 
 
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
-		PreCheck:     func() { AccTestEnvVarsCheck(t) },
 		CheckDestroy: testCheckPCIResourceDeleted("resizable_pci_cluster", hostname, username, apiKey),
 		Steps: []resource.TestStep{
 			{
@@ -69,16 +69,16 @@ func TestAccPCIClusterResize(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckPCIResourceValid("resizable_pci_cluster"),
 					testCheckPCIResourceCreated("resizable_pci_cluster", hostname, username, apiKey),
+					checkClusterRunning("resizable_pci_cluster", hostname, username, apiKey),
 				),
 			},
 			{
 				Config: validResizeConfig,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_pci_cluster", "cluster_name", "tf-resizable-test"),
-					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_pci_cluster", "node_size", "resizeable-small(r5-xl)"),
-					testCheckPCIClusterResize(hostname, username, apiKey, "resizeable-small(r5-xl)"),
+					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_pci_cluster", "node_size", "resizeable-small(r5-xl)-v2"),
+					testCheckClusterResize("resizable_pci_cluster", hostname, username, apiKey, "resizeable-small(r5-xl)-v2"),
 				),
-				ExpectNonEmptyPlan: true,
 			},
 			{
 				Config:      invalidResizeClassConfig,
@@ -103,7 +103,6 @@ func TestAccPCIClusterInvalid(t *testing.T) {
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 	resource.Test(t, resource.TestCase{
 		Providers: testAccProviders,
-		PreCheck:  func() { AccTestEnvVarsCheck(t) },
 		Steps: []resource.TestStep{
 			{
 				Config:      fmt.Sprintf(string(validConfig), username, apiKey, hostname),
@@ -154,25 +153,6 @@ func testCheckPCIResourceDeleted(resourceName, hostname, username, apiKey string
 		err := client.DeleteCluster(id)
 		if err == nil {
 			return fmt.Errorf("Cluster %s still exists.", id)
-		}
-		return nil
-	}
-}
-
-func testCheckPCIClusterResize(hostname, username, apiKey, expectedNodeSize string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		resourceState := s.Modules[0].Resources["instaclustr_cluster.resizable_pci_cluster"]
-		id := resourceState.Primary.Attributes["cluster_id"]
-		client := new(instaclustr.APIClient)
-		client.InitClient(hostname, username, apiKey)
-
-		cluster, err := client.ReadCluster(id)
-		if err != nil {
-			return fmt.Errorf("Failed to read cluster %s: %s", id, err)
-		}
-		targetNodeSize := cluster.DataCentres[0].ResizeTargetNodeSize
-		if targetNodeSize != expectedNodeSize {
-			return fmt.Errorf("Expected cluster to be resized to %s", expectedNodeSize)
 		}
 		return nil
 	}
