@@ -95,7 +95,7 @@ type Cluster struct {
 	ClusterStatus              string        	`json:"clusterStatus"`
 	BundleType                 string        	`json:"bundleType"`
 	BundleVersion              string        	`json:"bundleVersion"`
-	AddonBundles			   map[string]interface{}	 `json:"addonBundles"`
+	AddonBundles			   []map[string]interface{}	 `json:"addonBundles"`
 	Username                   string        	`json:"username"`
 	InstaclustrUserPassword    string        	`json:"instaclustrUserPassword"`
 	SlaTier                    string        	`json:"slaTier"`
@@ -103,7 +103,7 @@ type Cluster struct {
 	PciCompliance              string        	`json:"pciCompliance"`
 	BundleOption               *BundleOptions 	`json:"bundleOptions"`
 	DataCentres                []DataCentre  	`json:"dataCentres"`
-	Provider				   ClusterProvider	`json:"clusterProvider"`
+	Provider				   []ClusterProvider	`json:"clusterProvider"`
 }
 
 type DataCentre struct {
