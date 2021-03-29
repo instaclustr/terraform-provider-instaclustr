@@ -1,7 +1,7 @@
 
 BIN_NAME="terraform-provider-instaclustr"
 
-VERSION=v1.9.4
+VERSION=v1.9.5
 release_version:
 	@echo $(VERSION)
 
