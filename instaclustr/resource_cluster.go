@@ -592,7 +592,6 @@ func appendIfMissing(slice []string, toAppend string) []string {
 	return append(slice, toAppend)
 }
 
-
 func doClusterResize(client *APIClient, clusterID string, d *schema.ResourceData) error {
 
 	before, after := d.GetChange("node_size")
@@ -617,7 +616,7 @@ func doClusterResize(client *APIClient, clusterID string, d *schema.ResourceData
 	return nil
 }
 
-func resourceClusterRead(d *schema.ResourceData, meta interface{}) error{
+func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*Config).Client
 	id := d.Get("cluster_id").(string)
 	log.Printf("[INFO] Reading status of cluster %s.", id)
@@ -639,7 +638,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error{
 		return err
 	}
 
-	if err:= d.Set("bundle", bundles); err != nil {
+	if err := d.Set("bundle", bundles); err != nil {
 		return fmt.Errorf("[Error] Error reading cluster: %s", err)
 	}
 
@@ -667,14 +666,13 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error{
 		}
 	}
 	rackCount := len(rackList)
-	nodesPerRack := nodeCount/rackCount
+	nodesPerRack := nodeCount / rackCount
 
 	rackAllocation := make(map[string]interface{}, 0)
 	rackAllocation["number_of_racks"] = strconv.Itoa(rackCount)
 	rackAllocation["nodes_per_rack"] = strconv.Itoa(nodesPerRack)
 
-
-	if err:= d.Set("rack_allocation", rackAllocation); err != nil {
+	if err := d.Set("rack_allocation", rackAllocation); err != nil {
 		return fmt.Errorf("[Error] Error reading cluster, rack allocation could not be derived: %s", err)
 	}
 	if len(cluster.DataCentres[0].ResizeTargetNodeSize) > 0 {
@@ -727,8 +725,8 @@ func getBundlesFromCluster(cluster *Cluster) ([]map[string]interface{}, error) {
 	bundles := make([]map[string]interface{}, 0)
 	bundles = append(bundles, baseBundle)
 	if cluster.AddonBundles != nil {
-		for _, addonBundle := range cluster.AddonBundles{
-			bundles = append(bundles, addonBundle)	
+		for _, addonBundle := range cluster.AddonBundles {
+			bundles = append(bundles, addonBundle)
 		}
 	}
 

@@ -35,7 +35,7 @@ func TestAccCluster(t *testing.T) {
 				),
 			},
 			{
-				Config:      updatedConfig,
+				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckResourceValid("valid"),
 					testCheckResourceCreated("valid", hostname, username, apiKey),
@@ -300,7 +300,7 @@ func testCheckResourceDeleted(resourceName, hostname, username, apiKey string) r
 
 func testCheckClusterResize(resourceName, hostname, username, apiKey, expectedNodeSize string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		resourceState := s.Modules[0].Resources["instaclustr_cluster." + resourceName]
+		resourceState := s.Modules[0].Resources["instaclustr_cluster."+resourceName]
 		id := resourceState.Primary.Attributes["cluster_id"]
 		client := new(instaclustr.APIClient)
 		client.InitClient(hostname, username, apiKey)
@@ -329,7 +329,7 @@ func TestValidRedisClusterCreate(t *testing.T) {
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
 	resource.Test(t, resource.TestCase{
-		Providers: testAccProviders,
+		Providers:    testAccProviders,
 		CheckDestroy: testCheckResourceDeleted("validRedis", hostname, username, apiKey),
 		Steps: []resource.TestStep{
 			{
@@ -354,7 +354,7 @@ func TestValidApacheZookeeperClusterCreate(t *testing.T) {
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
 	resource.Test(t, resource.TestCase{
-		Providers: testAccProviders,
+		Providers:    testAccProviders,
 		CheckDestroy: testCheckResourceDeleted("validApacheZookeeper", hostname, username, apiKey),
 		Steps: []resource.TestStep{
 			{

@@ -34,7 +34,7 @@ func TestKafkaUserResource(t *testing.T) {
 	updateKafkaUserConfig := fmt.Sprintf(string(configBytes3), username, apiKey, hostname, zookeeperNodeSize, kafkaUsername, newPassword)
 
 	resource.Test(t, resource.TestCase{
-		Providers:    testProviders,
+		Providers: testProviders,
 		Steps: []resource.TestStep{
 			{
 				Config: createClusterConfig,
@@ -61,13 +61,13 @@ func TestKafkaUserResource(t *testing.T) {
 			// So, we just have to trust that successful API query changed the kafka user password.
 			{
 				Config: updateKafkaUserConfig,
-				Check: checkKafkaUserUpdated(newPassword),
+				Check:  checkKafkaUserUpdated(newPassword),
 			},
 			// Can't rely on the resource destruction because we need the destruction to happen in order and checked,
 			// i.e., we need to destroy the kafka user resources first.
 			{
 				Config: createClusterConfig,
-				Check: checkKafkaUserDeleted(kafkaUsername, hostname, username, apiKey),
+				Check:  checkKafkaUserDeleted(kafkaUsername, hostname, username, apiKey),
 			},
 		},
 	})
@@ -101,7 +101,7 @@ func checkKafkaUserCreated(hostname, username, apiKey string) resource.TestCheck
 		if err != nil {
 			return fmt.Errorf("Failed to read Kafka user list from %s: %s", clusterId, err)
 		}
-		for _,str := range usernameList {
+		for _, str := range usernameList {
 			if kafka_username == str {
 				return nil
 			}
@@ -121,7 +121,7 @@ func checkKafkaUserUpdated(newPassword string) resource.TestCheckFunc {
 		if instanceState == nil {
 			return fmt.Errorf("resource has no primary instance")
 		}
-		
+
 		if instanceState.Attributes["password"] != newPassword {
 			return fmt.Errorf("The new password in the terraform state is not as expected after update: %s != %s", instanceState.Attributes["password"], newPassword)
 		}
@@ -137,12 +137,12 @@ func checkKafkaUserDeleted(kafka_username, hostname, username, apiKey string) re
 
 		client := new(instaclustr.APIClient)
 		client.InitClient(hostname, username, apiKey)
-		
+
 		usernameList, err := client.ReadKafkaUserList(clusterId)
 		if err != nil {
 			return fmt.Errorf("Failed to read Kafka user list from %s: %s", clusterId, err)
 		}
-		for _,str := range usernameList {
+		for _, str := range usernameList {
 			if kafka_username == str {
 				return fmt.Errorf("Kafka user %s still exists in %s", kafka_username, clusterId)
 			}
@@ -166,13 +166,13 @@ func checkKafkaUserListCreated(hostname, username, apiKey string) resource.TestC
 
 		resourceListLen, _ := strconv.Atoi(resourceState.Primary.Attributes["username_list.#"])
 		if resourceListLen != len(usernameList) {
-			return fmt.Errorf("List of Kafka users of the Kafka cluster and resource are different (Length %d != %d). ", resourceListLen, len(usernameList) )
+			return fmt.Errorf("List of Kafka users of the Kafka cluster and resource are different (Length %d != %d). ", resourceListLen, len(usernameList))
 		}
 
 		for index, kafka_username := range usernameList {
 			resourceUser := resourceState.Primary.Attributes[fmt.Sprintf("username_list.%d", index)]
 			if resourceUser != kafka_username {
-			return fmt.Errorf("List of Kafka users of the Kafka cluster and resource are different (Index %d: %s != %s). ", index, resourceUser, kafka_username )
+				return fmt.Errorf("List of Kafka users of the Kafka cluster and resource are different (Index %d: %s != %s). ", index, resourceUser, kafka_username)
 			}
 		}
 

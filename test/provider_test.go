@@ -1,14 +1,14 @@
 package test
 
 import (
-    "testing"
+	"testing"
 
-    "github.com/hashicorp/terraform/terraform"
-    "github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
+	"github.com/hashicorp/terraform/terraform"
+	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 )
 
 func TestProvider(t *testing.T) {
-    if err := instaclustr.Provider().InternalValidate(); err != nil {
+	if err := instaclustr.Provider().InternalValidate(); err != nil {
 		t.Fatalf("err: %s", err)
 	}
 }

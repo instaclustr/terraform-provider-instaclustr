@@ -36,7 +36,7 @@ func TestAccPCICluster(t *testing.T) {
 				),
 			},
 			{
-				Config:      updatedConfig,
+				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckResourceValid("valid"),
 					testCheckResourceCreated("valid", hostname, username, apiKey),
@@ -58,7 +58,6 @@ func TestAccPCIClusterResize(t *testing.T) {
 	validResizeConfig := strings.Replace(originalConfig, "resizeable-small(r5-l)-v2", "resizeable-small(r5-xl)-v2", 1)
 	invalidResizeClassConfig := strings.Replace(originalConfig, "resizeable-small(r5-l)-v2", "resizeable-large(r5-xl)-v2", 1)
 	invalidResizeConfig := strings.Replace(originalConfig, "resizeable-small(r5-l)-v2", "t3.medium", 1)
-
 
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
