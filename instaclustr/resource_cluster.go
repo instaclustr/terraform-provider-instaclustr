@@ -55,11 +55,29 @@ func resourceCluster() *schema.Resource {
 			},
 
 			"data_centre": {
-				Type:     schema.TypeString,
+				Type:     schema.TypeList,
 				Required: true,
-				ForceNew: true,
+				MinItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"name": {
+							Type:     schema.TypeString,
+							Optional: true,
+							ForceNew: true,
+						},
+						"data_centre": {
+							Type:     schema.TypeString,
+							Required: true,
+							ForceNew: true,
+						},
+						"network": {
+							Type:     schema.TypeString,
+							Required: true,
+							ForceNew: true,
+						},
+					},
+				},
 			},
-
 			"sla_tier": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -387,6 +405,11 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		return formatCreateErrMsg(err)
 	}
 
+	dataCentres, err := getDataCentres(d)
+	if err != nil {
+		return formatCreateErrMsg(err)
+	}
+
 	var clusterProvider ClusterProvider
 	err = mapstructure.Decode(d.Get("cluster_provider").(map[string]interface{}), &clusterProvider)
 	if err != nil {
@@ -395,18 +418,17 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 
 	clusterProvider.Tags = d.Get("tags").(map[string]interface{})
 
-	createData := CreateRequest{
+	var createData = CreateRequest{
 		ClusterName:           d.Get("cluster_name").(string),
 		Bundles:               bundles,
 		Provider:              clusterProvider,
 		SlaTier:               d.Get("sla_tier").(string),
 		NodeSize:              d.Get("node_size").(string),
-		DataCentre:            d.Get("data_centre").(string),
+		DataCentres:           dataCentres,
 		ClusterNetwork:        d.Get("cluster_network").(string),
 		PrivateNetworkCluster: fmt.Sprintf("%v", d.Get("private_network_cluster")),
 		PCICompliantCluster:   fmt.Sprintf("%v", d.Get("pci_compliant_cluster")),
 	}
-
 	kafkaSchemaRegistryUserPassword := d.Get("kafka_schema_registry_user_password").(string)
 	kafkaRestProxyUserPassword := d.Get("kafka_rest_proxy_user_password").(string)
 	waitForClusterState := d.Get("wait_for_state").(string)
@@ -798,6 +820,19 @@ func getBundles(d *schema.ResourceData) ([]Bundle, error) {
 		bundles = append(bundles, bundle)
 	}
 	return bundles, nil
+}
+
+func getDataCentres(d *schema.ResourceData) ([]DataCentre, error) {
+	dataCentres := make([]DataCentre, 0)
+	for _, inDataCentre := range d.Get("data_centre").([]interface{}) {
+		var dataCentre DataCentre
+		err := mapstructure.WeakDecode(inDataCentre.(map[string]interface{}), &dataCentre)
+		if err != nil {
+			return nil, err
+		}
+		dataCentres = append(dataCentres, dataCentre)
+	}
+	return dataCentres, nil
 }
 
 func formatCreateErrMsg(err error) error {

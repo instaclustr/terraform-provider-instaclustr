@@ -76,7 +76,7 @@ type CreateRequest struct {
 	Provider              ClusterProvider `json:"provider"`
 	SlaTier               string          `json:"slaTier"`
 	NodeSize              string          `json:"nodeSize"`
-	DataCentre            string          `json:"dataCentre"`
+	DataCentres           []DataCentre    `json:"dataCentres"`
 	ClusterNetwork        string          `json:"clusterNetwork"`
 	PrivateNetworkCluster string          `json:"privateNetworkCluster"`
 	PCICompliantCluster   string          `json:"pciCompliantCluster"`
@@ -107,9 +107,9 @@ type Cluster struct {
 
 type DataCentre struct {
 	ID                            string   `json:"id"`
-	Name                          string   `json:"name"`
+	Name                          string   `json:"name" mapstructure:"name"`
 	Provider                      string   `json:"provider"`
-	CdcNetwork                    string   `json:"cdcNetwork"`
+	CdcNetwork                    string   `json:"network" mapstructure:"network"`
 	Bundles                       []string `json:"bundles"`
 	ClientEncryption              bool     `json:"clientEncryption"`
 	PasswordAuthentication        bool     `json:"passwordAuthentication"`
@@ -120,7 +120,13 @@ type DataCentre struct {
 	NodeCount                     int      `json:"nodeCount"`
 	EncryptionKeyId               []string `json:"encryptionKeyId"`
 	ResizeTargetNodeSize          string   `json:"resizeTargetNodeSize"`
-	DataCenter                    string   `json:"dataCenter"`
+	DataCentre                    string   `json:"dataCentre" mapstructure:"data_centre"`
+}
+
+type ClusterDataCentre struct {
+	Name       string `json:"name" mapstructure:"name"`
+	Network    string `json:"network" mapstructure:"network"`
+	DataCentre string `json:"dataCentre" mapstructure:"data_centre"`
 }
 
 type Node struct {
