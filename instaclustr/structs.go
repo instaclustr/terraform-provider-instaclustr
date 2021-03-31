@@ -106,21 +106,21 @@ type Cluster struct {
 }
 
 type DataCentre struct {
-	ID                            string   `json:"id"`
-	Name                          string   `json:"name" mapstructure:"name"`
-	Provider                      string   `json:"provider"`
-	CdcNetwork                    string   `json:"network" mapstructure:"network"`
-	Bundles                       []string `json:"bundles"`
-	ClientEncryption              bool     `json:"clientEncryption"`
-	PasswordAuthentication        bool     `json:"passwordAuthentication"`
-	UserAuthorization             bool     `json:"userAuthorization"`
-	UsePrivateBroadcastRPCAddress bool     `json:"usePrivateBroadcastRPCAddress"`
-	PrivateIPOnly                 bool     `json:"privateIPOnly"`
-	Nodes                         []Node   `json:"nodes"`
-	NodeCount                     int      `json:"nodeCount"`
-	EncryptionKeyId               []string `json:"encryptionKeyId"`
-	ResizeTargetNodeSize          string   `json:"resizeTargetNodeSize"`
-	DataCentre                    string   `json:"dataCentre" mapstructure:"data_centre"`
+	ID                            string   `json:"id,omitempty"`
+	Name                          string   `json:"name,omitempty" mapstructure:"name"`
+	Provider                      string   `json:"provider,omitempty"`
+	CdcNetwork                    string   `json:"network,omitempty" mapstructure:"network"`
+	Bundles                       []string `json:"bundles,omitempty"`
+	ClientEncryption              bool     `json:"clientEncryption,omitempty"`
+	PasswordAuthentication        bool     `json:"passwordAuthentication,omitempty"`
+	UserAuthorization             bool     `json:"userAuthorization,omitempty"`
+	UsePrivateBroadcastRPCAddress bool     `json:"usePrivateBroadcastRPCAddress,omitempty"`
+	PrivateIPOnly                 bool     `json:"privateIPOnly,omitempty"`
+	Nodes                         []Node   `json:"nodes,omitempty"`
+	NodeCount                     int      `json:"nodeCount,omitempty"`
+	EncryptionKeyId               []string `json:"encryptionKeyId,omitempty"`
+	ResizeTargetNodeSize          string   `json:"resizeTargetNodeSize,omitempty"`
+	DataCentre                    string   `json:"dataCentre,omitempty" mapstructure:"data_centre"`
 }
 
 type ClusterDataCentre struct {
