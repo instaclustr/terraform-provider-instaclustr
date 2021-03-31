@@ -1,7 +1,7 @@
 
 BIN_NAME="terraform-provider-instaclustr"
 
-VERSION=v1.10.3
+VERSION=v1.10.4
 
 
 
