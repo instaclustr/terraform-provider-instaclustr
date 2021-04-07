@@ -150,11 +150,6 @@ workflows:
     jobs:
       - commit-build-test
   pr-build-test:
-    when: # Only run workflow when triggered by PR event and not on a master branch
-      and:
-        - equal: [ true, << pipeline.parameters.is-pr >> ]
-        - not:
-            equal: [ "master", "${CIRLCE_BRANCH}" ]
     jobs:
       - pr-build-test:
           context: terraform provider
