@@ -13,6 +13,7 @@ jobs:
         env:
           PROJECT_SLUG: gh/hail-insta/terraform-provider-instaclustr
         run: |
+          echo ${GITHUB_REF}
           curl -X POST \
           -H 'Circle-Token: ${{ secrets.CIRCLE_TOKEN }}' \
           -d '{"branch":"${GITHUB_REF##*/}", "parameters":{"is-pr":true}}' \
