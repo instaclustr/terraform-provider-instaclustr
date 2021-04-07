@@ -151,7 +151,4 @@ workflows:
     jobs:
       - pr-build-test:
           type: approval
-          filters:
-            tags:
-              only: /acctest_ready.*/
           context: terraform provider
