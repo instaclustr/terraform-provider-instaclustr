@@ -1,11 +1,11 @@
 
 BIN_NAME="terraform-provider-instaclustr"
 
-VERSION=v2.10.3
-
-
+VERSION=v1.9.2
 
 .PHONY: install clean all build test testacc testtarget release_version
+release_version:
+	@echo $(VERSION)
 
 release_version:
 	@echo $(VERSION)
