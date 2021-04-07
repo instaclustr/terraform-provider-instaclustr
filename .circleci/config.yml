@@ -154,4 +154,5 @@ workflows:
       - pr-build-test:
           context: terraform provider
           filters:
-            only: /acctest_ready.*/
+            tags:
+              only: /acctest_ready.*/
