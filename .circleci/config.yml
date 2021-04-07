@@ -123,7 +123,7 @@ jobs:
     steps:
       - checkout
       - run: go get -v -t -d ./...
-      - configure-credentials
+#      - configure-credentials
       - run-unit-tests
       - package-all-platforms
   pr-build-test:
@@ -134,7 +134,7 @@ jobs:
       - checkout
       - run: go get -v -t -d ./...
       - run-unit-tests
-      - run-acceptance-tests
+#      - run-acceptance-tests
       - build-provider
       - package-all-platforms
 workflows:
