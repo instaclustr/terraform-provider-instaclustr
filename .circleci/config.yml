@@ -152,6 +152,7 @@ workflows:
   pr-build-test:
     jobs:
       - pr-build-test:
+          type: approval
           filters:
             tags:
               only: /acctest_ready.*/
