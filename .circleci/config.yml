@@ -24,6 +24,7 @@ commands: # a reusable command with parameters
       - run:
           name: "Configure Instaclustr credentials"
           command: |
+            echo ${TEST}
             export IC_USERNAME=${IC_TEST_USERNAME}
             export IC_API_KEY=${IC_TEST_API_KEY}
             export KMS_ARN=${IC_TEST_KMS_ARN}
