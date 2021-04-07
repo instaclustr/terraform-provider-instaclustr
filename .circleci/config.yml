@@ -132,6 +132,7 @@ jobs:
     steps:
       - checkout
       - run: go get -v -t -d ./...
+      - configure-credentials
 #      - run-acceptance-tests
       - build-provider
       - package-all-platforms
@@ -149,5 +150,4 @@ workflows:
       - commit-build-test
   pr-build-test:
     jobs:
-      - pr-build-test:
-          context: terraform provider
+      - pr-build-test
