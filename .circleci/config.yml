@@ -151,4 +151,5 @@ workflows:
   pr-build-test:
     jobs:
       - pr-build-test:
+          type: approval
           context: terraform provider
