@@ -20,7 +20,7 @@ jobs:
           CIRCLE_BRANCH: ${{ github.head_ref }}
         run: |
           curl -X POST \
-          -H 'Circle-Token: ${CIRCLE_TOKEN}' \
+          -H 'Circle-Token: ${secrets.CIRCLE_TOKEN}' \
           -H 'Content-Type: application/json' \
           -H 'Accept: application/json' \
           -d "{\"branch\":\"${CIRCLE_BRANCH}\"}" \
