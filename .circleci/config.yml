@@ -110,7 +110,6 @@ jobs:
       - run: go get -v -t -d ./...
       - configure-credentials
       - run-unit-tests
-      - run-acceptance-tests
       - build-provider
       - package-all-platforms
       - sign-builds
@@ -132,15 +131,13 @@ jobs:
     steps:
       - checkout
       - run: go get -v -t -d ./...
-      - run-unit-tests
 #      - run-acceptance-tests
       - build-provider
       - package-all-platforms
 workflows:
   build-and-deploy:
     jobs:
-      - commit-build-test:
-          context: terraform provider
+      - build:
           filters:
             tags:
               only: /^v.*/
