@@ -150,4 +150,5 @@ workflows:
       - commit-build-test
   pr-build-test:
     jobs:
-      - pr-build-test
+      - pr-build-test:
+          context: terraform provider
