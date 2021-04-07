@@ -123,9 +123,8 @@ jobs:
     steps:
       - checkout
       - run: go get -v -t -d ./...
-#      - configure-credentials
+      - build-provider
       - run-unit-tests
-      - package-all-platforms
   pr-build-test:
     docker:
       - image: circleci/golang:1.14
@@ -148,12 +147,8 @@ workflows:
             branches:
               ignore: /.*/
   commit-build-test:
-    when: # Only run workflow when not a PR event
-      and:
-        - not:  << pipeline.parameters.is-pr >>
     jobs:
-      - commit-build-test:
-          context: terraform provider
+      - commit-build-test
   pr-build-test:
     when: # Only run workflow when triggered by PR event and not on a master branch
       and:
