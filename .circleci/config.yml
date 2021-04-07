@@ -137,7 +137,7 @@ jobs:
 #      - build-provider
 #      - package-all-platforms
 workflows:
-  build-and-deploy:
+  build-and-deploy-workflow:
     jobs:
       - build:
           filters:
@@ -148,7 +148,7 @@ workflows:
   commit-build-test:
     jobs:
       - commit-build-test
-  pr-build-test:
+  pr-build-test-workflow:
     jobs:
       - hold:
           type: approval
