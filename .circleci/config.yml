@@ -137,7 +137,7 @@ jobs:
 #      - build-provider
 #      - package-all-platforms
 workflows:
-  build-and-deploy-workflow:
+  build-and-deploy:
     jobs:
       - build:
           filters:
@@ -145,7 +145,7 @@ workflows:
               only: /^v.*/
             branches:
               ignore: /.*/
-  commit-build-test:
+  commit-build-test-workflow:
     jobs:
       - commit-build-test
   pr-build-test-workflow:
