@@ -150,6 +150,9 @@ workflows:
       - commit-build-test
   pr-build-test:
     jobs:
-      - pr-build-test:
+      - hold:
           type: approval
+      - pr-build-test:
           context: terraform provider
+          requires:
+            - hold
