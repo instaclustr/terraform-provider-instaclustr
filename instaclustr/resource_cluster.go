@@ -715,7 +715,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		err = d.Set("private_contact_point", privateContactPointList)
 	}
 
-	log.Printf("[INFO] Private contact list %v", privateContactPointList)
+	log.Printf("[DEBUG] Private contact list %v", privateContactPointList)
 
 	toCheck := [2]string{"cluster_provider", "rack_allocation"}
 	for _, changing := range toCheck {

@@ -1,7 +1,9 @@
 
 BIN_NAME="terraform-provider-instaclustr"
 
-VERSION=v1.9.3
+VERSION=v1.9.4
+NOVVERSION=1.9.4
+INSTALL_FOLDER=$(HOME)/.terraform.d/plugins/example.com/instaclustr/instaclustr/$(NOVVERSION)/darwin_amd64
 
 .PHONY: install clean all build test testacc testtarget release_version
 release_version:
@@ -85,8 +87,8 @@ endif
 	cd test && TF_ACC=1 go test -v -run ${TARGET}
 
 install:
-	@if [ ! -d "$(HOME)/.terraform.d/plugins/" ]; then \
-		echo "$(HOME)/.terraform.d/plugins/ doesn't exist, creating..."; \
-		mkdir -p $(HOME)/.terraform.d/plugins/; \
+	@if [ ! -d $(INSTALL_FOLDER) ]; then \
+		echo "$(INSTALL_FOLDER) doesn't exist, creating..."; \
+		mkdir -p $(INSTALL_FOLDER); \
 	fi
-	cp ./bin/$(BIN_NAME)_$(VERSION) $(HOME)/.terraform.d/plugins/
+	cp ./bin/$(BIN_NAME)_$(VERSION) $(INSTALL_FOLDER)
