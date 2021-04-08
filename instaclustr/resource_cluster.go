@@ -456,6 +456,7 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		return nil
 	}
 
+
 	return waitForClusterStateAndDoUpdate(client, waitForClusterState, bundleConfig, kafkaRestProxyUserPassword, kafkaSchemaRegistryUserPassword, d, id)
 }
 
@@ -698,15 +699,23 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	for _, dataCentre := range cluster.DataCentres {
 		for _, node := range dataCentre.Nodes {
 			if !stringInSlice(node.Rack, azList) {
-				azList = appendIfMissing(azList, node.Rack)
-				privateContactPointList = appendIfMissing(privateContactPointList, node.PrivateAddress)
-				publicContactPointList = appendIfMissing(publicContactPointList, node.PublicAddress)
+				if !strings.HasPrefix(node.Size, "zk-") {
+					azList = appendIfMissing(azList, node.Rack)
+					privateContactPointList = appendIfMissing(privateContactPointList, node.PrivateAddress)
+					publicContactPointList = appendIfMissing(publicContactPointList, node.PublicAddress)
+				}
 			}
 		}
 	}
-	err = d.Set("public_contact_point", publicContactPointList)
-	err = d.Set("private_contact_point", privateContactPointList)
+	if len(publicContactPointList) > 0 {
+		err = d.Set("public_contact_point", publicContactPointList)
+	}
 
+	if len(privateContactPointList) > 0 {
+		err = d.Set("private_contact_point", privateContactPointList)
+	}
+
+	log.Printf("[INFO] Private contact list %v", privateContactPointList)
 
 	toCheck := [2]string{"cluster_provider", "rack_allocation"}
 	for _, changing := range toCheck {
