@@ -55,6 +55,11 @@ func resourceCluster() *schema.Resource {
 			},
 
 			"data_centre": {
+				Type:     schema.TypeString,
+				Required: true,
+			},
+
+			"data_centres": {
 				Type:     schema.TypeList,
 				Required: true,
 				MinItems: 1,
@@ -65,12 +70,12 @@ func resourceCluster() *schema.Resource {
 							Optional: true,
 							ForceNew: true,
 						},
-						"data_centre": {
+						"network": {
 							Type:     schema.TypeString,
 							Required: true,
 							ForceNew: true,
 						},
-						"network": {
+						"data_centre_region": {
 							Type:     schema.TypeString,
 							Required: true,
 							ForceNew: true,
@@ -424,11 +429,15 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		Provider:              clusterProvider,
 		SlaTier:               d.Get("sla_tier").(string),
 		NodeSize:              d.Get("node_size").(string),
+		DataCentre:            d.Get("data_centre").(string),
 		DataCentres:           dataCentres,
 		ClusterNetwork:        d.Get("cluster_network").(string),
 		PrivateNetworkCluster: fmt.Sprintf("%v", d.Get("private_network_cluster")),
 		PCICompliantCluster:   fmt.Sprintf("%v", d.Get("pci_compliant_cluster")),
 	}
+
+	// TODO: INS-11057 client data construction verifications?
+
 	kafkaSchemaRegistryUserPassword := d.Get("kafka_schema_registry_user_password").(string)
 	kafkaRestProxyUserPassword := d.Get("kafka_rest_proxy_user_password").(string)
 	waitForClusterState := d.Get("wait_for_state").(string)
@@ -824,7 +833,7 @@ func getBundles(d *schema.ResourceData) ([]Bundle, error) {
 
 func getDataCentres(d *schema.ResourceData) ([]DataCentre, error) {
 	dataCentres := make([]DataCentre, 0)
-	for _, inDataCentre := range d.Get("data_centre").([]interface{}) {
+	for _, inDataCentre := range d.Get("data_centres").([]interface{}) {
 		var dataCentre DataCentre
 		err := mapstructure.WeakDecode(inDataCentre.(map[string]interface{}), &dataCentre)
 		if err != nil {

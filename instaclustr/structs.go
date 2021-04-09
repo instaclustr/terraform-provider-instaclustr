@@ -71,17 +71,17 @@ type RackAllocation struct {
 }
 
 type CreateRequest struct {
-	ClusterName           string          `json:"clusterName"`
-	Bundles               []Bundle        `json:"bundles"`
-	Provider              ClusterProvider `json:"provider"`
-	SlaTier               string          `json:"slaTier"`
-	NodeSize              string          `json:"nodeSize"`
-	DataCentre            string          `json:"dataCentre"`
-	DataCentres           []DataCentre    `json:"dataCentres"`
-	ClusterNetwork        string          `json:"clusterNetwork"`
-	PrivateNetworkCluster string          `json:"privateNetworkCluster"`
-	PCICompliantCluster   string          `json:"pciCompliantCluster"`
-	RackAllocation        *RackAllocation `json:"rackAllocation,omitempty"`
+	ClusterName           string          `json:"clusterName,omitempty"`
+	Bundles               []Bundle        `json:"bundles,omitempty"`
+	Provider              ClusterProvider `json:"provider,omitempty"`
+	SlaTier               string          `json:"slaTier,omitempty"`
+	NodeSize              string          `json:"nodeSize,omitempty"`
+	DataCentre            string          `json:"dataCentre,omitempty"`
+	DataCentres           []DataCentre    `json:"dataCentres,omitempty"`
+	ClusterNetwork        string          `json:"clusterNetwork,omitempty"`
+	PrivateNetworkCluster string          `json:"privateNetworkCluster,omitempty"`
+	PCICompliantCluster   string          `json:"pciCompliantCluster,omitempty"`
+	RackAllocation        *RackAllocation `json:"rackAllocation,omitempty,omitempty"`
 }
 
 type AddonBundles struct {
