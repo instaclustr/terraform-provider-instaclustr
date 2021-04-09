@@ -76,6 +76,7 @@ type CreateRequest struct {
 	Provider              ClusterProvider `json:"provider"`
 	SlaTier               string          `json:"slaTier"`
 	NodeSize              string          `json:"nodeSize"`
+	DataCentre            string          `json:"dataCentre"`
 	DataCentres           []DataCentre    `json:"dataCentres"`
 	ClusterNetwork        string          `json:"clusterNetwork"`
 	PrivateNetworkCluster string          `json:"privateNetworkCluster"`
@@ -101,6 +102,7 @@ type Cluster struct {
 	ClusterCertificateDownload string                   `json:"clusterCertificateDownload"`
 	PciCompliance              string                   `json:"pciCompliance"`
 	BundleOption               *BundleOptions           `json:"bundleOptions"`
+	DataCentre                 string                   `json:"dataCentre"`
 	DataCentres                []DataCentre             `json:"dataCentres"`
 	Provider                   []ClusterProvider        `json:"clusterProvider"`
 }
@@ -109,7 +111,8 @@ type DataCentre struct {
 	ID                            string   `json:"id,omitempty"`
 	Name                          string   `json:"name,omitempty" mapstructure:"name"`
 	Provider                      string   `json:"provider,omitempty"`
-	CdcNetwork                    string   `json:"network,omitempty" mapstructure:"network"`
+	CdcNetwork                    string   `json:"cdcNetwork,omitempty"`
+	Network                       string   `json:"network,omitempty" mapstructure:"network"`
 	Bundles                       []string `json:"bundles,omitempty"`
 	ClientEncryption              bool     `json:"clientEncryption,omitempty"`
 	PasswordAuthentication        bool     `json:"passwordAuthentication,omitempty"`
@@ -120,13 +123,7 @@ type DataCentre struct {
 	NodeCount                     int      `json:"nodeCount,omitempty"`
 	EncryptionKeyId               []string `json:"encryptionKeyId,omitempty"`
 	ResizeTargetNodeSize          string   `json:"resizeTargetNodeSize,omitempty"`
-	DataCentre                    string   `json:"dataCentre,omitempty" mapstructure:"data_centre"`
-}
-
-type ClusterDataCentre struct {
-	Name       string `json:"name" mapstructure:"name"`
-	Network    string `json:"network" mapstructure:"network"`
-	DataCentre string `json:"dataCentre" mapstructure:"data_centre"`
+	DataCentreRegion              string   `json:"dataCentre,omitempty" mapstructure:"data_centre_region"`
 }
 
 type Node struct {
