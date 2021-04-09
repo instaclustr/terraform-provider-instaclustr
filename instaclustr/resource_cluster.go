@@ -764,6 +764,17 @@ func getBundlesFromCluster(cluster *Cluster) ([]map[string]interface{}, error) {
 	return bundles, nil
 }
 
+func getDataCentresFromCluster(cluster *Cluster) ([]DataCentre, error) {
+	dataCentres := make([]DataCentre, 0)
+	if cluster.DataCentres != nil {
+		for _, dataCentre := range cluster.DataCentres {
+			dataCentres = append(dataCentres, dataCentre)
+		}
+	}
+
+	return dataCentres, nil
+}
+
 func dereferencePointerInStruct(data map[string]interface{}) map[string]interface{} {
 	for k, v := range data {
 		// Terraform expects strings for everything
