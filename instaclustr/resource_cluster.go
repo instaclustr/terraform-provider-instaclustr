@@ -709,8 +709,16 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	if len(cluster.DataCentres[0].ResizeTargetNodeSize) > 0 {
 		nodeSize = cluster.DataCentres[0].ResizeTargetNodeSize
 	}
+
+	d.Set("data_centre", cluster.DataCentre)
+	dataCentres, err := getBundlesFromCluster(cluster)
+	if err != nil {
+		return err
+	}
+	if err := d.Set("data_centres", dataCentres); err != nil {
+		return fmt.Errorf("[Error] Error reading cluster, data centres could not be derived: %s", err)
+	}
 	d.Set("node_size", nodeSize)
-	d.Set("data_centre", cluster.DataCentres[0].Name)
 	d.Set("sla_tier", strings.ToUpper(cluster.SlaTier))
 	d.Set("cluster_network", cluster.DataCentres[0].CdcNetwork)
 	d.Set("private_network_cluster", cluster.DataCentres[0].PrivateIPOnly)
