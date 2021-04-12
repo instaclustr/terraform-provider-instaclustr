@@ -15,7 +15,7 @@ Property | Description | Default
 ---------|-------------|--------
 `cluster_name`|The name of new cluster. May contain a combination of letters, numbers and underscores with a maximum length of 32 characters.|Required
 `node_size`|Desired node size. See [here](https://www.instaclustr.com/support/api-integrations/api-reference/provisioning-api/#section-reference-data-data-centres-and-node-sizes) for more details. This field is updatable.|Required
-`data_centre`|Desired data centre. See [here](https://www.instaclustr.com/support/api-integrations/api-reference/provisioning-api/#section-reference-data-data-centres-and-node-sizes) for more details.|Required
+`data_centre`|Desired data centre. See [here](https://developer.instaclustr.com/#operation/extendedProvisionRequestHandler) for more details.|Required
 `sla_tier`|Accepts PRODUCTION/NON_PRODUCTION. The SLA Tier feature on the Instaclustr console is used to classify clusters as either production and non_production. See [here](https://www.instaclustr.com/support/documentation/useful-information/sla-tier/) for more details.|NON_PRODUCTION
 `cluster_network`|The private network address block for the cluster specified using CIDR address notation. The network must have a prefix length between /12 and /22 and must be part of a private address space.|10.224.0.0/12
 `private_network_cluster`|Accepts true/false. Creates the cluster with private network only.|false
@@ -32,7 +32,7 @@ Property | Description | Default
 
 Property | Description | Default
 ---------|-------------|--------
-`name`|Accepts AWS_VPC now. The new cluster will be deployed on Amazon Web Service.|Required
+`name`|The name of the Cluster Provider. Accepts AWS_VPC, AZURE, and GCP.|Required
 `account_name`|For customers running in their own account. Your provider account can be found on the ‘Account’ tab on the console, or the “Provider Account” property on any existing cluster.|""
 `tags`|If specified, the value is a map from tag key to value. For restrictions, refer to the [AWS User Guide](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html#tag-restrictions). Tags are defined per cluster and will be applied to every instance in the cluster.|""
 `resource_group`|AZURE only, if specified, the value is name for an Azure Resource Group which the resources will be provisioned into.|""
@@ -73,7 +73,7 @@ APACHE_ZOOKEEPER|3.5.8|
 Property | Description | For Bundles | Default
 ---------|-------------|-------------|--------
 `auth_n_authz`|Accepts true/false. Enables Password Authentication and User Authorization.|Cassandra|false
-`client_encryption`|Accepts true/false. Enables Client ⇄ Node Encryption.|Cassandra, Kafka, Elasticsearch, Spark, Redis, APACHE_ZOOKEEPER|false
+`client_encryption`|Accepts true/false. Enables Client ⇄ Node Encryption.|Cassandra, Kafka, Elasticsearch, Spark, Redis, ZooKeeper|false
 `dedicated_master_nodes`|Accepts true/false. Enables Dedicated Master Nodes.|Elasticsearch|false
 `master_node_size`|Desired master node size. See [here](https://www.instaclustr.com/support/api-integrations/api-reference/provisioning-api/#section-reference-data-data-centres-and-node-sizes) for more details.|Elasticsearch|Required
 `security_plugin`|Accepts true/false. Enables Security Plugin. This option gives an extra layer of security to the cluster. This will automatically enable internode encryption.|Elasticsearch|false
@@ -94,5 +94,5 @@ Property | Description | For Bundles | Default
 `replica_nodes`|The number of Replica nodes in a generated Redis Cluster.|Redis|Required (Integers)
 `dedicated_zookeeper`|Indicate whether this Kafka cluster should allocate dedicated Zookeeper nodes|Kafka|false
 `zookeeper_node_size`|If `dedicated_zookeeper` is true, then it is the node size for the dedicated Zookeeper nodes. Have a look [here](https://www.instaclustr.com/support/api-integrations/api-reference/provisioning-api/#section-create-cluster) (Kafka bundle options table) for node size options. |Kafka
-`zookeeper_node_count`|Indicates how many nodes are allocated to be Zookeeper nodes. For KAFKA bundle, if `dedicated_zookeeper` is false, then it indicates how many Kafka nodes also have ZooKeeper services in them. |Kafka, APACHE_ZOOKEEPER
+`zookeeper_node_count`|Indicates how many nodes are allocated to be Zookeeper nodes. For KAFKA bundle, if `dedicated_zookeeper` is false, then it indicates how many Kafka nodes also have ZooKeeper services in them. |Kafka, ZooKeeper
 
