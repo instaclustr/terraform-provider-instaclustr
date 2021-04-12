@@ -343,6 +343,31 @@ func TestValidRedisClusterCreate(t *testing.T) {
 	})
 }
 
+func TestValidApacheZookeeperClusterCreate(t *testing.T) {
+	testAccProvider := instaclustr.Provider()
+	testAccProviders := map[string]terraform.ResourceProvider{
+		"instaclustr": testAccProvider,
+	}
+	validConfig, _ := ioutil.ReadFile("data/valid_apache_zookeeper.tf")
+	username := os.Getenv("IC_USERNAME")
+	apiKey := os.Getenv("IC_API_KEY")
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
+	resource.Test(t, resource.TestCase{
+		Providers: testAccProviders,
+		CheckDestroy: testCheckResourceDeleted("validApacheZookeeper", hostname, username, apiKey),
+		Steps: []resource.TestStep{
+			{
+				Config: oriConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid("validApacheZookeeper"),
+					testCheckResourceCreated("validApacheZookeeper", hostname, username, apiKey),
+				),
+			},
+		},
+	})
+}
+
 func TestAccClusterCredentials(t *testing.T) {
 	testAccProviders := map[string]terraform.ResourceProvider{
 		"instaclustr": instaclustr.Provider(),

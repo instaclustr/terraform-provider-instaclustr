@@ -630,7 +630,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error{
 	d.Set("cluster_name", cluster.ClusterName)
 
 	clusterProvider := make(map[string]interface{}, 0)
-	mapstructure.Decode(cluster.Provider, &clusterProvider)
+	mapstructure.Decode(cluster.Provider[0], &clusterProvider)
 	processedClusterProvider := processProvider(d, clusterProvider)
 	d.Set("cluster_provider", processedClusterProvider)
 
@@ -727,7 +727,9 @@ func getBundlesFromCluster(cluster *Cluster) ([]map[string]interface{}, error) {
 	bundles := make([]map[string]interface{}, 0)
 	bundles = append(bundles, baseBundle)
 	if cluster.AddonBundles != nil {
-		bundles = append(bundles, cluster.AddonBundles)
+		for _, addonBundle := range cluster.AddonBundles{
+			bundles = append(bundles, addonBundle)	
+		}
 	}
 
 	return bundles, nil
@@ -807,6 +809,7 @@ func formatCreateErrMsg(err error) error {
 func checkIfBundleRequiresRackAllocation(bundles []Bundle) bool {
 	var noRackAllocationBundles = []string{
 		"REDIS",
+		"APACHE_ZOOKEEPER",
 	}
 
 	for i := 0; i < len(bundles); i++ {
