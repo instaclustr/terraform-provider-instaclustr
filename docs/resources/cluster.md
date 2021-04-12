@@ -14,7 +14,7 @@ A resource for managing clusters on Instaclustr Managed Platform. A cluster cont
 Property | Description | Default
 ---------|-------------|--------
 `cluster_name`|The name of new cluster. May contain a combination of letters, numbers and underscores with a maximum length of 32 characters.|Required
-`node_size`|Desired node size. See [here](https://www.instaclustr.com/support/api-integrations/api-reference/provisioning-api/#section-reference-data-data-centres-and-node-sizes) for more details. This field is updatable.|Required
+`node_size`|Desired node size. See [here](https://developer.instaclustr.com/#operation/extendedProvisionRequestHandler) for more details. This field is updatable.|Required
 `data_centre`|Desired data centre. See [here](https://developer.instaclustr.com/#operation/extendedProvisionRequestHandler) for more details.|Required
 `sla_tier`|Accepts PRODUCTION/NON_PRODUCTION. The SLA Tier feature on the Instaclustr console is used to classify clusters as either production and non_production. See [here](https://www.instaclustr.com/support/documentation/useful-information/sla-tier/) for more details.|NON_PRODUCTION
 `cluster_network`|The private network address block for the cluster specified using CIDR address notation. The network must have a prefix length between /12 and /22 and must be part of a private address space.|10.224.0.0/12
@@ -75,7 +75,7 @@ Property | Description | For Bundles | Default
 `auth_n_authz`|Accepts true/false. Enables Password Authentication and User Authorization.|Cassandra|false
 `client_encryption`|Accepts true/false. Enables Client ⇄ Node Encryption.|Cassandra, Kafka, Elasticsearch, Spark, Redis, ZooKeeper|false
 `dedicated_master_nodes`|Accepts true/false. Enables Dedicated Master Nodes.|Elasticsearch|false
-`master_node_size`|Desired master node size. See [here](https://www.instaclustr.com/support/api-integrations/api-reference/provisioning-api/#section-reference-data-data-centres-and-node-sizes) for more details.|Elasticsearch|Required
+`master_node_size`|Desired master node size. See [here](https://developer.instaclustr.com/#operation/extendedProvisionRequestHandler) for more details.|Elasticsearch|Required
 `security_plugin`|Accepts true/false. Enables Security Plugin. This option gives an extra layer of security to the cluster. This will automatically enable internode encryption.|Elasticsearch|false
 `use_private_broadcast_rpc_address`|Accepts true/false. Enables broadcast of private IPs for auto-discovery.|Cassandra|false
 `lucene_enabled`|Accepts true/false. Enabled Cassandra Lucene Index Plugin.|Cassandra|false
