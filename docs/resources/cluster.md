@@ -66,14 +66,14 @@ KAFKA_SCHEMA_REGISTRY|5.0.0|KAFKA
 ELASTICSEARCH|opendistro-for-elasticsearch:1.4.0
 KAFKA_CONNECT|2.3.1, 2.4.1, 2.5.1, 2.6.1|
 REDIS|6.0.9|
-
+APACHE_ZOOKEEPER|3.5.8|
 
 `bundle.options` - _all properties listed are optional_
 
 Property | Description | For Bundles | Default
 ---------|-------------|-------------|--------
 `auth_n_authz`|Accepts true/false. Enables Password Authentication and User Authorization.|Cassandra|false
-`client_encryption`|Accepts true/false. Enables Client ⇄ Node Encryption.|Cassandra, Kafka, Elasticsearch, Spark, Redis|false
+`client_encryption`|Accepts true/false. Enables Client ⇄ Node Encryption.|Cassandra, Kafka, Elasticsearch, Spark, Redis, APACHE_ZOOKEEPER|false
 `dedicated_master_nodes`|Accepts true/false. Enables Dedicated Master Nodes.|Elasticsearch|false
 `master_node_size`|Desired master node size. See [here](https://www.instaclustr.com/support/api-integrations/api-reference/provisioning-api/#section-reference-data-data-centres-and-node-sizes) for more details.|Elasticsearch|Required
 `security_plugin`|Accepts true/false. Enables Security Plugin. This option gives an extra layer of security to the cluster. This will automatically enable internode encryption.|Elasticsearch|false
@@ -94,5 +94,5 @@ Property | Description | For Bundles | Default
 `replica_nodes`|The number of Replica nodes in a generated Redis Cluster.|Redis|Required (Integers)
 `dedicated_zookeeper`|Indicate whether this Kafka cluster should allocate dedicated Zookeeper nodes|Kafka|false
 `zookeeper_node_size`|If `dedicated_zookeeper` is true, then it is the node size for the dedicated Zookeeper nodes. Have a look [here](https://www.instaclustr.com/support/api-integrations/api-reference/provisioning-api/#section-create-cluster) (Kafka bundle options table) for node size options. |Kafka
-`zookeeper_node_count`|If `dedicated_zookeeper` is true, then it indicates how many nodes are allocated to be Zookeeper nodes|Kafka
+`zookeeper_node_count`|Indicates how many nodes are allocated to be Zookeeper nodes. For KAFKA bundle, if `dedicated_zookeeper` is false, then it indicates how many Kafka nodes also have ZooKeeper services in them. |Kafka, APACHE_ZOOKEEPER
 
