@@ -17,7 +17,7 @@ build:
 	go build $(FLAGS) -o bin/$(BIN_NAME)_$(VERSION) main.go
 
 test:
-	cd test && go test -v -timeout 120m -count=1
+	go test -v -timeout 120m -count=1 ./...
 
 testacc:
 ifndef IC_USERNAME

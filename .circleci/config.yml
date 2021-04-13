@@ -24,6 +24,7 @@ commands: # a reusable command with parameters
       - run:
           name: "Configure Instaclustr credentials"
           command: |
+            echo ${TEST}
             export IC_USERNAME=${IC_TEST_USERNAME}
             export IC_API_KEY=${IC_TEST_API_KEY}
             export KMS_ARN=${IC_TEST_KMS_ARN}
@@ -131,9 +132,10 @@ jobs:
     steps:
       - checkout
       - run: go get -v -t -d ./...
+#      - configure-credentials
 #      - run-acceptance-tests
-      - build-provider
-      - package-all-platforms
+#      - build-provider
+#      - package-all-platforms
 workflows:
   build-and-deploy:
     jobs:
@@ -143,14 +145,14 @@ workflows:
               only: /^v.*/
             branches:
               ignore: /.*/
-  commit-build-test:
+  commit-build-test-workflow:
     jobs:
       - commit-build-test
-  pr-build-test:
+  pr-build-test-workflow:
     jobs:
-      - pr-build-test:
+      - hold:
           type: approval
-          filters:
-            tags:
-              only: /acctest_ready.*/
+      - pr-build-test:
           context: terraform provider
+          requires:
+            - hold
