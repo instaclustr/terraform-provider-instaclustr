@@ -135,6 +135,7 @@ workflows:
   build-and-deploy:
     jobs:
       - build:
+          context: terraform provider
           filters:
             tags:
               only: /^v.*/
