@@ -127,10 +127,10 @@ jobs:
     steps:
       - checkout
       - run: go get -v -t -d ./...
-#      - configure-credentials
-#      - run-acceptance-tests
-#      - build-provider
-#      - package-all-platforms
+      - configure-credentials
+      - run-acceptance-tests
+      - build-provider
+      - package-all-platforms
 workflows:
   build-and-deploy:
     jobs:
