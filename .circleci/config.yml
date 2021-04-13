@@ -102,7 +102,7 @@ jobs:
     steps:
       - checkout
       - run: go get -v -t -d ./...
-      - configure-credentials
+      - configure-gpg-key
       - run-unit-tests
       - build-provider
       - package-all-platforms
@@ -125,7 +125,6 @@ jobs:
     steps:
       - checkout
       - run: go get -v -t -d ./...
-      - configure-credentials
       - run-acceptance-tests
       - build-provider
       - package-all-platforms
