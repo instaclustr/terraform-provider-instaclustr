@@ -33,12 +33,12 @@ resource "instaclustr_cluster" "valid" {
     }
 
     bundle {
-        bundle = "KAFKA_REST_PROXY"
-        version = "kafka-rest-proxy:5.0.0"
-    }
-    bundle {
         bundle = "KAFKA_SCHEMA_REGISTRY"
         version = "kafka-schema-registry:5.0.0"
+    }
+    bundle {
+        bundle = "KAFKA_REST_PROXY"
+        version = "kafka-rest-proxy:5.0.0"
     }
 
 }
