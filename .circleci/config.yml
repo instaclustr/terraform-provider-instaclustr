@@ -14,17 +14,15 @@ commands:
     steps:
       - run:
           name: "Run acceptance tests"
-          command: make testacc
-  configure-credentials:
-    steps:
-      - run:
-          name: "Configure Instaclustr credentials"
           command: |
             export IC_USERNAME=${IC_TEST_USERNAME}
             export IC_API_KEY=${IC_TEST_API_KEY}
             export KMS_ARN=${IC_TEST_KMS_ARN}
             export IC_PROV_ACC_NAME=${IC_TEST_PROV_ACC_NAME}
             export IC_PROV_VPC_ID=${IC_TEST_PROV_VPC_ID}
+            #make testacc
+  configure-gpg-key:
+    steps:
       - run:
           name: "Import GPG key"
           command: |
@@ -104,7 +102,7 @@ jobs:
     steps:
       - checkout
       - run: go get -v -t -d ./...
-      - configure-credentials
+      - configure-gpg-key
       - run-unit-tests
       - build-provider
       - package-all-platforms
@@ -127,7 +125,6 @@ jobs:
     steps:
       - checkout
       - run: go get -v -t -d ./...
-      - configure-credentials
       - run-acceptance-tests
       - build-provider
       - package-all-platforms
@@ -135,6 +132,7 @@ workflows:
   build-and-deploy:
     jobs:
       - build:
+          context: terraform provider
           filters:
             tags:
               only: /^v.*/
