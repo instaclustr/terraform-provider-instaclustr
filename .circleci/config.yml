@@ -20,7 +20,7 @@ commands:
             export KMS_ARN=${IC_TEST_KMS_ARN}
             export IC_PROV_ACC_NAME=${IC_TEST_PROV_ACC_NAME}
             export IC_PROV_VPC_ID=${IC_TEST_PROV_VPC_ID}
-            make testacc
+            #make testacc
   configure-gpg-key:
     steps:
       - run:
