@@ -728,7 +728,9 @@ func getBundlesFromCluster(cluster *Cluster) ([]map[string]interface{}, error) {
 	bundles = append(bundles, baseBundle)
 	if cluster.AddonBundles != nil {
 		for _, addonBundle := range cluster.AddonBundles{
-			bundles = append(bundles, addonBundle)	
+			if len(addonBundle) != 0 {
+				bundles = append(bundles, addonBundle)
+			}
 		}
 	}
 
