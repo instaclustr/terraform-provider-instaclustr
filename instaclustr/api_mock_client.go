@@ -1,14 +1,12 @@
-package test
+package instaclustr
 
 import (
 	"net/http"
 	"time"
-
-	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 )
 
 type APIMockClient struct {
-	instaclustr.APIClient
+	APIClient
 }
 
 // RoundTripFunc .
