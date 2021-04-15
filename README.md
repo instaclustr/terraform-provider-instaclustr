@@ -1,7 +1,6 @@
 # Terraform Instaclustr Provider
 
-#### TODO: Change build badge to use instaclustr repo, main branch and token project token
-[![CircleCI](https://img.shields.io/circleci/build/gh/hail-insta-org/terraform-provider-instaclustr/master?style=for-the-badge)](https://app.circleci.com/pipelines/github/hail-insta-org/terraform-provider-instaclustr)
+[![CircleCI](https://img.shields.io/circleci/build/gh/instaclustr/terraform-provider-instaclustr/master?style=for-the-badge)](https://app.circleci.com/pipelines/github/instaclustr/terraform-provider-instaclustr)
 ![GoLang Version](https://img.shields.io/github/go-mod/go-version/instaclustr/terraform-provider-instaclustr?logo=go&style=for-the-badge)
 ![Latest Release Version](https://img.shields.io/github/v/release/instaclustr/terraform-provider-instaclustr?logo=github&sort=semver&style=for-the-badge)
 ![License](https://img.shields.io/github/license/instaclustr/terraform-provider-instaclustr?style=for-the-badge)
