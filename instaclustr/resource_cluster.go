@@ -56,33 +56,18 @@ func resourceCluster() *schema.Resource {
 
 			"data_centre": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
 
 			"data_centres": {
 				Type:     schema.TypeList,
-				Required: true,
-				MinItems: 1,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"name": {
-							Type:     schema.TypeString,
-							Optional: true,
-							ForceNew: true,
-						},
-						"network": {
-							Type:     schema.TypeString,
-							Required: true,
-							ForceNew: true,
-						},
-						"data_centre_region": {
-							Type:     schema.TypeString,
-							Required: true,
-							ForceNew: true,
-						},
-					},
+				Optional: true,
+				Elem: &schema.Schema{
+					Type: schema.TypeMap,
+					Elem: schema.TypeString,
 				},
 			},
+
 			"sla_tier": {
 				Type:     schema.TypeString,
 				Optional: true,
@@ -410,11 +395,6 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		return formatCreateErrMsg(err)
 	}
 
-	dataCentres, err := getDataCentres(d)
-	if err != nil {
-		return formatCreateErrMsg(err)
-	}
-
 	var clusterProvider ClusterProvider
 	err = mapstructure.Decode(d.Get("cluster_provider").(map[string]interface{}), &clusterProvider)
 	if err != nil {
@@ -429,14 +409,23 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		Provider:              clusterProvider,
 		SlaTier:               d.Get("sla_tier").(string),
 		NodeSize:              d.Get("node_size").(string),
-		DataCentre:            d.Get("data_centre").(string),
-		DataCentres:           dataCentres,
-		ClusterNetwork:        d.Get("cluster_network").(string),
 		PrivateNetworkCluster: fmt.Sprintf("%v", d.Get("private_network_cluster")),
 		PCICompliantCluster:   fmt.Sprintf("%v", d.Get("pci_compliant_cluster")),
 	}
 
-	// TODO: INS-11057 client data construction verifications?
+	dataCentre := d.Get("data_centre").(string)
+
+	if dataCentre != "" {
+		clusterNetwork := d.Get("cluster_network").(string)
+		createData.DataCentre = dataCentre
+		createData.ClusterNetwork = clusterNetwork
+	} else {
+		dataCentres, err := getDataCentres(d)
+		if err != nil {
+			return formatCreateErrMsg(err)
+		}
+		createData.DataCentres = dataCentres
+	}
 
 	kafkaSchemaRegistryUserPassword := d.Get("kafka_schema_registry_user_password").(string)
 	kafkaRestProxyUserPassword := d.Get("kafka_rest_proxy_user_password").(string)
