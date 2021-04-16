@@ -10,6 +10,7 @@ import (
 	"regexp"
 	"strings"
 	"testing"
+	"encoding/json"
 )
 
 func TestAccCluster(t *testing.T) {
@@ -39,6 +40,7 @@ func TestAccCluster(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckResourceValid("valid"),
 					testCheckResourceCreated("valid", hostname, username, apiKey),
+					testCheckContactIPCorrect("valid", hostname, username, apiKey, 5),
 				),
 			},
 		},
@@ -282,6 +284,63 @@ func testCheckResourceCreated(resourceName, hostname, username, apiKey string) r
 		}
 		return nil
 	}
+}
+
+func testCheckContactIPCorrect(resourceName, hostname, username, apiKey string, expectedContactPointLength int) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		resourceState := s.Modules[0].Resources["instaclustr_cluster."+resourceName]
+		id := resourceState.Primary.Attributes["cluster_id"]
+		client := new(instaclustr.APIClient)
+		client.InitClient(hostname, username, apiKey)
+		cluster, err := client.ReadCluster(id)
+		if err != nil {
+			return fmt.Errorf("[Error] Failed to read cluster %s: %s", id, err)
+		}
+		//contactPoints := make([]string, 0)
+		var privateContactPoints []string
+		var publicContactPoints []string
+
+		privateContactPointsRaw := resourceState.Primary.Attributes["private_contact_point"]
+		publicContactPointsRaw := resourceState.Primary.Attributes["public_contact_point"]
+
+		json.Unmarshal([]byte(privateContactPointsRaw), &privateContactPoints)
+		json.Unmarshal([]byte(publicContactPointsRaw), &publicContactPoints)
+
+		nodePrivateIPs := make([]string, 0)
+		nodePublicIPs := make([]string, 0)
+		for _, dataCentre := range cluster.DataCentres {
+			for _, node := range dataCentre.Nodes {
+				nodePrivateIPs = append(nodePrivateIPs, node.PrivateAddress)
+				nodePublicIPs = append(nodePublicIPs, node.PublicAddress)
+			}
+		}
+
+		for i, IP := range privateContactPoints {
+			if !stringInSlice(IP, nodePrivateIPs){
+				fmt.Errorf("[Error] Unable to find IP %s in node IPs", IP)
+			}
+			if !stringInSlice(publicContactPoints[i], nodePrivateIPs){
+				fmt.Errorf("[Error] Unable to find IP %s in node IPs", IP)
+			}
+		}
+
+		if len(privateContactPoints) == expectedContactPointLength {
+			fmt.Errorf("[Error] Expected %v private contact points but found %v", expectedContactPointLength, len(privateContactPoints))
+		}
+
+		if len(publicContactPoints) == expectedContactPointLength {
+			fmt.Errorf("[Error] Expected %v public contact points but found %v", expectedContactPointLength, len(publicContactPoints))
+		}
+		return nil
+	}
+}
+func stringInSlice(a string, list []string) bool {
+	for _, b := range list {
+		if b == a {
+			return true
+		}
+	}
+	return false
 }
 
 func testCheckResourceDeleted(resourceName, hostname, username, apiKey string) resource.TestCheckFunc {

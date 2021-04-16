@@ -456,8 +456,7 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		return nil
 	}
 
-
-	return waitForClusterStateAndDoUpdate(client, waitForClusterState, bundleConfig, kafkaRestProxyUserPassword, kafkaSchemaRegistryUserPassword, d, id)
+	return waitForClusterStateAndDoUpdate(client, waitForClusterState, bundleConfig, kafkaRestProxyUserPassword, kafkaSchemaRegistryUserPassword, d, id, meta)
 }
 
 func waitForClusterStateAndDoUpdate(client *APIClient,
@@ -466,11 +465,14 @@ func waitForClusterStateAndDoUpdate(client *APIClient,
 	kafkaRestProxyUserPassword string,
 	kafkaSchemaRegistryUserPassword string,
 	d *schema.ResourceData,
-	id string) error {
+	id string,
+	meta interface{}) error {
 	return resource.Retry(d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
 
 		//reading cluster details
 		cluster, err := client.ReadCluster(id)
+		resourceClusterRead(d, meta)
+
 
 		if err != nil {
 			return resource.NonRetryableError(fmt.Errorf("[Error] Error retrieving cluster info: %s", err))
