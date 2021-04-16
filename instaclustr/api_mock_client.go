@@ -6,7 +6,7 @@ import (
 )
 
 type APIMockClient struct {
-	APIClient
+	*APIClient
 }
 
 // RoundTripFunc .
