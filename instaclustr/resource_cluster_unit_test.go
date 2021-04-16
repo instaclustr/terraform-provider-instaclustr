@@ -11,9 +11,9 @@ func TestCreateBundleUserUpdateRequest(t *testing.T) {
 	testPassword := "reallySecure123"
 	testBundleRequest := createBundleUserUpdateRequest(testUsername, testPassword)
 
-	expectedOutput := fmt.Sprintf("{\"username\":\"%s\",\"password\":\"%s\"}", testUsername, testPassword)
+	expectedOutput := []byte(fmt.Sprintf("{\"username\":\"%s\",\"password\":\"%s\"}", testUsername, testPassword))
 
-	if fmt.Sprintf("%s", testBundleRequest) != expectedOutput {
+	if !reflect.DeepEqual(testBundleRequest, expectedOutput){
 		t.Fatalf("Incorrect request returned.\nExpected:%s\nActual:%s", expectedOutput, testBundleRequest)
 	}
 }
@@ -24,26 +24,35 @@ func TestGetBundleConfig(t *testing.T) {
 
 	testBundles = append(testBundles, Bundle{Bundle: "KAFKA"})
 	testBundleConfig = getBundleConfig(testBundles)
-	expectedOutput := "{IsKafkaCluster:true HasRestProxy:false HasSchemaRegistry:false}"
+	expectedOutput := BundleConfig{
+		IsKafkaCluster: true,
+		HasRestProxy: false,
+		HasSchemaRegistry: false}
 
-	if fmt.Sprintf("%+v", testBundleConfig) != expectedOutput {
-		t.Fatalf("Incorrect Bundle Config returned.\nExpected: %s\nActual: %+v", expectedOutput, testBundleConfig)
+	if testBundleConfig != expectedOutput {
+		t.Fatalf("Incorrect Bundle Config returned.\nExpected: %+v\nActual: %+v", expectedOutput, testBundleConfig)
 	}
 
 	testBundles = append(testBundles, Bundle{Bundle: "KAFKA_REST_PROXY"})
 	testBundleConfig = getBundleConfig(testBundles)
-	expectedOutput = "{IsKafkaCluster:true HasRestProxy:true HasSchemaRegistry:false}"
+	expectedOutput = BundleConfig{
+		IsKafkaCluster: true,
+		HasRestProxy: true,
+		HasSchemaRegistry: false}
 
-	if fmt.Sprintf("%+v", testBundleConfig) != expectedOutput {
-		t.Fatalf("Incorrect Bundle Config returned.\nExpected: %s\nActual: %+v", expectedOutput, testBundleConfig)
+	if testBundleConfig != expectedOutput {
+		t.Fatalf("Incorrect Bundle Config returned.\nExpected: %+v\nActual: %+v", expectedOutput, testBundleConfig)
 	}
 
 	testBundles = append(testBundles, Bundle{Bundle: "KAFKA_SCHEMA_REGISTRY"})
 	testBundleConfig = getBundleConfig(testBundles)
-	expectedOutput = "{IsKafkaCluster:true HasRestProxy:true HasSchemaRegistry:true}"
+	expectedOutput = BundleConfig{
+		IsKafkaCluster: true,
+		HasRestProxy: true,
+		HasSchemaRegistry: true}
 
-	if fmt.Sprintf("%+v", testBundleConfig) != expectedOutput {
-		t.Fatalf("Incorrect Bundle Config returned.\nExpected: %s\nActual: %+v", expectedOutput, testBundleConfig)
+	if testBundleConfig != expectedOutput {
+		t.Fatalf("Incorrect Bundle Config returned.\nExpected: %+v\nActual: %+v", expectedOutput, testBundleConfig)
 	}
 }
 
