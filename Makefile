@@ -1,7 +1,7 @@
 
 BIN_NAME="terraform-provider-instaclustr"
 
-VERSION=v1.9.4
+VERSION=v1.9.5
 
 .PHONY: install clean all build test testacc testtarget release_version
 release_version:
@@ -17,7 +17,7 @@ build:
 	go build $(FLAGS) -o bin/$(BIN_NAME)_$(VERSION) main.go
 
 test:
-	cd test && go test -v -timeout 120m -count=1
+	go test -v -timeout 120m -count=1 ./...
 
 testacc:
 ifndef IC_USERNAME
