@@ -19,7 +19,7 @@ build:
 	go build $(FLAGS) -o bin/$(BIN_NAME)_v$(VERSION) main.go
 
 test:
-	go test -v -timeout 120m -count=1 ./...
+	cd instaclustr && go test -v -timeout 120m -count=1
 
 testacc:
 ifndef IC_USERNAME
@@ -42,7 +42,7 @@ ifndef IC_PROV_VPC_ID
 	@echo "IC_PROV_VPC_ID for provisioning API must be set for acceptance tests"
 	@exit 1
 endif
-	cd test && TF_ACC=1 go test -v -timeout 120m -count=1
+	cd acc_test && TF_ACC=1 go test -v -timeout 120m -count=1
 
 testtarget:
 ifndef TARGET
