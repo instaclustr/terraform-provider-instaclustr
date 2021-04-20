@@ -3,6 +3,9 @@ package instaclustr
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/hashicorp/terraform/helper/resource"
+	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/mitchellh/mapstructure"
 	"log"
 	"reflect"
 	"regexp"
@@ -10,10 +13,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/mitchellh/mapstructure"
 )
 
 var (
@@ -676,7 +675,9 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		}
 	}
 	rackCount := len(rackList)
-	nodesPerRack := nodeCount / rackCount
+	if rackCount>0 {
+		nodesPerRack := nodeCount / rackCount
+	}
 
 	rackAllocation := make(map[string]interface{}, 0)
 	rackAllocation["number_of_racks"] = strconv.Itoa(rackCount)
@@ -730,15 +731,6 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 
 	log.Printf("[INFO] Fetched cluster %s info from the remote server.", cluster.ID)
 	return nil
-}
-
-func stringInSlice(a string, list []string) bool {
-	for _, b := range list {
-		if b == a {
-			return true
-		}
-	}
-	return false
 }
 
 func getBundlesFromCluster(cluster *Cluster) ([]map[string]interface{}, error) {

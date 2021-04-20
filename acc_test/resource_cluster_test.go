@@ -361,14 +361,6 @@ func testCheckContactIPCorrect(resourceName, hostname, username, apiKey string, 
 		return nil
 	}
 }
-func stringInSlice(a string, list []string) bool {
-	for _, b := range list {
-		if b == a {
-			return true
-		}
-	}
-	return false
-}
 
 func testCheckResourceDeleted(resourceName, hostname, username, apiKey string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
