@@ -220,7 +220,7 @@ func TestAccClusterCustomVPC(t *testing.T) {
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname, providerAccountName, providerVpcId)
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckResourceDeleted("kafka_zk", hostname, username, apiKey),
+		CheckDestroy: testCheckResourceDeleted("vpc_cluster", hostname, username, apiKey),
 		Steps: []resource.TestStep{
 			{
 				Config: oriConfig,
@@ -250,8 +250,8 @@ func TestAccKafkaZookeeperContactPoints(t *testing.T) {
 			{
 				Config: oriConfig,
 				Check: resource.ComposeTestCheckFunc(
-					//testCheckResourceValid("kafka_zk"),
-					//testCheckResourceCreated("kafka_zk", hostname, username, apiKey),
+					testCheckResourceValid("kafka_zk"),
+					testCheckResourceCreated("kafka_zk", hostname, username, apiKey),
 					testCheckContactIPCorrect("kafka_zk", hostname, username, apiKey, 3),
 				),
 			},
