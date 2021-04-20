@@ -1,8 +1,9 @@
 
 BIN_NAME="terraform-provider-instaclustr"
 
-VERSION=1.9.4
+VERSION=1.9.6
 INSTALL_FOLDER=$(HOME)/.terraform.d/plugins/example.com/instaclustr/instaclustr/$(VERSION)/darwin_amd64
+
 
 .PHONY: install clean all build test testacc testtarget release_version
 release_version:
@@ -18,7 +19,7 @@ build:
 	go build $(FLAGS) -o bin/$(BIN_NAME)_v$(VERSION) main.go
 
 test:
-	cd test && go test -v -timeout 120m -count=1
+	go test -v -timeout 120m -count=1 ./...
 
 testacc:
 ifndef IC_USERNAME

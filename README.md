@@ -1,12 +1,17 @@
 # Terraform Instaclustr Provider
 
-A [Terraform](http://terraform.io) provider for managing Instaclustr Platform resources.  
+[![CircleCI](https://img.shields.io/circleci/build/gh/instaclustr/terraform-provider-instaclustr/master?style=for-the-badge)](https://app.circleci.com/pipelines/github/instaclustr/terraform-provider-instaclustr)
+![GoLang Version](https://img.shields.io/github/go-mod/go-version/instaclustr/terraform-provider-instaclustr?logo=go&style=for-the-badge)
+![Latest Release Version](https://img.shields.io/github/v/release/instaclustr/terraform-provider-instaclustr?logo=github&sort=semver&style=for-the-badge)
+![License](https://img.shields.io/github/license/instaclustr/terraform-provider-instaclustr?style=for-the-badge)
 
-It provides a flexible set of resources for provisioning and managing [Instaclustr based clusters](http://instaclustr.com/) via the use of Terraform.  
+A [Terraform](http://terraform.io) provider for managing Instaclustr Platform resources.
+
+It provides a flexible set of resources for provisioning and managing [Instaclustr based clusters](http://instaclustr.com/) via the use of Terraform.
 
 For general information about Terraform, visit the [official website](https://terraform.io/) and [GitHub project page](https://github.com/hashicorp/terraform).
 
-For further information about Instaclustr, please see [FAQ](https://www.instaclustr.com/resources/faqs/) and [Support](https://support.instaclustr.com/hc/en-us) 
+For further information about Instaclustr, please see [FAQ](https://www.instaclustr.com/resources/faqs/) and [Support](https://support.instaclustr.com/hc/en-us)
 
 ## Key benefits
 
@@ -114,7 +119,7 @@ A schema change has been made from 0.0.1 which no longer supports the `bundles` 
 
 ## Contributing
 
-Firstly thanks!  We value your time and will do our best to review the PR as soon as possible. 
+Firstly thanks!  We value your time and will do our best to review the PR as soon as possible.
 
 1. [Install golang](https://golang.org/doc/install#install)
 2. Clone repository to: $GOPATH/src/github.com/instaclustr/terraform-provider-instaclustr
@@ -123,6 +128,13 @@ Firstly thanks!  We value your time and will do our best to review the PR as soo
 5. Set up all of the environmental variables listed [below](#acceptance-test-environment-variables) to prepare for acceptance testing.
 6. Run the acceptance tests `$ make testacc`
 7. Create a PR and send it our way :)
+
+Our Circle CI pipeline will automatically run unit tests when a PR is created and new changes are committed.
+It is also capable of running the acceptance tests, however our staff needs to give a manual approval to run the tests.
+Passing tests are a requirement to merge a PR. Please let us know when your PR is ready for acceptance tests!
+
+Unit tests are within `instaclustr` folder with `_unit_test` suffix, and used to test the internal methods.
+Acceptance tests are within `acc_test` folder, and used to run end-to-end testing.
 
 #### Acceptance Test Environment Variables
 Variable | Command | Description

@@ -1,4 +1,4 @@
-package test
+package instaclustr
 
 import (
 	"bytes"
@@ -22,10 +22,10 @@ Where:
  responseCode: is the api response code in this case 202
 
 */
-func SetupMock(t *testing.T, request string, response string, responseCode int) *APIMockClient {
+func SetupMock(t *testing.T, request string, response string, responseCode int) *APIClient {
 	requestString := fmt.Sprintf("/provisioning/v1/%s", request)
-	client := new(APIMockClient)
-	client.InitClient(func(req *http.Request) *http.Response {
+	client := new(APIClient)
+	client.InitMockClient(func(req *http.Request) *http.Response {
 		// Test request parameters
 		if req.URL.String() != requestString {
 			t.Fatalf("Unexpected request, expected '%s', but was '%s'", requestString, req.URL.String())
