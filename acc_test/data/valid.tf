@@ -10,7 +10,6 @@ resource "instaclustr_cluster" "valid" {
     data_centre = "US_WEST_2"
     sla_tier = "NON_PRODUCTION"
     cluster_network = "192.168.0.0/18"
-    wait_for_state = "RUNNING"
     private_network_cluster = false
     pci_compliant_cluster = false
     cluster_provider = {

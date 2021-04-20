@@ -8,7 +8,3 @@ vendor
 examples/crash.log
 examples/.terraform
 bin
-chris playground/.terraform/plugins/example.com/instaclustr/instaclustr/1.9.4/darwin_amd64
-chris playground/.terraform/plugins/registry.terraform.io/instaclustr/instaclustr/1.9.1/darwin_amd64/terraform-provider-instaclustr_v1.9.1
-chris playground/.terraform/plugins/selections.json
-chris playground/main.tf

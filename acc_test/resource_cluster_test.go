@@ -220,19 +220,44 @@ func TestAccClusterCustomVPC(t *testing.T) {
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname, providerAccountName, providerVpcId)
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckResourceDeleted("vpc_cluster", hostname, username, apiKey),
+		CheckDestroy: testCheckResourceDeleted("kafka_zk", hostname, username, apiKey),
 		Steps: []resource.TestStep{
 			{
 				Config: oriConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckResourceValid("vpc_cluster"),
 					testCheckResourceCreated("vpc_cluster", hostname, username, apiKey),
-					testCheckContactIPCorrect("valid", hostname, username, apiKey, 2),
-
 				),
 			},
 		},
 	})
+}
+
+func TestAccKafkaZookeeperContactPoints(t *testing.T) {
+	testAccProvider := instaclustr.Provider()
+	testAccProviders := map[string]terraform.ResourceProvider{
+		"instaclustr": testAccProvider,
+	}
+	validConfig, _ := ioutil.ReadFile("data/kafka_zk.tf")
+	username := os.Getenv("IC_USERNAME")
+	apiKey := os.Getenv("IC_API_KEY")
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
+	resource.Test(t, resource.TestCase{
+		Providers:    testAccProviders,
+		CheckDestroy: testCheckResourceDeleted("kafka_zk", hostname, username, apiKey),
+		Steps: []resource.TestStep{
+			{
+				Config: oriConfig,
+				Check: resource.ComposeTestCheckFunc(
+					//testCheckResourceValid("kafka_zk"),
+					//testCheckResourceCreated("kafka_zk", hostname, username, apiKey),
+					testCheckContactIPCorrect("kafka_zk", hostname, username, apiKey, 3),
+				),
+			},
+		},
+	})
+
 }
 
 func TestAccClusterCustomVPCInvalid(t *testing.T) {
