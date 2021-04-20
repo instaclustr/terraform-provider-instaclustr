@@ -233,7 +233,7 @@ func TestAccClusterCustomVPC(t *testing.T) {
 	})
 }
 
-func TestAccKafkaZookeeperContactPoints(t *testing.T) {
+func TestAccKafkaZookeeperContactPointsEven(t *testing.T) {
 	testAccProvider := instaclustr.Provider()
 	testAccProviders := map[string]terraform.ResourceProvider{
 		"instaclustr": testAccProvider,
@@ -253,6 +253,33 @@ func TestAccKafkaZookeeperContactPoints(t *testing.T) {
 					testCheckResourceValid("kafka_zk"),
 					testCheckResourceCreated("kafka_zk", hostname, username, apiKey),
 					testCheckContactIPCorrect("kafka_zk", hostname, username, apiKey, 3),
+				),
+			},
+		},
+	})
+
+}
+
+func TestAccCassandraSparkContactPointsOdd(t *testing.T) {
+	testAccProvider := instaclustr.Provider()
+	testAccProviders := map[string]terraform.ResourceProvider{
+		"instaclustr": testAccProvider,
+	}
+	validConfig, _ := ioutil.ReadFile("data/cassandra_contact_point.tf")
+	username := os.Getenv("IC_USERNAME")
+	apiKey := os.Getenv("IC_API_KEY")
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
+	resource.Test(t, resource.TestCase{
+		Providers:    testAccProviders,
+		CheckDestroy: testCheckResourceDeleted("cassandra_contact_point", hostname, username, apiKey),
+		Steps: []resource.TestStep{
+			{
+				Config: oriConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid("cassandra_contact_point"),
+					testCheckResourceCreated("cassandra_contact_point", hostname, username, apiKey),
+					testCheckContactIPCorrect("cassandra_contact_point", hostname, username, apiKey, 3),
 				),
 			},
 		},

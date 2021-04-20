@@ -675,9 +675,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		}
 	}
 	rackCount := len(rackList)
-	if rackCount>0 {
-		nodesPerRack := nodeCount / rackCount
-	}
+	nodesPerRack := nodeCount / rackCount
 
 	rackAllocation := make(map[string]interface{}, 0)
 	rackAllocation["number_of_racks"] = strconv.Itoa(rackCount)
