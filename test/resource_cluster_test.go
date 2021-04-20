@@ -40,7 +40,6 @@ func TestAccCluster(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckResourceValid("valid"),
 					testCheckResourceCreated("valid", hostname, username, apiKey),
-					testCheckContactIPCorrect("valid", hostname, username, apiKey, 5),
 				),
 			},
 		},
@@ -73,6 +72,7 @@ func TestKafkaConnectClusterCreateInstaclustrAWS(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckResourceValid("validKC"),
 					testCheckResourceCreated("validKC", hostname, username, apiKey),
+
 				),
 			},
 		},
@@ -227,6 +227,8 @@ func TestAccClusterCustomVPC(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckResourceValid("vpc_cluster"),
 					testCheckResourceCreated("vpc_cluster", hostname, username, apiKey),
+					testCheckContactIPCorrect("valid", hostname, username, apiKey, 2),
+
 				),
 			},
 		},
