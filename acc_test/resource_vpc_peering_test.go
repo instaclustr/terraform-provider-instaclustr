@@ -6,8 +6,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/terraform"
 	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 )
 
@@ -31,6 +31,7 @@ func TestAccVpcPeeringResource(t *testing.T) {
 					checkVpcPeeringCreated(hostname, username, apiKey),
 				),
 			},
+
 		},
 	})
 }

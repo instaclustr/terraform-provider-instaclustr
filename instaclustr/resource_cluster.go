@@ -3,8 +3,8 @@ package instaclustr
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 	"github.com/mitchellh/mapstructure"
 	"log"
 	"reflect"
@@ -98,6 +98,7 @@ func resourceCluster() *schema.Resource {
 			},
 
 			"private_contact_point": {
+				//Type:     schema.TypeList,
 				Type:     schema.TypeString,
 				Computed: true,
 				Optional: true,
@@ -698,6 +699,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	privateContactPointList := make([]string, 0)
 	publicContactPointList := make([]string, 0)
 
+
 	for _, dataCentre := range cluster.DataCentres {
 		for _, node := range dataCentre.Nodes {
 			if !stringInSlice(node.Rack, azList) {
@@ -709,11 +711,11 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 			}
 		}
 	}
-	if len(publicContactPointList) > 0 {
+	if len(publicContactPointList) != 0 {
 		err = d.Set("public_contact_point", publicContactPointList)
 	}
 
-	if len(privateContactPointList) > 0 {
+	if len(privateContactPointList) != 0 {
 		err = d.Set("private_contact_point", privateContactPointList)
 	}
 
