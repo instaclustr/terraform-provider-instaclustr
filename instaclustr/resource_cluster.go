@@ -89,16 +89,19 @@ func resourceCluster() *schema.Resource {
 			},
 
 			"public_contact_point": {
-				Type:     schema.TypeList,
+				Type:     schema.TypeString,
 				Computed: true,
+				Optional: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
 			},
 
 			"private_contact_point": {
-				Type:     schema.TypeList,
+				//Type:     schema.TypeList,
+				Type:     schema.TypeString,
 				Computed: true,
+				Optional: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
@@ -448,7 +451,6 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 	}
 	d.SetId(id)
 	d.Set("cluster_id", id)
-	d.Set("public_contact_point", "")
 	log.Printf("[INFO] Cluster %s has been created.", id)
 
 	if len(waitForClusterState) == 0 {

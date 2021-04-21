@@ -31,6 +31,7 @@ func TestAccVpcPeeringResource(t *testing.T) {
 					checkVpcPeeringCreated(hostname, username, apiKey),
 				),
 			},
+
 		},
 	})
 }
