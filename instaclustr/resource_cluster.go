@@ -448,6 +448,7 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 	}
 	d.SetId(id)
 	d.Set("cluster_id", id)
+	d.Set("public_contact_point", "")
 	log.Printf("[INFO] Cluster %s has been created.", id)
 
 	if len(waitForClusterState) == 0 {
@@ -708,11 +709,11 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 			}
 		}
 	}
-	if len(publicContactPointList) > 0 {
+	if len(publicContactPointList) != 0 {
 		err = d.Set("public_contact_point", publicContactPointList)
 	}
 
-	if len(privateContactPointList) > 0 {
+	if len(privateContactPointList) != 0 {
 		err = d.Set("private_contact_point", privateContactPointList)
 	}
 
