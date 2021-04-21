@@ -1,8 +1,8 @@
 package instaclustr
 
 import (
-    "testing"
-    "github.com/hashicorp/terraform/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/terraform"
+	"testing"
 )
 
 func TestProvider(t *testing.T) {
