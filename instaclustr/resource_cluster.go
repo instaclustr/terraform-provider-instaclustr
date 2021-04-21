@@ -64,7 +64,6 @@ func resourceCluster() *schema.Resource {
 				Optional: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeMap,
-					Elem: schema.TypeString,
 				},
 			},
 
@@ -677,14 +676,24 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	//loop over each data centre to determine nodes and racks for rack allocation
 	nodeCount := 0
 	rackList := make([]string, 0)
-	for _, dataCentre := range cluster.DataCentres {
-		for _, node := range dataCentre.Nodes {
-			if !strings.HasPrefix(node.Size, "zk-") {
-				nodeCount += 1
-			}
-			rackList = appendIfMissing(rackList, node.Rack)
+	//for _, dataCentre := range cluster.DataCentres {
+	//	for _, node := range dataCentre.Nodes {
+	//		if !strings.HasPrefix(node.Size, "zk-") {
+	//			nodeCount += 1
+	//		}
+	//		rackList = appendIfMissing(rackList, node.Rack)
+	//	}
+	//}
+	//rackCount := len(rackList)
+	//nodesPerRack := nodeCount / rackCount
+
+	for _, node := range cluster.DataCentres[0].Nodes {
+		if !strings.HasPrefix(node.Size, "zk-") {
+			nodeCount += 1
 		}
+		rackList = appendIfMissing(rackList, node.Rack)
 	}
+
 	rackCount := len(rackList)
 	nodesPerRack := nodeCount / rackCount
 
@@ -700,7 +709,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	d.Set("data_centre", cluster.DataCentre)
-	dataCentres, err := getBundlesFromCluster(cluster)
+	dataCentres, err := getDataCentresFromCluster(cluster)
 	if err != nil {
 		return err
 	}
@@ -709,6 +718,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	}
 	d.Set("node_size", nodeSize)
 	d.Set("sla_tier", strings.ToUpper(cluster.SlaTier))
+	// TODO: cluster.DataCentres[0].CdcNetwork doesn't make sense to me.
 	d.Set("cluster_network", cluster.DataCentres[0].CdcNetwork)
 	d.Set("private_network_cluster", cluster.DataCentres[0].PrivateIPOnly)
 	d.Set("pci_compliant_cluster", cluster.PciCompliance == "ENABLED")
@@ -754,18 +764,32 @@ func getBundlesFromCluster(cluster *Cluster) ([]map[string]interface{}, error) {
 	bundles = append(bundles, baseBundle)
 	if cluster.AddonBundles != nil {
 		for _, addonBundle := range cluster.AddonBundles {
-			bundles = append(bundles, addonBundle)
+			if addonBundle != nil {
+				bundles = append(bundles, addonBundle)
+			}
 		}
 	}
 
 	return bundles, nil
 }
 
-func getDataCentresFromCluster(cluster *Cluster) ([]DataCentre, error) {
-	dataCentres := make([]DataCentre, 0)
+func getDataCentresFromCluster(cluster *Cluster) ([]map[string]string, error) {
+	dataCentres := make([]map[string]string, 0)
 	if cluster.DataCentres != nil {
 		for _, dataCentre := range cluster.DataCentres {
-			dataCentres = append(dataCentres, dataCentre)
+			// dataCentreMap := make(map[string]interface{})
+			//err := mapstructure.Decode(dataCentre, &dataCentreMap)
+			//if err != nil {
+			//	return nil, fmt.Errorf("[Error] Error decoding data centre: %s", err)
+			//}
+			//// TODO: string conversions to successfully set into terraform states.
+			//dataCentreMap["PasswordAuthentication"] = strconv.FormatBool(dataCentreMap["PasswordAuthentication"].(bool))
+
+			dataCentreMap := map[string]string{
+				"data_centre_region": dataCentre.Name,
+				"network":            dataCentre.CdcNetwork,
+			}
+			dataCentres = append(dataCentres, dataCentreMap)
 		}
 	}
 

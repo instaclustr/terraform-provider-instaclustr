@@ -107,6 +107,7 @@ type Cluster struct {
 	Provider                   []ClusterProvider        `json:"clusterProvider"`
 }
 
+// TODO: fix CdcNetwork and Network issues.
 type DataCentre struct {
 	ID                            string   `json:"id,omitempty"`
 	Name                          string   `json:"name,omitempty" mapstructure:"name"`
@@ -121,7 +122,7 @@ type DataCentre struct {
 	PrivateIPOnly                 bool     `json:"privateIPOnly,omitempty"`
 	Nodes                         []Node   `json:"nodes,omitempty"`
 	NodeCount                     int      `json:"nodeCount,omitempty"`
-	EncryptionKeyId               []string `json:"encryptionKeyId,omitempty"`
+	EncryptionKeyId               string   `json:"encryptionKeyId,omitempty"`
 	ResizeTargetNodeSize          string   `json:"resizeTargetNodeSize,omitempty"`
 	DataCentreRegion              string   `json:"dataCentre,omitempty" mapstructure:"data_centre_region"`
 }
