@@ -91,7 +91,6 @@ func resourceCluster() *schema.Resource {
 			"public_contact_point": {
 				Type:     schema.TypeList,
 				Computed: true,
-				Optional: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
@@ -100,7 +99,6 @@ func resourceCluster() *schema.Resource {
 			"private_contact_point": {
 				Type:     schema.TypeList,
 				Computed: true,
-				Optional: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
@@ -697,6 +695,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	azList := make([]string, 0)
 	privateContactPointList := make([]string, 0)
 	publicContactPointList := make([]string, 0)
+
 
 	for _, dataCentre := range cluster.DataCentres {
 		for _, node := range dataCentre.Nodes {
