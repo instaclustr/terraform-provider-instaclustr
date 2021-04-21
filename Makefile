@@ -90,3 +90,4 @@ install:
 		mkdir -p $(HOME)/.terraform.d/plugins/; \
 	fi
 	cp ./bin/$(BIN_NAME)_$(VERSION) $(HOME)/.terraform.d/plugins/
+
