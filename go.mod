@@ -11,7 +11,7 @@ require (
 	github.com/hashicorp/go-hclog v0.15.0 // indirect
 	github.com/hashicorp/go-plugin v1.4.0 // indirect
 	github.com/hashicorp/go-version v1.2.1 // indirect
-	github.com/hashicorp/terraform v0.12.9
+	github.com/hashicorp/terraform v0.13.6
 	github.com/hashicorp/yamux v0.0.0-20181012175058-2f1d1f20f75d // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/mitchellh/cli v1.1.1 // indirect
