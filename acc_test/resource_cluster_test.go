@@ -1,7 +1,6 @@
 package test
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
@@ -11,6 +10,7 @@ import (
 	"regexp"
 	"strings"
 	"testing"
+	"encoding/json"
 )
 
 func TestAccCluster(t *testing.T) {
