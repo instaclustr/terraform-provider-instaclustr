@@ -120,6 +120,7 @@ type DataCentre struct {
 	NodeCount                     int      `json:"nodeCount"`
 	EncryptionKeyId               []string `json:"encryptionKeyId"`
 	ResizeTargetNodeSize          string   `json:"resizeTargetNodeSize"`
+	CdcStatus                     string   `json:"cdcStatus"`
 }
 
 type Node struct {
