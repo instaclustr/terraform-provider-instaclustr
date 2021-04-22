@@ -91,4 +91,3 @@ install:
 	fi
 	cp ./bin/$(BIN_NAME)_$(VERSION) $(HOME)/.terraform.d/plugins/
 
-
