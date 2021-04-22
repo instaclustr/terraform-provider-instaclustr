@@ -89,7 +89,7 @@ func resourceCluster() *schema.Resource {
 			},
 
 			"public_contact_point": {
-				Type:     schema.TypeList,
+				Type:     schema.TypeString,
 				Computed: true,
 				Optional: true,
 				Elem: &schema.Schema{
@@ -98,7 +98,7 @@ func resourceCluster() *schema.Resource {
 			},
 
 			"private_contact_point": {
-				Type:     schema.TypeList,
+				Type:     schema.TypeString,
 				Computed: true,
 				Optional: true,
 				Elem: &schema.Schema{
