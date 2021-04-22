@@ -144,6 +144,7 @@ func TestAccClusterResize(t *testing.T) {
 					testCheckResourceValid(resourceName),
 					testCheckResourceCreated(resourceName, hostname, username, apiKey),
 					checkClusterRunning(resourceName, hostname, username, apiKey),
+					testCheckContactIPCorrect(resourceName, hostname, username, apiKey, 3),
 				),
 			},
 			{
@@ -350,7 +351,6 @@ func testCheckContactIPCorrect(resourceName, hostname, username, apiKey string, 
 		if err != nil {
 			return fmt.Errorf("[Error] Failed to read cluster %s: %s", id, err)
 		}
-		//contactPoints := make([]string, 0)
 		var privateContactPoints []string
 		var publicContactPoints []string
 
