@@ -673,27 +673,14 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		}
 	}
 
-	//loop over each data centre to determine nodes and racks for rack allocation
 	nodeCount := 0
 	rackList := make([]string, 0)
-	//for _, dataCentre := range cluster.DataCentres {
-	//	for _, node := range dataCentre.Nodes {
-	//		if !strings.HasPrefix(node.Size, "zk-") {
-	//			nodeCount += 1
-	//		}
-	//		rackList = appendIfMissing(rackList, node.Rack)
-	//	}
-	//}
-	//rackCount := len(rackList)
-	//nodesPerRack := nodeCount / rackCount
-
 	for _, node := range cluster.DataCentres[0].Nodes {
 		if !strings.HasPrefix(node.Size, "zk-") {
 			nodeCount += 1
 		}
 		rackList = appendIfMissing(rackList, node.Rack)
 	}
-
 	rackCount := len(rackList)
 	nodesPerRack := nodeCount / rackCount
 
@@ -707,12 +694,9 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	if len(cluster.DataCentres[0].ResizeTargetNodeSize) > 0 {
 		nodeSize = cluster.DataCentres[0].ResizeTargetNodeSize
 	}
-	olala, _ := getDataCentres(d)
-	println(olala)
 
 	d.Set("data_centre", cluster.DataCentre)
-	// dataCentres, err := getDataCentresFromCluster(cluster)
-	dataCentres, err := getDataCentresFromClusterWithOlala(cluster, olala)
+	dataCentres, err := getDataCentresFromCluster(cluster, d)
 	if err != nil {
 		return err
 	}
@@ -777,36 +761,18 @@ func getBundlesFromCluster(cluster *Cluster) ([]map[string]interface{}, error) {
 	return bundles, nil
 }
 
-func getDataCentresFromCluster(cluster *Cluster) ([]map[string]string, error) {
+func getDataCentresFromCluster(cluster *Cluster, d *schema.ResourceData) ([]map[string]string, error) {
 	dataCentres := make([]map[string]string, 0)
-	if cluster.DataCentres != nil {
-		for _, dataCentre := range cluster.DataCentres {
-			// dataCentreMap := make(map[string]interface{})
-			//err := mapstructure.Decode(dataCentre, &dataCentreMap)
-			//if err != nil {
-			//	return nil, fmt.Errorf("[Error] Error decoding data centre: %s", err)
-			//}
-			//// TODO: string conversions to successfully set into terraform states.
-			//dataCentreMap["PasswordAuthentication"] = strconv.FormatBool(dataCentreMap["PasswordAuthentication"].(bool))
-
-			dataCentreMap := map[string]string{
-				"data_centre_region": dataCentre.Name,
-				"network":            dataCentre.CdcNetwork,
-			}
-			dataCentres = append(dataCentres, dataCentreMap)
-		}
+	stateDataCentres, err := getDataCentres(d)
+	if err != nil {
+		return nil, fmt.Errorf("[ERROR] Failed to get data centres from schema.ResourceData: %s", err)
 	}
 
-	return dataCentres, nil
-}
-
-func getDataCentresFromClusterWithOlala(cluster *Cluster, olala []DataCentre) ([]map[string]string, error) {
-	dataCentres := make([]map[string]string, 0)
-
-	for _, olalaDataCentre := range olala {
+	// make sure the order of data centres is correct.
+	for _, stateDataCentre := range stateDataCentres {
 		if cluster.DataCentres != nil {
 			for _, dataCentre := range cluster.DataCentres {
-				if dataCentre.CdcNetwork == olalaDataCentre.Network {
+				if dataCentre.CdcNetwork == stateDataCentre.Network {
 					dataCentreMap := map[string]string{
 						"data_centre_region": dataCentre.Name,
 						"network":            dataCentre.CdcNetwork,

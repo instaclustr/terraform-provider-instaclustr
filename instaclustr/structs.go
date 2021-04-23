@@ -107,7 +107,6 @@ type Cluster struct {
 	Provider                   []ClusterProvider        `json:"clusterProvider"`
 }
 
-// TODO: fix CdcNetwork and Network issues.
 type DataCentre struct {
 	ID                            string   `json:"id,omitempty"`
 	Name                          string   `json:"name,omitempty" mapstructure:"name"`
