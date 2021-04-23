@@ -25,21 +25,6 @@ resource "instaclustr_cluster" "valid" {
       data_centre_region = "US_WEST_2"
       network = "10.0.0.0/18"
     },
-    {
-      name = "backup1"
-      data_centre_region = "US_WEST_2"
-      network = "10.1.0.0/18"
-    },
-    {
-      name = "backup2"
-      data_centre_region = "US_WEST_2"
-      network = "10.2.0.0/18"
-    },
-    {
-      name = "backup3"
-      data_centre_region = "US_WEST_2"
-      network = "10.3.0.0/18"
-    }
   ]
 
   bundle {
@@ -48,6 +33,9 @@ resource "instaclustr_cluster" "valid" {
     options = {
       auth_n_authz = true
       continuous_backup_enabled = true
+      client_encryption = false
+      lucene_enabled = false
+      use_private_broadcast_rpc_address = false
     }
   }
 }

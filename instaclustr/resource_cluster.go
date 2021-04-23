@@ -707,9 +707,12 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	if len(cluster.DataCentres[0].ResizeTargetNodeSize) > 0 {
 		nodeSize = cluster.DataCentres[0].ResizeTargetNodeSize
 	}
+	olala, _ := getDataCentres(d)
+	println(olala)
 
 	d.Set("data_centre", cluster.DataCentre)
-	dataCentres, err := getDataCentresFromCluster(cluster)
+	// dataCentres, err := getDataCentresFromCluster(cluster)
+	dataCentres, err := getDataCentresFromClusterWithOlala(cluster, olala)
 	if err != nil {
 		return err
 	}
@@ -718,8 +721,9 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	}
 	d.Set("node_size", nodeSize)
 	d.Set("sla_tier", strings.ToUpper(cluster.SlaTier))
-	// TODO: cluster.DataCentres[0].CdcNetwork doesn't make sense to me.
-	d.Set("cluster_network", cluster.DataCentres[0].CdcNetwork)
+	if cluster.DataCentre != "" {
+		d.Set("cluster_network", cluster.DataCentres[0].CdcNetwork)
+	}
 	d.Set("private_network_cluster", cluster.DataCentres[0].PrivateIPOnly)
 	d.Set("pci_compliant_cluster", cluster.PciCompliance == "ENABLED")
 
@@ -793,6 +797,25 @@ func getDataCentresFromCluster(cluster *Cluster) ([]map[string]string, error) {
 		}
 	}
 
+	return dataCentres, nil
+}
+
+func getDataCentresFromClusterWithOlala(cluster *Cluster, olala []DataCentre) ([]map[string]string, error) {
+	dataCentres := make([]map[string]string, 0)
+
+	for _, olalaDataCentre := range olala {
+		if cluster.DataCentres != nil {
+			for _, dataCentre := range cluster.DataCentres {
+				if dataCentre.CdcNetwork == olalaDataCentre.Network {
+					dataCentreMap := map[string]string{
+						"data_centre_region": dataCentre.Name,
+						"network":            dataCentre.CdcNetwork,
+					}
+					dataCentres = append(dataCentres, dataCentreMap)
+				}
+			}
+		}
+	}
 	return dataCentres, nil
 }
 
