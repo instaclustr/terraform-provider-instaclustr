@@ -10,7 +10,6 @@ import (
 	"regexp"
 	"strings"
 	"testing"
-	"encoding/json"
 )
 
 func TestAccCluster(t *testing.T) {
@@ -144,7 +143,7 @@ func TestAccClusterResize(t *testing.T) {
 					testCheckResourceValid(resourceName),
 					testCheckResourceCreated(resourceName, hostname, username, apiKey),
 					checkClusterRunning(resourceName, hostname, username, apiKey),
-					testCheckContactIPCorrect(resourceName, hostname, username, apiKey, 4),
+					testCheckContactIPCorrect(resourceName, hostname, username, apiKey, 3),
 				),
 			},
 			{
@@ -298,39 +297,23 @@ func testCheckContactIPCorrect(resourceName, hostname, username, apiKey string, 
 		if err != nil {
 			return fmt.Errorf("[Error] Failed to read cluster %s: %s", id, err)
 		}
-		var privateContactPoints []string
-		var publicContactPoints []string
 
-		privateContactPointsRaw := resourceState.Primary.Attributes["private_contact_point"]
-		publicContactPointsRaw := resourceState.Primary.Attributes["public_contact_point"]
 
-		json.Unmarshal([]byte(privateContactPointsRaw), &privateContactPoints)
-		json.Unmarshal([]byte(publicContactPointsRaw), &publicContactPoints)
-
-		nodePrivateIPs := make([]string, 0)
-		nodePublicIPs := make([]string, 0)
+		privateContactPoints := make([]string, 0)
+		publicContactPoints := make([]string, 0)
 		for _, dataCentre := range cluster.DataCentres {
 			for _, node := range dataCentre.Nodes {
-				nodePrivateIPs = append(nodePrivateIPs, node.PrivateAddress)
-				nodePublicIPs = append(nodePublicIPs, node.PublicAddress)
+				privateContactPoints = append(privateContactPoints, node.PrivateAddress)
+				publicContactPoints = append(publicContactPoints, node.PublicAddress)
 			}
 		}
 
-		for i, IP := range privateContactPoints {
-			if !stringInSlice(IP, nodePrivateIPs){
-				fmt.Errorf("[Error] Unable to find IP %s in node IPs", IP)
-			}
-			if !stringInSlice(publicContactPoints[i], nodePrivateIPs){
-				fmt.Errorf("[Error] Unable to find IP %s in node IPs", IP)
-			}
+		if len(privateContactPoints) != expectedContactPointLength {
+			return fmt.Errorf("[Error] Expected %v private contact points but found %v", expectedContactPointLength, len(privateContactPoints))
 		}
 
-		if len(privateContactPoints) == expectedContactPointLength {
-			fmt.Errorf("[Error] Expected %v private contact points but found %v", expectedContactPointLength, len(privateContactPoints))
-		}
-
-		if len(publicContactPoints) == expectedContactPointLength {
-			fmt.Errorf("[Error] Expected %v public contact points but found %v", expectedContactPointLength, len(publicContactPoints))
+		if len(publicContactPoints) != expectedContactPointLength {
+			return fmt.Errorf("[Error] Expected %v public contact points but found %v", expectedContactPointLength, len(publicContactPoints))
 		}
 		return nil
 	}

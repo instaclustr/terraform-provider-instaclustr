@@ -16,7 +16,7 @@ resource "instaclustr_cluster" "resizable_pci_cluster" {
         name = "AWS_VPC"
     }
     rack_allocation = {
-        number_of_racks = 4
+        number_of_racks = 2
         nodes_per_rack = 2
     }
     bundle {
