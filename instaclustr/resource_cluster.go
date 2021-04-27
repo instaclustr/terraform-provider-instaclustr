@@ -771,26 +771,14 @@ func getBundlesFromCluster(cluster *Cluster) ([]map[string]interface{}, error) {
 	return bundles, nil
 }
 
-func getDataCentresFromCluster(cluster *Cluster, d *schema.ResourceData) ([]map[string]string, error) {
-	dataCentres := make([]map[string]string, 0)
-	stateDataCentres, err := getDataCentres(d)
-	if err != nil {
-		return nil, fmt.Errorf("[ERROR] Failed to get data centres from schema.ResourceData: %s", err)
-	}
-
-	// make sure the order of data centres is correct.
-	for _, stateDataCentre := range stateDataCentres {
-		if cluster.DataCentres != nil {
-			for _, dataCentre := range cluster.DataCentres {
-				if dataCentre.CdcNetwork == stateDataCentre.Network {
-					dataCentreMap := map[string]string{
-						"data_centre_region": dataCentre.Name,
-						"network":            dataCentre.CdcNetwork,
-					}
-					dataCentres = append(dataCentres, dataCentreMap)
-				}
-			}
-		}
+func getDataCentresFromCluster(cluster *Cluster, d *schema.ResourceData) ([]map[string]interface{}, error) {
+	dataCentres := make([]map[string]interface{}, 0)
+	for _, dataCentre := range cluster.DataCentres {
+		dataCentreMap := make(map[string]interface{})
+		dataCentreMap["data_centre_region"] = dataCentre.Name
+		dataCentreMap["network"] = dataCentre.CdcNetwork
+		convertedDataCentreMap := dereferencePointerInStruct(dataCentreMap)
+		dataCentres = append(dataCentres, convertedDataCentreMap)
 	}
 	return dataCentres, nil
 }
