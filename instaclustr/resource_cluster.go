@@ -468,7 +468,7 @@ func waitForClusterStateAndDoUpdate(client *APIClient,
 	id string,
 	meta interface{}) error {
 	return resource.Retry(d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
-
+		fmt.Printf("waiting for cluster to reach %s\n", waitForClusterState)
 		//reading cluster details
 		cluster, err := client.ReadCluster(id)
 		resourceClusterRead(d, meta)
@@ -693,7 +693,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("cluster_network", cluster.DataCentres[0].CdcNetwork)
 	d.Set("private_network_cluster", cluster.DataCentres[0].PrivateIPOnly)
 	d.Set("pci_compliant_cluster", cluster.PciCompliance == "ENABLED")
-	
+
 	publicContactPointList, privateContactPointList  := getContactPointIPs(cluster)
 
 	if len(publicContactPointList) > 0 {
