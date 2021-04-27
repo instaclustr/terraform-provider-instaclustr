@@ -78,7 +78,6 @@ func resourceCluster() *schema.Resource {
 			"cluster_network": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "10.224.0.0/12",
 				ForceNew: true,
 			},
 
@@ -707,7 +706,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 	if err := d.Set("data_centres", dataCentres); err != nil {
-		return fmt.Errorf("[Error] Error reading cluster, data centres could not be derived: %s", err)
+		return fmt.Errorf("[Error] Error setting data centres into terraform state, data centres could not be derived: %s", err)
 	}
 	d.Set("node_size", nodeSize)
 	d.Set("sla_tier", strings.ToUpper(cluster.SlaTier))

@@ -17,7 +17,7 @@ func TestAccCluster(t *testing.T) {
 	testAccProviders := map[string]terraform.ResourceProvider{
 		"instaclustr": testAccProvider,
 	}
-	validConfig, _ := ioutil.ReadFile("data/valid.tf")
+	validConfig, _ := ioutil.ReadFile("data/valid_multi_dc_provisioning.tf")
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
