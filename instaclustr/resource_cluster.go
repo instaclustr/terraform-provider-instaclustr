@@ -696,7 +696,12 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		nodeSize = cluster.DataCentres[0].ResizeTargetNodeSize
 	}
 
-	d.Set("data_centre", cluster.DataCentre)
+	if cluster.DataCentre != "" {
+		d.Set("data_centre", cluster.DataCentre)
+	} else if len(cluster.DataCentres) == 1 {
+		d.Set("data_centre", cluster.DataCentres[0].Name)
+	}
+
 	dataCentres, err := getDataCentresFromCluster(cluster, d)
 	if err != nil {
 		return err
@@ -706,7 +711,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	}
 	d.Set("node_size", nodeSize)
 	d.Set("sla_tier", strings.ToUpper(cluster.SlaTier))
-	if cluster.DataCentre != "" {
+	if len(cluster.DataCentres) == 1 {
 		d.Set("cluster_network", cluster.DataCentres[0].CdcNetwork)
 	}
 	d.Set("private_network_cluster", cluster.DataCentres[0].PrivateIPOnly)
