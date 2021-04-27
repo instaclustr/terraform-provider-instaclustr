@@ -184,6 +184,8 @@ func TestKafkaUserResource_importBasic(t *testing.T) {
 					"cluster_provider",
 					"pci_compliant_cluster",
 					"rack_allocation",
+					// wait_for_state is a creation option to ensure IP contact points are ready for other parts of the infrastructure. It cannot be imported.
+					"wait_for_state",
 				},
 			},
 		},

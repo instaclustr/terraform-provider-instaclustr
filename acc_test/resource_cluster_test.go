@@ -153,9 +153,6 @@ func TestAccClusterResize(t *testing.T) {
 					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_cluster", "cluster_name", "tf-resizable-test"),
 					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_cluster", "node_size", "resizeable-small(r5-xl)-v2"),
 					testCheckClusterResize("resizable_cluster", hostname, username, apiKey, "resizeable-small(r5-xl)-v2"),
-					//resource.TestCheckResourceAttrSet("instaclustr_cluster."+resourceName, "public_contact_point"),
-					//resource.TestCheckResourceAttrSet("instaclustr_cluster."+resourceName, "private_contact_point"),
-
 				),
 			},
 			{

@@ -693,22 +693,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("cluster_network", cluster.DataCentres[0].CdcNetwork)
 	d.Set("private_network_cluster", cluster.DataCentres[0].PrivateIPOnly)
 	d.Set("pci_compliant_cluster", cluster.PciCompliance == "ENABLED")
-
-	//azList := make([]string, 0)
-	//privateContactPointList := make([]string, 0)
-	//publicContactPointList := make([]string, 0)
-	//
-	//for _, dataCentre := range cluster.DataCentres {
-	//	for _, node := range dataCentre.Nodes {
-	//		if !stringInSlice(node.Rack, azList) {
-	//			if !strings.HasPrefix(node.Size, "zk-") {
-	//				azList = appendIfMissing(azList, node.Rack)
-	//				privateContactPointList = appendIfMissing(privateContactPointList, node.PrivateAddress)
-	//				publicContactPointList = appendIfMissing(publicContactPointList, node.PublicAddress)
-	//			}
-	//		}
-	//	}
-	//}
+	
 	publicContactPointList, privateContactPointList  := getContactPointIPs(cluster)
 
 	if len(publicContactPointList) > 0 {
