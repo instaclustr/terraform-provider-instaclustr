@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"os"
 	"regexp"
+	"strconv"
 	"strings"
 	"testing"
 )
@@ -152,6 +153,9 @@ func TestAccClusterResize(t *testing.T) {
 					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_cluster", "cluster_name", "tf-resizable-test"),
 					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_cluster", "node_size", "resizeable-small(r5-xl)-v2"),
 					testCheckClusterResize("resizable_cluster", hostname, username, apiKey, "resizeable-small(r5-xl)-v2"),
+					//resource.TestCheckResourceAttrSet("instaclustr_cluster."+resourceName, "public_contact_point"),
+					//resource.TestCheckResourceAttrSet("instaclustr_cluster."+resourceName, "private_contact_point"),
+
 				),
 			},
 			{
@@ -290,30 +294,16 @@ func testCheckResourceCreated(resourceName, hostname, username, apiKey string) r
 func testCheckContactIPCorrect(resourceName, hostname, username, apiKey string, expectedContactPointLength int) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		resourceState := s.Modules[0].Resources["instaclustr_cluster."+resourceName]
-		id := resourceState.Primary.Attributes["cluster_id"]
-		client := new(instaclustr.APIClient)
-		client.InitClient(hostname, username, apiKey)
-		cluster, err := client.ReadCluster(id)
-		if err != nil {
-			return fmt.Errorf("[Error] Failed to read cluster %s: %s", id, err)
+
+		privateContactPoints, _ := strconv.Atoi(resourceState.Primary.Attributes["private_contact_point.#"])
+		publicContactPoints, _ := strconv.Atoi(resourceState.Primary.Attributes["public_contact_point.#"])
+
+		if privateContactPoints != expectedContactPointLength {
+			return fmt.Errorf("[Error] Expected %v private contact points but found %v", expectedContactPointLength, privateContactPoints)
 		}
 
-
-		privateContactPoints := make([]string, 0)
-		publicContactPoints := make([]string, 0)
-		for _, dataCentre := range cluster.DataCentres {
-			for _, node := range dataCentre.Nodes {
-				privateContactPoints = append(privateContactPoints, node.PrivateAddress)
-				publicContactPoints = append(publicContactPoints, node.PublicAddress)
-			}
-		}
-
-		if len(privateContactPoints) != expectedContactPointLength {
-			return fmt.Errorf("[Error] Expected %v private contact points but found %v", expectedContactPointLength, len(privateContactPoints))
-		}
-
-		if len(publicContactPoints) != expectedContactPointLength {
-			return fmt.Errorf("[Error] Expected %v public contact points but found %v", expectedContactPointLength, len(publicContactPoints))
+		if publicContactPoints != expectedContactPointLength {
+			return fmt.Errorf("[Error] Expected %v public contact points but found %v", expectedContactPointLength, publicContactPoints)
 		}
 		return nil
 	}

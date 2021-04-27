@@ -89,7 +89,7 @@ func resourceCluster() *schema.Resource {
 			},
 
 			"public_contact_point": {
-				Type:     schema.TypeString,
+				Type:     schema.TypeSet,
 				Computed: true,
 				Optional: true,
 				Elem: &schema.Schema{
@@ -98,7 +98,7 @@ func resourceCluster() *schema.Resource {
 			},
 
 			"private_contact_point": {
-				Type:     schema.TypeString,
+				Type:     schema.TypeSet,
 				Computed: true,
 				Optional: true,
 				Elem: &schema.Schema{
@@ -694,21 +694,23 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("private_network_cluster", cluster.DataCentres[0].PrivateIPOnly)
 	d.Set("pci_compliant_cluster", cluster.PciCompliance == "ENABLED")
 
-	azList := make([]string, 0)
-	privateContactPointList := make([]string, 0)
-	publicContactPointList := make([]string, 0)
+	//azList := make([]string, 0)
+	//privateContactPointList := make([]string, 0)
+	//publicContactPointList := make([]string, 0)
+	//
+	//for _, dataCentre := range cluster.DataCentres {
+	//	for _, node := range dataCentre.Nodes {
+	//		if !stringInSlice(node.Rack, azList) {
+	//			if !strings.HasPrefix(node.Size, "zk-") {
+	//				azList = appendIfMissing(azList, node.Rack)
+	//				privateContactPointList = appendIfMissing(privateContactPointList, node.PrivateAddress)
+	//				publicContactPointList = appendIfMissing(publicContactPointList, node.PublicAddress)
+	//			}
+	//		}
+	//	}
+	//}
+	publicContactPointList, privateContactPointList  := getContactPointIPs(cluster)
 
-	for _, dataCentre := range cluster.DataCentres {
-		for _, node := range dataCentre.Nodes {
-			if !stringInSlice(node.Rack, azList) {
-				if !strings.HasPrefix(node.Size, "zk-") {
-					azList = appendIfMissing(azList, node.Rack)
-					privateContactPointList = appendIfMissing(privateContactPointList, node.PrivateAddress)
-					publicContactPointList = appendIfMissing(publicContactPointList, node.PublicAddress)
-				}
-			}
-		}
-	}
 	if len(publicContactPointList) > 0 {
 		err = d.Set("public_contact_point", publicContactPointList)
 	}
