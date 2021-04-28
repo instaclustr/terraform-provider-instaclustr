@@ -49,6 +49,7 @@ func TestKafkaUserResource(t *testing.T) {
 				Config: createKafkaUserConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckResourceValidKafka("instaclustr_kafka_user.kafka_user_charlie"),
+					checkClusterRunning("kafka_cluster", hostname, username, apiKey),
 					checkKafkaUserCreated(hostname, username, apiKey),
 				),
 			},
