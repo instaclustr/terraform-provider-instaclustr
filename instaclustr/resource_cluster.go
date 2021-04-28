@@ -694,14 +694,32 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("private_network_cluster", cluster.DataCentres[0].PrivateIPOnly)
 	d.Set("pci_compliant_cluster", cluster.PciCompliance == "ENABLED")
 
-	publicContactPointList, privateContactPointList  := getContactPointIPs(cluster)
+	azList := make([]string, 0)
+	publicContactPointList:= make([]string, 0)
+	privateContactPointList:= make([]string, 0)
 
-	if len(publicContactPointList) > 0 {
-		err = d.Set("public_contact_point", publicContactPointList)
+	for _, dataCentre := range cluster.DataCentres {
+		for _, node := range dataCentre.Nodes {
+			if !stringInSlice(node.Rack, azList) {
+				if !strings.HasPrefix(node.Size, "zk-") {
+					azList = appendIfMissing(azList, node.Rack)
+					privateContactPointList = appendIfMissing(privateContactPointList, node.PrivateAddress)
+					publicContactPointList = appendIfMissing(publicContactPointList, node.PublicAddress)
+				}
+			}
+		}
+	}
+
+	if !cluster.DataCentres[0].PrivateIPOnly && len(publicContactPointList) > 0 {
+			err = d.Set("public_contact_point", publicContactPointList)
+	} else {
+		err = d.Set("public_contact_point", nil)
 	}
 
 	if len(privateContactPointList) > 0 {
 		err = d.Set("private_contact_point", privateContactPointList)
+	} else {
+		err = d.Set("public_contact_point", nil)
 	}
 
 	toCheck := [2]string{"cluster_provider", "rack_allocation"}

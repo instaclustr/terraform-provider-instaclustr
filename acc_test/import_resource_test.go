@@ -170,7 +170,7 @@ func TestKafkaUserResource_importBasic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckResourceValidKafka("instaclustr_cluster.kafka_cluster"),
 					checkClusterRunning("kafka_cluster", hostname, username, apiKey),
-					testCheckContactIPCorrect("kafka_cluster", hostname, username, apiKey, 3),
+					testCheckContactIPCorrect("kafka_cluster", hostname, username, apiKey, 3, 3),
 				),
 			},
 			{
