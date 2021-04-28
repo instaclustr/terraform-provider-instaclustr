@@ -701,7 +701,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		d.Set("data_centre", cluster.DataCentres[0].Name)
 	}
 
-	dataCentres, err := getDataCentresFromCluster(cluster, d)
+	dataCentres, err := getDataCentresFromCluster(cluster)
 	if err != nil {
 		return err
 	}
@@ -771,7 +771,7 @@ func getBundlesFromCluster(cluster *Cluster) ([]map[string]interface{}, error) {
 	return bundles, nil
 }
 
-func getDataCentresFromCluster(cluster *Cluster, d *schema.ResourceData) ([]map[string]interface{}, error) {
+func getDataCentresFromCluster(cluster *Cluster) ([]map[string]interface{}, error) {
 	dataCentres := make([]map[string]interface{}, 0)
 	for _, dataCentre := range cluster.DataCentres {
 		dataCentreMap := make(map[string]interface{})
