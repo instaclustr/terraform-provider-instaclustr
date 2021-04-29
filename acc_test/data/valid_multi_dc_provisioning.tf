@@ -16,16 +16,17 @@ resource "instaclustr_cluster" "valid" {
     nodes_per_rack = 1
   }
 
-  data_centres = [
-    {
-      data_centre_region = "US_WEST_1"
-      network = "192.168.0.0/18"
-    },
-    {
-      data_centre_region = "US_WEST_2"
-      network = "10.0.0.0/18"
-    },
-  ]
+
+  data_centres {
+    data_centre_region = "US_WEST_1"
+    network = "10.1.0.0/18"
+  }
+
+
+  data_centres {
+        data_centre_region = "US_WEST_2"
+        network = "192.168.0.0/18"
+  }
 
   bundle {
     bundle = "APACHE_CASSANDRA"

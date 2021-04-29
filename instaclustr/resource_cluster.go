@@ -61,10 +61,25 @@ func resourceCluster() *schema.Resource {
 			},
 
 			"data_centres": {
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Optional: true,
-				Elem: &schema.Schema{
-					Type: schema.TypeMap,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"name": {
+							Type:     schema.TypeString,
+							Optional: true,
+						},
+
+						"data_centre_region": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+
+						"network": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+					},
 				},
 			},
 
@@ -104,7 +119,6 @@ func resourceCluster() *schema.Resource {
 			"private_contact_point": {
 				Type:     schema.TypeString,
 				Computed: true,
-				Optional: true,
 			},
 
 			"cluster_provider": {
@@ -858,8 +872,9 @@ func getBundles(d *schema.ResourceData) ([]Bundle, error) {
 }
 
 func getDataCentres(d *schema.ResourceData) ([]DataCentre, error) {
+	dataCentres_ := d.Get("data_centres").(*schema.Set)
 	dataCentres := make([]DataCentre, 0)
-	for _, inDataCentre := range d.Get("data_centres").([]interface{}) {
+	for _, inDataCentre := range dataCentres_.List() {
 		var dataCentre DataCentre
 		err := mapstructure.WeakDecode(inDataCentre.(map[string]interface{}), &dataCentre)
 		if err != nil {
