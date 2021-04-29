@@ -80,7 +80,7 @@ func resourceVpcPeeringCreate(d *schema.ResourceData, meta interface{}) error {
 			return fmt.Errorf("[Error] Error retrieving cluster info: %s", err)
 		}
 		latestStatus = cluster.ClusterStatus
-		if cluster.ClusterStatus == "PROVISIONED" || cluster.ClusterStatus == "RUNNING" {
+		if cluster.DataCentres[0].CdcStatus == "PROVISIONED" || cluster.ClusterStatus == "RUNNING" {
 			cdcID = cluster.DataCentres[0].ID
 			break
 		}
