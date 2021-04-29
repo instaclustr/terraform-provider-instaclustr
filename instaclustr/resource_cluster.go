@@ -709,6 +709,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		nodeSize = cluster.DataCentres[0].ResizeTargetNodeSize
 	}
 
+	// set data centre
 	if cluster.DataCentre != "" {
 		d.Set("data_centre", cluster.DataCentre)
 	} else if len(cluster.DataCentres) == 1 {
@@ -719,6 +720,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	if err != nil {
 		return err
 	}
+	// set data centres
 	if len(dataCentres) > 1 {
 		if err := d.Set("data_centres", dataCentres); err != nil {
 			return fmt.Errorf("[Error] Error setting data centres into terraform state, data centres could not be derived: %s", err)
