@@ -705,9 +705,12 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	if err != nil {
 		return err
 	}
-	if err := d.Set("data_centres", dataCentres); err != nil {
-		return fmt.Errorf("[Error] Error setting data centres into terraform state, data centres could not be derived: %s", err)
+	if len(dataCentres) > 1 {
+		if err := d.Set("data_centres", dataCentres); err != nil {
+			return fmt.Errorf("[Error] Error setting data centres into terraform state, data centres could not be derived: %s", err)
+		}
 	}
+
 	d.Set("node_size", nodeSize)
 	d.Set("sla_tier", strings.ToUpper(cluster.SlaTier))
 	if len(cluster.DataCentres) == 1 {
@@ -780,6 +783,9 @@ func getDataCentresFromCluster(cluster *Cluster) ([]map[string]interface{}, erro
 		convertedDataCentreMap := dereferencePointerInStruct(dataCentreMap)
 		dataCentres = append(dataCentres, convertedDataCentreMap)
 	}
+	sort.Slice(dataCentres, func(i, j int) bool {
+		return dataCentres[i]["data_centre_region"].(string) < dataCentres[j]["data_centre_region"].(string)
+	})
 	return dataCentres, nil
 }
 

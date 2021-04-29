@@ -17,6 +17,39 @@ func TestAccCluster(t *testing.T) {
 	testAccProviders := map[string]terraform.ResourceProvider{
 		"instaclustr": testAccProvider,
 	}
+	validConfig, _ := ioutil.ReadFile("data/valid.tf")
+	username := os.Getenv("IC_USERNAME")
+	apiKey := os.Getenv("IC_API_KEY")
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
+	updatedConfig := strings.Replace(oriConfig, "testcluster", "newcluster", 1)
+	resource.Test(t, resource.TestCase{
+		Providers:    testAccProviders,
+		CheckDestroy: testCheckResourceDeleted("valid", hostname, username, apiKey),
+		Steps: []resource.TestStep{
+			{
+				Config: oriConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid("valid"),
+					testCheckResourceCreated("valid", hostname, username, apiKey),
+				),
+			},
+			{
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid("valid"),
+					testCheckResourceCreated("valid", hostname, username, apiKey),
+				),
+			},
+		},
+	})
+}
+
+func TestAccMultiDcCluster(t *testing.T) {
+	testAccProvider := instaclustr.Provider()
+	testAccProviders := map[string]terraform.ResourceProvider{
+		"instaclustr": testAccProvider,
+	}
 	validConfig, _ := ioutil.ReadFile("data/valid_multi_dc_provisioning.tf")
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
