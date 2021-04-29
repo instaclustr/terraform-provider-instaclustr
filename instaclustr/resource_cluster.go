@@ -58,6 +58,7 @@ func resourceCluster() *schema.Resource {
 			"data_centre": {
 				Type:     schema.TypeString,
 				Optional: true,
+				ForceNew: true,
 			},
 
 			"data_centres": {
@@ -111,14 +112,21 @@ func resourceCluster() *schema.Resource {
 			},
 
 			"public_contact_point": {
-				Type:     schema.TypeString,
+				Type:     schema.TypeSet,
 				Computed: true,
 				Optional: true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
 			},
 
 			"private_contact_point": {
-				Type:     schema.TypeString,
+				Type:     schema.TypeSet,
 				Computed: true,
+				Optional: true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
 			},
 
 			"cluster_provider": {
@@ -483,7 +491,7 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		return nil
 	}
 
-	return waitForClusterStateAndDoUpdate(client, waitForClusterState, bundleConfig, kafkaRestProxyUserPassword, kafkaSchemaRegistryUserPassword, d, id)
+	return waitForClusterStateAndDoUpdate(client, waitForClusterState, bundleConfig, kafkaRestProxyUserPassword, kafkaSchemaRegistryUserPassword, d, id, meta)
 }
 
 func waitForClusterStateAndDoUpdate(client *APIClient,
@@ -492,11 +500,13 @@ func waitForClusterStateAndDoUpdate(client *APIClient,
 	kafkaRestProxyUserPassword string,
 	kafkaSchemaRegistryUserPassword string,
 	d *schema.ResourceData,
-	id string) error {
+	id string,
+	meta interface{}) error {
 	return resource.Retry(d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
-
+		fmt.Printf("waiting for cluster to reach %s\n", waitForClusterState)
 		//reading cluster details
 		cluster, err := client.ReadCluster(id)
+		resourceClusterRead(d, meta)
 
 		if err != nil {
 			return resource.NonRetryableError(fmt.Errorf("[Error] Error retrieving cluster info: %s", err))
@@ -632,8 +642,8 @@ func doClusterResize(client *APIClient, clusterID string, d *schema.ResourceData
 	oldNodeClass := regex.FindString(before.(string))
 	newNodeClass := regex.FindString(after.(string))
 
-	isNotResizable := (oldNodeClass == "")
-	isNotSameSizeClass := (newNodeClass != oldNodeClass)
+	isNotResizable := oldNodeClass == ""
+	isNotSameSizeClass := newNodeClass != oldNodeClass
 	if isNotResizable || isNotSameSizeClass {
 		return fmt.Errorf("[Error] Cannot resize nodes from %s to %s", before, after)
 	}
@@ -708,7 +718,6 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	if len(cluster.DataCentres[0].ResizeTargetNodeSize) > 0 {
 		nodeSize = cluster.DataCentres[0].ResizeTargetNodeSize
 	}
-
 	// set data centre
 	if cluster.DataCentre != "" {
 		d.Set("data_centre", cluster.DataCentre)
@@ -730,17 +739,37 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("node_size", nodeSize)
 	d.Set("sla_tier", strings.ToUpper(cluster.SlaTier))
 	if len(cluster.DataCentres) == 1 {
-		d.Set("cluster_network", cluster.DataCentres[0].CdcNetwork)
+		d.Set("cluster_network", cluster.DataCentres[0].Network)
 	}
 	d.Set("private_network_cluster", cluster.DataCentres[0].PrivateIPOnly)
 	d.Set("pci_compliant_cluster", cluster.PciCompliance == "ENABLED")
 
-	if len(cluster.DataCentres[0].Nodes[0].PublicAddress) != 0 {
-		err = d.Set("public_contact_point", cluster.DataCentres[0].Nodes[0].PublicAddress)
+	azList := make([]string, 0)
+	publicContactPointList := make([]string, 0)
+	privateContactPointList := make([]string, 0)
+
+	for _, dataCentre := range cluster.DataCentres {
+		for _, node := range dataCentre.Nodes {
+			if !stringInSlice(node.Rack, azList) {
+				if !strings.HasPrefix(node.Size, "zk-") {
+					azList = appendIfMissing(azList, node.Rack)
+					privateContactPointList = appendIfMissing(privateContactPointList, node.PrivateAddress)
+					publicContactPointList = appendIfMissing(publicContactPointList, node.PublicAddress)
+				}
+			}
+		}
 	}
 
-	if len(cluster.DataCentres[0].Nodes[0].PrivateAddress) != 0 {
-		err = d.Set("private_contact_point", cluster.DataCentres[0].Nodes[0].PrivateAddress)
+	if !cluster.DataCentres[0].PrivateIPOnly && len(publicContactPointList) > 0 {
+		err = d.Set("public_contact_point", publicContactPointList)
+	} else {
+		err = d.Set("public_contact_point", nil)
+	}
+
+	if len(privateContactPointList) > 0 {
+		err = d.Set("private_contact_point", privateContactPointList)
+	} else {
+		err = d.Set("public_contact_point", nil)
 	}
 
 	toCheck := [2]string{"cluster_provider", "rack_allocation"}
@@ -795,7 +824,7 @@ func getDataCentresFromCluster(cluster *Cluster) ([]map[string]interface{}, erro
 	for _, dataCentre := range cluster.DataCentres {
 		dataCentreMap := make(map[string]interface{})
 		dataCentreMap["data_centre_region"] = dataCentre.Name
-		dataCentreMap["network"] = dataCentre.CdcNetwork
+		dataCentreMap["network"] = dataCentre.Network
 		convertedDataCentreMap := dereferencePointerInStruct(dataCentreMap)
 		dataCentres = append(dataCentres, convertedDataCentreMap)
 	}

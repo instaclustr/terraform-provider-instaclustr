@@ -203,6 +203,7 @@ func TestKafkaUserResource_importBasic(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckResourceValidKafka("instaclustr_cluster.kafka_cluster"),
 					checkClusterRunning("kafka_cluster", hostname, username, apiKey),
+					testCheckContactIPCorrect("kafka_cluster", hostname, username, apiKey, 3, 3),
 				),
 			},
 			{
@@ -216,6 +217,8 @@ func TestKafkaUserResource_importBasic(t *testing.T) {
 					"cluster_provider",
 					"pci_compliant_cluster",
 					"rack_allocation",
+					// wait_for_state is a creation option to ensure IP contact points are ready for other parts of the infrastructure. It cannot be imported.
+					"wait_for_state",
 				},
 			},
 		},

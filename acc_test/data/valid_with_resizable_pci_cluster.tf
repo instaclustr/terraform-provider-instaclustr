@@ -12,12 +12,13 @@ resource "instaclustr_cluster" "resizable_pci_cluster" {
     cluster_network = "192.168.0.0/18"
     private_network_cluster = true
     pci_compliant_cluster = true
+    wait_for_state = "RUNNING"
     cluster_provider = {
         name = "AWS_VPC"
     }
     rack_allocation = {
-        number_of_racks = 3
-        nodes_per_rack = 1
+        number_of_racks = 2
+        nodes_per_rack = 2
     }
     bundle {
         bundle = "APACHE_CASSANDRA"

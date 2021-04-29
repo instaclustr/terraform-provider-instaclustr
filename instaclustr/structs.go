@@ -111,7 +111,6 @@ type DataCentre struct {
 	ID                            string   `json:"id,omitempty"`
 	Name                          string   `json:"name,omitempty" mapstructure:"name"`
 	Provider                      string   `json:"provider,omitempty"`
-	CdcNetwork                    string   `json:"cdcNetwork,omitempty"`
 	Network                       string   `json:"network,omitempty" mapstructure:"network"`
 	Bundles                       []string `json:"bundles,omitempty"`
 	ClientEncryption              bool     `json:"clientEncryption,omitempty"`
@@ -127,15 +126,15 @@ type DataCentre struct {
 }
 
 type Node struct {
-	ID             string   `json:"id"`
-	Size           string   `json:"size"`
-	Rack           string   `json:"rack"`
-	PublicAddress  []string `json:"publicAddress"`
-	PrivateAddress []string `json:"privateAddress"`
-	NodeStatus     string   `json:"nodeStatus"`
-	SparkMaster    bool     `json:"sparkMaster"`
-	SparkJobserver bool     `json:"sparkJobserver"`
-	Zeppelin       bool     `json:"zeppelin"`
+	ID             string `json:"id"`
+	Size           string `json:"size"`
+	Rack           string `json:"rack"`
+	PublicAddress  string `json:"publicAddress"`
+	PrivateAddress string `json:"privateAddress"`
+	NodeStatus     string `json:"nodeStatus"`
+	SparkMaster    bool   `json:"sparkMaster"`
+	SparkJobserver bool   `json:"sparkJobserver"`
+	Zeppelin       bool   `json:"zeppelin"`
 }
 
 type CreateVPCPeeringRequest struct {

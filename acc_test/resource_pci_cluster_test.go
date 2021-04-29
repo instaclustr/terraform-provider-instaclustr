@@ -69,6 +69,7 @@ func TestAccPCIClusterResize(t *testing.T) {
 					testCheckPCIResourceValid("resizable_pci_cluster"),
 					testCheckPCIResourceCreated("resizable_pci_cluster", hostname, username, apiKey),
 					checkClusterRunning("resizable_pci_cluster", hostname, username, apiKey),
+					testCheckContactIPCorrect("resizable_pci_cluster", hostname, username, apiKey, 2, 0),
 				),
 			},
 			{
