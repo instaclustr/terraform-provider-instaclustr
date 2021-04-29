@@ -49,18 +49,18 @@ commands:
             RELEASE_TAG=$(make release_version)
             FULL_BIN_NAME="${BIN_NAME}_${RELEASE_TAG}"
             SHASUM_NAME="${BIN_NAME}_${RELEASE_TAG:1}"
-            env GOOS=darwin GOARCH=amd64 make build VERSION=${RELEASE_TAG}
+            env GOOS=darwin GOARCH=amd64 make build
             zip -j bin/${FULL_BIN_NAME}_darwin_amd64.zip bin/${FULL_BIN_NAME}
-            env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 make build FLAGS="-ldflags '-w -s -extldflags \"-static\"' -tags netgo -a -v" VERSION=${RELEASE_TAG}
+            env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 make build FLAGS="-ldflags '-w -s -extldflags \"-static\"' -tags netgo -a -v"
             zip -j bin/${FULL_BIN_NAME}_linux_amd64.zip bin/${FULL_BIN_NAME}
             cp bin/${FULL_BIN_NAME}_linux_amd64.zip bin/${FULL_BIN_NAME}_alpine_amd64.zip
-            env GOOS=linux GOARCH=arm64 make build VERSION=${RELEASE_TAG}
+            env GOOS=linux GOARCH=arm64 make build
             zip -j bin/${FULL_BIN_NAME}_linux_arm64.zip bin/${FULL_BIN_NAME}
-            env GOOS=linux GOARCH=arm GOARM=6 make build VERSION=${RELEASE_TAG}
+            env GOOS=linux GOARCH=arm GOARM=6 make build
             zip -j bin/${FULL_BIN_NAME}_linux_arm.zip bin/${FULL_BIN_NAME}
-            env GOOS=windows GOARCH=amd64 make build VERSION=${RELEASE_TAG}
+            env GOOS=windows GOARCH=amd64 make build
             zip -j bin/${FULL_BIN_NAME}_windows_amd64.zip bin/${FULL_BIN_NAME}
-            env GOOS=windows GOARCH=386 make build VERSION=${RELEASE_TAG}
+            env GOOS=windows GOARCH=386 make build
             zip -j bin/${FULL_BIN_NAME}_windows_386.zip bin/${FULL_BIN_NAME}
             rm bin/${FULL_BIN_NAME}
   sign-builds:
