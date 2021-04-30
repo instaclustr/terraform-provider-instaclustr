@@ -111,6 +111,7 @@ type DataCentre struct {
 	ID                            string   `json:"id,omitempty"`
 	Name                          string   `json:"name,omitempty" mapstructure:"name"`
 	Provider                      string   `json:"provider,omitempty"`
+	CdcNetwork                    string   `json:"cdcNetwork,omitempty"`
 	Network                       string   `json:"network,omitempty" mapstructure:"network"`
 	Bundles                       []string `json:"bundles,omitempty"`
 	ClientEncryption              bool     `json:"clientEncryption,omitempty"`
@@ -123,6 +124,7 @@ type DataCentre struct {
 	EncryptionKeyId               string   `json:"encryptionKeyId,omitempty"`
 	ResizeTargetNodeSize          string   `json:"resizeTargetNodeSize,omitempty"`
 	DataCentreRegion              string   `json:"dataCentre,omitempty" mapstructure:"data_centre_region"`
+	CdcStatus                     string   `json:"cdcStatus,omitempty"`
 }
 
 type Node struct {

@@ -739,7 +739,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("node_size", nodeSize)
 	d.Set("sla_tier", strings.ToUpper(cluster.SlaTier))
 	if len(cluster.DataCentres) == 1 {
-		d.Set("cluster_network", cluster.DataCentres[0].Network)
+		d.Set("cluster_network", cluster.DataCentres[0].CdcNetwork)
 	}
 	d.Set("private_network_cluster", cluster.DataCentres[0].PrivateIPOnly)
 	d.Set("pci_compliant_cluster", cluster.PciCompliance == "ENABLED")
@@ -824,7 +824,7 @@ func getDataCentresFromCluster(cluster *Cluster) ([]map[string]interface{}, erro
 	for _, dataCentre := range cluster.DataCentres {
 		dataCentreMap := make(map[string]interface{})
 		dataCentreMap["data_centre_region"] = dataCentre.Name
-		dataCentreMap["network"] = dataCentre.Network
+		dataCentreMap["network"] = dataCentre.CdcNetwork
 		convertedDataCentreMap := dereferencePointerInStruct(dataCentreMap)
 		dataCentres = append(dataCentres, convertedDataCentreMap)
 	}
