@@ -16,15 +16,22 @@ resource "instaclustr_cluster" "valid" {
     nodes_per_rack = 1
   }
 
+  data_centres {
+    name = "DC1"
+    data_centre_region = "US_WEST_1"
+    network = "10.0.0.0/18"
+  }
 
   data_centres {
+    name = "DC2"
     data_centre_region = "US_WEST_1"
     network = "10.1.0.0/18"
   }
 
   data_centres {
-        data_centre_region = "US_WEST_2"
-        network = "192.168.0.0/18"
+    name = "DC3"
+    data_centre_region = "US_WEST_2"
+    network = "192.168.0.0/18"
   }
 
   bundle {
