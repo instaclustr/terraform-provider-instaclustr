@@ -823,6 +823,7 @@ func getDataCentresFromCluster(cluster *Cluster) ([]map[string]interface{}, erro
 	dataCentres := make([]map[string]interface{}, 0)
 	for _, dataCentre := range cluster.DataCentres {
 		dataCentreMap := make(map[string]interface{})
+		dataCentreMap["name"] = dataCentre.CdcName
 		dataCentreMap["data_centre_region"] = dataCentre.Name
 		dataCentreMap["network"] = dataCentre.CdcNetwork
 		convertedDataCentreMap := dereferencePointerInStruct(dataCentreMap)
