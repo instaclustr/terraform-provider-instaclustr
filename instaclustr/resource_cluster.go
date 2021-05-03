@@ -195,157 +195,128 @@ func resourceCluster() *schema.Resource {
 						"options": {
 							Type:     schema.TypeMap,
 							Optional: true,
+							ForceNew: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"auth_n_authz": {
 										Type:     schema.TypeBool,
 										Optional: true,
-										ForceNew: true,
 									},
 									"client_encryption": {
 										Type:     schema.TypeBool,
 										Optional: true,
-										ForceNew: true,
 									},
 									"use_private_broadcast_rpc_address": {
 										Type:     schema.TypeBool,
 										Optional: true,
-										ForceNew: true,
 									},
 									"lucene_enabled": {
 										Type:     schema.TypeBool,
 										Optional: true,
-										ForceNew: true,
 									},
 									"continuous_backup_enabled": {
 										Type:     schema.TypeBool,
 										Optional: true,
-										ForceNew: true,
 									},
 									"number_partitions": {
 										Type:     schema.TypeInt,
 										Optional: true,
-										ForceNew: true,
 									},
 									"auto_create_topics": {
 										Type:     schema.TypeBool,
 										Optional: true,
-										ForceNew: true,
 									},
 									"delete_topics": {
 										Type:     schema.TypeBool,
 										Optional: true,
-										ForceNew: true,
 									},
 									"password_authentication": {
 										Type:     schema.TypeBool,
 										Optional: true,
-										ForceNew: true,
 									},
 									"target_kafka_cluster_id": {
 										Type:     schema.TypeString,
 										Optional: true,
-										ForceNew: true,
 									},
 									"vpc_type": {
 										Type:     schema.TypeString,
 										Optional: true,
-										ForceNew: true,
 									},
 									"aws_access_key": {
 										Type:     schema.TypeString,
 										Optional: true,
-										ForceNew: true,
 									},
 									"aws_secret_key": {
 										Type:     schema.TypeString,
 										Optional: true,
-										ForceNew: true,
 									},
 									"s3_bucket_name": {
 										Type:     schema.TypeString,
 										Optional: true,
-										ForceNew: true,
 									},
 									"azure_storage_account_name": {
 										Type:     schema.TypeString,
 										Optional: true,
-										ForceNew: true,
 									},
 									"azure_storage_account_key": {
 										Type:     schema.TypeString,
 										Optional: true,
-										ForceNew: true,
 									},
 									"azure_storage_container_name": {
 										Type:     schema.TypeString,
 										Optional: true,
-										ForceNew: true,
 									},
 									"ssl_enabled_protocols": {
 										Type:     schema.TypeString,
 										Optional: true,
-										ForceNew: true,
 									},
 									"ssl_truststore_password": {
 										Type:     schema.TypeString,
 										Optional: true,
-										ForceNew: true,
 									},
 									"ssl_protocol": {
 										Type:     schema.TypeString,
 										Optional: true,
-										ForceNew: true,
 									},
 									"security_protocol": {
 										Type:     schema.TypeString,
 										Optional: true,
-										ForceNew: true,
 									},
 									"sasl_mechanism": {
 										Type:     schema.TypeString,
 										Optional: true,
-										ForceNew: true,
 									},
 									"sasl_jaas_config": {
 										Type:     schema.TypeString,
 										Optional: true,
-										ForceNew: true,
 									},
 									"bootstrap_servers": {
 										Type:     schema.TypeString,
 										Optional: true,
-										ForceNew: true,
 									},
 									"truststore": {
 										Type:     schema.TypeString,
 										Optional: true,
-										ForceNew: true,
 									},
 									"dedicated_zookeeper": {
 										Type:     schema.TypeBool,
 										Optional: true,
-										ForceNew: true,
 									},
 									"zookeeper_node_size": {
 										Type:     schema.TypeString,
 										Optional: true,
-										ForceNew: true,
 									},
 									"zookeeper_node_count": {
 										Type:     schema.TypeInt,
 										Optional: true,
-										ForceNew: true,
 									},
 									"master_nodes": {
 										Type:     schema.TypeInt,
 										Optional: true,
-										ForceNew: true,
 									},
 									"replica_nodes": {
 										Type:     schema.TypeInt,
 										Optional: true,
-										ForceNew: true,
 									},
 								},
 							},
