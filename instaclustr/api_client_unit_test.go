@@ -1,10 +1,9 @@
-package test
+package instaclustr
 
 import (
     "fmt"
 	"io/ioutil"
 	"testing"
-	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 )
 
 func TestAPIClientRead(t *testing.T) {
@@ -84,7 +83,7 @@ func TestAPIClientCreateNoNetwork(t *testing.T) {
 		t.Fatalf("Failed to load %s: %s", filename, err)
 	}
 
-	client := new(instaclustr.APIClient)
+	client := new(APIClient)
 	client.InitClient("http://127.0.0.1:5000", "Trisolaris", "DoNotAnswer!")
 	_, err = client.CreateCluster(jsonStr)
 	if err == nil {
@@ -94,7 +93,7 @@ func TestAPIClientCreateNoNetwork(t *testing.T) {
 
 func TestAPIClientReadNoNetwork(t *testing.T) {
 	id := "77b5a4e1-c422-4a78-b551-d8fa5c42ad95"
-	client := new(instaclustr.APIClient)
+	client := new(APIClient)
 	client.InitClient("http://127.0.0.1:5000", "Trisolaris", "DoNotAnswer!")
 	_, err := client.ReadCluster(id)
 	if err == nil {
@@ -104,7 +103,7 @@ func TestAPIClientReadNoNetwork(t *testing.T) {
 
 func TestAPIClientDeleteNoNetwork(t *testing.T) {
        id := "77b5a4e1-c422-4a78-b551-d8fa5c42ad95"
-       client := new(instaclustr.APIClient)
+       client := new(APIClient)
        client.InitClient("http://127.0.0.1:5000", "Trisolaris", "DoNotAnswer!")
        err := client.DeleteCluster(id)
        if err == nil {

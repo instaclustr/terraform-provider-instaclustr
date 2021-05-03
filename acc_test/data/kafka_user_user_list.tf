@@ -1,4 +1,4 @@
-// This is part of testing "kafka user" suite, 2 of 3
+// This is part of testing "kafka user" suite, 3 of 3
 provider "instaclustr" {
   username = "%s"
   api_key = "%s"
@@ -11,6 +11,7 @@ resource "instaclustr_cluster" "kafka_cluster" {
   data_centre = "US_WEST_2"
   sla_tier = "NON_PRODUCTION"
   cluster_network = "192.168.0.0/18"
+  wait_for_state = "RUNNING"
   cluster_provider = {
     name = "AWS_VPC"
   }
@@ -39,4 +40,8 @@ resource "instaclustr_kafka_user" "kafka_user_charlie" {
   username = "%s"
   password = "%s"
   initial_permissions = "none"
+}
+
+data "instaclustr_kafka_user_list" "kafka_user_list" {
+  cluster_id = "${instaclustr_cluster.kafka_cluster.id}"
 }

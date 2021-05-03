@@ -4,6 +4,8 @@ terraform {
   required_providers {
     instaclustr = {
       source = "instaclustr/instaclustr"
+      //Change the source as per below to work with a local development copy on terraform version >=13
+      //source = "terraform.instaclustr.com/instaclustr/instaclustr"
       version = ">= 1.0.0"
     }
   }
@@ -52,10 +54,6 @@ resource "instaclustr_cluster" "example" {
     version = "2.3.2"
   }
 
-  bundle {
-    bundle = "ZEPPELIN"
-    version = "apache-zeppelin:0.8.0-spark-2.3.2"
-  }
 }
 
 data "instaclustr_cluster_credentials" "example_credentials" {

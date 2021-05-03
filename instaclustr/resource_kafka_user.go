@@ -60,7 +60,7 @@ func resourceKafkaUserCreate(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("[Error] Error in getting the status of the cluster: %s", err)
 	}
 	if cluster.ClusterStatus != "RUNNING" {
-		return fmt.Errorf("[Error] Cluster %s is not RUNNING.", cluster_id)
+		return fmt.Errorf("[Error] Cluster %s is not RUNNING. Currently in %s state", cluster_id, cluster.ClusterStatus)
 	}
 
 	// just use linear search for now to check if the user going to be created is already in the system
@@ -72,7 +72,7 @@ func resourceKafkaUserCreate(d *schema.ResourceData, meta interface{}) error {
 		if str == username {
 			// user is already set, so we don't change anything
 			d.SetId(fmt.Sprintf("%s-%s", cluster_id, username))
-			log.Printf("[INFO] Kafka user %d already exists in %s.", username, cluster_id)
+			log.Printf("[INFO] Kafka user %s already exists in %s.", username, cluster_id)
 			return nil
 		}
 	}

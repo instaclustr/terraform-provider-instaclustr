@@ -3,16 +3,16 @@ package instaclustr
 import (
 	"encoding/json"
 	"fmt"
-	"log"
-	"reflect"
-	"regexp"
-	"strconv"
-	"strings"
-	"time"
-
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/mitchellh/mapstructure"
+	"log"
+	"reflect"
+	"regexp"
+	"sort"
+	"strconv"
+	"strings"
+	"time"
 )
 
 var (
@@ -89,15 +89,21 @@ func resourceCluster() *schema.Resource {
 			},
 
 			"public_contact_point": {
-				Type:     schema.TypeString,
+				Type:     schema.TypeSet,
 				Computed: true,
 				Optional: true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
 			},
 
 			"private_contact_point": {
-				Type:     schema.TypeString,
+				Type:     schema.TypeSet,
 				Computed: true,
 				Optional: true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
 			},
 
 			"cluster_provider": {
@@ -450,7 +456,7 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		return nil
 	}
 
-	return waitForClusterStateAndDoUpdate(client, waitForClusterState, bundleConfig, kafkaRestProxyUserPassword, kafkaSchemaRegistryUserPassword, d, id)
+	return waitForClusterStateAndDoUpdate(client, waitForClusterState, bundleConfig, kafkaRestProxyUserPassword, kafkaSchemaRegistryUserPassword, d, id, meta)
 }
 
 func waitForClusterStateAndDoUpdate(client *APIClient,
@@ -459,11 +465,14 @@ func waitForClusterStateAndDoUpdate(client *APIClient,
 	kafkaRestProxyUserPassword string,
 	kafkaSchemaRegistryUserPassword string,
 	d *schema.ResourceData,
-	id string) error {
+	id string,
+	meta interface{}) error {
 	return resource.Retry(d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
-
+		fmt.Printf("waiting for cluster to reach %s\n", waitForClusterState)
 		//reading cluster details
 		cluster, err := client.ReadCluster(id)
+		resourceClusterRead(d, meta)
+
 
 		if err != nil {
 			return resource.NonRetryableError(fmt.Errorf("[Error] Error retrieving cluster info: %s", err))
@@ -592,7 +601,6 @@ func appendIfMissing(slice []string, toAppend string) []string {
 	return append(slice, toAppend)
 }
 
-
 func doClusterResize(client *APIClient, clusterID string, d *schema.ResourceData) error {
 
 	before, after := d.GetChange("node_size")
@@ -600,8 +608,8 @@ func doClusterResize(client *APIClient, clusterID string, d *schema.ResourceData
 	oldNodeClass := regex.FindString(before.(string))
 	newNodeClass := regex.FindString(after.(string))
 
-	isNotResizable := (oldNodeClass == "")
-	isNotSameSizeClass := (newNodeClass != oldNodeClass)
+	isNotResizable := oldNodeClass == ""
+	isNotSameSizeClass := newNodeClass != oldNodeClass
 	if isNotResizable || isNotSameSizeClass {
 		return fmt.Errorf("[Error] Cannot resize nodes from %s to %s", before, after)
 	}
@@ -617,7 +625,7 @@ func doClusterResize(client *APIClient, clusterID string, d *schema.ResourceData
 	return nil
 }
 
-func resourceClusterRead(d *schema.ResourceData, meta interface{}) error{
+func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*Config).Client
 	id := d.Get("cluster_id").(string)
 	log.Printf("[INFO] Reading status of cluster %s.", id)
@@ -639,7 +647,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error{
 		return err
 	}
 
-	if err:= d.Set("bundle", bundles); err != nil {
+	if err := d.Set("bundle", bundles); err != nil {
 		return fmt.Errorf("[Error] Error reading cluster: %s", err)
 	}
 
@@ -667,14 +675,13 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error{
 		}
 	}
 	rackCount := len(rackList)
-	nodesPerRack := nodeCount/rackCount
+	nodesPerRack := nodeCount / rackCount
 
 	rackAllocation := make(map[string]interface{}, 0)
 	rackAllocation["number_of_racks"] = strconv.Itoa(rackCount)
 	rackAllocation["nodes_per_rack"] = strconv.Itoa(nodesPerRack)
 
-
-	if err:= d.Set("rack_allocation", rackAllocation); err != nil {
+	if err := d.Set("rack_allocation", rackAllocation); err != nil {
 		return fmt.Errorf("[Error] Error reading cluster, rack allocation could not be derived: %s", err)
 	}
 	if len(cluster.DataCentres[0].ResizeTargetNodeSize) > 0 {
@@ -687,12 +694,32 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error{
 	d.Set("private_network_cluster", cluster.DataCentres[0].PrivateIPOnly)
 	d.Set("pci_compliant_cluster", cluster.PciCompliance == "ENABLED")
 
-	if len(cluster.DataCentres[0].Nodes[0].PublicAddress) != 0 {
-		err = d.Set("public_contact_point", cluster.DataCentres[0].Nodes[0].PublicAddress)
+	azList := make([]string, 0)
+	publicContactPointList:= make([]string, 0)
+	privateContactPointList:= make([]string, 0)
+
+	for _, dataCentre := range cluster.DataCentres {
+		for _, node := range dataCentre.Nodes {
+			if !stringInSlice(node.Rack, azList) {
+				if !strings.HasPrefix(node.Size, "zk-") {
+					azList = appendIfMissing(azList, node.Rack)
+					privateContactPointList = appendIfMissing(privateContactPointList, node.PrivateAddress)
+					publicContactPointList = appendIfMissing(publicContactPointList, node.PublicAddress)
+				}
+			}
+		}
 	}
 
-	if len(cluster.DataCentres[0].Nodes[0].PrivateAddress) != 0 {
-		err = d.Set("private_contact_point", cluster.DataCentres[0].Nodes[0].PrivateAddress)
+	if !cluster.DataCentres[0].PrivateIPOnly && len(publicContactPointList) > 0 {
+			err = d.Set("public_contact_point", publicContactPointList)
+	} else {
+		err = d.Set("public_contact_point", nil)
+	}
+
+	if len(privateContactPointList) > 0 {
+		err = d.Set("private_contact_point", privateContactPointList)
+	} else {
+		err = d.Set("public_contact_point", nil)
 	}
 
 	toCheck := [2]string{"cluster_provider", "rack_allocation"}
@@ -726,9 +753,17 @@ func getBundlesFromCluster(cluster *Cluster) ([]map[string]interface{}, error) {
 
 	bundles := make([]map[string]interface{}, 0)
 	bundles = append(bundles, baseBundle)
-	if cluster.AddonBundles != nil {
-		for _, addonBundle := range cluster.AddonBundles{
-			bundles = append(bundles, addonBundle)	
+
+	addonBundles := cluster.AddonBundles
+
+	if addonBundles == nil {
+		return nil, nil
+	}
+
+	sort.Slice(addonBundles, func(i, j int) bool {return addonBundles[i]["bundle"].(string) > addonBundles[j]["bundle"].(string)})
+	for _, addonBundle := range addonBundles {
+		if len(addonBundle) != 0 {
+			bundles = append(bundles, addonBundle)
 		}
 	}
 
@@ -799,6 +834,7 @@ func getBundles(d *schema.ResourceData) ([]Bundle, error) {
 		}
 		bundles = append(bundles, bundle)
 	}
+
 	return bundles, nil
 }
 
