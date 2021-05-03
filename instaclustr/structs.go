@@ -25,6 +25,8 @@ type BundleOptions struct {
 	ClientEncryption              *bool  `json:"clientEncryption,omitempty" mapstructure:"client_encryption,omitempty"`
 	DedicatedMasterNodes          *bool  `json:"dedicatedMasterNodes,omitempty" mapstructure:"dedicated_master_nodes,omitempty"`
 	MasterNodeSize                string `json:"masterNodeSize,omitempty" mapstructure:"master_node_size,omitempty"`
+	KibanaNodeSize                string `json:"kibanaNodeSize,omitempty" mapstructure:"kibana_node_size,omitempty"`
+	DataNodeSize                  string `json:"dataNodeSize,omitempty" mapstructure:"data_node_size,omitempty"`
 	SecurityPlugin                *bool  `json:"securityPlugin,omitempty" mapstructure:"security_plugin,omitempty"`
 	UsePrivateBroadcastRpcAddress *bool  `json:"usePrivateBroadcastRPCAddress,omitempty" mapstructure:"use_private_broadcast_rpc_address,omitempty"`
 	LuceneEnabled                 *bool  `json:"luceneEnabled,omitempty" mapstructure:"lucene_enabled,omitempty"`
@@ -160,9 +162,10 @@ type VPCPeeringSubnet struct {
 }
 
 type ResizeClusterRequest struct {
-	NewNodeSize           string `json:"newNodeSize"`
-	ConcurrentResizes     int    `json:"concurrentResizes"`
-	NotifySupportContacts string `json:"notifySupportContacts"`
+	NewNodeSize           string       `json:"newNodeSize"`
+	ConcurrentResizes     int          `json:"concurrentResizes"`
+	NotifySupportContacts string       `json:"notifySupportContacts"`
+	NodePurpose           *NodePurpose `json:"nodePurpose"`
 }
 
 type EncryptionKey struct {
@@ -190,6 +193,16 @@ type UpdateKafkaUserRequest struct {
 
 type DeleteKafkaUserRequest struct {
 	Username string `json:"username"`
+}
+
+type ClusterDataCenterResizeResponse struct {
+	OperationId string `json:"operationId"`
+}
+
+type ClusterDataCentreResizeOperationDetails struct {
+	Id              string `json:"id"`
+	Completed       *int64 `json:"completed"`
+	CompletedStatus string `json:"completedStatus"`
 }
 
 type BundleConfig struct {

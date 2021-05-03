@@ -13,7 +13,7 @@ func TestCreateBundleUserUpdateRequest(t *testing.T) {
 
 	expectedOutput := []byte(fmt.Sprintf("{\"username\":\"%s\",\"password\":\"%s\"}", testUsername, testPassword))
 
-	if !reflect.DeepEqual(testBundleRequest, expectedOutput){
+	if !reflect.DeepEqual(testBundleRequest, expectedOutput) {
 		t.Fatalf("Incorrect request returned.\nExpected:%s\nActual:%s", expectedOutput, testBundleRequest)
 	}
 }
@@ -25,8 +25,8 @@ func TestGetBundleConfig(t *testing.T) {
 	testBundles = append(testBundles, Bundle{Bundle: "KAFKA"})
 	testBundleConfig = getBundleConfig(testBundles)
 	expectedOutput := BundleConfig{
-		IsKafkaCluster: true,
-		HasRestProxy: false,
+		IsKafkaCluster:    true,
+		HasRestProxy:      false,
 		HasSchemaRegistry: false}
 
 	if testBundleConfig != expectedOutput {
@@ -36,8 +36,8 @@ func TestGetBundleConfig(t *testing.T) {
 	testBundles = append(testBundles, Bundle{Bundle: "KAFKA_REST_PROXY"})
 	testBundleConfig = getBundleConfig(testBundles)
 	expectedOutput = BundleConfig{
-		IsKafkaCluster: true,
-		HasRestProxy: true,
+		IsKafkaCluster:    true,
+		HasRestProxy:      true,
 		HasSchemaRegistry: false}
 
 	if testBundleConfig != expectedOutput {
@@ -47,8 +47,8 @@ func TestGetBundleConfig(t *testing.T) {
 	testBundles = append(testBundles, Bundle{Bundle: "KAFKA_SCHEMA_REGISTRY"})
 	testBundleConfig = getBundleConfig(testBundles)
 	expectedOutput = BundleConfig{
-		IsKafkaCluster: true,
-		HasRestProxy: true,
+		IsKafkaCluster:    true,
+		HasRestProxy:      true,
 		HasSchemaRegistry: true}
 
 	if testBundleConfig != expectedOutput {
@@ -105,4 +105,105 @@ func TestCheckIfBundleRequiresRackAllocation(t *testing.T) {
 	if isRackAllocationRequired == false {
 		t.Fatalf("Incorrect check performed for APACHE_CASSANDRA.\nExpected: %v\nActual: %v\n", true, false)
 	}
+}
+
+func TestIsElasticsearchSizeAllChange(t *testing.T) {
+	helper := func(kibanaSize, masterSize, dataSize, expectedNewSize string, kibana, dedicatedMaster, expectedIsAll bool) {
+		newSize, isAllChange := isElasticsearchSizeAllChange(kibanaSize, masterSize, dataSize, kibana, dedicatedMaster)
+		if isAllChange != expectedIsAll {
+			t.Fatalf("changeAll should be %t when using kibanaSize: %s, masterSize: %s, dataSize: %s, kibana: %t, dedicatedMaster: %t", expectedIsAll, kibanaSize, masterSize, dataSize, kibana, dedicatedMaster)
+		}
+		if isAllChange && newSize != expectedNewSize {
+			t.Fatalf("newSize should be %s when using kibanaSize: %s, masterSize: %s, dataSize: %s, kibana: %t, dedicatedMaster:%t", expectedNewSize, kibanaSize, masterSize, dataSize, kibana, dedicatedMaster)
+		}
+	}
+	helper("t3.small-v2", "t3.small-v2", "t3.small-v2", "t3.small-v2", true, true, true)
+	helper("t3.small-v2", "t3.small-v2", "", "t3.small-v2", true, false, true)
+	helper("", "t3.small-v2", "t3.small-v2", "t3.small-v2", false, true, true)
+	helper("", "t3.small-v2", "", "t3.small-v2", false, false, true)
+
+	helper("t3.small-v2", "m5l-400-v2", "t3.small-v2", "t3.small-v2", true, true, false)
+	helper("t3.small-v2", "t3.small-v2", "m5l-400-v2", "t3.small-v2", true, true, false)
+	helper("m5l-400-v2", "t3.small-v2", "t3.small-v2", "t3.small-v2", true, true, false)
+
+	helper("", "t3.small-v2", "", "t3.small-v2", false, true, false)
+	helper("", "t3.small-v2", "t3.small-v2", "t3.small-v2", true, false, false)
+	helper("t3.small-v2", "", "t3.small-v2", "t3.small-v2", false, false, false)
+}
+
+func TestIsKafkaSizeAllChange(t *testing.T) {
+	helper := func(brokerSize, zookeeperSize, expectedNewSize string, dedicatedZookeeper, expectedIsAll bool) {
+		newSize, isAllChange := isKafkaSizeAllChange(brokerSize, zookeeperSize, dedicatedZookeeper)
+		if isAllChange != expectedIsAll {
+			t.Fatalf("changeAll should be %t when using brokerSize: %s, zookeeperSize: %s, dedicatedZookeeper: %t", expectedIsAll, brokerSize, zookeeperSize, dedicatedZookeeper)
+		}
+		if isAllChange && newSize != expectedNewSize {
+			t.Fatalf("newSize should be %s when using brokerSize: %s, zookeeperSize: %s, dedicatedZookeeper: %t c", expectedNewSize, brokerSize, zookeeperSize, dedicatedZookeeper)
+		}
+	}
+	helper("t3.small-v2", "t3.small-v2", "t3.small-v2", true, true)
+	helper("t3.small-v2", "t3.small-v2", "t3.small-v2", false, true)
+	helper("t3.small-v2", "", "t3.small-v2", true, false)
+	helper("t3.small-v2", "m5l-400-v2", "t3.small-v2", true, false)
+}
+
+func TestGetSingleChangedElasticsearchSizeAndPurpose(t *testing.T) {
+	helper := func(kibanaSize, masterSize, dataSize, expectedNewSize string, kibana, dedicatedMaster, expectErr bool, expectedNodePurpose NodePurpose) {
+		newSize, nodePurpose, err := getSingleChangedElasticsearchSizeAndPurpose(kibanaSize, masterSize, dataSize, kibana, dedicatedMaster)
+		if expectErr {
+			if err == nil {
+				t.Fatalf("expect error when using kibanaSize: %s, masterSize: %s, dataSize: %s, kibana: %t, dedicatedMaster: %t", kibanaSize, masterSize, dataSize, kibana, dedicatedMaster)
+			} else {
+				return
+			}
+		}
+		if err != nil {
+			t.Fatalf("got unexpected error: %s when using kibanaSize: %s, masterSize: %s, dataSize: %s, kibana: %t, dedicatedMaster: %t", err.Error(), kibanaSize, masterSize, dataSize, kibana, dedicatedMaster)
+		}
+		if newSize != expectedNewSize {
+			t.Fatalf("newSize should be %s when using kibanaSize: %s, masterSize: %s, dataSize: %s, kibana: %t, dedicatedMaster:%t", expectedNewSize, kibanaSize, masterSize, dataSize, kibana, dedicatedMaster)
+		}
+		if nodePurpose.String() != expectedNodePurpose.String() {
+			t.Fatalf("nodePurpose should be %s when using kibanaSize: %s, masterSize: %s, dataSize: %s, kibana: %t, dedicatedMaster:%t", expectedNodePurpose, kibanaSize, masterSize, dataSize, kibana, dedicatedMaster)
+		}
+	}
+	helper("t3.small-v2", "t3.small-v2", "t3.small-v2", "t3.small-v2", true, true, true, ELASTICSEARCH_KIBANA)
+	helper("", "", "t3.small-v2", "t3.small-v2", true, false, true, ELASTICSEARCH_KIBANA)
+	helper("t3.small-v2", "", "", "t3.small-v2", false, false, true, ELASTICSEARCH_KIBANA)
+	helper("t3.small-v2", "", "t3.small-v2", "t3.small-v2", false, false, true, ELASTICSEARCH_KIBANA)
+	helper("t3.small-v2", "", "t3.small-v2", "t3.small-v2", false, false, true, ELASTICSEARCH_KIBANA)
+
+	helper("t3.small-v2", "", "", "t3.small-v2", true, false, false, ELASTICSEARCH_KIBANA)
+	helper("t3.small-v2", "", "", "t3.small-v2", true, true, false, ELASTICSEARCH_KIBANA)
+	helper("", "t3.small-v2", "", "t3.small-v2", true, true, false, ELASTICSEARCH_MASTER)
+	helper("", "t3.small-v2", "", "t3.small-v2", true, false, false, ELASTICSEARCH_MASTER)
+	helper("", "", "t3.small-v2", "t3.small-v2", true, true, false, ELASTICSEARCH_DATA_AND_INGEST)
+}
+
+func TestGetSingleChangedKafkaSizeAndPurpose(t *testing.T) {
+	helper := func(brokerSize, zookeeperSize, expectedNewSize string, dedicatedZookeeper, expectErr bool, expectedNodePurpose NodePurpose) {
+		newSize, nodePurpose, err := getSingleChangedKafkaSizeAndPurpose(brokerSize, zookeeperSize, dedicatedZookeeper)
+		if expectErr {
+			if err == nil {
+				t.Fatalf("expect error when using brokerSize: %s, zookeeperSize: %s, dedicatedZookeeper: %t", brokerSize, zookeeperSize, dedicatedZookeeper)
+			} else {
+				return
+			}
+		}
+		if err != nil {
+			t.Fatalf("got unexpected error: %s when using brokerSize: %s, zookeeperSize: %s, dedicatedZookeeper: %t", err.Error(), brokerSize, zookeeperSize, dedicatedZookeeper)
+		}
+		if newSize != expectedNewSize {
+			t.Fatalf("newSize should be %s when using brokerSize: %s, zookeeperSize: %s, dedicatedZookeeper: %t", expectedNewSize, brokerSize, zookeeperSize, dedicatedZookeeper)
+		}
+		if nodePurpose.String() != expectedNodePurpose.String() {
+			t.Fatalf("nodePurpose should be %s when using brokerSize: %s, zookeeperSize: %s, dedicatedZookeeper: %t", expectedNodePurpose, brokerSize, zookeeperSize, dedicatedZookeeper)
+		}
+	}
+
+	helper("t3.small-v2", "t3.small-v2", "t3.small-v2", false, true, KAFKA_BROKER)
+	helper("t3.small-v2", "t3.small-v2", "t3.small-v2", true, true, KAFKA_BROKER)
+	helper("t3.small-v2", "", "t3.small-v2", false, false, KAFKA_BROKER)
+	helper("t3.small-v2", "", "t3.small-v2", true, false, KAFKA_BROKER)
+	helper("", "t3.small-v2", "t3.small-v2", true, false, KAFKA_DEDICATED_ZOOKEEPER)
 }
