@@ -16,7 +16,8 @@ clean:
 	rm -fr vendor
 
 build:
-	go build $(FLAGS) -o bin/$(BIN_NAME)_v$(VERSION) main.go
+#	go build $(FLAGS) -o bin/$(BIN_NAME)_v$(VERSION) main.go
+	go build $(FLAGS) -o bin/registry.terraform.io/instaclustr/instaclustr/1.9.6/darwin_amd64/$(BIN_NAME)_$(VERSION) main.go
 
 test:
 	cd instaclustr && go test -v -timeout 120m -count=1

@@ -173,6 +173,8 @@ resource "instaclustr_cluster" "example-elasticsearch" {
       client_encryption = true,
       dedicated_master_nodes = true,
       master_node_size = "m5l-250-v2",
+      data_node_size = "m5l-250-v2",
+      kibana_node_size = "m5l-250-v2",
       security_plugin = true
     }
   }
