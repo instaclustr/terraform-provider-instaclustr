@@ -64,6 +64,7 @@ func resourceCluster() *schema.Resource {
 			"data_centres": {
 				Type:     schema.TypeSet,
 				Optional: true,
+				ForceNew: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"name": {
@@ -702,13 +703,21 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		}
 	}
 
+	//loop over each data centre to determine nodes and racks for rack allocation
 	nodeCount := 0
 	rackList := make([]string, 0)
-	for _, node := range cluster.DataCentres[0].Nodes {
-		if !strings.HasPrefix(node.Size, "zk-") {
-			nodeCount += 1
+	for _, dataCentre := range cluster.DataCentres {
+		for _, node := range dataCentre.Nodes {
+			if !strings.HasPrefix(node.Size, "zk-") {
+				nodeCount += 1
+			}
+			rackList = appendIfMissing(rackList, node.Rack)
 		}
-		rackList = appendIfMissing(rackList, node.Rack)
+
+		// for multi-DC provisioning
+		if len(cluster.DataCentres) > 1 {
+			break
+		}
 	}
 	rackCount := len(rackList)
 	nodesPerRack := nodeCount / rackCount
@@ -724,9 +733,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		nodeSize = cluster.DataCentres[0].ResizeTargetNodeSize
 	}
 	// set data centre
-	if cluster.DataCentre != "" {
-		d.Set("data_centre", cluster.DataCentre)
-	} else if len(cluster.DataCentres) == 1 {
+	if len(cluster.DataCentres) == 1 {
 		d.Set("data_centre", cluster.DataCentres[0].Name)
 	}
 
