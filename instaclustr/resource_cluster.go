@@ -741,7 +741,7 @@ func getSingleChangedElasticsearchSizeAndPurpose(kibanaSize, masterSize, dataSiz
 	}
 	if len(kibanaSize) > 0 {
 		if !kibana {
-			return "", "", fmt.Errorf("[ERROR] This cluster didn't enable Dedicated Master, data_node_sise is not used for this cluster. Please use master_node_size to change the size instead")
+			return "", "", fmt.Errorf("[ERROR] This cluster didn't enable Kibanna, kibana_node_sise is not used for this cluster. Please use master_node_size to change the size instead")
 		}
 		changedCount += 1
 		nodePurpose = ELASTICSEARCH_KIBANA
@@ -754,19 +754,13 @@ func getSingleChangedElasticsearchSizeAndPurpose(kibanaSize, masterSize, dataSiz
 }
 
 func doElasticsearchClusterResize(client *APIClient, cluster *Cluster, d *schema.ResourceData) (*string, *ClusterDataCenterResizeResponse, error) {
-	dedicatedMaster := false
-	kibana := false
+	dedicatedMaster := cluster.BundleOption.DedicatedMasterNodes != nil && *cluster.BundleOption.DedicatedMasterNodes
+	kibana := len(cluster.BundleOption.KibanaNodeSize) > 0
 	var nodePurpose *NodePurpose
 	var nodeSize string
 	masterNewSize := getNewSizeOrEmpty(d, "bundle.0.options.master_node_size")
 	kibanaNewSize := getNewSizeOrEmpty(d, "bundle.0.options.kibana_node_size")
 	dataNewSize := getNewSizeOrEmpty(d, "bundle.0.options.data_node_size")
-	if dedi, ok := d.GetOk("bundle.0.options.dedicated_master_nodes"); ok {
-		dedicatedMaster, _ = strconv.ParseBool(dedi.(string))
-	}
-	if kib, ok := d.GetOk("bundle.0.options.kibana_master_nodes"); ok {
-		kibana, _ = strconv.ParseBool(kib.(string))
-	}
 
 	if newSize, isAllChange := isElasticsearchSizeAllChange(kibanaNewSize, masterNewSize, dataNewSize, kibana, dedicatedMaster); isAllChange {
 		nodeSize = newSize
@@ -821,10 +815,8 @@ func getSingleChangedKafkaSizeAndPurpose(brokerSize, zookeeperSize string, dedic
 }
 
 func doKafkaClusterResize(client *APIClient, cluster *Cluster, d *schema.ResourceData) (*string, *ClusterDataCenterResizeResponse, error) {
-	dedicatedZookeeper := false
-	if dedi, ok := d.GetOk("bundle.0.options.dedicated_zookeeper"); ok {
-		dedicatedZookeeper, _ = strconv.ParseBool(dedi.(string))
-	}
+	dedicatedZookeeper := cluster.BundleOption.DedicatedZookeeper != nil && *cluster.BundleOption.DedicatedZookeeper
+
 	var nodePurpose *NodePurpose
 	var nodeSize string
 	zookeeperNewSize := getNewSizeOrEmpty(d, "bundle.0.options.zookeeper_node_size")
