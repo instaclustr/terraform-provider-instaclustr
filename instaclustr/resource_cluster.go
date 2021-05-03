@@ -441,6 +441,11 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		return formatCreateErrMsg(err)
 	}
 
+	// we will throw an error if neither data_centre nor data_centres found
+	if dataCentre == "" && len(dataCentres) == 0 {
+		return fmt.Errorf("[Error] Error creating cluster: either data_centre or data_centres should be provided")
+	}
+
 	// we will throw an error if the Terraform file has both "data centre" and "data centres"
 	if dataCentre != "" && len(dataCentres) > 0 {
 		return fmt.Errorf("[Error] Error creating cluster: data_centre and data_centres cannot exist at the same time")
