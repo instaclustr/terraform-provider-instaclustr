@@ -222,27 +222,27 @@ func resourceCluster() *schema.Resource {
 								Schema: map[string]*schema.Schema{
 									"auth_n_authz": {
 										Type:     schema.TypeBool,
-										Required: true,
+										Optional: true,
 										ForceNew: true,
 									},
 									"client_encryption": {
 										Type:     schema.TypeBool,
-										Required: true,
+										Optional: true,
 										ForceNew: true,
 									},
 									"use_private_broadcast_rpc_address": {
 										Type:     schema.TypeBool,
-										Required: true,
+										Optional: true,
 										ForceNew: true,
 									},
 									"lucene_enabled": {
 										Type:     schema.TypeBool,
-										Required: true,
+										Optional: true,
 										ForceNew: true,
 									},
 									"continuous_backup_enabled": {
 										Type:     schema.TypeBool,
-										Required: true,
+										Optional: true,
 										ForceNew: true,
 									},
 									"number_partitions": {
