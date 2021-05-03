@@ -435,16 +435,21 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	dataCentre := d.Get("data_centre").(string)
+	dataCentres, err := getDataCentres(d)
+	if err != nil {
+		return formatCreateErrMsg(err)
+	}
+
+	// we will throw an error if the Terraform file has both "data centre" and "data centres"
+	if dataCentre != "" && len(dataCentres) > 0 {
+		return fmt.Errorf("[Error] Error creating cluster: data_centre and data_centres cannot exist at the same time")
+	}
 
 	if dataCentre != "" {
 		clusterNetwork := d.Get("cluster_network").(string)
 		createData.DataCentre = dataCentre
 		createData.ClusterNetwork = clusterNetwork
 	} else {
-		dataCentres, err := getDataCentres(d)
-		if err != nil {
-			return formatCreateErrMsg(err)
-		}
 		createData.DataCentres = dataCentres
 	}
 

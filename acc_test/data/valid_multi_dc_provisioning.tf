@@ -7,7 +7,7 @@ provider "instaclustr" {
 resource "instaclustr_cluster" "valid" {
   cluster_name = "testcluster"
   node_size    = "t3.small-v2"
-  sla_tier     = "NON_PRODUCTION"
+  sla_tier                = "NON_PRODUCTION"
   cluster_provider = {
     name = "AWS_VPC"
   }
