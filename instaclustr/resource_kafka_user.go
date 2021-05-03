@@ -60,7 +60,7 @@ func resourceKafkaUserCreate(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("[Error] Error in getting the status of the cluster: %s", err)
 	}
 	if cluster.ClusterStatus != "RUNNING" {
-		return fmt.Errorf("[Error] Cluster %s is not RUNNING.", cluster_id)
+		return fmt.Errorf("[Error] Cluster %s is not RUNNING. Currently in %s state", cluster_id, cluster.ClusterStatus)
 	}
 
 	// just use linear search for now to check if the user going to be created is already in the system
