@@ -109,7 +109,7 @@ type Cluster struct {
 
 type DataCentre struct {
 	ID                            string   `json:"id,omitempty"`
-	Name                          string   `json:"name,omitempty" mapstructure:"name"`
+	Name                          string   `json:"name" mapstructure:"name"`
 	CdcName                       string   `json:"cdcName,omitempty" mapstructure:"cdcName"`
 	Provider                      string   `json:"provider,omitempty"`
 	CdcNetwork                    string   `json:"cdcNetwork,omitempty"`

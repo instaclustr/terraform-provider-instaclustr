@@ -29,7 +29,6 @@ resource "instaclustr_cluster" "valid" {
   }
 
   data_centres {
-    name               = "DC3"
     data_centre_region = "US_WEST_2"
     network            = "192.168.0.0/18"
   }
