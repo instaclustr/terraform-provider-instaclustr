@@ -74,13 +74,13 @@ type CreateRequest struct {
 	ClusterName           string          `json:"clusterName"`
 	Bundles               []Bundle        `json:"bundles"`
 	Provider              ClusterProvider `json:"provider"`
-	SlaTier               string          `json:"slaTier"`
+	SlaTier               string          `json:"slaTier,omitempty"`
 	NodeSize              string          `json:"nodeSize"`
 	DataCentre            string          `json:"dataCentre,omitempty"`
 	DataCentres           []DataCentre    `json:"dataCentres,omitempty"`
 	ClusterNetwork        string          `json:"clusterNetwork,omitempty"`
-	PrivateNetworkCluster string          `json:"privateNetworkCluster"`
-	PCICompliantCluster   string          `json:"pciCompliantCluster"`
+	PrivateNetworkCluster string          `json:"privateNetworkCluster,omitempty"`
+	PCICompliantCluster   string          `json:"pciCompliantCluster,omitempty"`
 	RackAllocation        *RackAllocation `json:"rackAllocation,omitempty"`
 }
 
