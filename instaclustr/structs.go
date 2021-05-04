@@ -71,17 +71,17 @@ type RackAllocation struct {
 }
 
 type CreateRequest struct {
-	ClusterName           string          `json:"clusterName"`
-	Bundles               []Bundle        `json:"bundles"`
-	Provider              ClusterProvider `json:"provider"`
-	SlaTier               string          `json:"slaTier,omitempty"`
-	NodeSize              string          `json:"nodeSize"`
-	DataCentre            string          `json:"dataCentre,omitempty"`
-	DataCentres           []DataCentre    `json:"dataCentres,omitempty"`
-	ClusterNetwork        string          `json:"clusterNetwork,omitempty"`
-	PrivateNetworkCluster string          `json:"privateNetworkCluster,omitempty"`
-	PCICompliantCluster   string          `json:"pciCompliantCluster,omitempty"`
-	RackAllocation        *RackAllocation `json:"rackAllocation,omitempty"`
+	ClusterName           string                    `json:"clusterName"`
+	Bundles               []Bundle                  `json:"bundles"`
+	Provider              ClusterProvider           `json:"provider"`
+	SlaTier               string                    `json:"slaTier,omitempty"`
+	NodeSize              string                    `json:"nodeSize"`
+	DataCentre            string                    `json:"dataCentre,omitempty"`
+	DataCentres           []DataCentreCreateRequest `json:"dataCentres,omitempty"`
+	ClusterNetwork        string                    `json:"clusterNetwork,omitempty"`
+	PrivateNetworkCluster string                    `json:"privateNetworkCluster,omitempty"`
+	PCICompliantCluster   string                    `json:"pciCompliantCluster,omitempty"`
+	RackAllocation        *RackAllocation           `json:"rackAllocation,omitempty"`
 }
 
 type AddonBundles struct {
@@ -126,6 +126,12 @@ type DataCentre struct {
 	ResizeTargetNodeSize          string   `json:"resizeTargetNodeSize,omitempty"`
 	DataCentreRegion              string   `json:"dataCentre,omitempty" mapstructure:"data_centre_region"`
 	CdcStatus                     string   `json:"cdcStatus,omitempty"`
+}
+
+type DataCentreCreateRequest struct {
+	Name       string `json:"name" mapstructure:"name"`
+	Network    string `json:"network,omitempty" mapstructure:"network"`
+	DataCentre string `json:"dataCentre,omitempty" mapstructure:"data_centre"`
 }
 
 type Node struct {

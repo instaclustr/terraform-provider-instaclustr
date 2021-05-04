@@ -72,7 +72,7 @@ func resourceCluster() *schema.Resource {
 							Optional: true,
 						},
 
-						"data_centre_region": {
+						"data_centre": {
 							Type:     schema.TypeString,
 							Required: true,
 						},
@@ -838,14 +838,11 @@ func getDataCentresFromCluster(cluster *Cluster) ([]map[string]interface{}, erro
 	for _, dataCentre := range cluster.DataCentres {
 		dataCentreMap := make(map[string]interface{})
 		dataCentreMap["name"] = dataCentre.CdcName
-		dataCentreMap["data_centre_region"] = dataCentre.Name
+		dataCentreMap["data_centre"] = dataCentre.Name
 		dataCentreMap["network"] = dataCentre.CdcNetwork
 		convertedDataCentreMap := dereferencePointerInStruct(dataCentreMap)
 		dataCentres = append(dataCentres, convertedDataCentreMap)
 	}
-	sort.Slice(dataCentres, func(i, j int) bool {
-		return dataCentres[i]["data_centre_region"].(string) < dataCentres[j]["data_centre_region"].(string)
-	})
 	return dataCentres, nil
 }
 
@@ -917,11 +914,11 @@ func getBundles(d *schema.ResourceData) ([]Bundle, error) {
 	return bundles, nil
 }
 
-func getDataCentres(d *schema.ResourceData) ([]DataCentre, error) {
+func getDataCentres(d *schema.ResourceData) ([]DataCentreCreateRequest, error) {
 	dataCentres_ := d.Get("data_centres").(*schema.Set)
-	dataCentres := make([]DataCentre, 0)
+	dataCentres := make([]DataCentreCreateRequest, 0)
 	for _, inDataCentre := range dataCentres_.List() {
-		var dataCentre DataCentre
+		var dataCentre DataCentreCreateRequest
 		err := mapstructure.WeakDecode(inDataCentre.(map[string]interface{}), &dataCentre)
 		if err != nil {
 			return nil, err

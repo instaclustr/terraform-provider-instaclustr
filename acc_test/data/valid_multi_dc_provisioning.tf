@@ -7,7 +7,7 @@ provider "instaclustr" {
 resource "instaclustr_cluster" "valid" {
   cluster_name = "testcluster"
   node_size    = "t3.small-v2"
-  sla_tier                = "NON_PRODUCTION"
+  sla_tier     = "NON_PRODUCTION"
   cluster_provider = {
     name = "AWS_VPC"
   }
@@ -17,20 +17,20 @@ resource "instaclustr_cluster" "valid" {
   }
 
   data_centres {
-    name               = "DC1"
-    data_centre_region = "US_WEST_1"
-    network            = "10.0.0.0/18"
+    name        = "DC1"
+    data_centre = "US_WEST_1"
+    network     = "10.0.0.0/18"
   }
 
   data_centres {
-    name               = "DC2"
-    data_centre_region = "US_WEST_1"
-    network            = "10.1.0.0/18"
+    name        = "DC2"
+    data_centre = "US_WEST_1"
+    network     = "10.1.0.0/18"
   }
 
   data_centres {
-    data_centre_region = "US_WEST_2"
-    network            = "192.168.0.0/18"
+    data_centre = "US_WEST_2"
+    network     = "192.168.0.0/18"
   }
 
   bundle {
