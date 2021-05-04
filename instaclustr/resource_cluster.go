@@ -710,25 +710,22 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 
 	//loop over each data centre to determine nodes and racks for rack allocation
 	nodeCount := 0
-	rackList := make([]string, 0)
+	rackCount := 0
 	for _, dataCentre := range cluster.DataCentres {
+		rackList := make([]string, 0)
 		for _, node := range dataCentre.Nodes {
 			if !strings.HasPrefix(node.Size, "zk-") {
 				nodeCount += 1
 			}
 			rackList = appendIfMissing(rackList, node.Rack)
 		}
-
-		// for multi-DC provisioning
-		if len(cluster.DataCentres) > 1 {
-			break
-		}
+		rackCount += len(rackList)
 	}
-	rackCount := len(rackList)
+
 	nodesPerRack := nodeCount / rackCount
 
 	rackAllocation := make(map[string]interface{}, 0)
-	rackAllocation["number_of_racks"] = strconv.Itoa(rackCount)
+	rackAllocation["number_of_racks"] = strconv.Itoa(rackCount / len(cluster.DataCentres))
 	rackAllocation["nodes_per_rack"] = strconv.Itoa(nodesPerRack)
 
 	if err := d.Set("rack_allocation", rackAllocation); err != nil {
