@@ -565,10 +565,13 @@ func waitForCdcResizeToFinish(client *APIClient,
 		if res.CompletedStatus == "FAILED" {
 			return resource.NonRetryableError(fmt.Errorf("[Error] CDC Resize operation %s failed", opId))
 		}
+		if res.Completed == nil {
+			return resource.RetryableError(fmt.Errorf("[DEBUG] CDC resize %s is in progress...", opId))
+		}
 		if res.CompletedStatus == "SUCCESS" {
 			return nil
 		} else {
-			return resource.RetryableError(fmt.Errorf("[DEBUG] CDC resize %s is in progress...", opId))
+			return resource.NonRetryableError(fmt.Errorf("[ERROR] unexpected cdc resize finish status %s", res.CompletedStatus))
 		}
 	})
 }
@@ -673,20 +676,20 @@ func appendIfMissing(slice []string, toAppend string) []string {
 func getBundleIndex(bundleType string, bundles []Bundle) (int, error) {
 	for i := range bundles {
 		if bundles[i].Bundle == bundleType {
+			return i, nil
 		}
-		return i, nil
 	}
 	return -1, fmt.Errorf("can't find bundle %s", bundleType)
 }
 
 func hasElasticsearchSizeChanges(bundleIndex int, d *schema.ResourceData) bool {
-	return d.HasChange(getBundleOptionKey(bundleIndex, "master_node_size")) &&
-		d.HasChange(getBundleOptionKey(bundleIndex, "kibana_node_size")) &&
+	return d.HasChange(getBundleOptionKey(bundleIndex, "master_node_size")) ||
+		d.HasChange(getBundleOptionKey(bundleIndex, "kibana_node_size")) ||
 		d.HasChange(getBundleOptionKey(bundleIndex, "data_node_size"))
 }
 
 func hasKafkaSizeChanges(bundleIndex int, d *schema.ResourceData) bool {
-	return d.HasChange(getBundleOptionKey(bundleIndex, "zookeeper_node_size")) &&
+	return d.HasChange(getBundleOptionKey(bundleIndex, "zookeeper_node_size")) ||
 		d.HasChange("node_size")
 }
 
