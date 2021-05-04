@@ -1,8 +1,4 @@
 version: 2.1
-
-orbs:
-  sonarcloud: sonarsource/sonarcloud@1.0.2
-
 commands:
   build-provider:
     steps:
@@ -107,7 +103,6 @@ jobs:
       - run: go get -v -t -d ./...
       - configure-gpg-key
       - run-unit-tests
-      - sonarcloud/scan
       - build-provider
       - package-all-platforms
       - sign-builds
