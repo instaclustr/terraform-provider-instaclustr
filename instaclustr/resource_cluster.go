@@ -580,8 +580,6 @@ func resourceClusterUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*Config).Client
 	clusterID := d.Get("cluster_id").(string)
 
-	clusterResize := d.HasChange("node_size") || d.HasChange("bundle.0.options.kibana_node_size") || d.HasChange("bundle.0.options.master_node_size") || d.HasChange("bundle.0.options.data_node_size") || d.HasChange("bundle.0.options.zookeeper_node_size")
-
 	kafkaSchemaRegistryUserUpdate := d.HasChange("kafka_schema_registry_user_password")
 	kafkaRestProxyUserUpdate := d.HasChange("kafka_rest_proxy_user_password")
 
@@ -608,12 +606,9 @@ func resourceClusterUpdate(d *schema.ResourceData, meta interface{}) error {
 		}
 	}
 
-	if clusterResize {
-		//resizing the cluster (i.e, upgrading from one node size to another node size)
-		err = doClusterResize(client, clusterID, d)
-		if err != nil {
-			return fmt.Errorf("[Error] Error resizing the cluster : %s", err)
-		}
+	err = doClusterResize(client, clusterID, d, bundles)
+	if err != nil {
+		return fmt.Errorf("[Error] Error resizing the cluster : %s", err)
 	}
 
 	if !bundleConfig.IsKafkaCluster && (kafkaSchemaRegistryUserUpdate || kafkaRestProxyUserUpdate) {
@@ -675,22 +670,62 @@ func appendIfMissing(slice []string, toAppend string) []string {
 	return append(slice, toAppend)
 }
 
-func doClusterResize(client *APIClient, clusterID string, d *schema.ResourceData) error {
+func getBundleIndex(bundleType string, bundles []Bundle) (int, error) {
+	for i := range bundles {
+		if bundles[i].Bundle == bundleType {
+		}
+		return i, nil
+	}
+	return -1, fmt.Errorf("can't find bundle %s", bundleType)
+}
+
+func hasElasticsearchSizeChanges(bundleIndex int, d *schema.ResourceData) bool {
+	return d.HasChange(getBundleOptionKey(bundleIndex, "master_node_size")) &&
+		d.HasChange(getBundleOptionKey(bundleIndex, "kibana_node_size")) &&
+		d.HasChange(getBundleOptionKey(bundleIndex, "data_node_size"))
+}
+
+func hasKafkaSizeChanges(bundleIndex int, d *schema.ResourceData) bool {
+	return d.HasChange(getBundleOptionKey(bundleIndex, "zookeeper_node_size")) &&
+		d.HasChange("node_size")
+}
+
+func hasCassandraSizeChanges(d *schema.ResourceData) bool {
+	return d.HasChange("node_size")
+}
+
+func doClusterResize(client *APIClient, clusterID string, d *schema.ResourceData, bundles []Bundle) error {
 	cluster, err := client.ReadCluster(clusterID)
 	if err != nil {
 		return fmt.Errorf("[Error] Error reading cluster: %s", err)
+	}
+	bundleIndex, err := getBundleIndex(cluster.BundleType, bundles)
+	if err != nil {
+		return err
 	}
 	var res *ClusterDataCenterResizeResponse
 	var cdcId *string
 	switch cluster.BundleType {
 	case "APACHE_CASSANDRA":
-		cdcId, res, err = doLegacyCassandraClusterResize(client, cluster, d)
+		if hasCassandraSizeChanges(d) {
+			cdcId, res, err = doLegacyCassandraClusterResize(client, cluster, d)
+		} else {
+			return nil
+		}
 		break
 	case "ELASTICSEARCH":
-		cdcId, res, err = doElasticsearchClusterResize(client, cluster, d)
+		if hasElasticsearchSizeChanges(bundleIndex, d) {
+			cdcId, res, err = doElasticsearchClusterResize(client, cluster, d, bundleIndex)
+		} else {
+			return nil
+		}
 		break
 	case "KAFKA":
-		cdcId, res, err = doKafkaClusterResize(client, cluster, d)
+		if hasKafkaSizeChanges(bundleIndex, d) {
+			cdcId, res, err = doKafkaClusterResize(client, cluster, d, bundleIndex)
+		} else {
+			return nil
+		}
 		break
 	default:
 		return fmt.Errorf("CDC resize does not support: %s", cluster.BundleType)
@@ -753,14 +788,18 @@ func getSingleChangedElasticsearchSizeAndPurpose(kibanaSize, masterSize, dataSiz
 	return nodeSize, nodePurpose, nil
 }
 
-func doElasticsearchClusterResize(client *APIClient, cluster *Cluster, d *schema.ResourceData) (*string, *ClusterDataCenterResizeResponse, error) {
+func getBundleOptionKey(bundleIndex int, option string) string {
+	return fmt.Sprintf("bundle.%d.options.%s", bundleIndex, option)
+}
+
+func doElasticsearchClusterResize(client *APIClient, cluster *Cluster, d *schema.ResourceData, bundleIndex int) (*string, *ClusterDataCenterResizeResponse, error) {
 	dedicatedMaster := cluster.BundleOption.DedicatedMasterNodes != nil && *cluster.BundleOption.DedicatedMasterNodes
 	kibana := len(cluster.BundleOption.KibanaNodeSize) > 0
 	var nodePurpose *NodePurpose
 	var nodeSize string
-	masterNewSize := getNewSizeOrEmpty(d, "bundle.0.options.master_node_size")
-	kibanaNewSize := getNewSizeOrEmpty(d, "bundle.0.options.kibana_node_size")
-	dataNewSize := getNewSizeOrEmpty(d, "bundle.0.options.data_node_size")
+	masterNewSize := getNewSizeOrEmpty(d, getBundleOptionKey(bundleIndex, "master_node_size"))
+	kibanaNewSize := getNewSizeOrEmpty(d, getBundleOptionKey(bundleIndex, "kibana_node_size"))
+	dataNewSize := getNewSizeOrEmpty(d, getBundleOptionKey(bundleIndex, "data_node_size"))
 
 	if newSize, isAllChange := isElasticsearchSizeAllChange(kibanaNewSize, masterNewSize, dataNewSize, kibana, dedicatedMaster); isAllChange {
 		nodeSize = newSize
@@ -814,12 +853,12 @@ func getSingleChangedKafkaSizeAndPurpose(brokerSize, zookeeperSize string, dedic
 	return nodeSize, nodePurpose, nil
 }
 
-func doKafkaClusterResize(client *APIClient, cluster *Cluster, d *schema.ResourceData) (*string, *ClusterDataCenterResizeResponse, error) {
+func doKafkaClusterResize(client *APIClient, cluster *Cluster, d *schema.ResourceData, bundleIndex int) (*string, *ClusterDataCenterResizeResponse, error) {
 	dedicatedZookeeper := cluster.BundleOption.DedicatedZookeeper != nil && *cluster.BundleOption.DedicatedZookeeper
 
 	var nodePurpose *NodePurpose
 	var nodeSize string
-	zookeeperNewSize := getNewSizeOrEmpty(d, "bundle.0.options.zookeeper_node_size")
+	zookeeperNewSize := getNewSizeOrEmpty(d, getBundleOptionKey(bundleIndex, "zookeeper_node_size"))
 	brokerNewSize := getNewSizeOrEmpty(d, "node_size")
 
 	if newSize, isAllChange := isKafkaSizeAllChange(brokerNewSize, zookeeperNewSize, dedicatedZookeeper); isAllChange {

@@ -207,3 +207,14 @@ func TestGetSingleChangedKafkaSizeAndPurpose(t *testing.T) {
 	helper("t3.small-v2", "", "t3.small-v2", true, false, KAFKA_BROKER)
 	helper("", "t3.small-v2", "t3.small-v2", true, false, KAFKA_DEDICATED_ZOOKEEPER)
 }
+
+func TestGetBundleOptionKey(t *testing.T) {
+	helper := func(bundleIndex int, option, expect string) {
+		if getBundleOptionKey(bundleIndex, option) != expect {
+			t.Fatalf("With parameter %d, %s, should return ", bundleIndex, option, expect)
+		}
+	}
+	helper(0, "test", "bundle.0.options.test")
+	helper(2, "kibana_node_size", "bundle.2.options.kibana_node_size")
+	helper(-1, "kibana_node_size", "bundle.-1.options.kibana_node_size")
+}
