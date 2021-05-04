@@ -1,9 +1,9 @@
 package main
 
 import (
-    "github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
-	"github.com/hashicorp/terraform/plugin"
-	"github.com/hashicorp/terraform/terraform"
+	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/plugin"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
 func main() {

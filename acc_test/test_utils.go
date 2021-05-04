@@ -2,13 +2,12 @@ package test
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 	"os"
 	"time"
 )
-
 
 func getOptionalEnv(key, fallback string) string {
 	value := os.Getenv(key)
@@ -20,7 +19,7 @@ func getOptionalEnv(key, fallback string) string {
 
 func checkClusterRunning(resourceName, hostname, username, apiKey string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		resourceState := s.Modules[0].Resources["instaclustr_cluster." + resourceName]
+		resourceState := s.Modules[0].Resources["instaclustr_cluster."+resourceName]
 		id := resourceState.Primary.Attributes["cluster_id"]
 		client := new(instaclustr.APIClient)
 		client.InitClient(hostname, username, apiKey)

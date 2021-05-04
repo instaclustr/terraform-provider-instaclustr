@@ -6,8 +6,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 )
 
@@ -20,7 +20,6 @@ func TestAccFirewallRuleResource(t *testing.T) {
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 	config := fmt.Sprintf(string(tfFile), username, apiKey, hostname)
-
 
 	resource.Test(t, resource.TestCase{
 		Providers:    testProviders,

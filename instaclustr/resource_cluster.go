@@ -3,8 +3,8 @@ package instaclustr
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/mitchellh/mapstructure"
 	"log"
 	"reflect"
@@ -473,7 +473,6 @@ func waitForClusterStateAndDoUpdate(client *APIClient,
 		cluster, err := client.ReadCluster(id)
 		resourceClusterRead(d, meta)
 
-
 		if err != nil {
 			return resource.NonRetryableError(fmt.Errorf("[Error] Error retrieving cluster info: %s", err))
 		}
@@ -695,8 +694,8 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("pci_compliant_cluster", cluster.PciCompliance == "ENABLED")
 
 	azList := make([]string, 0)
-	publicContactPointList:= make([]string, 0)
-	privateContactPointList:= make([]string, 0)
+	publicContactPointList := make([]string, 0)
+	privateContactPointList := make([]string, 0)
 
 	for _, dataCentre := range cluster.DataCentres {
 		for _, node := range dataCentre.Nodes {
@@ -711,7 +710,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	if !cluster.DataCentres[0].PrivateIPOnly && len(publicContactPointList) > 0 {
-			err = d.Set("public_contact_point", publicContactPointList)
+		err = d.Set("public_contact_point", publicContactPointList)
 	} else {
 		err = d.Set("public_contact_point", nil)
 	}
@@ -760,7 +759,7 @@ func getBundlesFromCluster(cluster *Cluster) ([]map[string]interface{}, error) {
 		return nil, nil
 	}
 
-	sort.Slice(addonBundles, func(i, j int) bool {return addonBundles[i]["bundle"].(string) > addonBundles[j]["bundle"].(string)})
+	sort.Slice(addonBundles, func(i, j int) bool { return addonBundles[i]["bundle"].(string) > addonBundles[j]["bundle"].(string) })
 	for _, addonBundle := range addonBundles {
 		if len(addonBundle) != 0 {
 			bundles = append(bundles, addonBundle)
