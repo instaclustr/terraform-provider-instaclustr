@@ -142,14 +142,14 @@ workflows:
   commit-build-test-workflow:
     jobs:
       - commit-build-test
-  pr-build-test-workflow:
-    jobs:
-      - hold:
-          type: approval
-          filters:
-            branches:
-              ignore: master
-      - pr-build-test:
-          context: terraform provider
-          requires:
-            - hold
+#  pr-build-test-workflow:
+#    jobs:
+#      - hold:
+#          type: approval
+#          filters:
+#            branches:
+#              ignore: master
+#      - pr-build-test:
+#          context: terraform provider
+#          requires:
+#            - hold
