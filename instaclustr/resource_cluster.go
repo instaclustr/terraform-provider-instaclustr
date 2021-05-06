@@ -728,12 +728,15 @@ func getBundlesFromCluster(cluster *Cluster) ([]map[string]interface{}, error) {
 	bundles := make([]map[string]interface{}, 0)
 	bundles = append(bundles, baseBundle)
 	addonBundles := cluster.AddonBundles
+
+	if addonBundles == nil {
+		return nil, nil
+	}
+
 	sort.Slice(addonBundles, func(i, j int) bool {return addonBundles[i]["bundle"].(string) > addonBundles[j]["bundle"].(string)})
-	if addonBundles != nil {
-		for _, addonBundle := range addonBundles {
-			if len(addonBundle) != 0 {
-				bundles = append(bundles, addonBundle)
-			}
+	for _, addonBundle := range addonBundles {
+		if len(addonBundle) != 0 {
+			bundles = append(bundles, addonBundle)
 		}
 	}
 

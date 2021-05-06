@@ -1,6 +1,7 @@
 # Terraform Instaclustr Provider
 
 [![CircleCI](https://img.shields.io/circleci/build/gh/hail-insta-org/terraform-provider-instaclustr/master?style=for-the-badge)](https://app.circleci.com/pipelines/github/hail-insta-org/terraform-provider-instaclustr)
+
 ![GoLang Version](https://img.shields.io/github/go-mod/go-version/instaclustr/terraform-provider-instaclustr?logo=go&style=for-the-badge)
 ![Latest Release Version](https://img.shields.io/github/v/release/instaclustr/terraform-provider-instaclustr?logo=github&sort=semver&style=for-the-badge)
 ![License](https://img.shields.io/github/license/instaclustr/terraform-provider-instaclustr?style=for-the-badge)
@@ -128,6 +129,13 @@ Firstly thanks!  We value your time and will do our best to review the PR as soo
 5. Set up all of the environmental variables listed [below](#acceptance-test-environment-variables) to prepare for acceptance testing.
 6. Run the acceptance tests `$ make testacc`
 7. Create a PR and send it our way :)
+
+Our Circle CI pipeline will automatically run unit tests when a PR is created and new changes are committed.
+It is also capable of running the acceptance tests, however our staff needs to give a manual approval to run the tests.
+Passing tests are a requirement to merge a PR. Please let us know when your PR is ready for acceptance tests!
+
+Unit tests are within `instaclustr` folder with `_unit_test` suffix, and used to test the internal methods.
+Acceptance tests are within `acc_test` folder, and used to run end-to-end testing.
 
 #### Acceptance Test Environment Variables
 Variable | Command | Description
