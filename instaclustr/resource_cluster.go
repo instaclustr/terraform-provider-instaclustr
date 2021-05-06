@@ -84,24 +84,29 @@ func resourceCluster() *schema.Resource {
 							ForceNew: true,
 						},
 
-						"rack_allocation": {
-							Type:     schema.TypeMap,
+						"node_size": {
+							Type:     schema.TypeString,
 							Optional: true,
-							Elem: &schema.Resource{
-								Schema: map[string]*schema.Schema{
-									"number_of_racks": {
-										Type:     schema.TypeInt,
-										Required: true,
-										ForceNew: true,
-									},
-									"nodes_per_rack": {
-										Type:     schema.TypeInt,
-										Required: true,
-										ForceNew: true,
-									},
-								},
-							},
 						},
+
+						//"rack_allocation": {
+						//	Type:     schema.TypeMap,
+						//	Optional: true,
+						//	Elem: &schema.Resource{
+						//		Schema: map[string]*schema.Schema{
+						//			"number_of_racks": {
+						//				Type:     schema.TypeInt,
+						//				Required: true,
+						//				ForceNew: true,
+						//			},
+						//			"nodes_per_rack": {
+						//				Type:     schema.TypeInt,
+						//				Required: true,
+						//				ForceNew: true,
+						//			},
+						//		},
+						//	},
+						//},
 					},
 				},
 			},
@@ -861,6 +866,17 @@ func getDataCentresFromCluster(cluster *Cluster) ([]map[string]interface{}, erro
 		dataCentreMap["name"] = dataCentre.CdcName
 		dataCentreMap["data_centre"] = dataCentre.Name
 		dataCentreMap["network"] = dataCentre.CdcNetwork
+
+		// find the node size for this data centre
+		nodeSize := ""
+		for _, node := range dataCentre.Nodes {
+			nodeSize = node.Size
+			if !strings.HasPrefix(nodeSize, "zk-") {
+				break
+			}
+		}
+		dataCentreMap["node_size"] = nodeSize
+
 		convertedDataCentreMap := dereferencePointerInStruct(dataCentreMap)
 		dataCentres = append(dataCentres, convertedDataCentreMap)
 	}

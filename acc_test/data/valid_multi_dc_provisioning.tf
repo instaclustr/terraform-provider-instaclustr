@@ -20,17 +20,20 @@ resource "instaclustr_cluster" "valid" {
     name        = "DC1"
     data_centre = "US_WEST_1"
     network     = "10.0.0.0/18"
+    node_size    =  "t3.medium"
   }
 
   data_centres {
     name        = "DC2"
     data_centre = "US_WEST_1"
     network     = "10.1.0.0/18"
+    node_size    = "t3.small-v2"
   }
 
   data_centres {
     data_centre = "US_WEST_2"
     network     = "192.168.0.0/18"
+    node_size    = "t3.small-v2"
   }
 
   bundle {

@@ -128,10 +128,11 @@ type DataCentre struct {
 }
 
 type DataCentreCreateRequest struct {
-	Name           string          `json:"name" mapstructure:"name"`
-	Network        string          `json:"network" mapstructure:"network"`
-	DataCentre     string          `json:"dataCentre" mapstructure:"data_centre"`
-	RackAllocation *RackAllocation `json:"rackAllocation,omitempty" mapstructure:"rack_allocation,omitempty"`
+	Name       string `json:"name" mapstructure:"name"`
+	Network    string `json:"network" mapstructure:"network"`
+	DataCentre string `json:"dataCentre" mapstructure:"data_centre"`
+	// RackAllocation *RackAllocation `json:"rackAllocation,omitempty" mapstructure:"rack_allocation,omitempty"`
+	NodeSize string `json:"nodeSize,omitempty" mapstructure:"node_size,omitempty"`
 }
 
 type Node struct {
