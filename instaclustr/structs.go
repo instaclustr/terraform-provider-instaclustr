@@ -201,7 +201,7 @@ type ClusterDataCenterResizeResponse struct {
 
 type ClusterDataCentreResizeOperationDetails struct {
 	Id              string `json:"id"`
-	Completed       *int64 `json:"completed"`
+	Completed       *int64 `json:"completed,omitempty"`
 	CompletedStatus string `json:"completedStatus"`
 }
 

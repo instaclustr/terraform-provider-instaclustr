@@ -404,22 +404,22 @@ func resourceCluster() *schema.Resource {
 }
 
 func getNodeSize(d *schema.ResourceData, bundles []Bundle) (string, error) {
-	for i := range bundles {
-		if bundles[i].Bundle == "ELASTICSEARCH" {
-			if len(bundles[i].Options.MasterNodeSize) == 0 {
+	for i, bundle := range bundles {
+		if bundle.Bundle == "ELASTICSEARCH" {
+			if len(bundle.Options.MasterNodeSize) == 0 {
 				return "", fmt.Errorf("[ERROR] 'master_node_size' is required in the bundle option.")
 			}
-			dedicatedMaster := bundles[i].Options.DedicatedMasterNodes != nil && *bundles[i].Options.DedicatedMasterNodes
+			dedicatedMaster := bundle.Options.DedicatedMasterNodes != nil && *bundle.Options.DedicatedMasterNodes
 			if dedicatedMaster {
-				if len(bundles[i].Options.DataNodeSize) == 0 {
+				if len(bundle.Options.DataNodeSize) == 0 {
 					return "", fmt.Errorf("[ERROR] Elasticsearch dedicated master is enabled, 'data_node_size' is required in the bundle option.")
 				}
-				return bundles[i].Options.DataNodeSize, nil
+				return bundle.Options.DataNodeSize, nil
 			} else {
-				if len(bundles[i].Options.DataNodeSize) != 0 {
-					return "", fmt.Errorf("[ERROR] 'dedicated_master_nodes' must be true if 'data_node_size' is set.")
+				if len(bundle.Options.DataNodeSize) != 0 && bundle.Options.DataNodeSize != bundle.Options.MasterNodeSize {
+					return "", fmt.Errorf("[ERROR] When 'dedicated_master_nodes' is not true , data_node_size can be either null or equal to master_node_size.")
 				}
-				size := bundles[i].Options.MasterNodeSize
+				size := bundle.Options.MasterNodeSize
 				bundles[i].Options.MasterNodeSize = ""
 				return size, nil
 			}
@@ -747,20 +747,20 @@ func getNewSizeOrEmpty(d *schema.ResourceData, key string) string {
 	return after.(string)
 }
 
-func isElasticsearchSizeAllChange(kibanaSize, masterSize, dataSize string, kibana, dedicatedMaster bool) (string, bool) {
+func isElasticsearchSizeAllChange(kibanaSize, masterSize, dataSize string, kibana, dataNodes bool) (string, bool) {
 	if len(masterSize) == 0 {
 		return "", false
 	}
 	if kibana && (len(kibanaSize) == 0 || kibanaSize != masterSize) {
 		return "", false
 	}
-	if dedicatedMaster && (len(dataSize) == 0 || dataSize != masterSize) {
+	if dataNodes && (len(dataSize) == 0 || dataSize != masterSize) {
 		return "", false
 	}
 	return masterSize, true
 }
 
-func getSingleChangedElasticsearchSizeAndPurpose(kibanaSize, masterSize, dataSize string, kibana, dedicatedMaster bool) (string, NodePurpose, error) {
+func getSingleChangedElasticsearchSizeAndPurpose(kibanaSize, masterSize, dataSize string, kibana, dataNodes bool) (string, NodePurpose, error) {
 	changedCount := 0
 	var nodePurpose NodePurpose
 	var nodeSize string
@@ -770,8 +770,8 @@ func getSingleChangedElasticsearchSizeAndPurpose(kibanaSize, masterSize, dataSiz
 		nodeSize = masterSize
 	}
 	if len(dataSize) > 0 {
-		if !dedicatedMaster {
-			return "", "", fmt.Errorf("[ERROR] This cluster didn't enable Dedicated Master, data_node_sise is not used for this cluster. Please use master_node_size to change the size instead")
+		if !dataNodes {
+			return "", "", fmt.Errorf("[ERROR] This cluster does not have data only nodes, so data_node_sise is not used for this cluster. Please use master_node_size to change the size instead")
 		}
 		changedCount += 1
 		nodePurpose = ELASTICSEARCH_DATA_AND_INGEST
@@ -796,19 +796,19 @@ func getBundleOptionKey(bundleIndex int, option string) string {
 }
 
 func doElasticsearchClusterResize(client *APIClient, cluster *Cluster, d *schema.ResourceData, bundleIndex int) (*string, *ClusterDataCenterResizeResponse, error) {
-	dedicatedMaster := cluster.BundleOption.DedicatedMasterNodes != nil && *cluster.BundleOption.DedicatedMasterNodes
 	kibana := len(cluster.BundleOption.KibanaNodeSize) > 0
+	dataNodes := len(cluster.BundleOption.DataNodeSize) > 0
 	var nodePurpose *NodePurpose
 	var nodeSize string
 	masterNewSize := getNewSizeOrEmpty(d, getBundleOptionKey(bundleIndex, "master_node_size"))
 	kibanaNewSize := getNewSizeOrEmpty(d, getBundleOptionKey(bundleIndex, "kibana_node_size"))
 	dataNewSize := getNewSizeOrEmpty(d, getBundleOptionKey(bundleIndex, "data_node_size"))
 
-	if newSize, isAllChange := isElasticsearchSizeAllChange(kibanaNewSize, masterNewSize, dataNewSize, kibana, dedicatedMaster); isAllChange {
+	if newSize, isAllChange := isElasticsearchSizeAllChange(kibanaNewSize, masterNewSize, dataNewSize, kibana, dataNodes); isAllChange {
 		nodeSize = newSize
 		nodePurpose = nil
 	} else {
-		newSize, purpose, err := getSingleChangedElasticsearchSizeAndPurpose(kibanaNewSize, masterNewSize, dataNewSize, kibana, dedicatedMaster)
+		newSize, purpose, err := getSingleChangedElasticsearchSizeAndPurpose(kibanaNewSize, masterNewSize, dataNewSize, kibana, dataNodes)
 		if err != nil {
 			return nil, nil, err
 		}

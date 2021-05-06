@@ -211,7 +211,7 @@ func TestGetSingleChangedKafkaSizeAndPurpose(t *testing.T) {
 func TestGetBundleOptionKey(t *testing.T) {
 	helper := func(bundleIndex int, option, expect string) {
 		if getBundleOptionKey(bundleIndex, option) != expect {
-			t.Fatalf("With parameter %d, %s, should return ", bundleIndex, option, expect)
+			t.Fatalf("With parameter %d, %s, should return %s", bundleIndex, option, expect)
 		}
 	}
 	helper(0, "test", "bundle.0.options.test")
