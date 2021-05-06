@@ -93,7 +93,7 @@ resource "instaclustr_cluster" "example" {
 
 ## Configuration
 
-Configuration documentation can be found at the [Instacluster Terraform Registry](https://registry.terraform.io/providers/instaclustr/instaclustr/latest/docs/resources/encryption_key)
+Configuration documentation can be found at the [Instaclustr Terraform Registry](https://registry.terraform.io/providers/instaclustr/instaclustr/latest/docs/resources/encryption_key)
 
 ## Bundles and Versions
 
