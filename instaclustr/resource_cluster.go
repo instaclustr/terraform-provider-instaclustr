@@ -779,7 +779,7 @@ func getSingleChangedElasticsearchSizeAndPurpose(kibanaSize, masterSize, dataSiz
 	}
 	if len(kibanaSize) > 0 {
 		if !kibana {
-			return "", "", fmt.Errorf("[ERROR] This cluster didn't enable Kibanna, kibana_node_sise is not used for this cluster. Please use master_node_size to change the size instead")
+			return "", "", fmt.Errorf("[ERROR] This cluster didn't enable Kibana, kibana_node_sise is not used for this cluster. Please use master_node_size to change the size instead")
 		}
 		changedCount += 1
 		nodePurpose = ELASTICSEARCH_KIBANA
