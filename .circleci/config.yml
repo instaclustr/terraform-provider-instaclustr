@@ -142,7 +142,7 @@ workflows:
   unit-test-workflow:
     jobs:
       - commit-build-test
-  acceptence-test-workflow:
+  acceptance-test-workflow:
     jobs:
       - hold:
           type: approval
