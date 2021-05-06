@@ -113,7 +113,6 @@ type DataCentre struct {
 	CdcName                       string   `json:"cdcName,omitempty" mapstructure:"cdcName"`
 	Provider                      string   `json:"provider,omitempty"`
 	CdcNetwork                    string   `json:"cdcNetwork,omitempty"`
-	Network                       string   `json:"network,omitempty" mapstructure:"network"`
 	Bundles                       []string `json:"bundles,omitempty"`
 	ClientEncryption              bool     `json:"clientEncryption,omitempty"`
 	PasswordAuthentication        bool     `json:"passwordAuthentication,omitempty"`
@@ -129,9 +128,10 @@ type DataCentre struct {
 }
 
 type DataCentreCreateRequest struct {
-	Name       string `json:"name" mapstructure:"name"`
-	Network    string `json:"network,omitempty" mapstructure:"network"`
-	DataCentre string `json:"dataCentre,omitempty" mapstructure:"data_centre"`
+	Name           string          `json:"name" mapstructure:"name"`
+	Network        string          `json:"network" mapstructure:"network"`
+	DataCentre     string          `json:"dataCentre" mapstructure:"data_centre"`
+	RackAllocation *RackAllocation `json:"rackAllocation,omitempty" mapstructure:"rack_allocation,omitempty"`
 }
 
 type Node struct {

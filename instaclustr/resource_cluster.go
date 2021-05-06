@@ -64,22 +64,43 @@ func resourceCluster() *schema.Resource {
 			"data_centres": {
 				Type:     schema.TypeSet,
 				Optional: true,
-				ForceNew: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"name": {
 							Type:     schema.TypeString,
 							Optional: true,
+							ForceNew: true,
 						},
 
 						"data_centre": {
 							Type:     schema.TypeString,
 							Required: true,
+							ForceNew: true,
 						},
 
 						"network": {
 							Type:     schema.TypeString,
 							Required: true,
+							ForceNew: true,
+						},
+
+						"rack_allocation": {
+							Type:     schema.TypeMap,
+							Optional: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"number_of_racks": {
+										Type:     schema.TypeInt,
+										Required: true,
+										ForceNew: true,
+									},
+									"nodes_per_rack": {
+										Type:     schema.TypeInt,
+										Required: true,
+										ForceNew: true,
+									},
+								},
+							},
 						},
 					},
 				},
