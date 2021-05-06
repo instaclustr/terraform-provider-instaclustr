@@ -21,7 +21,7 @@ Property | Description | Default
 
 Property | Description | Default
 ---------|-------------|--------
-`type`|Accepts CASSANDRA, SPARK, SPARK_JOBSERVER|Required
+`type`|Accepts CASSANDRA, SPARK, SPARK_JOBSERVER, APACHE_ZOOKEEPER, KAFKA, KAFKA_CONNECT, ELASTICSEARCH, REDIS|Required
 
 #### Example
 ```
