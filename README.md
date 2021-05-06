@@ -26,27 +26,25 @@ For further information about Instaclustr, please see [FAQ](https://www.instaclu
 - Terraform v0.10.x - .v0.13.x.
 - Go 1.14 or higher
 
-## Building The Provider
+## Using The Provider
 
-Clone the provider source code
+To install this provider, copy and paste this code into your Terraform configuration. Then, run terraform init.
 
-```sh
-$ mkdir -p $GOPATH/src/github.com/instaclustr; cd $GOPATH/src/github.com/instaclustr
-$ git clone https://github.com/instaclustr/terraform-provider-instaclustr.git
+Terraform 0.13+
+
 ```
+terraform {
+  required_providers {
+    instaclustr = {
+      source = "instaclustr/instaclustr"
+      version = "1.9.6"
+    }
+  }
+}
 
-Build the source into executable binary
-
-```sh
-$ cd $GOPATH/src/github.com/instaclustr/terraform-provider-instaclustr
-$ make build
-```
-
-Install the provider
-
-```sh
-$ cd $GOPATH/src/github.com/instaclustr/terraform-provider-instaclustr
-$ make install
+provider "instaclustr" {
+  # Configuration options
+}
 ```
 
 For further details on Provider installation please see the [Terraform installation guide](https://www.terraform.io/docs/plugins/basics.html#installing-a-plugin).
@@ -111,6 +109,7 @@ KAFKA_SCHEMA_REGISTRY|5.0.0|KAFKA
 ELASTICSEARCH|opendistro-for-elasticsearch:1.4.0
 KAFKA_CONNECT|2.3.1, 2.4.1, 2.5.1, 2.6.1|
 REDIS|6.0.9|
+APACHE_ZOOKEEPER|3.5.8|
 
 ### Migrating from 0.0.1 &rarr; 1.0.0+
 A schema change has been made from 0.0.1 which no longer supports the `bundles` argument and uses `bundle` blocks instead. This change can cause `terraform apply` to fail with a message that `bundles` has been removed and/or updating isn't supported. To resolve this -<br>
@@ -122,11 +121,21 @@ A schema change has been made from 0.0.1 which no longer supports the `bundles` 
 Firstly thanks!  We value your time and will do our best to review the PR as soon as possible.
 
 1. [Install golang](https://golang.org/doc/install#install)
-2. Clone repository to: $GOPATH/src/github.com/instaclustr/terraform-provider-instaclustr
-3. Build the provider by `$ make build`
-4. Run the tests by `$ make test`
-5. Set up all of the environmental variables listed [below](#acceptance-test-environment-variables) to prepare for acceptance testing.
-6. Run the acceptance tests `$ make testacc`
+2. Clone repository to: ```$GOPATH/src/github.com/instaclustr/terraform-provider-instaclustr```
+3. Build and install the provider by `$ make build install`
+1. For local testing of your changes you will need to use the local provider instead of the provider from the registry, so change your provider config to the following
+
+    ```
+    terraform {
+      required_providers {
+        instaclustr = {
+          source = "terraform.instaclustr.com/instaclustr/instaclustr"
+          version = ">= 1.0.0"
+        }
+      }
+    }
+    ```
+4. Run the unit tests by `$ make test`
 7. Create a PR and send it our way :)
 
 Our Circle CI pipeline will automatically run unit tests when a PR is created and new changes are committed.
@@ -134,9 +143,12 @@ It is also capable of running the acceptance tests, however our staff needs to g
 Passing tests are a requirement to merge a PR. Please let us know when your PR is ready for acceptance tests!
 
 Unit tests are within `instaclustr` folder with `_unit_test` suffix, and used to test the internal methods.
-Acceptance tests are within `acc_test` folder, and used to run end-to-end testing.
 
-#### Acceptance Test Environment Variables
+#### Acceptance Testing
+
+Acceptance tests are within `acc_test` folder, and used to run end-to-end testing. We recommend using CircleCI to run your acceptance tests, however you can run them locally. Acceptance tests require end to end interaction with the instaclustr platform and will create real (paid) infrastructure. If you wish to perform local testing you must set the variables below and run ```make testacc``` 
+
+
 Variable | Command | Description
 ---------|-------------|--------
 TF_ACC|`$ export TF_ACC=1`|Enables online acceptance tests.

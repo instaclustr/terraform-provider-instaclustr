@@ -11,6 +11,7 @@ resource "instaclustr_cluster" "resizable_cluster" {
     sla_tier = "NON_PRODUCTION"
     cluster_network = "192.168.0.0/18"
     private_network_cluster = false
+    wait_for_state = "RUNNING"
     cluster_provider = {
         name = "AWS_VPC"
     }
