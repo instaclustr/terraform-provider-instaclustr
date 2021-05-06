@@ -139,10 +139,10 @@ workflows:
               only: /^v.*/
             branches:
               ignore: /.*/
-  commit-build-test-workflow:
+  unit-test-workflow:
     jobs:
       - commit-build-test
-  pr-build-test-workflow:
+  acceptence-test-workflow:
     jobs:
       - hold:
           type: approval
