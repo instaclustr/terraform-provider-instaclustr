@@ -144,7 +144,7 @@ workflows:
               ignore: /.*/
   commit-build-test-workflow:
     jobs:
-      - commit-build-test
+      - commit-build-test:
           context: terraform provider
   pr-build-test-workflow:
     jobs:
