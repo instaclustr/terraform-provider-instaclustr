@@ -1,4 +1,8 @@
 version: 2.1
+
+orbs:
+  sonarcloud: sonarsource/sonarcloud@1.0.1
+
 commands:
   build-provider:
     steps:
@@ -119,6 +123,7 @@ jobs:
       - run: go get -v -t -d ./...
       - build-provider
       - run-unit-tests
+      - sonarcloud/scan
   pr-build-test:
     docker:
       - image: circleci/golang:1.14
@@ -141,7 +146,8 @@ workflows:
               ignore: /.*/
   unit-test-workflow:
     jobs:
-      - commit-build-test
+      - commit-build-test:
+          context: terraform provider
   acceptance-test-workflow:
     jobs:
       - hold:
@@ -153,4 +159,3 @@ workflows:
           context: terraform provider
           requires:
             - hold
-
