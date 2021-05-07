@@ -987,3 +987,10 @@ func checkIfBundleRequiresRackAllocation(bundles []Bundle) bool {
 
 	return true
 }
+
+func isClusterSingleDataCentre(clustre Cluster) bool {
+	if clustre.DataCentre != "" && len(clustre.DataCentres) == 1 {
+		return true
+	}
+	return false
+}
