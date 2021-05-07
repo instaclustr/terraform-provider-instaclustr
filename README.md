@@ -23,14 +23,12 @@ For further information about Instaclustr, please see [FAQ](https://www.instaclu
 
 ## Requirements
 
-- Terraform v0.10.x - .v0.13.x.
+- Terraform v0.10.x - .v0.15.x.
 - Go 1.14 or higher
 
 ## Using The Provider
 
-To install this provider, copy and paste this code into your Terraform configuration. Then, run terraform init.
-
-Terraform 0.13+
+To install this provider using Terraform 0.13+, copy and paste this code into your Terraform configuration. Then, run terraform init.
 
 ```
 terraform {
@@ -47,7 +45,7 @@ provider "instaclustr" {
 }
 ```
 
-For further details on Provider installation please see the [Terraform installation guide](https://www.terraform.io/docs/plugins/basics.html#installing-a-plugin).
+For further details on Provider installation, and installation on older versions of terraform please see the [Terraform installation guide](https://www.terraform.io/docs/plugins/basics.html#installing-a-plugin).
 
 ## Authentication
 
@@ -95,7 +93,7 @@ resource "instaclustr_cluster" "example" {
 
 ## Configuration
 
-Configuration documentation can be found at the [Instacluster Terraform Registry](https://registry.terraform.io/providers/instaclustr/instaclustr/latest/docs/resources/encryption_key)
+Configuration documentation can be found at the [Instaclustr Terraform Registry](https://registry.terraform.io/providers/instaclustr/instaclustr/latest/docs/resources/encryption_key)
 
 ## Bundles and Versions
 
@@ -109,6 +107,7 @@ KAFKA_SCHEMA_REGISTRY|5.0.0|KAFKA
 ELASTICSEARCH|opendistro-for-elasticsearch:1.4.0
 KAFKA_CONNECT|2.3.1, 2.4.1, 2.5.1, 2.6.1|
 REDIS|6.0.9|
+APACHE_ZOOKEEPER|3.5.8|
 
 ### Migrating from 0.0.1 &rarr; 1.0.0+
 A schema change has been made from 0.0.1 which no longer supports the `bundles` argument and uses `bundle` blocks instead. This change can cause `terraform apply` to fail with a message that `bundles` has been removed and/or updating isn't supported. To resolve this -<br>
