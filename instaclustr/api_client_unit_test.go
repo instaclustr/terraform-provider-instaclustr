@@ -7,6 +7,7 @@ import (
 )
 
 func TestAPIClientRead(t *testing.T) {
+    t.Fatalf("I'm a really bad test")
     id := "77b5a4e1-c422-4a78-b551-d8fa5c42ad95"
     request := fmt.Sprintf("%s/terraform-description", id)
     client := SetupMock(t, request, fmt.Sprintf(`{"id":"%s"}`, id), 202)
