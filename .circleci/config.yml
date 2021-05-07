@@ -150,7 +150,7 @@ workflows:
             branches:
               ignore: master
       - pr-build-test:
-          context: terraform provider preprod
+          context: terraform provider
           requires:
             - hold
 
