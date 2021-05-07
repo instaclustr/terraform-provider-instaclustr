@@ -52,7 +52,7 @@ func resourceCluster() *schema.Resource {
 
 			"node_size": {
 				Type:     schema.TypeString,
-				Required: true,
+				Optional: true,
 			},
 
 			"data_centre": {
@@ -776,7 +776,9 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		}
 	}
 
-	d.Set("node_size", nodeSize)
+	if len(cluster.DataCentres) == 1 {
+		d.Set("node_size", nodeSize)
+	}
 	d.Set("sla_tier", strings.ToUpper(cluster.SlaTier))
 	if len(cluster.DataCentres) == 1 {
 		d.Set("cluster_network", cluster.DataCentres[0].CdcNetwork)

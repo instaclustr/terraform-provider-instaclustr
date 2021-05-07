@@ -75,7 +75,7 @@ type CreateRequest struct {
 	Bundles               []Bundle                  `json:"bundles"`
 	Provider              ClusterProvider           `json:"provider"`
 	SlaTier               string                    `json:"slaTier,omitempty"`
-	NodeSize              string                    `json:"nodeSize"`
+	NodeSize              string                    `json:"nodeSize,omitempty"`
 	DataCentre            string                    `json:"dataCentre,omitempty"`
 	DataCentres           []DataCentreCreateRequest `json:"dataCentres,omitempty"`
 	ClusterNetwork        string                    `json:"clusterNetwork,omitempty"`
