@@ -81,7 +81,7 @@ provider "instaclustr" {
 ```
 When running terraform plan/apply, pipe in the variables as follows:
 
-```Terraform apply -var= "api_key=$api_key"```
+```terraform apply -var= "api_key=$api_key"```
 
 ## Example Usage
 
