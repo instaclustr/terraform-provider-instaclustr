@@ -58,7 +58,7 @@ provider "instaclustr" {
 }
 ```
 
-If you wish to keep secrets in the ENV instead of stored in your main.tf file use the following method:
+If you wish to keep secrets in the ENV instead of stored in your terraform file use the following method:
 
 In console export the desired variable:
 
