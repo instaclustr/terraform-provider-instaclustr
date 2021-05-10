@@ -62,9 +62,9 @@ If you wish to keep secrets in the ENV instead of stored in your terraform file 
 
 In console export the desired variable:
 
-```Export api_key={instaclustrAPIkey}```
+```export api_key={instaclustrAPIkey}```
 
-In your main.tf file create a variable:
+In your terraform file create a variable:
 ```
 variable "api_key" {
  type = string
