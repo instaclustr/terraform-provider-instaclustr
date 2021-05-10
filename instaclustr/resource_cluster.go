@@ -557,7 +557,7 @@ func waitForCdcResizeToFinish(client *APIClient,
 	clusterId string,
 	cdcId string,
 	d *schema.ResourceData) error {
-	return resource.Retry(d.Timeout(schema.TimeoutCreate), func() *resource.RetryError {
+	return resource.Retry(d.Timeout(schema.TimeoutUpdate), func() *resource.RetryError {
 		res, err := client.GetCDCResizeDetail(opId, clusterId, cdcId)
 		if err != nil {
 			return resource.RetryableError(err)

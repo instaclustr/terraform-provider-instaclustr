@@ -36,7 +36,7 @@ func TestAccCluster(t *testing.T) {
 				),
 			},
 			{
-				Config:      updatedConfig,
+				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckResourceValid("valid"),
 					testCheckResourceCreated("valid", hostname, username, apiKey),
@@ -72,7 +72,6 @@ func TestKafkaConnectClusterCreateInstaclustrAWS(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckResourceValid("validKC"),
 					testCheckResourceCreated("validKC", hostname, username, apiKey),
-
 				),
 			},
 		},
@@ -144,7 +143,7 @@ func TestAccClusterResize(t *testing.T) {
 					testCheckResourceValid(resourceName),
 					testCheckResourceCreated(resourceName, hostname, username, apiKey),
 					checkClusterRunning(resourceName, hostname, username, apiKey),
-					testCheckContactIPCorrect(resourceName, hostname, username, apiKey, 3,3),
+					testCheckContactIPCorrect(resourceName, hostname, username, apiKey, 3, 3),
 				),
 			},
 			{
@@ -162,6 +161,54 @@ func TestAccClusterResize(t *testing.T) {
 			{
 				Config:      invalidResizeConfig,
 				ExpectError: regexp.MustCompile("Cannot resize nodes"),
+			},
+		},
+	})
+}
+
+func TestAccElasticsearchClusterResize(t *testing.T) {
+	testAccProviders := map[string]terraform.ResourceProvider{
+		"instaclustr": instaclustr.Provider(),
+	}
+	validConfig, _ := ioutil.ReadFile("data/valid_with_resizable_elasticsearch_cluster.tf")
+	username := os.Getenv("IC_USERNAME")
+	apiKey := os.Getenv("IC_API_KEY")
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+	resourceName := "resizable_elasticsearch_cluster"
+	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
+	invalidResizeConfig := strings.Replace(oriConfig, "m5l-250-v2", "t3.medium", 1)
+	invalidResizeConfig2 := strings.Replace(oriConfig, "t3.small-v2", "t3.small-v2", 1)
+	validResizeConfig := strings.Replace(oriConfig, "m5l-400-v2", "m5xl-400-v2", 1)
+
+	resource.Test(t, resource.TestCase{
+		Providers:    testAccProviders,
+		CheckDestroy: testCheckResourceDeleted(resourceName, hostname, username, apiKey),
+		Steps: []resource.TestStep{
+			{
+				Config: oriConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid(resourceName),
+					testCheckResourceCreated(resourceName, hostname, username, apiKey),
+					checkClusterRunning(resourceName, hostname, username, apiKey),
+					testCheckContactIPCorrect(resourceName, hostname, username, apiKey, 3, 3),
+				),
+			},
+
+			{
+				Config:      invalidResizeConfig,
+				ExpectError: regexp.MustCompile("There are no suitable replacement modes for cluster data centre"),
+			},
+			{
+				Config:      invalidResizeConfig2,
+				ExpectError: regexp.MustCompile("There are no suitable replacement modes for cluster data centre"),
+			},
+			{
+				Config: validResizeConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_elasticsearch_cluster", "cluster_name", "tf-resizable-elasticsearch-test"),
+					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_elasticsearch_cluster", "bundle.0.options.kibana_node_size", "m5xl-400-v2"),
+					testCheckClusterResize("resizable_elasticsearch_cluster", hostname, username, apiKey, "m5xl-400-v2"),
+				),
 			},
 		},
 	})
@@ -234,7 +281,6 @@ func TestAccClusterCustomVPC(t *testing.T) {
 	})
 }
 
-
 func TestAccClusterCustomVPCInvalid(t *testing.T) {
 	testAccProvider := instaclustr.Provider()
 	testAccProviders := map[string]terraform.ResourceProvider{
@@ -288,7 +334,7 @@ func testCheckResourceCreated(resourceName, hostname, username, apiKey string) r
 	}
 }
 
-func testCheckContactIPCorrect(resourceName, hostname, username, apiKey string, expectedPrivateContactPointLength int,expectedPublicContactPointLength int) resource.TestCheckFunc {
+func testCheckContactIPCorrect(resourceName, hostname, username, apiKey string, expectedPrivateContactPointLength int, expectedPublicContactPointLength int) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		resourceState := s.Modules[0].Resources["instaclustr_cluster."+resourceName]
 
@@ -322,7 +368,7 @@ func testCheckResourceDeleted(resourceName, hostname, username, apiKey string) r
 
 func testCheckClusterResize(resourceName, hostname, username, apiKey, expectedNodeSize string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		resourceState := s.Modules[0].Resources["instaclustr_cluster." + resourceName]
+		resourceState := s.Modules[0].Resources["instaclustr_cluster."+resourceName]
 		id := resourceState.Primary.Attributes["cluster_id"]
 		client := new(instaclustr.APIClient)
 		client.InitClient(hostname, username, apiKey)
@@ -351,7 +397,7 @@ func TestValidRedisClusterCreate(t *testing.T) {
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
 	resource.Test(t, resource.TestCase{
-		Providers: testAccProviders,
+		Providers:    testAccProviders,
 		CheckDestroy: testCheckResourceDeleted("validRedis", hostname, username, apiKey),
 		Steps: []resource.TestStep{
 			{
@@ -376,7 +422,7 @@ func TestValidApacheZookeeperClusterCreate(t *testing.T) {
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
 	resource.Test(t, resource.TestCase{
-		Providers: testAccProviders,
+		Providers:    testAccProviders,
 		CheckDestroy: testCheckResourceDeleted("validApacheZookeeper", hostname, username, apiKey),
 		Steps: []resource.TestStep{
 			{
