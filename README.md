@@ -74,7 +74,7 @@ variable "api_key" {
 
 In the provider block use the variable:
 ```
-Provider "instaclustr" {
+provider "instaclustr" {
     username={username}
     api_key = var.api_key
 }
