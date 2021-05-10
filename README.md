@@ -57,7 +57,31 @@ provider "instaclustr" {
     api_key = "<Your provisioning API key here>"
 }
 ```
-or just input them when Terraform indicates you.
+
+If you wish to keep secrets in the ENV instead of stored in your main.tf file use the following method:
+
+In console export the desired variable:
+
+```Export api_key={instaclustrAPIkey}```
+
+In your main.tf file create a variable:
+```
+variable "api_key" {
+ type = string
+ default = "xxx"
+}
+```
+
+In the provider block use the variable:
+```
+Provider "instaclustr" {
+    username={username}
+    api_key = var.api_key
+}
+```
+When running terraform plan/apply, pipe in the variables as follows:
+
+```Terraform apply -var= "api_key=$api_key"```
 
 ## Example Usage
 
