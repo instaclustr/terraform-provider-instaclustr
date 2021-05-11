@@ -84,6 +84,37 @@ func TestFormatCreateErrMsg(t *testing.T) {
 	}
 }
 
+// (Here)
+func TestFormatCreateErrMsgDuplicationOne(t *testing.T) {
+	testError := fmt.Errorf("test error")
+	formattedError := formatCreateErrMsg(testError)
+	expectedError := fmt.Sprintf("[Error] Error creating cluster: %s", testError.Error())
+
+	if formattedError.Error() != expectedError {
+		t.Fatalf("Incorrectly formatted error.\nExpected: %s\nActual: %s", expectedError, formattedError)
+	}
+}
+
+func TestFormatCreateErrMsgDuplicationTwo(t *testing.T) {
+	testError := fmt.Errorf("test error")
+	formattedError := formatCreateErrMsg(testError)
+	expectedError := fmt.Sprintf("[Error] Error creating cluster: %s", testError.Error())
+
+	if formattedError.Error() != expectedError {
+		t.Fatalf("Incorrectly formatted error.\nExpected: %s\nActual: %s", expectedError, formattedError)
+	}
+}
+
+func TestFormatCreateErrMsgDuplicationThree(t *testing.T) {
+	testError := fmt.Errorf("test error")
+	formattedError := formatCreateErrMsg(testError)
+	expectedError := fmt.Sprintf("[Error] Error creating cluster: %s", testError.Error())
+
+	if formattedError.Error() != expectedError {
+		t.Fatalf("Incorrectly formatted error.\nExpected: %s\nActual: %s", expectedError, formattedError)
+	}
+}
+
 func TestCheckIfBundleRequiresRackAllocation(t *testing.T) {
 	bundles := []Bundle{{Bundle: "REDIS"}}
 	isRackAllocationRequired := checkIfBundleRequiresRackAllocation(bundles)
