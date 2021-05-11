@@ -32,6 +32,84 @@ func (c *APIClient) SetClient(client *http.Client) {
 }
 
 func (c *APIClient) MakeRequest(url string, method string, data []byte) (*http.Response, error) {
+
+	//(Here)
+	if true {
+		print("test1")
+	}
+	if true {
+		print("test2")
+	}
+	if true {
+		print("test3")
+	}
+	if true {
+		print("test4")
+	}
+	if true {
+		print("test5")
+	}
+	if true {
+		print("test1")
+	}
+	if true {
+		print("test2")
+	}
+	if true {
+		print("test3")
+	}
+	if true {
+		print("test4")
+	}
+	if true {
+		print("test5")
+	}
+	if true {
+		print("test1")
+	}
+	if true {
+		print("test2")
+	}
+	if true {
+		print("test3")
+	}
+	if true {
+		print("test4")
+	}
+	if true {
+		print("test5")
+	}
+	if true {
+		print("test1")
+	}
+	if true {
+		print("test2")
+	}
+	if true {
+		print("test3")
+	}
+	if true {
+		print("test4")
+	}
+	if true {
+		print("test5")
+	}
+	if true {
+		print("test1")
+	}
+	if true {
+		print("test2")
+	}
+	if true {
+		print("test3")
+	}
+	if true {
+		print("test4")
+	}
+	if true {
+		print("test5")
+	}
+
 	req, err := http.NewRequest(method, url, bytes.NewBuffer(data))
 	if err != nil {
 		return nil, err
