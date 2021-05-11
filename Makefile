@@ -21,7 +21,7 @@ build:
 	go build $(FLAGS) -o bin/$(BIN_NAME)_v$(VERSION) main.go
 
 test:
-	cd instaclustr && go test -v -timeout 120m -count=1 -coverprofile coverage.out ./...
+	cd instaclustr && go test -v -timeout 120m -count=1 -coverprofile coverage.out  && go test -json ./... > report.json
 
 testacc:
 ifndef IC_USERNAME
