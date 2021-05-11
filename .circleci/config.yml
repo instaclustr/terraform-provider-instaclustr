@@ -123,6 +123,7 @@ jobs:
       - run: go get -v -t -d ./...
       - build-provider
       - run-unit-tests
+      - sonarcloud/scan
   pr-build-test:
     docker:
       - image: circleci/golang:1.14
