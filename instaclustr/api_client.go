@@ -96,7 +96,7 @@ func (c *APIClient) DeleteCluster(clusterID string) error {
 	return nil
 }
 
-func (c *APIClient) ResizeCluster(clusterID string, cdcID string, newNodeSize string, nodePurpose *NodePurpose) (*ClusterDataCenterResizeResponse, error) {
+func (c *APIClient) ResizeCluster(clusterID string, cdcID string, newNodeSize string, nodePurpose *NodePurpose) error {
 	request := ResizeClusterRequest{
 		NewNodeSize:           newNodeSize,
 		ConcurrentResizes:     1,
@@ -105,43 +105,19 @@ func (c *APIClient) ResizeCluster(clusterID string, cdcID string, newNodeSize st
 	}
 	data, err := json.Marshal(request)
 	if err != nil {
-		return nil, fmt.Errorf("[Error] Error creating resize cluster request: %s", err)
+		return fmt.Errorf("[Error] Error creating resize cluster request: %s", err)
 	}
 
 	url := fmt.Sprintf("%s/provisioning/v1/%s/%s/resize", c.apiServerHostname, clusterID, cdcID)
 	resp, err := c.MakeRequest(url, "POST", data)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	bodyText, err := ioutil.ReadAll(resp.Body)
 	if resp.StatusCode != 202 {
-		return nil, errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
+		return errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
 	}
-
-	cdcResizeResponse := ClusterDataCenterResizeResponse{}
-	err = json.Unmarshal(bodyText, &cdcResizeResponse)
-	if err != nil {
-		return nil, err
-	}
-	return &cdcResizeResponse, nil
-}
-
-func (c *APIClient) GetCDCResizeDetail(opID, clusterID, cdcID string) (*ClusterDataCentreResizeOperationDetails, error) {
-	url := fmt.Sprintf("%s/provisioning/v1/%s/%s/resize/%s", c.apiServerHostname, clusterID, cdcID, opID)
-	resp, err := c.MakeRequest(url, "GET", []byte{})
-	if err != nil {
-		return nil, err
-	}
-	bodyText, err := ioutil.ReadAll(resp.Body)
-	if resp.StatusCode != 200 {
-		return nil, errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
-	}
-	cdcResizeOp := ClusterDataCentreResizeOperationDetails{}
-	err = json.Unmarshal(bodyText, &cdcResizeOp)
-	if err != nil {
-		return nil, err
-	}
-	return &cdcResizeOp, nil
+	return nil
 }
 
 func (c *APIClient) CreateFirewallRule(data []byte, clusterID string) error {

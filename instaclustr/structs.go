@@ -195,16 +195,6 @@ type DeleteKafkaUserRequest struct {
 	Username string `json:"username"`
 }
 
-type ClusterDataCenterResizeResponse struct {
-	OperationId string `json:"operationId"`
-}
-
-type ClusterDataCentreResizeOperationDetails struct {
-	Id              string `json:"id"`
-	Completed       *int64 `json:"completed,omitempty"`
-	CompletedStatus string `json:"completedStatus"`
-}
-
 type BundleConfig struct {
 	IsKafkaCluster    bool
 	HasRestProxy      bool

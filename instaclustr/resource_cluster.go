@@ -552,30 +552,6 @@ func waitForClusterStateAndDoUpdate(client *APIClient,
 	})
 }
 
-func waitForCdcResizeToFinish(client *APIClient,
-	opId string,
-	clusterId string,
-	cdcId string,
-	d *schema.ResourceData) error {
-	return resource.Retry(d.Timeout(schema.TimeoutUpdate), func() *resource.RetryError {
-		res, err := client.GetCDCResizeDetail(opId, clusterId, cdcId)
-		if err != nil {
-			return resource.RetryableError(err)
-		}
-		if res.CompletedStatus == "FAILED" {
-			return resource.NonRetryableError(fmt.Errorf("[Error] CDC Resize operation %s failed", opId))
-		}
-		if res.Completed == nil {
-			return resource.RetryableError(fmt.Errorf("[DEBUG] CDC resize %s is in progress...", opId))
-		}
-		if res.CompletedStatus == "SUCCESS" {
-			return nil
-		} else {
-			return resource.NonRetryableError(fmt.Errorf("[ERROR] unexpected cdc resize finish status %s", res.CompletedStatus))
-		}
-	})
-}
-
 func resourceClusterUpdate(d *schema.ResourceData, meta interface{}) error {
 	d.Partial(true)
 	// currently only cluster resize, kafka-schema-registry user password update and kafka-rest-proxy user password update are supported
@@ -706,37 +682,28 @@ func doClusterResize(client *APIClient, clusterID string, d *schema.ResourceData
 	if err != nil {
 		return err
 	}
-	var res *ClusterDataCenterResizeResponse
-	var cdcId *string
 	switch cluster.BundleType {
 	case "APACHE_CASSANDRA":
 		if hasCassandraSizeChanges(d) {
-			cdcId, res, err = doLegacyCassandraClusterResize(client, cluster, d)
+			return doLegacyCassandraClusterResize(client, cluster, d)
 		} else {
 			return nil
 		}
-		break
 	case "ELASTICSEARCH":
 		if hasElasticsearchSizeChanges(bundleIndex, d) {
-			cdcId, res, err = doElasticsearchClusterResize(client, cluster, d, bundleIndex)
+			return doElasticsearchClusterResize(client, cluster, d, bundleIndex)
 		} else {
 			return nil
 		}
-		break
 	case "KAFKA":
 		if hasKafkaSizeChanges(bundleIndex, d) {
-			cdcId, res, err = doKafkaClusterResize(client, cluster, d, bundleIndex)
+			return doKafkaClusterResize(client, cluster, d, bundleIndex)
 		} else {
 			return nil
 		}
-		break
 	default:
 		return fmt.Errorf("CDC resize does not support: %s", cluster.BundleType)
 	}
-	if err != nil {
-		return err
-	}
-	return waitForCdcResizeToFinish(client, res.OperationId, clusterID, *cdcId, d)
 }
 
 func getNewSizeOrEmpty(d *schema.ResourceData, key string) string {
@@ -795,7 +762,7 @@ func getBundleOptionKey(bundleIndex int, option string) string {
 	return fmt.Sprintf("bundle.%d.options.%s", bundleIndex, option)
 }
 
-func doElasticsearchClusterResize(client *APIClient, cluster *Cluster, d *schema.ResourceData, bundleIndex int) (*string, *ClusterDataCenterResizeResponse, error) {
+func doElasticsearchClusterResize(client *APIClient, cluster *Cluster, d *schema.ResourceData, bundleIndex int) error {
 	kibana := len(cluster.BundleOption.KibanaNodeSize) > 0
 	dataNodes := len(cluster.BundleOption.DataNodeSize) > 0
 	var nodePurpose *NodePurpose
@@ -810,17 +777,17 @@ func doElasticsearchClusterResize(client *APIClient, cluster *Cluster, d *schema
 	} else {
 		newSize, purpose, err := getSingleChangedElasticsearchSizeAndPurpose(kibanaNewSize, masterNewSize, dataNewSize, kibana, dataNodes)
 		if err != nil {
-			return nil, nil, err
+			return err
 		}
 		nodeSize = newSize
 		nodePurpose = &purpose
 	}
 	log.Printf("[INFO] Resizing Elasticsearch cluster. nodePurpose: %s, newSize: %s", nodePurpose, nodeSize)
-	res, err := client.ResizeCluster(cluster.ID, cluster.DataCentres[0].ID, nodeSize, nodePurpose)
+	err := client.ResizeCluster(cluster.ID, cluster.DataCentres[0].ID, nodeSize, nodePurpose)
 	if err != nil {
-		return nil, nil, fmt.Errorf("[Error] Error resizing cluster %s with error %s", cluster.ID, err)
+		return fmt.Errorf("[Error] Error resizing cluster %s with error %s", cluster.ID, err)
 	}
-	return &cluster.DataCentres[0].ID, res, nil
+	return nil
 }
 
 func isKafkaSizeAllChange(brokerSize, zookeeperSize string, dedicatedZookeeper bool) (string, bool) {
@@ -856,7 +823,7 @@ func getSingleChangedKafkaSizeAndPurpose(brokerSize, zookeeperSize string, dedic
 	return nodeSize, nodePurpose, nil
 }
 
-func doKafkaClusterResize(client *APIClient, cluster *Cluster, d *schema.ResourceData, bundleIndex int) (*string, *ClusterDataCenterResizeResponse, error) {
+func doKafkaClusterResize(client *APIClient, cluster *Cluster, d *schema.ResourceData, bundleIndex int) error {
 	dedicatedZookeeper := cluster.BundleOption.DedicatedZookeeper != nil && *cluster.BundleOption.DedicatedZookeeper
 
 	var nodePurpose *NodePurpose
@@ -870,21 +837,21 @@ func doKafkaClusterResize(client *APIClient, cluster *Cluster, d *schema.Resourc
 	} else {
 		newSize, purpose, err := getSingleChangedKafkaSizeAndPurpose(brokerNewSize, zookeeperNewSize, dedicatedZookeeper)
 		if err != nil {
-			return nil, nil, err
+			return err
 		}
 		nodeSize = newSize
 		nodePurpose = &purpose
 	}
 
 	log.Printf("[INFO] Resizing Kafka cluster. nodePurpose: %s, newSize: %s", nodePurpose, nodeSize)
-	res, err := client.ResizeCluster(cluster.ID, cluster.DataCentres[0].ID, nodeSize, nodePurpose)
+	err := client.ResizeCluster(cluster.ID, cluster.DataCentres[0].ID, nodeSize, nodePurpose)
 	if err != nil {
-		return nil, nil, fmt.Errorf("[Error] Error resizing cluster %s with error %s", cluster.ID, err)
+		return fmt.Errorf("[Error] Error resizing cluster %s with error %s", cluster.ID, err)
 	}
-	return &cluster.DataCentres[0].ID, res, nil
+	return nil
 }
 
-func doLegacyCassandraClusterResize(client *APIClient, cluster *Cluster, d *schema.ResourceData) (*string, *ClusterDataCenterResizeResponse, error) {
+func doLegacyCassandraClusterResize(client *APIClient, cluster *Cluster, d *schema.ResourceData) error {
 	before, after := d.GetChange("node_size")
 	regex := regexp.MustCompile(`resizeable-(small|large)`)
 	oldNodeClass := regex.FindString(before.(string))
@@ -893,14 +860,14 @@ func doLegacyCassandraClusterResize(client *APIClient, cluster *Cluster, d *sche
 	isNotResizable := oldNodeClass == ""
 	isNotSameSizeClass := newNodeClass != oldNodeClass
 	if isNotResizable || isNotSameSizeClass {
-		return nil, nil, fmt.Errorf("[Error] Cannot resize nodes from %s to %s", before, after)
+		return fmt.Errorf("[Error] Cannot resize nodes from %s to %s", before, after)
 	}
 
-	res, err := client.ResizeCluster(cluster.ID, cluster.DataCentres[0].ID, after.(string), nil)
+	err := client.ResizeCluster(cluster.ID, cluster.DataCentres[0].ID, after.(string), nil)
 	if err != nil {
-		return nil, nil, fmt.Errorf("[Error] Error resizing cluster %s with error %s", cluster.ID, err)
+		return fmt.Errorf("[Error] Error resizing cluster %s with error %s", cluster.ID, err)
 	}
-	return &cluster.DataCentres[0].ID, res, nil
+	return nil
 }
 
 func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
