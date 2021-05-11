@@ -31,6 +31,7 @@ endif
 ifndef IC_API_KEY
 	@echo "IC_API_KEY for provisioning API must be set for acceptance tests"
 	@exit 1
+endif
 ifndef KMS_ARN
 	@echo "KMS_ARN for provisioning API must be set for acceptance tests"
 	@exit 1
