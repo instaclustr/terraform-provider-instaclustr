@@ -683,18 +683,18 @@ func getBundleIndex(bundleType string, bundles []Bundle) (int, error) {
 }
 
 func hasElasticsearchSizeChanges(bundleIndex int, d *schema.ResourceData) bool {
-	return d.HasChange(getBundleOptionKey(bundleIndex, "master_node_size")) ||
-		d.HasChange(getBundleOptionKey(bundleIndex, "kibana_node_size")) ||
-		d.HasChange(getBundleOptionKey(bundleIndex, "data_node_size"))
+	return len(getNewSizeOrEmpty(d, getBundleOptionKey(bundleIndex, "master_node_size"))) > 0 ||
+		len(getNewSizeOrEmpty(d, getBundleOptionKey(bundleIndex, "kibana_node_size"))) > 0 ||
+		len(getNewSizeOrEmpty(d, getBundleOptionKey(bundleIndex, "data_node_size"))) > 0
 }
 
 func hasKafkaSizeChanges(bundleIndex int, d *schema.ResourceData) bool {
-	return d.HasChange(getBundleOptionKey(bundleIndex, "zookeeper_node_size")) ||
-		d.HasChange("node_size")
+	return len(getNewSizeOrEmpty(d, getBundleOptionKey(bundleIndex, "zookeeper_node_size"))) > 0 ||
+		len(getNewSizeOrEmpty(d, "node_size")) > 0
 }
 
 func hasCassandraSizeChanges(d *schema.ResourceData) bool {
-	return d.HasChange("node_size")
+	return len(getNewSizeOrEmpty(d, "node_size")) > 0
 }
 
 func doClusterResize(client *APIClient, clusterID string, d *schema.ResourceData, bundles []Bundle) error {
