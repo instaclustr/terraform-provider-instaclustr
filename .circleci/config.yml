@@ -1,4 +1,8 @@
 version: 2.1
+
+orbs:
+sonarcloud: sonarsource/sonarcloud@1.0.1
+
 commands:
   build-provider:
     steps:
@@ -141,7 +145,8 @@ workflows:
               ignore: /.*/
   unit-test-workflow:
     jobs:
-      - commit-build-test
+      - commit-build-test:
+          context: terraform provider
   acceptance-test-workflow:
     jobs:
       - hold:
@@ -153,4 +158,3 @@ workflows:
           context: terraform provider
           requires:
             - hold
-
