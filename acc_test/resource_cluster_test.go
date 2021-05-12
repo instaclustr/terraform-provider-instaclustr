@@ -174,11 +174,10 @@ func TestAccElasticsearchClusterResize(t *testing.T) {
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
-	resourceName := "resizable_elasticsearch_cluster"
+	resourceName := "resizable_cluster"
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
-	invalidResizeConfig := strings.Replace(oriConfig, "m5l-250-v2", "t3.medium", 1)
-	invalidResizeConfig2 := strings.Replace(oriConfig, "t3.small-v2", "t3.small-v2", 1)
-	validResizeConfig := strings.Replace(oriConfig, "m5l-400-v2", "m5xl-400-v2", 1)
+	validResizeConfig := strings.Replace(oriConfig, `master_node_size = "t3.small-v2",`, `master_node_size = "m5xl-400-v2",`, 1)
+	invalidResizeConfig := strings.Replace(oriConfig, `master_node_size = "t3.small-v2",`, `master_node_size = "t3.small",`, 1)
 
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
@@ -193,21 +192,15 @@ func TestAccElasticsearchClusterResize(t *testing.T) {
 					testCheckContactIPCorrect(resourceName, hostname, username, apiKey, 3, 3),
 				),
 			},
-
 			{
 				Config:      invalidResizeConfig,
-				ExpectError: regexp.MustCompile("There are no suitable replacement modes for cluster data centre"),
-			},
-			{
-				Config:      invalidResizeConfig2,
-				ExpectError: regexp.MustCompile("There are no suitable replacement modes for cluster data centre"),
+				ExpectError: regexp.MustCompile("Current node size 't3.small-v2' is not resizeable to new node size 't3.small'."),
 			},
 			{
 				Config: validResizeConfig,
 				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_elasticsearch_cluster", "cluster_name", "tf-resizable-elasticsearch-test"),
-					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_elasticsearch_cluster", "bundle.0.options.kibana_node_size", "m5xl-400-v2"),
-					testCheckClusterResize("resizable_elasticsearch_cluster", hostname, username, apiKey, "m5xl-400-v2"),
+					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_cluster", "cluster_name", "tf-resizable-test"),
+					testCheckClusterResize("resizable_cluster", hostname, username, apiKey, "m5xl-400-v2"),
 				),
 			},
 		},

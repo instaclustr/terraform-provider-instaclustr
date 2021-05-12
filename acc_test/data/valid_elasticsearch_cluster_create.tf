@@ -6,7 +6,7 @@ provider "instaclustr" {
 
 
 resource "instaclustr_cluster" "validElasticsearch" {
-    cluster_name = "tf-resizable-elasticsearch-test"
+    cluster_name = "tf-elasticsearch-test"
     data_centre = "US_WEST_2"
     sla_tier = "NON_PRODUCTION"
     cluster_network = "192.168.0.0/18"
