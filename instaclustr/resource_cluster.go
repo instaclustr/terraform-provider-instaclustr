@@ -554,6 +554,19 @@ func resourceClusterUpdate(d *schema.ResourceData, meta interface{}) error {
 
 func createBundleUserUpdateRequest(bundleUsername string, bundleUserPassword string) []byte {
 
+	if true {
+		print("test1")
+	}
+	if true {
+		print("test2")
+	}
+	if true {
+		print("test3")
+	}
+
+	var password = "TestTestTest"
+	print(password)
+
 	var err error
 	//preparing the bundle user update request
 	updateBundleUserData := UpdateBundleUserRequest{
