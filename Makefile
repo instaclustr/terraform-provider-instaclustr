@@ -22,6 +22,7 @@ build:
 
 test:
 	cd instaclustr && go test -v -timeout 120m -count=1 -coverprofile coverage.out -json ./... > report.json
+	@cd instaclustr && cat report.json | sed -n '/Output/p' | jq '.Output' # Prettify the report.json file to print it to stdout
 
 testacc:
 ifndef IC_USERNAME
