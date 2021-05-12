@@ -85,13 +85,13 @@ type CreateRequest struct {
 }
 
 type DataCentreCreateRequest struct {
-	Name           string          `json:"name" mapstructure:"name"`
-	Network        string          `json:"network" mapstructure:"network"`
-	DataCentre     string          `json:"dataCentre" mapstructure:"data_centre"`
-	Provider       ClusterProvider `json:"provider,omitempty" mapstructure:"provider"`
-	NodeSize       string          `json:"nodeSize,omitempty" mapstructure:"node_size,omitempty"`
-	Bundles        []Bundle        `json:"bundles,omitempty" mapstructure:"bundles,omitempty"`
-	RackAllocation *RackAllocation `json:"rackAllocation,omitempty" mapstructure:"rack_allocation,omitempty"`
+	Name           string           `json:"name" mapstructure:"name"`
+	Network        string           `json:"network" mapstructure:"network"`
+	DataCentre     string           `json:"dataCentre" mapstructure:"data_centre"`
+	Provider       *ClusterProvider `json:"provider,omitempty" mapstructure:"provider,omitempty"`
+	NodeSize       string           `json:"nodeSize,omitempty" mapstructure:"node_size,omitempty"`
+	Bundles        []Bundle         `json:"bundles,omitempty" mapstructure:"bundles,omitempty"`
+	RackAllocation *RackAllocation  `json:"rackAllocation,omitempty" mapstructure:"rack_allocation,omitempty"`
 }
 
 type AddonBundles struct {

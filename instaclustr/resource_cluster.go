@@ -107,6 +107,50 @@ func resourceCluster() *schema.Resource {
 								},
 							},
 						},
+
+						"cluster_provider": {
+							Type:     schema.TypeMap,
+							Optional: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"name": {
+										Type:     schema.TypeString,
+										Required: true,
+										ForceNew: true,
+									},
+									"account_name": {
+										Type:     schema.TypeString,
+										Optional: true,
+										ForceNew: true,
+									},
+									"custom_virtual_network_id": {
+										Type:     schema.TypeString,
+										Optional: true,
+										ForceNew: true,
+									},
+									"resource_group": {
+										Type:     schema.TypeString,
+										Optional: true,
+										ForceNew: true,
+									},
+									"disk_encryption_key": {
+										Type:     schema.TypeString,
+										Optional: true,
+										ForceNew: true,
+									},
+								},
+							},
+						},
+
+						"bundles": {
+							Type:     schema.TypeList,
+							Optional: true,
+							Elem: &schema.Schema{
+								Type:     schema.TypeMap,
+								Elem:     schema.TypeString,
+								ForceNew: true,
+							},
+						},
 					},
 				},
 			},
@@ -158,7 +202,7 @@ func resourceCluster() *schema.Resource {
 
 			"cluster_provider": {
 				Type:     schema.TypeMap,
-				Required: true,
+				Optional: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"name": {
@@ -228,7 +272,7 @@ func resourceCluster() *schema.Resource {
 
 			"bundle": {
 				Type:     schema.TypeList,
-				Required: true,
+				Optional: true,
 				MinItems: 1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -499,15 +543,20 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("[Error] kafka-schema-registry or kafka-rest-proxy user passwords may only be provided for Kafka clusters")
 	}
 
-	// Some Bundles do not use Rack Allocation so add that separately if needed. (Redis for example)
-	if checkIfBundleRequiresRackAllocation(bundles) {
-		var rackAllocation RackAllocation
-		err = mapstructure.Decode(d.Get("rack_allocation").(map[string]interface{}), &rackAllocation)
-		if err != nil {
-			return err
-		}
+	_ = validateMultiDCProvisioningAPI(createData)
 
-		createData.RackAllocation = &rackAllocation
+	// fill in root-level fields in order to successfully provision the cluster
+	if createData.RackAllocation == nil {
+		createData.RackAllocation = createData.DataCentres[0].RackAllocation
+	}
+	if createData.NodeSize == "" {
+		createData.NodeSize = createData.DataCentres[0].NodeSize
+	}
+	if len(createData.Bundles) == 0 {
+		createData.Bundles = createData.DataCentres[0].Bundles
+	}
+	if createData.Provider.Name == nil {
+		createData.Provider = *createData.DataCentres[0].Provider
 	}
 
 	var jsonStrCreate []byte
@@ -997,18 +1046,17 @@ func isClusterSingleDataCentre(clustre Cluster) bool {
 
 func validateMultiDCProvisioningAPI(request CreateRequest) error {
 
-	emptyRackAllocation := RackAllocation{}
-	if *request.RackAllocation == emptyRackAllocation {
+	if request.RackAllocation == nil {
 		// verify that field rackAllocation exists for every data centre
 		for _, dataCentre := range request.DataCentres {
-			if *dataCentre.RackAllocation == emptyRackAllocation {
+			if dataCentre.RackAllocation == nil {
 				return fmt.Errorf("[Error] Error creating cluster: rack_allocation should be specified on either root-level or each data centre")
 			}
 		}
 	} else {
 		// verify that field rackAllocation does not exist for every data centre
 		for _, dataCentre := range request.DataCentres {
-			if *dataCentre.RackAllocation != emptyRackAllocation {
+			if dataCentre.RackAllocation != nil {
 				return fmt.Errorf("[Error] Error creating cluster: rack_allocation should be specified on either root-level or each data centre")
 			}
 		}
@@ -1056,7 +1104,7 @@ func validateMultiDCProvisioningAPI(request CreateRequest) error {
 	} else {
 		// verify that field provider does not exist for every data centre
 		for _, dataCentre := range request.DataCentres {
-			if dataCentre.Provider.Name != nil {
+			if dataCentre.Provider != nil {
 				return fmt.Errorf("[Error] Error creating cluster: cluster_provider should be specified on either root-level or each data centre")
 			}
 		}
