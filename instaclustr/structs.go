@@ -72,8 +72,8 @@ type RackAllocation struct {
 
 type CreateRequest struct {
 	ClusterName           string                    `json:"clusterName"`
-	Bundles               []Bundle                  `json:"bundles"`
-	Provider              ClusterProvider           `json:"provider"`
+	Bundles               []Bundle                  `json:"bundles,omitempty"`
+	Provider              ClusterProvider           `json:"provider,omitempty"`
 	SlaTier               string                    `json:"slaTier,omitempty"`
 	NodeSize              string                    `json:"nodeSize,omitempty"`
 	DataCentre            string                    `json:"dataCentre,omitempty"`
@@ -82,6 +82,16 @@ type CreateRequest struct {
 	PrivateNetworkCluster string                    `json:"privateNetworkCluster,omitempty"`
 	PCICompliantCluster   string                    `json:"pciCompliantCluster,omitempty"`
 	RackAllocation        *RackAllocation           `json:"rackAllocation,omitempty"`
+}
+
+type DataCentreCreateRequest struct {
+	Name           string          `json:"name" mapstructure:"name"`
+	Network        string          `json:"network" mapstructure:"network"`
+	DataCentre     string          `json:"dataCentre" mapstructure:"data_centre"`
+	Provider       ClusterProvider `json:"provider,omitempty" mapstructure:"provider"`
+	NodeSize       string          `json:"nodeSize,omitempty" mapstructure:"node_size,omitempty"`
+	Bundles        []Bundle        `json:"bundles,omitempty" mapstructure:"bundles,omitempty"`
+	RackAllocation *RackAllocation `json:"rackAllocation,omitempty" mapstructure:"rack_allocation,omitempty"`
 }
 
 type AddonBundles struct {
@@ -125,16 +135,6 @@ type DataCentre struct {
 	ResizeTargetNodeSize          string   `json:"resizeTargetNodeSize,omitempty"`
 	DataCentreRegion              string   `json:"dataCentre,omitempty" mapstructure:"data_centre_region"`
 	CdcStatus                     string   `json:"cdcStatus,omitempty"`
-}
-
-type DataCentreCreateRequest struct {
-	Name           string          `json:"name" mapstructure:"name"`
-	Network        string          `json:"network" mapstructure:"network"`
-	DataCentre     string          `json:"dataCentre" mapstructure:"data_centre"`
-	Provider       string          `json:"provider,omitempty" mapstructure:"provider"`
-	NodeSize       string          `json:"nodeSize,omitempty" mapstructure:"node_size,omitempty"`
-	Bundles        []Bundle        `json:"bundles,omitempty" mapstructure:"bundles,omitempty"`
-	RackAllocation *RackAllocation `json:"rackAllocation,omitempty" mapstructure:"rack_allocation,omitempty"`
 }
 
 type Node struct {

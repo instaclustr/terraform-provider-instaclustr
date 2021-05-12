@@ -994,3 +994,72 @@ func isClusterSingleDataCentre(clustre Cluster) bool {
 	}
 	return false
 }
+
+func validateMultiDCProvisioningAPI(request CreateRequest) error {
+
+	emptyRackAllocation := RackAllocation{}
+	if *request.RackAllocation == emptyRackAllocation {
+		// verify that field rackAllocation exists for every data centre
+		for _, dataCentre := range request.DataCentres {
+			if *dataCentre.RackAllocation == emptyRackAllocation {
+				return fmt.Errorf("[Error] Error creating cluster: rack_allocation should be specified on either root-level or each data centre")
+			}
+		}
+	} else {
+		// verify that field rackAllocation does not exist for every data centre
+		for _, dataCentre := range request.DataCentres {
+			if *dataCentre.RackAllocation != emptyRackAllocation {
+				return fmt.Errorf("[Error] Error creating cluster: rack_allocation should be specified on either root-level or each data centre")
+			}
+		}
+	}
+
+	if request.NodeSize == "" {
+		//  verify that field nodeSize exists for every data centre
+		for _, dataCentre := range request.DataCentres {
+			if dataCentre.NodeSize == "" {
+				return fmt.Errorf("[Error] Error creating cluster: node_size should be specified on either root-level or each data centre")
+			}
+		}
+	} else {
+		//  verify that field nodeSize does not exist for every data centre
+		for _, dataCentre := range request.DataCentres {
+			if dataCentre.NodeSize != "" {
+				return fmt.Errorf("[Error] Error creating cluster: node_size should be specified on either root-level or each data centre")
+			}
+		}
+	}
+
+	if len(request.Bundles) == 0 {
+		// verify that field bundles exists for every data centre
+		for _, dataCentre := range request.DataCentres {
+			if len(dataCentre.Bundles) == 0 {
+				return fmt.Errorf("[Error] Error creating cluster: bundles should be specified on either root-level or each data centre")
+			}
+		}
+	} else {
+		// verify that field bundles does not exist for every data centre
+		for _, dataCentre := range request.DataCentres {
+			if len(dataCentre.Bundles) != 0 {
+				return fmt.Errorf("[Error] Error creating cluster: bundles should be specified on either root-level or each data centre")
+			}
+		}
+	}
+
+	if request.Provider.Name == nil {
+		// verify that field provider exists for every data centre
+		for _, dataCentre := range request.DataCentres {
+			if dataCentre.Provider.Name == nil {
+				return fmt.Errorf("[Error] Error creating cluster: cluster_provider should be specified on either root-level or each data centre")
+			}
+		}
+	} else {
+		// verify that field provider does not exist for every data centre
+		for _, dataCentre := range request.DataCentres {
+			if dataCentre.Provider.Name != nil {
+				return fmt.Errorf("[Error] Error creating cluster: cluster_provider should be specified on either root-level or each data centre")
+			}
+		}
+	}
+	return nil
+}
