@@ -89,24 +89,24 @@ func resourceCluster() *schema.Resource {
 							Optional: true,
 						},
 
-						//"rack_allocation": {
-						//	Type:     schema.TypeMap,
-						//	Optional: true,
-						//	Elem: &schema.Resource{
-						//		Schema: map[string]*schema.Schema{
-						//			"number_of_racks": {
-						//				Type:     schema.TypeInt,
-						//				Required: true,
-						//				ForceNew: true,
-						//			},
-						//			"nodes_per_rack": {
-						//				Type:     schema.TypeInt,
-						//				Required: true,
-						//				ForceNew: true,
-						//			},
-						//		},
-						//	},
-						//},
+						"rack_allocation": {
+							Type:     schema.TypeMap,
+							Optional: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"number_of_racks": {
+										Type:     schema.TypeInt,
+										Required: true,
+										ForceNew: true,
+									},
+									"nodes_per_rack": {
+										Type:     schema.TypeInt,
+										Required: true,
+										ForceNew: true,
+									},
+								},
+							},
+						},
 					},
 				},
 			},
