@@ -146,8 +146,7 @@ workflows:
               ignore: /.*/
   unit-test-workflow:
     jobs:
-      - commit-build-test:
-          context: terraform provider
+      - commit-build-test
   acceptance-test-workflow:
     jobs:
       - hold:
