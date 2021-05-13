@@ -118,23 +118,24 @@ type Cluster struct {
 }
 
 type DataCentre struct {
-	ID                            string   `json:"id,omitempty"`
-	Name                          string   `json:"name" mapstructure:"name"`
-	CdcName                       string   `json:"cdcName,omitempty" mapstructure:"cdcName"`
-	Provider                      string   `json:"provider,omitempty"`
-	CdcNetwork                    string   `json:"cdcNetwork,omitempty"`
-	Bundles                       []string `json:"bundles,omitempty"`
-	ClientEncryption              bool     `json:"clientEncryption,omitempty"`
-	PasswordAuthentication        bool     `json:"passwordAuthentication,omitempty"`
-	UserAuthorization             bool     `json:"userAuthorization,omitempty"`
-	UsePrivateBroadcastRPCAddress bool     `json:"usePrivateBroadcastRPCAddress,omitempty"`
-	PrivateIPOnly                 bool     `json:"privateIPOnly,omitempty"`
-	Nodes                         []Node   `json:"nodes,omitempty"`
-	NodeCount                     int      `json:"nodeCount,omitempty"`
-	EncryptionKeyId               string   `json:"encryptionKeyId,omitempty"`
-	ResizeTargetNodeSize          string   `json:"resizeTargetNodeSize,omitempty"`
-	DataCentreRegion              string   `json:"dataCentre,omitempty" mapstructure:"data_centre_region"`
-	CdcStatus                     string   `json:"cdcStatus,omitempty"`
+	ID                            string          `json:"id,omitempty"`
+	Name                          string          `json:"name" mapstructure:"name"`
+	CdcName                       string          `json:"cdcName,omitempty" mapstructure:"cdcName"`
+	Provider                      string          `json:"provider,omitempty"`
+	CdcNetwork                    string          `json:"cdcNetwork,omitempty"`
+	Bundles                       []string        `json:"bundles,omitempty"`
+	ClientEncryption              bool            `json:"clientEncryption,omitempty"`
+	PasswordAuthentication        bool            `json:"passwordAuthentication,omitempty"`
+	UserAuthorization             bool            `json:"userAuthorization,omitempty"`
+	UsePrivateBroadcastRPCAddress bool            `json:"usePrivateBroadcastRPCAddress,omitempty"`
+	PrivateIPOnly                 bool            `json:"privateIPOnly,omitempty"`
+	Nodes                         []Node          `json:"nodes,omitempty"`
+	NodeCount                     int             `json:"nodeCount,omitempty"`
+	EncryptionKeyId               string          `json:"encryptionKeyId,omitempty"`
+	ResizeTargetNodeSize          string          `json:"resizeTargetNodeSize,omitempty"`
+	DataCentreRegion              string          `json:"dataCentre,omitempty" mapstructure:"data_centre_region"`
+	CdcStatus                     string          `json:"cdcStatus,omitempty"`
+	RackAllocation                *RackAllocation `json:"rackAllocation,omitempty" mapstructure:"rack_allocation,omitempty"`
 }
 
 type Node struct {

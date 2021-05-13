@@ -797,15 +797,15 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		rackCount += len(rackList)
 	}
 
-	nodesPerRack := nodeCount / rackCount
+	// nodesPerRack := nodeCount / rackCount
 
-	rackAllocation := make(map[string]interface{}, 0)
-	rackAllocation["number_of_racks"] = strconv.Itoa(rackCount / len(cluster.DataCentres))
-	rackAllocation["nodes_per_rack"] = strconv.Itoa(nodesPerRack)
-
-	if err := d.Set("rack_allocation", rackAllocation); err != nil {
-		return fmt.Errorf("[Error] Error reading cluster, rack allocation could not be derived: %s", err)
-	}
+	//rackAllocation := make(map[string]interface{}, 0)
+	//rackAllocation["number_of_racks"] = strconv.Itoa(rackCount / len(cluster.DataCentres))
+	//rackAllocation["nodes_per_rack"] = strconv.Itoa(nodesPerRack)
+	//
+	//if err := d.Set("rack_allocation", rackAllocation); err != nil {
+	//	return fmt.Errorf("[Error] Error reading cluster, rack allocation could not be derived: %s", err)
+	//}
 	if len(cluster.DataCentres[0].ResizeTargetNodeSize) > 0 {
 		nodeSize = cluster.DataCentres[0].ResizeTargetNodeSize
 	}
@@ -928,8 +928,25 @@ func getDataCentresFromCluster(cluster *Cluster) ([]map[string]interface{}, erro
 		}
 		dataCentreMap["node_size"] = nodeSize
 
-		convertedDataCentreMap := dereferencePointerInStruct(dataCentreMap)
-		dataCentres = append(dataCentres, convertedDataCentreMap)
+		// find rack allocation for each data centre
+		nodeCount := 0
+		rackCount := 0
+		rackList := make([]string, 0)
+		for _, node := range dataCentre.Nodes {
+			if !strings.HasPrefix(node.Size, "zk-") {
+				nodeCount += 1
+			}
+			rackList = appendIfMissing(rackList, node.Rack)
+		}
+		rackCount += len(rackList)
+		nodesPerRack := nodeCount / rackCount
+		rackAllocation := make(map[string]interface{}, 0)
+		rackAllocation["number_of_racks"] = strconv.Itoa(rackCount)
+		rackAllocation["nodes_per_rack"] = strconv.Itoa(nodesPerRack)
+		dataCentreMap["rack_allocation"] = rackAllocation
+
+		// convertedDataCentreMap := dereferencePointerInStruct(dataCentreMap)
+		dataCentres = append(dataCentres, dataCentreMap)
 	}
 	return dataCentres, nil
 }
@@ -1046,20 +1063,25 @@ func isClusterSingleDataCentre(clustre Cluster) bool {
 
 func validateMultiDCProvisioningAPI(request CreateRequest) error {
 
-	if request.RackAllocation == nil {
-		// verify that field rackAllocation exists for every data centre
-		for _, dataCentre := range request.DataCentres {
-			if dataCentre.RackAllocation == nil {
-				return fmt.Errorf("[Error] Error creating cluster: rack_allocation should be specified on either root-level or each data centre")
-			}
-		}
-	} else {
-		// verify that field rackAllocation does not exist for every data centre
-		for _, dataCentre := range request.DataCentres {
-			if dataCentre.RackAllocation != nil {
-				return fmt.Errorf("[Error] Error creating cluster: rack_allocation should be specified on either root-level or each data centre")
-			}
-		}
+	//if request.RackAllocation == nil {
+	//	// verify that field rackAllocation exists for every data centre
+	//	for _, dataCentre := range request.DataCentres {
+	//		if dataCentre.RackAllocation == nil {
+	//			return fmt.Errorf("[Error] Error creating cluster: rack_allocation should be specified on either root-level or each data centre")
+	//		}
+	//	}
+	//} else {
+	//	// verify that field rackAllocation does not exist for every data centre
+	//	for _, dataCentre := range request.DataCentres {
+	//		if dataCentre.RackAllocation != nil {
+	//			return fmt.Errorf("[Error] Error creating cluster: rack_allocation should be specified on either root-level or each data centre")
+	//		}
+	//	}
+	//}
+
+	//  verify that there's no rack allocation on root-level attributes
+	if request.RackAllocation != nil {
+		return fmt.Errorf("[Error] Error creating cluster: rack_allocation is not allowed to be a root-level attributes when multi-DC proviosioning, please specify on each data centre instead")
 	}
 
 	if request.NodeSize == "" {
