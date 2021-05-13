@@ -73,7 +73,7 @@ type RackAllocation struct {
 type CreateRequest struct {
 	ClusterName           string                    `json:"clusterName"`
 	Bundles               []Bundle                  `json:"bundles,omitempty"`
-	Provider              ClusterProvider           `json:"provider,omitempty"`
+	Provider              *ClusterProvider          `json:"provider,omitempty"`
 	SlaTier               string                    `json:"slaTier,omitempty"`
 	NodeSize              string                    `json:"nodeSize,omitempty"`
 	DataCentre            string                    `json:"dataCentre,omitempty"`

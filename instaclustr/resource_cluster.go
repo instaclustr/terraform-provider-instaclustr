@@ -108,7 +108,7 @@ func resourceCluster() *schema.Resource {
 							},
 						},
 
-						"cluster_provider": {
+						"provider": {
 							Type:     schema.TypeMap,
 							Optional: true,
 							Elem: &schema.Resource{
@@ -498,7 +498,7 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 	var createData = CreateRequest{
 		ClusterName:           d.Get("cluster_name").(string),
 		Bundles:               bundles,
-		Provider:              clusterProvider,
+		Provider:              &clusterProvider,
 		SlaTier:               d.Get("sla_tier").(string),
 		NodeSize:              d.Get("node_size").(string),
 		PrivateNetworkCluster: fmt.Sprintf("%v", d.Get("private_network_cluster")),
@@ -556,7 +556,7 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		createData.Bundles = createData.DataCentres[0].Bundles
 	}
 	if createData.Provider.Name == nil {
-		createData.Provider = *createData.DataCentres[0].Provider
+		createData.Provider = createData.DataCentres[0].Provider
 	}
 
 	var jsonStrCreate []byte
@@ -1116,20 +1116,25 @@ func validateMultiDCProvisioningAPI(request CreateRequest) error {
 		}
 	}
 
-	if request.Provider.Name == nil {
-		// verify that field provider exists for every data centre
-		for _, dataCentre := range request.DataCentres {
-			if dataCentre.Provider.Name == nil {
-				return fmt.Errorf("[Error] Error creating cluster: cluster_provider should be specified on either root-level or each data centre")
-			}
-		}
-	} else {
-		// verify that field provider does not exist for every data centre
-		for _, dataCentre := range request.DataCentres {
-			if dataCentre.Provider != nil {
-				return fmt.Errorf("[Error] Error creating cluster: cluster_provider should be specified on either root-level or each data centre")
-			}
-		}
+	//if request.Provider.Name == nil {
+	//	// verify that field provider exists for every data centre
+	//	for _, dataCentre := range request.DataCentres {
+	//		if dataCentre.Provider.Name == nil {
+	//			return fmt.Errorf("[Error] Error creating cluster: cluster_provider should be specified on either root-level or each data centre")
+	//		}
+	//	}
+	//} else {
+	//	// verify that field provider does not exist for every data centre
+	//	for _, dataCentre := range request.DataCentres {
+	//		if dataCentre.Provider != nil {
+	//			return fmt.Errorf("[Error] Error creating cluster: cluster_provider should be specified on either root-level or each data centre")
+	//		}
+	//	}
+	//}
+	//  verify that there's no cluster provider on root-level attributes
+	if request.Provider != nil {
+		return fmt.Errorf("[Error] Error creating cluster: cluster_provider is not allowed to be a root-level attributes when multi-DC proviosioning, please specify on each data centre instead")
 	}
+
 	return nil
 }
