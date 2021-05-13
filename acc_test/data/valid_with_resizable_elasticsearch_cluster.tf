@@ -16,7 +16,7 @@ resource "instaclustr_cluster" "resizable_cluster" {
     }
     rack_allocation = {
         number_of_racks = 3
-        nodes_per_rack = 2
+        nodes_per_rack = 1
     }
     bundle {
         bundle = "ELASTICSEARCH"
@@ -24,7 +24,7 @@ resource "instaclustr_cluster" "resizable_cluster" {
         options = {
             dedicated_master_nodes = false,
             master_node_size = "t3.small-v2",
-            data_node_size = "t3.small-v2",
+            kibana_node_size = "t3.small-v2",
             security_plugin=false,
             client_encryption=false
         }

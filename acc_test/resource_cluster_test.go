@@ -166,88 +166,6 @@ func TestAccClusterResize(t *testing.T) {
 	})
 }
 
-func TestAccElasticsearchClusterResize(t *testing.T) {
-	testAccProviders := map[string]terraform.ResourceProvider{
-		"instaclustr": instaclustr.Provider(),
-	}
-	validConfig, _ := ioutil.ReadFile("data/valid_with_resizable_elasticsearch_cluster.tf")
-	username := os.Getenv("IC_USERNAME")
-	apiKey := os.Getenv("IC_API_KEY")
-	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
-	resourceName := "resizable_cluster"
-	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
-	validResizeConfig := strings.Replace(oriConfig, `master_node_size = "t3.small-v2",`, `master_node_size = "m5xl-400-v2",`, 1)
-	invalidResizeConfig := strings.Replace(oriConfig, `master_node_size = "t3.small-v2",`, `master_node_size = "t3.small",`, 1)
-
-	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		CheckDestroy: testCheckResourceDeleted(resourceName, hostname, username, apiKey),
-		Steps: []resource.TestStep{
-			{
-				Config: oriConfig,
-				Check: resource.ComposeTestCheckFunc(
-					testCheckResourceValid(resourceName),
-					testCheckResourceCreated(resourceName, hostname, username, apiKey),
-					checkClusterRunning(resourceName, hostname, username, apiKey),
-					testCheckContactIPCorrect(resourceName, hostname, username, apiKey, 3, 3),
-				),
-			},
-			{
-				Config:      invalidResizeConfig,
-				ExpectError: regexp.MustCompile("Current node size 't3.small-v2' is not resizeable to new node size 't3.small'."),
-			},
-			{
-				Config: validResizeConfig,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_cluster", "cluster_name", "tf-resizable-test"),
-					testCheckClusterResize("resizable_cluster", hostname, username, apiKey, "m5xl-400-v2"),
-				),
-			},
-		},
-	})
-}
-
-func TestAccKafkaClusterResize(t *testing.T) {
-	testAccProviders := map[string]terraform.ResourceProvider{
-		"instaclustr": instaclustr.Provider(),
-	}
-	validConfig, _ := ioutil.ReadFile("data/valid_with_resizable_kafka.tf")
-	username := os.Getenv("IC_USERNAME")
-	apiKey := os.Getenv("IC_API_KEY")
-	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
-	resourceName := "resizable_cluster"
-	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
-	validResizeConfig := strings.Replace(oriConfig, `r5.large-800-gp2`, `r5.xlarge-800-gp2`, 1)
-	invalidResizeConfig := strings.Replace(oriConfig, `r5.large-800-gp2`, `r5.large-500-gp2`, 1)
-
-	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		CheckDestroy: testCheckResourceDeleted(resourceName, hostname, username, apiKey),
-		Steps: []resource.TestStep{
-			{
-				Config: oriConfig,
-				Check: resource.ComposeTestCheckFunc(
-					testCheckResourceValid(resourceName),
-					testCheckResourceCreated(resourceName, hostname, username, apiKey),
-					checkClusterRunning(resourceName, hostname, username, apiKey),
-					testCheckContactIPCorrect(resourceName, hostname, username, apiKey, 3, 3),
-				),
-			},
-			{
-				Config:      invalidResizeConfig,
-				ExpectError: regexp.MustCompile("Current node size 'r5.large-800-gp2' is not resizeable to new node size 'r5.large-500-gp2'."),
-			},
-			{
-				Config: validResizeConfig,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_cluster", "cluster_name", "tf-resizable-test"),
-					testCheckClusterResize("resizable_cluster", hostname, username, apiKey, "r5.xlarge-800-gp2"),
-				),
-			},
-		},
-	})
-}
-
 func TestAccClusterInvalid(t *testing.T) {
 	testAccProvider := instaclustr.Provider()
 	testAccProviders := map[string]terraform.ResourceProvider{
@@ -331,6 +249,88 @@ func TestAccClusterCustomVPCInvalid(t *testing.T) {
 			{
 				Config:      fmt.Sprintf(string(validConfig), username, hostname, apiKey, providerAccountName),
 				ExpectError: regexp.MustCompile("Error creating cluster"),
+			},
+		},
+	})
+}
+
+func TestAccElasticsearchClusterResize(t *testing.T) {
+	testAccProviders := map[string]terraform.ResourceProvider{
+		"instaclustr": instaclustr.Provider(),
+	}
+	validConfig, _ := ioutil.ReadFile("data/valid_with_resizable_elasticsearch_cluster.tf")
+	username := os.Getenv("IC_USERNAME")
+	apiKey := os.Getenv("IC_API_KEY")
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+	resourceName := "resizable_cluster"
+	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
+	validResizeConfig := strings.Replace(oriConfig, `kibana_node_size = "t3.small-v2",`, `kibana_node_size = "m5xl-400-v2",`, 1)
+	invalidResizeConfig := strings.Replace(oriConfig, `kibana_node_size = "t3.small-v2",`, `kibana_node_size = "t3.small",`, 1)
+
+	resource.Test(t, resource.TestCase{
+		Providers:    testAccProviders,
+		CheckDestroy: testCheckResourceDeleted(resourceName, hostname, username, apiKey),
+		Steps: []resource.TestStep{
+			{
+				Config: oriConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid(resourceName),
+					testCheckResourceCreated(resourceName, hostname, username, apiKey),
+					checkClusterRunning(resourceName, hostname, username, apiKey),
+					testCheckContactIPCorrect(resourceName, hostname, username, apiKey, 3, 3),
+				),
+			},
+			{
+				Config:      invalidResizeConfig,
+				ExpectError: regexp.MustCompile("t3.small"),
+			},
+			{
+				Config: validResizeConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_cluster", "cluster_name", "tf-resizable-test"),
+				),
+				ExpectNonEmptyPlan: true,
+			},
+		},
+	})
+}
+
+func TestAccKafkaClusterResize(t *testing.T) {
+	testAccProviders := map[string]terraform.ResourceProvider{
+		"instaclustr": instaclustr.Provider(),
+	}
+	validConfig, _ := ioutil.ReadFile("data/valid_with_resizable_kafka.tf")
+	username := os.Getenv("IC_USERNAME")
+	apiKey := os.Getenv("IC_API_KEY")
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+	resourceName := "resizable_cluster"
+	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
+	validResizeConfig := strings.Replace(oriConfig, `r5.large-800-gp2`, `r5.xlarge-800-gp2`, 1)
+	invalidResizeConfig := strings.Replace(oriConfig, `r5.large-800-gp2`, `t3.small-20-gp2`, 1)
+
+	resource.Test(t, resource.TestCase{
+		Providers:    testAccProviders,
+		CheckDestroy: testCheckResourceDeleted(resourceName, hostname, username, apiKey),
+		Steps: []resource.TestStep{
+			{
+				Config: oriConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid(resourceName),
+					testCheckResourceCreated(resourceName, hostname, username, apiKey),
+					checkClusterRunning(resourceName, hostname, username, apiKey),
+					testCheckContactIPCorrect(resourceName, hostname, username, apiKey, 3, 3),
+				),
+			},
+			{
+				Config:      invalidResizeConfig,
+				ExpectError: regexp.MustCompile("t3.small-20-gp2"),
+			},
+			{
+				Config: validResizeConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_cluster", "cluster_name", "tf-resizable-test"),
+					testCheckClusterResize(resourceName, hostname, username, apiKey, "r5.xlarge-800-gp2"),
+				),
 			},
 		},
 	})

@@ -4,8 +4,8 @@ provider "instaclustr" {
     api_hostname = "%s"
 }
 resource "instaclustr_cluster" "resizable_cluster" {
-    cluster_name = "test_cluster"
-    node_size = "r5.xlarge-800-gp2"
+    cluster_name = "tf-resizable-test"
+    node_size = "r5.large-800-gp2"
     data_centre = "US_WEST_2"
     sla_tier = "NON_PRODUCTION"
     cluster_network = "192.168.0.0/18"
