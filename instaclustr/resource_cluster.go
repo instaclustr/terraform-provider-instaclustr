@@ -924,81 +924,74 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("cluster_id", cluster.ID)
 	d.Set("cluster_name", cluster.ClusterName)
 
-	clusterProvider := make(map[string]interface{}, 0)
-	mapstructure.Decode(cluster.Provider[0], &clusterProvider)
-	processedClusterProvider := processProvider(d, clusterProvider)
-	d.Set("cluster_provider", processedClusterProvider)
+	if isClusterSingleDataCentre(*cluster) {
+		clusterProvider := make(map[string]interface{}, 0)
+		mapstructure.Decode(cluster.Provider[0], &clusterProvider)
+		processedClusterProvider := processProvider(d, clusterProvider)
+		d.Set("cluster_provider", processedClusterProvider)
 
-	bundles, err := getBundlesFromCluster(cluster)
-	if err != nil {
-		return err
-	}
-
-	if err := d.Set("bundle", bundles); err != nil {
-		return fmt.Errorf("[Error] Error reading cluster: %s", err)
-	}
-
-	nodeSize := ""
-	/*
-	*  Ideally, we would like this information to be coming directly from the API cluster status.
-	*  Hence, this is a slightly hacky way of ignoring zookeeper node sizes (Kafka bundles specific).
-	 */
-	for _, node := range cluster.DataCentres[0].Nodes {
-		nodeSize = node.Size
-		if !strings.HasPrefix(nodeSize, "zk-") {
-			break
+		bundles, err := getBundlesFromCluster(cluster)
+		if err != nil {
+			return err
 		}
-	}
+		if err := d.Set("bundle", bundles); err != nil {
+			return fmt.Errorf("[Error] Error reading cluster: %s", err)
+		}
 
-	//loop over each data centre to determine nodes and racks for rack allocation
-	nodeCount := 0
-	rackCount := 0
-	for _, dataCentre := range cluster.DataCentres {
+		nodeSize := ""
+		/*
+		*  Ideally, we would like this information to be coming directly from the API cluster status.
+		*  Hence, this is a slightly hacky way of ignoring zookeeper node sizes (Kafka bundles specific).
+		 */
+		for _, node := range cluster.DataCentres[0].Nodes {
+			nodeSize = node.Size
+			if !strings.HasPrefix(nodeSize, "zk-") {
+				break
+			}
+		}
+
+		//loop over each data centre to determine nodes and racks for rack allocation
+		nodeCount := 0
+		rackCount := 0
 		rackList := make([]string, 0)
-		for _, node := range dataCentre.Nodes {
+		for _, node := range cluster.DataCentres[0].Nodes {
 			if !strings.HasPrefix(node.Size, "zk-") {
 				nodeCount += 1
 			}
 			rackList = appendIfMissing(rackList, node.Rack)
 		}
 		rackCount += len(rackList)
-	}
 
-	// nodesPerRack := nodeCount / rackCount
+		nodesPerRack := nodeCount / rackCount
+		rackAllocation := make(map[string]interface{}, 0)
+		rackAllocation["number_of_racks"] = strconv.Itoa(rackCount)
+		rackAllocation["nodes_per_rack"] = strconv.Itoa(nodesPerRack)
 
-	//rackAllocation := make(map[string]interface{}, 0)
-	//rackAllocation["number_of_racks"] = strconv.Itoa(rackCount / len(cluster.DataCentres))
-	//rackAllocation["nodes_per_rack"] = strconv.Itoa(nodesPerRack)
-	//
-	//if err := d.Set("rack_allocation", rackAllocation); err != nil {
-	//	return fmt.Errorf("[Error] Error reading cluster, rack allocation could not be derived: %s", err)
-	//}
-	if len(cluster.DataCentres[0].ResizeTargetNodeSize) > 0 {
-		nodeSize = cluster.DataCentres[0].ResizeTargetNodeSize
-	}
-	// set data centre
-	if len(cluster.DataCentres) == 1 {
+		if err := d.Set("rack_allocation", rackAllocation); err != nil {
+			return fmt.Errorf("[Error] Error reading cluster, rack allocation could not be derived: %s", err)
+		}
+
+		if len(cluster.DataCentres[0].ResizeTargetNodeSize) > 0 {
+			nodeSize = cluster.DataCentres[0].ResizeTargetNodeSize
+		}
+
+		d.Set("node_size", nodeSize)
 		d.Set("data_centre", cluster.DataCentres[0].Name)
-	}
-
-	dataCentres, err := getDataCentresFromCluster(cluster)
-	if err != nil {
-		return err
-	}
-	// set data centres
-	if len(dataCentres) > 1 {
-		if err := d.Set("data_centres", dataCentres); err != nil {
-			return fmt.Errorf("[Error] Error setting data centres into terraform state, data centres could not be derived: %s", err)
+		d.Set("cluster_network", cluster.DataCentres[0].CdcNetwork)
+	} else {
+		dataCentres, err := getDataCentresFromCluster(cluster)
+		if err != nil {
+			return err
+		}
+		// set data centres
+		if len(dataCentres) > 1 {
+			if err := d.Set("data_centres", dataCentres); err != nil {
+				return fmt.Errorf("[Error] Error setting data centres into terraform state, data centres could not be derived: %s", err)
+			}
 		}
 	}
 
-	if len(cluster.DataCentres) == 1 {
-		d.Set("node_size", nodeSize)
-	}
 	d.Set("sla_tier", strings.ToUpper(cluster.SlaTier))
-	if len(cluster.DataCentres) == 1 {
-		d.Set("cluster_network", cluster.DataCentres[0].CdcNetwork)
-	}
 	d.Set("private_network_cluster", cluster.DataCentres[0].PrivateIPOnly)
 	d.Set("pci_compliant_cluster", cluster.PciCompliance == "ENABLED")
 
