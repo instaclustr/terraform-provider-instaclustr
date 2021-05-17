@@ -719,9 +719,6 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 	if createData.NodeSize == "" {
 		createData.NodeSize = createData.DataCentres[0].NodeSize
 	}
-	if len(createData.Bundles) == 0 {
-		createData.Bundles = createData.DataCentres[0].Bundles
-	}
 	if createData.Provider.Name == nil {
 		createData.Provider = createData.DataCentres[0].Provider
 	}
@@ -924,19 +921,19 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("cluster_id", cluster.ID)
 	d.Set("cluster_name", cluster.ClusterName)
 
+	bundles, err := getBundlesFromCluster(cluster)
+	if err != nil {
+		return err
+	}
+	if err := d.Set("bundle", bundles); err != nil {
+		return fmt.Errorf("[Error] Error reading cluster: %s", err)
+	}
+
 	if isClusterSingleDataCentre(*cluster) {
 		clusterProvider := make(map[string]interface{}, 0)
 		mapstructure.Decode(cluster.Provider[0], &clusterProvider)
 		processedClusterProvider := processProvider(d, clusterProvider)
 		d.Set("cluster_provider", processedClusterProvider)
-
-		bundles, err := getBundlesFromCluster(cluster)
-		if err != nil {
-			return err
-		}
-		if err := d.Set("bundle", bundles); err != nil {
-			return fmt.Errorf("[Error] Error reading cluster: %s", err)
-		}
 
 		nodeSize := ""
 		/*
@@ -1126,14 +1123,8 @@ func getDataCentresFromCluster(cluster *Cluster) ([]map[string]interface{}, erro
 		dataCentreMap["provider"] = provider
 
 		// find bundles for each data centre
-
-		// find primary bundles:
-		primaryBundles, err := getBaseBundlesFromCluster(cluster)
-		if err != nil {
-			return nil, err
-		}
 		secondaryBundles := make([]map[string]interface{}, 0)
-		if len(dataCentre.Bundles) != 0 {
+		if dataCentre.Bundles != nil && len(dataCentre.Bundles) != 0 {
 			// append add-on bundles here for this data centre
 			for _, secondaryBundle := range dataCentre.Bundles {
 				for _, addOnBundle := range cluster.AddonBundles {
@@ -1144,8 +1135,7 @@ func getDataCentresFromCluster(cluster *Cluster) ([]map[string]interface{}, erro
 			}
 
 		}
-		bundles := append(primaryBundles, secondaryBundles...)
-		dataCentreMap["bundles"] = bundles
+		dataCentreMap["bundles"] = secondaryBundles
 
 		// convertedDataCentreMap := dereferencePointerInStruct(dataCentreMap)
 		dataCentres = append(dataCentres, dataCentreMap)
@@ -1275,8 +1265,8 @@ func validateMultiDCProvisioningAPI(request CreateRequest) error {
 	}
 
 	// verify that there's no bundles attribute at the root level
-	if len(request.Bundles) != 0 {
-		return fmt.Errorf("[Error] Error creating cluster: bundles is not allowed to be a root-level attribute when multi-DC proviosioning, please specify on each data centre instead")
+	if len(request.Bundles) == 0 {
+		return fmt.Errorf("[Error] Error creating cluster: primary bundles required at the root level to provision a multi-DC cluster")
 	}
 
 	//  verify that there's no cluster provider on root-level attributes
