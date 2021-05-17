@@ -295,47 +295,6 @@ func TestAccElasticsearchClusterResize(t *testing.T) {
 	})
 }
 
-func TestAccKafkaClusterResize(t *testing.T) {
-	testAccProviders := map[string]terraform.ResourceProvider{
-		"instaclustr": instaclustr.Provider(),
-	}
-	validConfig, _ := ioutil.ReadFile("data/valid_with_resizable_kafka.tf")
-	username := os.Getenv("IC_USERNAME")
-	apiKey := os.Getenv("IC_API_KEY")
-	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
-	resourceName := "resizable_cluster"
-	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
-	validResizeConfig := strings.Replace(oriConfig, `r5.large-800-gp2`, `r5.xlarge-800-gp2`, 1)
-	invalidResizeConfig := strings.Replace(oriConfig, `r5.large-800-gp2`, `t3.small-20-gp2`, 1)
-
-	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		CheckDestroy: testCheckResourceDeleted(resourceName, hostname, username, apiKey),
-		Steps: []resource.TestStep{
-			{
-				Config: oriConfig,
-				Check: resource.ComposeTestCheckFunc(
-					testCheckResourceValid(resourceName),
-					testCheckResourceCreated(resourceName, hostname, username, apiKey),
-					checkClusterRunning(resourceName, hostname, username, apiKey),
-					testCheckContactIPCorrect(resourceName, hostname, username, apiKey, 3, 3),
-				),
-			},
-			{
-				Config:      invalidResizeConfig,
-				ExpectError: regexp.MustCompile("t3.small-20-gp2"),
-			},
-			{
-				Config: validResizeConfig,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_cluster", "cluster_name", "tf-resizable-test"),
-					testCheckClusterResize(resourceName, hostname, username, apiKey, "r5.xlarge-800-gp2"),
-				),
-			},
-		},
-	})
-}
-
 func testCheckResourceValid(resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		resourceState := s.Modules[0].Resources["instaclustr_cluster."+resourceName]
@@ -484,7 +443,7 @@ func TestInvalidElasticsearchClusterCreate(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config:      fmt.Sprintf(string(invalidConfig), username, apiKey, hostname),
-				ExpectError: regexp.MustCompile("Error creating cluster"),
+				ExpectError: regexp.MustCompile("When 'dedicated_master_nodes' is not true , data_node_size can be either null or equal to master_node_size."),
 			},
 		},
 	})

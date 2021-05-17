@@ -7,7 +7,7 @@ provider "instaclustr" {
 
 resource "instaclustr_cluster" "kafka_cluster" {
   cluster_name = "example_kafka_tf_test"
-  node_size = "t3.small-20-gp2"
+  node_size = "t3.medium-80-gp2"
   data_centre = "US_WEST_2"
   sla_tier = "NON_PRODUCTION"
   cluster_network = "192.168.0.0/18"

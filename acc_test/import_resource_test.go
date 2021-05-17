@@ -7,6 +7,8 @@ import (
 	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 	"io/ioutil"
 	"os"
+	"regexp"
+	"strings"
 	"testing"
 )
 
@@ -161,6 +163,9 @@ func TestKafkaUserResource_importBasic(t *testing.T) {
 	zookeeperNodeSize := "zk-developer-t3.small-20"
 
 	createClusterConfig := fmt.Sprintf(string(configBytes1), username, apiKey, hostname, zookeeperNodeSize)
+	validResizeConfig := strings.Replace(createClusterConfig, `t3.medium-80-gp2`, `r5.xlarge-800-gp2`, 1)
+	invalidResizeConfig := strings.Replace(createClusterConfig, `t3.medium-80-gp2`, `t3.small-20-gp2`, 1)
+	resourceName := "kafka_cluster"
 
 	resource.Test(t, resource.TestCase{
 		Providers: testProviders,
@@ -187,6 +192,17 @@ func TestKafkaUserResource_importBasic(t *testing.T) {
 					// wait_for_state is a creation option to ensure IP contact points are ready for other parts of the infrastructure. It cannot be imported.
 					"wait_for_state",
 				},
+			},
+			{
+				Config:      invalidResizeConfig,
+				ExpectError: regexp.MustCompile("t3.small-20-gp2"),
+			},
+			{
+				Config: validResizeConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("instaclustr_cluster."+resourceName, "cluster_name", "example_kafka_tf_test"),
+					testCheckClusterResize(resourceName, hostname, username, apiKey, "r5.xlarge-800-gp2"),
+				),
 			},
 		},
 	})
