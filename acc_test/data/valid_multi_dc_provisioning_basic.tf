@@ -6,28 +6,39 @@ provider "instaclustr" {
 
 resource "instaclustr_cluster" "valid" {
   cluster_name = "testcluster"
-  // node_size    = "t3.small-v2"
+  node_size    = "t3.small-v2"
   sla_tier     = "NON_PRODUCTION"
-//  cluster_provider = {
-//    name = "AWS_VPC"
-//  }
+  cluster_provider = {
+    name = "AWS_VPC"
+  }
+
   rack_allocation = {
     number_of_racks = 2
     nodes_per_rack  = 1
+  }
+
+  bundle {
+    bundle  = "APACHE_CASSANDRA"
+    version = "apache-cassandra-3.11.8.ic2"
+    options = {
+      auth_n_authz                      = true
+      continuous_backup_enabled         = true
+      client_encryption                 = false
+      lucene_enabled                    = false
+      use_private_broadcast_rpc_address = false
+    }
   }
 
   data_centres {
     name        = "DC1"
     data_centre = "US_WEST_1"
     network     = "10.0.0.0/18"
-    node_size   =  "t3.medium"
   }
 
   data_centres {
     name        = "DC2"
     data_centre = "US_WEST_1"
     network     = "10.1.0.0/18"
-    node_size   =  "t3.medium"
   }
 
   data_centres {
@@ -35,16 +46,4 @@ resource "instaclustr_cluster" "valid" {
     network     = "192.168.0.0/18"
     node_size   =  "t3.medium"
   }
-
-//  bundle {
-//    bundle  = "APACHE_CASSANDRA"
-//    version = "apache-cassandra-3.11.8.ic2"
-//    options = {
-//      auth_n_authz                      = true
-//      continuous_backup_enabled         = true
-//      client_encryption                 = false
-//      lucene_enabled                    = false
-//      use_private_broadcast_rpc_address = false
-//    }
-//  }
 }

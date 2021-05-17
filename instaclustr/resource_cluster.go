@@ -61,7 +61,7 @@ func resourceCluster() *schema.Resource {
 				ForceNew: true,
 			},
 
-			"data_centres": {
+			"data_centres": { // delme
 				Type:     schema.TypeSet,
 				Optional: true,
 				Elem: &schema.Resource{
@@ -145,10 +145,177 @@ func resourceCluster() *schema.Resource {
 						"bundles": {
 							Type:     schema.TypeList,
 							Optional: true,
-							Elem: &schema.Schema{
-								Type:     schema.TypeMap,
-								Elem:     schema.TypeString,
-								ForceNew: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"bundle": {
+										Type:     schema.TypeString,
+										Required: true,
+										ForceNew: true,
+									},
+									"version": {
+										Type:     schema.TypeString,
+										Required: true,
+										ForceNew: true,
+									},
+									"options": {
+										Type:     schema.TypeMap,
+										Optional: true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"auth_n_authz": {
+													Type:     schema.TypeBool,
+													Optional: true,
+													ForceNew: true,
+												},
+												"client_encryption": {
+													Type:     schema.TypeBool,
+													Optional: true,
+													ForceNew: true,
+												},
+												"use_private_broadcast_rpc_address": {
+													Type:     schema.TypeBool,
+													Optional: true,
+													ForceNew: true,
+												},
+												"lucene_enabled": {
+													Type:     schema.TypeBool,
+													Optional: true,
+													ForceNew: true,
+												},
+												"continuous_backup_enabled": {
+													Type:     schema.TypeBool,
+													Optional: true,
+													ForceNew: true,
+												},
+												"number_partitions": {
+													Type:     schema.TypeInt,
+													Optional: true,
+													ForceNew: true,
+												},
+												"auto_create_topics": {
+													Type:     schema.TypeBool,
+													Optional: true,
+													ForceNew: true,
+												},
+												"delete_topics": {
+													Type:     schema.TypeBool,
+													Optional: true,
+													ForceNew: true,
+												},
+												"password_authentication": {
+													Type:     schema.TypeBool,
+													Optional: true,
+													ForceNew: true,
+												},
+												"target_kafka_cluster_id": {
+													Type:     schema.TypeString,
+													Optional: true,
+													ForceNew: true,
+												},
+												"vpc_type": {
+													Type:     schema.TypeString,
+													Optional: true,
+													ForceNew: true,
+												},
+												"aws_access_key": {
+													Type:     schema.TypeString,
+													Optional: true,
+													ForceNew: true,
+												},
+												"aws_secret_key": {
+													Type:     schema.TypeString,
+													Optional: true,
+													ForceNew: true,
+												},
+												"s3_bucket_name": {
+													Type:     schema.TypeString,
+													Optional: true,
+													ForceNew: true,
+												},
+												"azure_storage_account_name": {
+													Type:     schema.TypeString,
+													Optional: true,
+													ForceNew: true,
+												},
+												"azure_storage_account_key": {
+													Type:     schema.TypeString,
+													Optional: true,
+													ForceNew: true,
+												},
+												"azure_storage_container_name": {
+													Type:     schema.TypeString,
+													Optional: true,
+													ForceNew: true,
+												},
+												"ssl_enabled_protocols": {
+													Type:     schema.TypeString,
+													Optional: true,
+													ForceNew: true,
+												},
+												"ssl_truststore_password": {
+													Type:     schema.TypeString,
+													Optional: true,
+													ForceNew: true,
+												},
+												"ssl_protocol": {
+													Type:     schema.TypeString,
+													Optional: true,
+													ForceNew: true,
+												},
+												"security_protocol": {
+													Type:     schema.TypeString,
+													Optional: true,
+													ForceNew: true,
+												},
+												"sasl_mechanism": {
+													Type:     schema.TypeString,
+													Optional: true,
+													ForceNew: true,
+												},
+												"sasl_jaas_config": {
+													Type:     schema.TypeString,
+													Optional: true,
+													ForceNew: true,
+												},
+												"bootstrap_servers": {
+													Type:     schema.TypeString,
+													Optional: true,
+													ForceNew: true,
+												},
+												"truststore": {
+													Type:     schema.TypeString,
+													Optional: true,
+													ForceNew: true,
+												},
+												"dedicated_zookeeper": {
+													Type:     schema.TypeBool,
+													Optional: true,
+													ForceNew: true,
+												},
+												"zookeeper_node_size": {
+													Type:     schema.TypeString,
+													Optional: true,
+													ForceNew: true,
+												},
+												"zookeeper_node_count": {
+													Type:     schema.TypeInt,
+													Optional: true,
+													ForceNew: true,
+												},
+												"master_nodes": {
+													Type:     schema.TypeInt,
+													Optional: true,
+													ForceNew: true,
+												},
+												"replica_nodes": {
+													Type:     schema.TypeInt,
+													Optional: true,
+													ForceNew: true,
+												},
+											},
+										},
+									},
+								},
 							},
 						},
 					},
@@ -877,7 +1044,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	return nil
 }
 
-func getBundlesFromCluster(cluster *Cluster) ([]map[string]interface{}, error) {
+func getBaseBundlesFromCluster(cluster *Cluster) ([]map[string]interface{}, error) {
 	baseBundle := make(map[string]interface{}, 3)
 	baseBundle["bundle"] = cluster.BundleType
 
@@ -894,7 +1061,22 @@ func getBundlesFromCluster(cluster *Cluster) ([]map[string]interface{}, error) {
 
 	bundles := make([]map[string]interface{}, 0)
 	bundles = append(bundles, baseBundle)
-	addonBundles := cluster.AddonBundles
+
+	return bundles, nil
+}
+
+func getBundlesFromCluster(cluster *Cluster) ([]map[string]interface{}, error) {
+	bundles, error := getBaseBundlesFromCluster(cluster)
+	if error != nil {
+		return nil, error
+	}
+
+	addonBundles := make([]map[string]interface{}, 0)
+	for _, addOnBundle := range cluster.AddonBundles {
+		if addOnBundle != nil {
+			addonBundles = append(addonBundles, addOnBundle)
+		}
+	}
 
 	if addonBundles == nil {
 		return nil, nil
@@ -944,6 +1126,33 @@ func getDataCentresFromCluster(cluster *Cluster) ([]map[string]interface{}, erro
 		rackAllocation["number_of_racks"] = strconv.Itoa(rackCount)
 		rackAllocation["nodes_per_rack"] = strconv.Itoa(nodesPerRack)
 		dataCentreMap["rack_allocation"] = rackAllocation
+
+		// find provider for each data centre
+		provider := make(map[string]interface{})
+		provider["name"] = dataCentre.Provider
+		dataCentreMap["provider"] = provider
+
+		// find bundles for each data centre
+
+		// find primary bundles:
+		primaryBundles, err := getBaseBundlesFromCluster(cluster)
+		if err != nil {
+			return nil, err
+		}
+		secondaryBundles := make([]map[string]interface{}, 0)
+		if len(dataCentre.Bundles) != 0 {
+			// append add-on bundles here for this data centre
+			for _, secondaryBundle := range dataCentre.Bundles {
+				for _, addOnBundle := range cluster.AddonBundles {
+					if addOnBundle != nil && addOnBundle["bundle"] == secondaryBundle {
+						secondaryBundles = append(secondaryBundles, addOnBundle)
+					}
+				}
+			}
+
+		}
+		bundles := append(primaryBundles, secondaryBundles...)
+		dataCentreMap["bundles"] = bundles
 
 		// convertedDataCentreMap := dereferencePointerInStruct(dataCentreMap)
 		dataCentres = append(dataCentres, dataCentreMap)
@@ -1054,86 +1263,32 @@ func checkIfBundleRequiresRackAllocation(bundles []Bundle) bool {
 	return true
 }
 
-func isClusterSingleDataCentre(clustre Cluster) bool {
-	if clustre.DataCentre != "" && len(clustre.DataCentres) == 1 {
+func isClusterSingleDataCentre(cluster Cluster) bool {
+	if cluster.DataCentre != "" && len(cluster.DataCentres) == 1 {
 		return true
 	}
 	return false
 }
 
 func validateMultiDCProvisioningAPI(request CreateRequest) error {
-
-	//if request.RackAllocation == nil {
-	//	// verify that field rackAllocation exists for every data centre
-	//	for _, dataCentre := range request.DataCentres {
-	//		if dataCentre.RackAllocation == nil {
-	//			return fmt.Errorf("[Error] Error creating cluster: rack_allocation should be specified on either root-level or each data centre")
-	//		}
-	//	}
-	//} else {
-	//	// verify that field rackAllocation does not exist for every data centre
-	//	for _, dataCentre := range request.DataCentres {
-	//		if dataCentre.RackAllocation != nil {
-	//			return fmt.Errorf("[Error] Error creating cluster: rack_allocation should be specified on either root-level or each data centre")
-	//		}
-	//	}
-	//}
-
 	//  verify that there's no rack allocation on root-level attributes
 	if request.RackAllocation != nil {
 		return fmt.Errorf("[Error] Error creating cluster: rack_allocation is not allowed to be a root-level attributes when multi-DC proviosioning, please specify on each data centre instead")
 	}
 
-	if request.NodeSize == "" {
-		//  verify that field nodeSize exists for every data centre
-		for _, dataCentre := range request.DataCentres {
-			if dataCentre.NodeSize == "" {
-				return fmt.Errorf("[Error] Error creating cluster: node_size should be specified on either root-level or each data centre")
-			}
-		}
-	} else {
-		//  verify that field nodeSize does not exist for every data centre
-		for _, dataCentre := range request.DataCentres {
-			if dataCentre.NodeSize != "" {
-				return fmt.Errorf("[Error] Error creating cluster: node_size should be specified on either root-level or each data centre")
-			}
-		}
+	// verify that there's no node_size at the root level
+	if request.NodeSize != "" {
+		return fmt.Errorf("[Error] Error creating cluster: node_size is not allowed to be a root-level attribute when multi-DC proviosioning, please specify on each data centre instead")
 	}
 
-	if len(request.Bundles) == 0 {
-		// verify that field bundles exists for every data centre
-		for _, dataCentre := range request.DataCentres {
-			if len(dataCentre.Bundles) == 0 {
-				return fmt.Errorf("[Error] Error creating cluster: bundles should be specified on either root-level or each data centre")
-			}
-		}
-	} else {
-		// verify that field bundles does not exist for every data centre
-		for _, dataCentre := range request.DataCentres {
-			if len(dataCentre.Bundles) != 0 {
-				return fmt.Errorf("[Error] Error creating cluster: bundles should be specified on either root-level or each data centre")
-			}
-		}
+	// verify that there's no bundles attribute at the root level
+	if len(request.Bundles) != 0 {
+		return fmt.Errorf("[Error] Error creating cluster: bundles is not allowed to be a root-level attribute when multi-DC proviosioning, please specify on each data centre instead")
 	}
 
-	//if request.Provider.Name == nil {
-	//	// verify that field provider exists for every data centre
-	//	for _, dataCentre := range request.DataCentres {
-	//		if dataCentre.Provider.Name == nil {
-	//			return fmt.Errorf("[Error] Error creating cluster: cluster_provider should be specified on either root-level or each data centre")
-	//		}
-	//	}
-	//} else {
-	//	// verify that field provider does not exist for every data centre
-	//	for _, dataCentre := range request.DataCentres {
-	//		if dataCentre.Provider != nil {
-	//			return fmt.Errorf("[Error] Error creating cluster: cluster_provider should be specified on either root-level or each data centre")
-	//		}
-	//	}
-	//}
 	//  verify that there's no cluster provider on root-level attributes
 	if request.Provider != nil {
-		return fmt.Errorf("[Error] Error creating cluster: cluster_provider is not allowed to be a root-level attributes when multi-DC proviosioning, please specify on each data centre instead")
+		return fmt.Errorf("[Error] Error creating cluster: cluster_provider is not allowed to be a root-level attribute when multi-DC proviosioning, please specify on each data centre instead")
 	}
 
 	return nil
