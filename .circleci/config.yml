@@ -139,10 +139,10 @@ workflows:
               only: /^v.*/
             branches:
               ignore: /.*/
-  commit-build-test-workflow:
+  unit-test-workflow:
     jobs:
       - commit-build-test
-  pr-build-test-workflow:
+  acceptance-test-workflow:
     jobs:
       - hold:
           type: approval
@@ -153,3 +153,4 @@ workflows:
           context: terraform provider preprod
           requires:
             - hold
+
