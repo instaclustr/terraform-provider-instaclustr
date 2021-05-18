@@ -86,6 +86,11 @@ When running terraform plan/apply, pipe in the variables as follows:
 
 ## Example Usage
 
+It's possible to provision clusters for different cloud providers by changing the variable `cluster_provider`.
+The accepted cloud providers are: `AWS`, `GCP`, `AZURE`.
+
+
+AWS:
 ```
 resource "instaclustr_cluster" "example" {
     cluster_name = "testcluster"
@@ -113,6 +118,60 @@ resource "instaclustr_cluster" "example" {
         bundle = "SPARK"
         version = "2.3.2"
       }
+}
+```
+
+AZURE:
+```
+resource "instaclustr_cluster" "azure_example" {
+  cluster_name = "testcluster"
+  node_size = "Standard_DS2_v2-256"
+  data_centre = "CENTRAL_US"
+  sla_tier = "NON_PRODUCTION"
+  cluster_network = "192.168.0.0/18"
+  private_network_cluster = false
+  cluster_provider = {
+    name = "AZURE"
+  }
+  rack_allocation = {
+    number_of_racks = 3
+    nodes_per_rack = 1
+  }
+
+  bundle {
+    bundle = "APACHE_CASSANDRA"
+    version = "3.11.8"
+    options = {
+      auth_n_authz = true
+    }
+  }
+}
+```
+
+GCP:
+```
+resource "instaclustr_cluster" "gcp_example" {
+  cluster_name = "testclustergcp"
+  node_size = "n1-standard-2"
+  data_centre = "us-east1"
+  sla_tier = "NON_PRODUCTION"
+  cluster_network = "192.168.0.0/18"
+  private_network_cluster = false
+  cluster_provider = {
+    name = "GCP"
+  }
+  rack_allocation = {
+    number_of_racks = 3
+    nodes_per_rack = 1
+  }
+
+  bundle {
+    bundle = "APACHE_CASSANDRA"
+    version = "3.11.8"
+    options = {
+      auth_n_authz = true
+    }
+  }
 }
 ```
 
