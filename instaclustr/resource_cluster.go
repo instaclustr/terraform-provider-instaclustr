@@ -710,17 +710,25 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("[Error] kafka-schema-registry or kafka-rest-proxy user passwords may only be provided for Kafka clusters")
 	}
 
-	_ = validateMultiDCProvisioningAPI(createData)
+	if len(dataCentres) > 1 {
+		err = validateMultiDCProvisioningAPI(createData)
+		if err != nil {
+			return fmt.Errorf("[ERROR] error when provisioning multi-DC cluster, %s", err)
+		}
 
-	// fill in root-level fields in order to successfully provision the cluster
-	if createData.RackAllocation == nil {
-		createData.RackAllocation = createData.DataCentres[0].RackAllocation
-	}
-	if createData.NodeSize == "" {
 		createData.NodeSize = createData.DataCentres[0].NodeSize
-	}
-	if createData.Provider.Name == nil {
 		createData.Provider = createData.DataCentres[0].Provider
+	}
+
+	// Some Bundles do not use Rack Allocation so add that separately if needed. (Redis for example)
+	if checkIfBundleRequiresRackAllocation(bundles) {
+		var rackAllocation RackAllocation
+		err = mapstructure.Decode(d.Get("rack_allocation").(map[string]interface{}), &rackAllocation)
+		if err != nil {
+			return err
+		}
+
+		createData.RackAllocation = &rackAllocation
 	}
 
 	var jsonStrCreate []byte
@@ -1201,7 +1209,11 @@ func getBundles(d *schema.ResourceData) ([]Bundle, error) {
 	bundles := make([]Bundle, 0)
 	for _, inBundle := range d.Get("bundle").([]interface{}) {
 		var bundle Bundle
-		err := mapstructure.WeakDecode(inBundle.(map[string]interface{}), &bundle)
+		inBundleMap := inBundle.(map[string]interface{})
+		if len(inBundleMap["options"].(map[string]interface{})) == 0 {
+			inBundleMap["options"] = nil
+		}
+		err := mapstructure.WeakDecode(inBundleMap, &bundle)
 		if err != nil {
 			return nil, err
 		}

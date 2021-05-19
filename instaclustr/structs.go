@@ -11,9 +11,9 @@ type RuleType struct {
 }
 
 type Bundle struct {
-	Bundle  string        `json:"bundle" mapstructure:"bundle"`
-	Version string        `json:"version" mapstructure:"version"`
-	Options BundleOptions `json:"options,omitempty" mapstructure:"options"`
+	Bundle  string         `json:"bundle" mapstructure:"bundle"`
+	Version string         `json:"version" mapstructure:"version"`
+	Options *BundleOptions `json:"options,omitempty" mapstructure:"options"`
 }
 
 type OmitEmptyBool struct {
