@@ -36,7 +36,7 @@ terraform {
   required_providers {
     instaclustr = {
       source = "instaclustr/instaclustr"
-      version = "1.9.6"
+      version = "1.9.10"
     }
   }
 }
