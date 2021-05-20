@@ -1259,7 +1259,7 @@ func checkIfBundleRequiresRackAllocation(bundles []Bundle) bool {
 }
 
 func isClusterSingleDataCentre(cluster Cluster) bool {
-	if cluster.DataCentre != "" && len(cluster.DataCentres) == 1 {
+	if len(cluster.DataCentres) == 1 {
 		return true
 	}
 	return false
