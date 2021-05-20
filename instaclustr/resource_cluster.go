@@ -710,18 +710,8 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("[Error] kafka-schema-registry or kafka-rest-proxy user passwords may only be provided for Kafka clusters")
 	}
 
-	if len(dataCentres) > 1 {
-		err = validateMultiDCProvisioningAPI(createData)
-		if err != nil {
-			return fmt.Errorf("[ERROR] error when provisioning multi-DC cluster, %s", err)
-		}
-
-		createData.NodeSize = createData.DataCentres[0].NodeSize
-		createData.Provider = createData.DataCentres[0].Provider
-	}
-
 	// Some Bundles do not use Rack Allocation so add that separately if needed. (Redis for example)
-	if checkIfBundleRequiresRackAllocation(bundles) {
+	if dataCentre != "" && checkIfBundleRequiresRackAllocation(bundles) {
 		var rackAllocation RackAllocation
 		err = mapstructure.Decode(d.Get("rack_allocation").(map[string]interface{}), &rackAllocation)
 		if err != nil {
@@ -729,6 +719,17 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		}
 
 		createData.RackAllocation = &rackAllocation
+	}
+
+	if len(dataCentres) > 1 {
+		err = validateMultiDCProvisioningAPI(createData)
+		if err != nil {
+			return fmt.Errorf("[ERROR] error when provisioning multi-DC cluster, %s", err)
+		}
+
+		createData.RackAllocation = createData.DataCentres[0].RackAllocation
+		createData.NodeSize = createData.DataCentres[0].NodeSize
+		createData.Provider = createData.DataCentres[0].Provider
 	}
 
 	var jsonStrCreate []byte
@@ -1282,7 +1283,7 @@ func validateMultiDCProvisioningAPI(request CreateRequest) error {
 	}
 
 	//  verify that there's no cluster provider on root-level attributes
-	if request.Provider != nil {
+	if request.Provider.Name != nil {
 		return fmt.Errorf("[Error] Error creating cluster: cluster_provider is not allowed to be a root-level attribute when multi-DC proviosioning, please specify on each data centre instead")
 	}
 
