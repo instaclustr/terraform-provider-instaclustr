@@ -23,14 +23,12 @@ For further information about Instaclustr, please see [FAQ](https://www.instaclu
 
 ## Requirements
 
-- Terraform v0.10.x - .v0.13.x.
+- Terraform v0.10.x - .v0.15.x.
 - Go 1.14 or higher
 
 ## Using The Provider
 
-To install this provider, copy and paste this code into your Terraform configuration. Then, run terraform init.
-
-Terraform 0.13+
+To install this provider using Terraform 0.13+, copy and paste this code into your Terraform configuration. Then, run terraform init.
 
 ```
 terraform {
@@ -47,7 +45,7 @@ provider "instaclustr" {
 }
 ```
 
-For further details on Provider installation please see the [Terraform installation guide](https://www.terraform.io/docs/plugins/basics.html#installing-a-plugin).
+For further details on Provider installation, and installation on older versions of terraform please see the [Terraform installation guide](https://www.terraform.io/docs/plugins/basics.html#installing-a-plugin).
 
 ## Authentication
 
@@ -59,7 +57,31 @@ provider "instaclustr" {
     api_key = "<Your provisioning API key here>"
 }
 ```
-or just input them when Terraform indicates you.
+
+If you wish to keep secrets in the ENV instead of stored in your terraform file use the following method:
+
+In console export the desired variable:
+
+```export api_key={instaclustrAPIkey}```
+
+In your terraform file create a variable:
+```
+variable "api_key" {
+ type = string
+ default = "xxx"
+}
+```
+
+In the provider block use the variable:
+```
+provider "instaclustr" {
+    username={username}
+    api_key = var.api_key
+}
+```
+When running terraform plan/apply, pipe in the variables as follows:
+
+```terraform apply -var= "api_key=$api_key"```
 
 ## Example Usage
 
@@ -95,7 +117,7 @@ resource "instaclustr_cluster" "example" {
 
 ## Configuration
 
-Configuration documentation can be found at the [Instacluster Terraform Registry](https://registry.terraform.io/providers/instaclustr/instaclustr/latest/docs/resources/encryption_key)
+Configuration documentation can be found at the [Instaclustr Terraform Registry](https://registry.terraform.io/providers/instaclustr/instaclustr/latest/docs/resources/encryption_key)
 
 ## Bundles and Versions
 
