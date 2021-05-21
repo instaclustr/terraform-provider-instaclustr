@@ -25,7 +25,7 @@ func checkClusterRunning(resourceName, hostname, username, apiKey string) resour
 		client.InitClient(hostname, username, apiKey)
 
 		const ClusterReadInterval = 5
-		const WaitForClusterTimeout = 30 * 60
+		const WaitForClusterTimeout = 40 * 60
 		var latestStatus string
 		timePassed := 0
 		fmt.Print("\033[s")
