@@ -685,7 +685,8 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("[Error] Error creating cluster: either data_centre or data_centres should be provided")
 	}
 
-	if dataCentre != "" {
+	// for a single DC cluster
+	if dataCentre != "" && len(dataCentres) == 0 {
 		clusterNetwork := d.Get("cluster_network").(string)
 		createData.DataCentre = dataCentre
 		createData.ClusterNetwork = clusterNetwork
@@ -708,7 +709,7 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	// Some Bundles do not use Rack Allocation so add that separately if needed. (Redis for example)
-	if dataCentre != "" && checkIfBundleRequiresRackAllocation(bundles) {
+	if dataCentre != "" && len(dataCentres) == 0 && checkIfBundleRequiresRackAllocation(bundles) {
 		var rackAllocation RackAllocation
 		err = mapstructure.Decode(d.Get("rack_allocation").(map[string]interface{}), &rackAllocation)
 		if err != nil {
@@ -718,6 +719,7 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		createData.RackAllocation = &rackAllocation
 	}
 
+	// for multi-DC cluster
 	if len(dataCentres) > 1 {
 		err = validateMultiDCProvisioningAPI(createData)
 		if err != nil {
@@ -1264,24 +1266,24 @@ func isClusterSingleDataCentre(cluster Cluster) bool {
 }
 
 func validateMultiDCProvisioningAPI(request CreateRequest) error {
-	//  verify that there's no rack allocation on root-level attributes
+	//  verify that there's no rack allocation on root-level attributes when multi-DC provisioning
 	if request.RackAllocation != nil {
-		return fmt.Errorf("[Error] Error creating cluster: rack_allocation is not allowed to be a root-level attributes when multi-DC proviosioning, please specify on each data centre instead")
+		return fmt.Errorf("[Error] Error creating cluster via the tf file: rack_allocation is not allowed to be a root-level attribute when multi-DC proviosioning, please specify on each data centre instead")
 	}
 
-	// verify that there's no node_size at the root level
+	// verify that there's no node_size at the root level when multi-DC provisioning
 	if request.NodeSize != "" {
-		return fmt.Errorf("[Error] Error creating cluster: node_size is not allowed to be a root-level attribute when multi-DC proviosioning, please specify on each data centre instead")
+		return fmt.Errorf("[Error] Error creating cluster via the tf file: node_size is not allowed to be a root-level attribute when multi-DC proviosioning, please specify on each data centre instead")
 	}
 
 	// verify that there's no bundles attribute at the root level
 	if len(request.Bundles) == 0 {
-		return fmt.Errorf("[Error] Error creating cluster: primary bundles required at the root level to provision a multi-DC cluster")
+		return fmt.Errorf("[Error] Error creating cluster via the tf file: primary bundles required at the root level to provision a multi-DC cluster")
 	}
 
 	//  verify that there's no cluster provider on root-level attributes
 	if request.Provider.Name != nil {
-		return fmt.Errorf("[Error] Error creating cluster: cluster_provider is not allowed to be a root-level attribute when multi-DC proviosioning, please specify on each data centre instead")
+		return fmt.Errorf("[Error] Error creating cluster via the tf file: cluster_provider is not allowed to be a root-level attribute when multi-DC proviosioning, please specify on each data centre instead")
 	}
 
 	return nil
