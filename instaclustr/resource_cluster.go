@@ -23,6 +23,8 @@ var (
 	}
 )
 
+var secondaryBundles = []string{"SPARK", "ZEPPELIN", "KAFKA_REST_PROXY", "KAFKA_SCHEMA_REGISTRY"}
+
 func resourceCluster() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceClusterCreate,
@@ -1276,9 +1278,25 @@ func validateMultiDCProvisioningAPI(request CreateRequest) error {
 		return fmt.Errorf("[Error] Error creating cluster via the tf file: node_size is not allowed to be a root-level attribute when multi-DC proviosioning, please specify on each data centre instead")
 	}
 
-	// verify that there's no bundles attribute at the root level
+	// verify that there's bundles attribute at the root level
 	if len(request.Bundles) == 0 {
 		return fmt.Errorf("[Error] Error creating cluster via the tf file: primary bundles required at the root level to provision a multi-DC cluster")
+	}
+	// verify that root-level bundles are not secondary bundles
+	for _, bundle := range request.Bundles {
+		for _, secondaryBundle := range secondaryBundles {
+			if bundle.Bundle == secondaryBundle {
+				return fmt.Errorf("[Error] Error creating cluster via the tf file: secondary bundles not allowed to be specified at the root level when multi-DC provisioning, please specify on each data centre instead")
+			}
+		}
+	}
+	// for each data centre, verify that bundles are secondary bundles only
+	for _, dataCentre := range request.DataCentres {
+		for _, inBundle := range dataCentre.Bundles {
+			if !stringInSlice(inBundle.Bundle, secondaryBundles) {
+				return fmt.Errorf("[Error] Error creating cluster via the tf file: only secondary bundles allowed to be specified on each data centre")
+			}
+		}
 	}
 
 	//  verify that there's no cluster provider on root-level attributes
