@@ -56,14 +56,16 @@ func resourceCluster() *schema.Resource {
 			},
 
 			"data_centre": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
+				Type:          schema.TypeString,
+				Optional:      true,
+				ConflictsWith: []string{"data_centres"},
+				ForceNew:      true,
 			},
 
-			"data_centres": { // delme
-				Type:     schema.TypeSet,
-				Optional: true,
+			"data_centres": {
+				Type:          schema.TypeSet,
+				Optional:      true,
+				ConflictsWith: []string{"data_centre"},
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"name": {
@@ -86,12 +88,12 @@ func resourceCluster() *schema.Resource {
 
 						"node_size": {
 							Type:     schema.TypeString,
-							Optional: true,
+							Required: true,
 						},
 
 						"rack_allocation": {
 							Type:     schema.TypeMap,
-							Optional: true,
+							Required: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"number_of_racks": {
@@ -110,7 +112,7 @@ func resourceCluster() *schema.Resource {
 
 						"provider": {
 							Type:     schema.TypeMap,
-							Optional: true,
+							Required: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"name": {
@@ -681,11 +683,6 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 	// we will throw an error if neither data_centre nor data_centres found
 	if dataCentre == "" && len(dataCentres) == 0 {
 		return fmt.Errorf("[Error] Error creating cluster: either data_centre or data_centres should be provided")
-	}
-
-	// we will throw an error if the Terraform file has both "data centre" and "data centres"
-	if dataCentre != "" && len(dataCentres) > 0 {
-		return fmt.Errorf("[Error] Error creating cluster: data_centre and data_centres cannot exist at the same time")
 	}
 
 	if dataCentre != "" {
