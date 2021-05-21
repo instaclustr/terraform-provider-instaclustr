@@ -85,7 +85,7 @@ type CreateRequest struct {
 }
 
 type DataCentreCreateRequest struct {
-	Name           string           `json:"name" mapstructure:"name"`
+	Name           string           `json:"name,omitempty" mapstructure:"name"`
 	Network        string           `json:"network" mapstructure:"network"`
 	DataCentre     string           `json:"dataCentre" mapstructure:"data_centre"`
 	Provider       *ClusterProvider `json:"provider,omitempty" mapstructure:"provider,omitempty"`
