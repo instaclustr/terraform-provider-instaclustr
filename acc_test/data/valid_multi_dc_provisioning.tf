@@ -32,6 +32,11 @@ resource "instaclustr_cluster" "valid" {
     provider = {
       name = "AWS_VPC"
     }
+
+    bundles {
+      bundle = "SPARK"
+      version = "apache-spark:2.3.2.ic1"
+    }
   }
 
   data_centres {

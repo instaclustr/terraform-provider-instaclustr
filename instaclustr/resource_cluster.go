@@ -147,7 +147,7 @@ func resourceCluster() *schema.Resource {
 						},
 
 						"bundles": {
-							Type:     schema.TypeList,
+							Type:     schema.TypeSet,
 							Optional: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -731,6 +731,17 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		createData.RackAllocation = createData.DataCentres[0].RackAllocation
 		createData.NodeSize = createData.DataCentres[0].NodeSize
 		createData.Provider = createData.DataCentres[0].Provider
+
+		// add primary bundles into each data centre for successful provisioning
+		for i, inDataCentre := range createData.DataCentres {
+			if len(inDataCentre.Bundles) > 0 {
+				newBundles := inDataCentre.Bundles
+				for _, primaryBundle := range createData.Bundles {
+					newBundles = append(newBundles, primaryBundle)
+				}
+				createData.DataCentres[i].Bundles = newBundles
+			}
+		}
 	}
 
 	var jsonStrCreate []byte
@@ -931,10 +942,21 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("cluster_id", cluster.ID)
 	d.Set("cluster_name", cluster.ClusterName)
 
-	bundles, err := getBundlesFromCluster(cluster)
-	if err != nil {
-		return err
+	bundles := make([]map[string]interface{}, 0)
+	if isClusterSingleDataCentre(*cluster) {
+		fullBundles, err := getBundlesFromCluster(cluster)
+		if err != nil {
+			return err
+		}
+		bundles = fullBundles
+	} else {
+		baseBundles, err := getBaseBundlesFromCluster(cluster)
+		if err != nil {
+			return err
+		}
+		bundles = baseBundles
 	}
+
 	if err := d.Set("bundle", bundles); err != nil {
 		return fmt.Errorf("[Error] Error reading cluster: %s", err)
 	}
@@ -1133,19 +1155,18 @@ func getDataCentresFromCluster(cluster *Cluster) ([]map[string]interface{}, erro
 		dataCentreMap["provider"] = provider
 
 		// find bundles for each data centre
-		secondaryBundles := make([]map[string]interface{}, 0)
+		thisDataCentreBundles := make([]map[string]interface{}, 0)
 		if dataCentre.Bundles != nil && len(dataCentre.Bundles) != 0 {
-			// append add-on bundles here for this data centre
-			for _, secondaryBundle := range dataCentre.Bundles {
+			for _, thisDataCentreBundle := range dataCentre.Bundles {
 				for _, addOnBundle := range cluster.AddonBundles {
-					if addOnBundle != nil && addOnBundle["bundle"] == secondaryBundle {
-						secondaryBundles = append(secondaryBundles, addOnBundle)
+					if addOnBundle != nil && addOnBundle["bundle"].(string) == thisDataCentreBundle {
+						thisDataCentreBundles = append(thisDataCentreBundles, addOnBundle)
 					}
 				}
 			}
 
 		}
-		dataCentreMap["bundles"] = secondaryBundles
+		dataCentreMap["bundles"] = thisDataCentreBundles
 
 		// convertedDataCentreMap := dereferencePointerInStruct(dataCentreMap)
 		dataCentres = append(dataCentres, dataCentreMap)
@@ -1230,7 +1251,10 @@ func getDataCentres(d *schema.ResourceData) ([]DataCentreCreateRequest, error) {
 	dataCentres := make([]DataCentreCreateRequest, 0)
 	for _, inDataCentre := range dataCentres_.List() {
 		var dataCentre DataCentreCreateRequest
-		err := mapstructure.WeakDecode(inDataCentre.(map[string]interface{}), &dataCentre)
+		inDataCentreMap := inDataCentre.(map[string]interface{})
+		inDataCentreBundles := inDataCentreMap["bundles"].(*schema.Set).List()
+		inDataCentreMap["bundles"] = inDataCentreBundles
+		err := mapstructure.WeakDecode(inDataCentreMap, &dataCentre)
 		if err != nil {
 			return nil, err
 		}
