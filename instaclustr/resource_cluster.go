@@ -53,8 +53,9 @@ func resourceCluster() *schema.Resource {
 			},
 
 			"node_size": {
-				Type:     schema.TypeString,
-				Optional: true,
+				Type:          schema.TypeString,
+				Optional:      true,
+				ConflictsWith: []string{"data_centres"},
 			},
 
 			"data_centre": {
@@ -372,8 +373,9 @@ func resourceCluster() *schema.Resource {
 			},
 
 			"cluster_provider": {
-				Type:     schema.TypeMap,
-				Optional: true,
+				Type:          schema.TypeMap,
+				Optional:      true,
+				ConflictsWith: []string{"data_centres"},
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"name": {
@@ -412,8 +414,9 @@ func resourceCluster() *schema.Resource {
 			},
 
 			"rack_allocation": {
-				Type:     schema.TypeMap,
-				Optional: true,
+				Type:          schema.TypeMap,
+				Optional:      true,
+				ConflictsWith: []string{"data_centres"},
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"number_of_racks": {
@@ -1293,16 +1296,6 @@ func isClusterSingleDataCentre(cluster Cluster) bool {
 }
 
 func validateMultiDCProvisioningAPI(request CreateRequest) error {
-	//  verify that there's no rack allocation on root-level attributes when multi-DC provisioning
-	if request.RackAllocation != nil {
-		return fmt.Errorf("[Error] Error creating cluster via the tf file: rack_allocation is not allowed to be a root-level attribute when multi-DC proviosioning, please specify on each data centre instead")
-	}
-
-	// verify that there's no node_size at the root level when multi-DC provisioning
-	if request.NodeSize != "" {
-		return fmt.Errorf("[Error] Error creating cluster via the tf file: node_size is not allowed to be a root-level attribute when multi-DC proviosioning, please specify on each data centre instead")
-	}
-
 	// verify that there's bundles attribute at the root level
 	if len(request.Bundles) == 0 {
 		return fmt.Errorf("[Error] Error creating cluster via the tf file: primary bundles required at the root level to provision a multi-DC cluster")
@@ -1322,11 +1315,6 @@ func validateMultiDCProvisioningAPI(request CreateRequest) error {
 				return fmt.Errorf("[Error] Error creating cluster via the tf file: only secondary bundles allowed to be specified on each data centre")
 			}
 		}
-	}
-
-	//  verify that there's no cluster provider on root-level attributes
-	if request.Provider.Name != nil {
-		return fmt.Errorf("[Error] Error creating cluster via the tf file: cluster_provider is not allowed to be a root-level attribute when multi-DC proviosioning, please specify on each data centre instead")
 	}
 
 	return nil
