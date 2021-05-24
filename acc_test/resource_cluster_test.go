@@ -54,7 +54,7 @@ func TestAccCluster(t *testing.T) {
 	AccClusterResourceTestSteps(t, testAccProviders, validSingleDCClusterConfig)
 
 	// test multi DC
-	validMultiDCClusterConfig, _ := ioutil.ReadFile("data/valid_multi_dc_provisioning.tf")
+	validMultiDCClusterConfig, _ := ioutil.ReadFile("data/valid_multi_DC_provisioning.tf")
 	AccClusterResourceTestSteps(t, testAccProviders, validMultiDCClusterConfig)
 }
 

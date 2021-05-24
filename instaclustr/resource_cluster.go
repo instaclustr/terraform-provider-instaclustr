@@ -6,7 +6,6 @@ import (
 	"log"
 	"reflect"
 	"regexp"
-	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -434,7 +433,7 @@ func resourceCluster() *schema.Resource {
 			},
 
 			"bundles": {
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Optional: true,
 				Elem: &schema.Schema{
 					Type:     schema.TypeMap,
@@ -445,7 +444,7 @@ func resourceCluster() *schema.Resource {
 			},
 
 			"bundle": {
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Optional: true,
 				MinItems: 1,
 				Elem: &schema.Resource{
@@ -1087,7 +1086,7 @@ func getBaseBundlesFromCluster(cluster *Cluster) ([]map[string]interface{}, erro
 	bundles := make([]map[string]interface{}, 0)
 	bundles = append(bundles, baseBundle)
 
-	sort.Slice(bundles, func(i, j int) bool { return bundles[i]["bundle"].(string) > bundles[j]["bundle"].(string) })
+	// sort.Slice(bundles, func(i, j int) bool { return bundles[i]["bundle"].(string) > bundles[j]["bundle"].(string) })
 	return bundles, nil
 }
 
@@ -1108,7 +1107,7 @@ func getBundlesFromCluster(cluster *Cluster) ([]map[string]interface{}, error) {
 		return nil, nil
 	}
 
-	sort.Slice(addonBundles, func(i, j int) bool { return addonBundles[i]["bundle"].(string) > addonBundles[j]["bundle"].(string) })
+	// sort.Slice(addonBundles, func(i, j int) bool { return addonBundles[i]["bundle"].(string) > addonBundles[j]["bundle"].(string) })
 	for _, addonBundle := range addonBundles {
 		if len(addonBundle) != 0 {
 			bundles = append(bundles, addonBundle)
@@ -1234,7 +1233,7 @@ func resourceClusterStateImport(d *schema.ResourceData, meta interface{}) ([]*sc
 
 func getBundles(d *schema.ResourceData) ([]Bundle, error) {
 	bundles := make([]Bundle, 0)
-	for _, inBundle := range d.Get("bundle").([]interface{}) {
+	for _, inBundle := range d.Get("bundle").(*schema.Set).List() {
 		var bundle Bundle
 		inBundleMap := inBundle.(map[string]interface{})
 		if len(inBundleMap["options"].(map[string]interface{})) == 0 {
