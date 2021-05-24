@@ -1124,23 +1124,14 @@ func getDataCentresFromCluster(cluster *Cluster) ([]map[string]interface{}, erro
 		dataCentreMap["network"] = dataCentre.CdcNetwork
 
 		// find the node size for this data centre
-		nodeSize := ""
-		for _, node := range dataCentre.Nodes {
-			nodeSize = node.Size
-			if !strings.HasPrefix(nodeSize, "zk-") {
-				break
-			}
-		}
-		dataCentreMap["node_size"] = nodeSize
+		dataCentreMap["node_size"] = dataCentre.Nodes[0].Size
 
 		// find rack allocation for each data centre
 		nodeCount := 0
 		rackCount := 0
 		rackList := make([]string, 0)
 		for _, node := range dataCentre.Nodes {
-			if !strings.HasPrefix(node.Size, "zk-") {
-				nodeCount += 1
-			}
+			nodeCount += 1
 			rackList = appendIfMissing(rackList, node.Rack)
 		}
 		rackCount += len(rackList)
