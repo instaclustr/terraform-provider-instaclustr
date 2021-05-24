@@ -3,6 +3,7 @@ package instaclustr
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/hashicorp/terraform/helper/validation"
 	"log"
 	"reflect"
 	"regexp"
@@ -21,8 +22,6 @@ var (
 		"PROVISIONED": true,
 	}
 )
-
-var secondaryBundles = []string{"SPARK", "KAFKA_REST_PROXY", "KAFKA_SCHEMA_REGISTRY"}
 
 func resourceCluster() *schema.Resource {
 	return &schema.Resource{
@@ -155,6 +154,9 @@ func resourceCluster() *schema.Resource {
 										Type:     schema.TypeString,
 										Required: true,
 										ForceNew: true,
+										ValidateFunc: validation.StringInSlice([]string{
+											"SPARK",
+										}, false),
 									},
 									"version": {
 										Type:     schema.TypeString,
@@ -166,153 +168,13 @@ func resourceCluster() *schema.Resource {
 										Optional: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
-												"auth_n_authz": {
-													Type:     schema.TypeBool,
-													Optional: true,
-													ForceNew: true,
-												},
 												"client_encryption": {
-													Type:     schema.TypeBool,
-													Optional: true,
-													ForceNew: true,
-												},
-												"use_private_broadcast_rpc_address": {
-													Type:     schema.TypeBool,
-													Optional: true,
-													ForceNew: true,
-												},
-												"lucene_enabled": {
-													Type:     schema.TypeBool,
-													Optional: true,
-													ForceNew: true,
-												},
-												"continuous_backup_enabled": {
-													Type:     schema.TypeBool,
-													Optional: true,
-													ForceNew: true,
-												},
-												"number_partitions": {
-													Type:     schema.TypeInt,
-													Optional: true,
-													ForceNew: true,
-												},
-												"auto_create_topics": {
-													Type:     schema.TypeBool,
-													Optional: true,
-													ForceNew: true,
-												},
-												"delete_topics": {
 													Type:     schema.TypeBool,
 													Optional: true,
 													ForceNew: true,
 												},
 												"password_authentication": {
 													Type:     schema.TypeBool,
-													Optional: true,
-													ForceNew: true,
-												},
-												"target_kafka_cluster_id": {
-													Type:     schema.TypeString,
-													Optional: true,
-													ForceNew: true,
-												},
-												"vpc_type": {
-													Type:     schema.TypeString,
-													Optional: true,
-													ForceNew: true,
-												},
-												"aws_access_key": {
-													Type:     schema.TypeString,
-													Optional: true,
-													ForceNew: true,
-												},
-												"aws_secret_key": {
-													Type:     schema.TypeString,
-													Optional: true,
-													ForceNew: true,
-												},
-												"s3_bucket_name": {
-													Type:     schema.TypeString,
-													Optional: true,
-													ForceNew: true,
-												},
-												"azure_storage_account_name": {
-													Type:     schema.TypeString,
-													Optional: true,
-													ForceNew: true,
-												},
-												"azure_storage_account_key": {
-													Type:     schema.TypeString,
-													Optional: true,
-													ForceNew: true,
-												},
-												"azure_storage_container_name": {
-													Type:     schema.TypeString,
-													Optional: true,
-													ForceNew: true,
-												},
-												"ssl_enabled_protocols": {
-													Type:     schema.TypeString,
-													Optional: true,
-													ForceNew: true,
-												},
-												"ssl_truststore_password": {
-													Type:     schema.TypeString,
-													Optional: true,
-													ForceNew: true,
-												},
-												"ssl_protocol": {
-													Type:     schema.TypeString,
-													Optional: true,
-													ForceNew: true,
-												},
-												"security_protocol": {
-													Type:     schema.TypeString,
-													Optional: true,
-													ForceNew: true,
-												},
-												"sasl_mechanism": {
-													Type:     schema.TypeString,
-													Optional: true,
-													ForceNew: true,
-												},
-												"sasl_jaas_config": {
-													Type:     schema.TypeString,
-													Optional: true,
-													ForceNew: true,
-												},
-												"bootstrap_servers": {
-													Type:     schema.TypeString,
-													Optional: true,
-													ForceNew: true,
-												},
-												"truststore": {
-													Type:     schema.TypeString,
-													Optional: true,
-													ForceNew: true,
-												},
-												"dedicated_zookeeper": {
-													Type:     schema.TypeBool,
-													Optional: true,
-													ForceNew: true,
-												},
-												"zookeeper_node_size": {
-													Type:     schema.TypeString,
-													Optional: true,
-													ForceNew: true,
-												},
-												"zookeeper_node_count": {
-													Type:     schema.TypeInt,
-													Optional: true,
-													ForceNew: true,
-												},
-												"master_nodes": {
-													Type:     schema.TypeInt,
-													Optional: true,
-													ForceNew: true,
-												},
-												"replica_nodes": {
-													Type:     schema.TypeInt,
 													Optional: true,
 													ForceNew: true,
 												},
@@ -1286,26 +1148,9 @@ func isClusterSingleDataCentre(cluster Cluster) bool {
 }
 
 func validateMultiDCProvisioningRequest(request CreateRequest) error {
-	// verify that there's bundles attribute at the root level
-	if len(request.Bundles) == 0 {
-		return fmt.Errorf("[Error] Error creating cluster via the tf file: primary bundles required at the root level to provision a multi-DC cluster")
+	// verify that the only primary bundle is APACHE_CASSANDRA
+	if len(request.Bundles) != 1 || request.Bundles[0].Bundle != "APACHE_CASSANDRA" {
+		return fmt.Errorf("[Error] only APACHE_CASSANDRA supported for multi data centre provisioning")
 	}
-	// verify that root-level bundles are not secondary bundles
-	for _, bundle := range request.Bundles {
-		for _, secondaryBundle := range secondaryBundles {
-			if bundle.Bundle == secondaryBundle {
-				return fmt.Errorf("[Error] Error creating cluster via the tf file: secondary bundles not allowed to be specified at the root level when multi-DC provisioning, please specify on each data centre instead")
-			}
-		}
-	}
-	// for each data centre, verify that bundles are secondary bundles only
-	for _, dataCentre := range request.DataCentres {
-		for _, inBundle := range dataCentre.Bundles {
-			if !stringInSlice(inBundle.Bundle, secondaryBundles) {
-				return fmt.Errorf("[Error] Error creating cluster via the tf file: only secondary bundles allowed to be specified on each data centre")
-			}
-		}
-	}
-
 	return nil
 }
