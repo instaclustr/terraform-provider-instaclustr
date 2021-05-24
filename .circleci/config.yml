@@ -153,12 +153,12 @@ workflows:
               only: /^v.*/
             branches:
               ignore: /.*/
-unit-test-workflow:
-  jobs:
-    - commit-build-test:
-        filters:
-          branches:
-            ignore: master
+  unit-test-workflow:
+    jobs:
+      - commit-build-test:
+          filters:
+            branches:
+              ignore: master
   acceptance-test-workflow:
     jobs:
       - hold:
@@ -170,9 +170,9 @@ unit-test-workflow:
           context: terraform provider
           requires:
             - hold
-    master-unit-test-workflow:
-      jobs:
-        - on-master-build-test:
+  master-unit-test-workflow:
+    jobs:
+      - on-master-build-test:
           filters:
             branches:
               only: master
