@@ -725,7 +725,7 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 
 	// for multi-DC cluster
 	if len(dataCentres) > 1 {
-		err = validateMultiDCProvisioningAPI(createData)
+		err = validateMultiDCProvisioningRequest(createData)
 		if err != nil {
 			return fmt.Errorf("[ERROR] error when provisioning multi-DC cluster, %s", err)
 		}
@@ -1283,7 +1283,7 @@ func isClusterSingleDataCentre(cluster Cluster) bool {
 	return false
 }
 
-func validateMultiDCProvisioningAPI(request CreateRequest) error {
+func validateMultiDCProvisioningRequest(request CreateRequest) error {
 	// verify that there's bundles attribute at the root level
 	if len(request.Bundles) == 0 {
 		return fmt.Errorf("[Error] Error creating cluster via the tf file: primary bundles required at the root level to provision a multi-DC cluster")
