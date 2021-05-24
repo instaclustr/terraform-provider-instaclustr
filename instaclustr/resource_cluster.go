@@ -147,7 +147,7 @@ func resourceCluster() *schema.Resource {
 
 						"bundles": {
 							Type:     schema.TypeSet,
-							Optional: true,
+							Required: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"bundle": {
@@ -155,6 +155,7 @@ func resourceCluster() *schema.Resource {
 										Required: true,
 										ForceNew: true,
 										ValidateFunc: validation.StringInSlice([]string{
+											"APACHE_CASSANDRA",
 											"SPARK",
 										}, false),
 									},
@@ -168,12 +169,32 @@ func resourceCluster() *schema.Resource {
 										Optional: true,
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
+												"auth_n_authz": {
+													Type:     schema.TypeBool,
+													Optional: true,
+													ForceNew: true,
+												},
 												"client_encryption": {
 													Type:     schema.TypeBool,
 													Optional: true,
 													ForceNew: true,
 												},
 												"password_authentication": {
+													Type:     schema.TypeBool,
+													Optional: true,
+													ForceNew: true,
+												},
+												"use_private_broadcast_rpc_address": {
+													Type:     schema.TypeBool,
+													Optional: true,
+													ForceNew: true,
+												},
+												"lucene_enabled": {
+													Type:     schema.TypeBool,
+													Optional: true,
+													ForceNew: true,
+												},
+												"continuous_backup_enabled": {
 													Type:     schema.TypeBool,
 													Optional: true,
 													ForceNew: true,
@@ -295,8 +316,9 @@ func resourceCluster() *schema.Resource {
 			},
 
 			"bundles": {
-				Type:     schema.TypeSet,
-				Optional: true,
+				Type:          schema.TypeSet,
+				Optional:      true,
+				ConflictsWith: []string{"data_centres"},
 				Elem: &schema.Schema{
 					Type:     schema.TypeMap,
 					Elem:     schema.TypeString,
@@ -306,9 +328,10 @@ func resourceCluster() *schema.Resource {
 			},
 
 			"bundle": {
-				Type:     schema.TypeSet,
-				Optional: true,
-				MinItems: 1,
+				Type:          schema.TypeSet,
+				Optional:      true,
+				ConflictsWith: []string{"data_centres"},
+				MinItems:      1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"bundle": {
@@ -589,25 +612,10 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 
 	// for multi-DC cluster
 	if len(dataCentres) > 1 {
-		err = validateMultiDCProvisioningRequest(createData)
-		if err != nil {
-			return fmt.Errorf("[ERROR] error when provisioning multi-DC cluster, %s", err)
-		}
-
 		createData.RackAllocation = createData.DataCentres[0].RackAllocation
 		createData.NodeSize = createData.DataCentres[0].NodeSize
 		createData.Provider = createData.DataCentres[0].Provider
-
-		// add primary bundles into each data centre for successful provisioning
-		for i, inDataCentre := range createData.DataCentres {
-			if len(inDataCentre.Bundles) > 0 {
-				newBundles := inDataCentre.Bundles
-				for _, primaryBundle := range createData.Bundles {
-					newBundles = append(newBundles, primaryBundle)
-				}
-				createData.DataCentres[i].Bundles = newBundles
-			}
-		}
+		createData.Bundles = createData.DataCentres[0].Bundles
 	}
 
 	var jsonStrCreate []byte
@@ -808,23 +816,14 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("cluster_id", cluster.ID)
 	d.Set("cluster_name", cluster.ClusterName)
 
-	bundles := make([]map[string]interface{}, 0)
 	if isClusterSingleDataCentre(*cluster) {
-		fullBundles, err := getBundlesFromCluster(cluster)
+		bundles, err := getBundlesFromCluster(cluster)
 		if err != nil {
 			return err
 		}
-		bundles = fullBundles
-	} else {
-		baseBundles, err := getBaseBundlesFromCluster(cluster)
-		if err != nil {
-			return err
+		if err := d.Set("bundle", bundles); err != nil {
+			return fmt.Errorf("[Error] Error reading cluster: %s", err)
 		}
-		bundles = baseBundles
-	}
-
-	if err := d.Set("bundle", bundles); err != nil {
-		return fmt.Errorf("[Error] Error reading cluster: %s", err)
 	}
 
 	if isClusterSingleDataCentre(*cluster) {
@@ -1011,7 +1010,7 @@ func getDataCentresFromCluster(cluster *Cluster) ([]map[string]interface{}, erro
 		dataCentreMap["provider"] = provider
 
 		// find bundles for each data centre
-		thisDataCentreBundles := make([]map[string]interface{}, 0)
+		thisDataCentreBundles, _ := getBaseBundlesFromCluster(cluster)
 		if dataCentre.Bundles != nil && len(dataCentre.Bundles) != 0 {
 			for _, thisDataCentreBundle := range dataCentre.Bundles {
 				for _, addOnBundle := range cluster.AddonBundles {
@@ -1020,11 +1019,9 @@ func getDataCentresFromCluster(cluster *Cluster) ([]map[string]interface{}, erro
 					}
 				}
 			}
-
 		}
 		dataCentreMap["bundles"] = thisDataCentreBundles
 
-		// convertedDataCentreMap := dereferencePointerInStruct(dataCentreMap)
 		dataCentres = append(dataCentres, dataCentreMap)
 	}
 	return dataCentres, nil
@@ -1145,12 +1142,4 @@ func isClusterSingleDataCentre(cluster Cluster) bool {
 		return true
 	}
 	return false
-}
-
-func validateMultiDCProvisioningRequest(request CreateRequest) error {
-	// verify that the only primary bundle is APACHE_CASSANDRA
-	if len(request.Bundles) != 1 || request.Bundles[0].Bundle != "APACHE_CASSANDRA" {
-		return fmt.Errorf("[Error] only APACHE_CASSANDRA supported for multi data centre provisioning")
-	}
-	return nil
 }
