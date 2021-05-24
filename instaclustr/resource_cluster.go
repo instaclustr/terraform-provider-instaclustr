@@ -22,7 +22,7 @@ var (
 	}
 )
 
-var secondaryBundles = []string{"SPARK", "ZEPPELIN", "KAFKA_REST_PROXY", "KAFKA_SCHEMA_REGISTRY"}
+var secondaryBundles = []string{"SPARK", "KAFKA_REST_PROXY", "KAFKA_SCHEMA_REGISTRY"}
 
 func resourceCluster() *schema.Resource {
 	return &schema.Resource{
