@@ -689,8 +689,10 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("[Error] Error creating cluster: either data_centre or data_centres should be provided")
 	}
 
+	var isSingleDCCluster = dataCentre != "" && len(dataCentres) == 0
+
 	// for a single DC cluster
-	if dataCentre != "" && len(dataCentres) == 0 {
+	if isSingleDCCluster {
 		clusterNetwork := d.Get("cluster_network").(string)
 		createData.DataCentre = dataCentre
 		createData.ClusterNetwork = clusterNetwork
@@ -713,7 +715,7 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	// Some Bundles do not use Rack Allocation so add that separately if needed. (Redis for example)
-	if dataCentre != "" && len(dataCentres) == 0 && checkIfBundleRequiresRackAllocation(bundles) {
+	if isSingleDCCluster && checkIfBundleRequiresRackAllocation(bundles) {
 		var rackAllocation RackAllocation
 		err = mapstructure.Decode(d.Get("rack_allocation").(map[string]interface{}), &rackAllocation)
 		if err != nil {
