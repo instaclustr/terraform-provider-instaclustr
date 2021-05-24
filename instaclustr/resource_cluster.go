@@ -1086,7 +1086,6 @@ func getBaseBundlesFromCluster(cluster *Cluster) ([]map[string]interface{}, erro
 	bundles := make([]map[string]interface{}, 0)
 	bundles = append(bundles, baseBundle)
 
-	// sort.Slice(bundles, func(i, j int) bool { return bundles[i]["bundle"].(string) > bundles[j]["bundle"].(string) })
 	return bundles, nil
 }
 
@@ -1107,7 +1106,6 @@ func getBundlesFromCluster(cluster *Cluster) ([]map[string]interface{}, error) {
 		return nil, nil
 	}
 
-	// sort.Slice(addonBundles, func(i, j int) bool { return addonBundles[i]["bundle"].(string) > addonBundles[j]["bundle"].(string) })
 	for _, addonBundle := range addonBundles {
 		if len(addonBundle) != 0 {
 			bundles = append(bundles, addonBundle)

@@ -43,17 +43,22 @@ func AccClusterResourceTestSteps(t *testing.T, testAccProviders map[string]terra
 	})
 }
 
-func TestAccCluster(t *testing.T) {
+func TestAccClusterSingleDC(t *testing.T) {
 	testAccProvider := instaclustr.Provider()
 	testAccProviders := map[string]terraform.ResourceProvider{
 		"instaclustr": testAccProvider,
 	}
 
-	// test single DC
 	validSingleDCClusterConfig, _ := ioutil.ReadFile("data/valid.tf")
 	AccClusterResourceTestSteps(t, testAccProviders, validSingleDCClusterConfig)
+}
 
-	// test multi DC
+func TestAccClusterMultiDC(t *testing.T) {
+	testAccProvider := instaclustr.Provider()
+	testAccProviders := map[string]terraform.ResourceProvider{
+		"instaclustr": testAccProvider,
+	}
+
 	validMultiDCClusterConfig, _ := ioutil.ReadFile("data/valid_multi_DC_provisioning.tf")
 	AccClusterResourceTestSteps(t, testAccProviders, validMultiDCClusterConfig)
 }
