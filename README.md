@@ -176,6 +176,9 @@ resource "instaclustr_cluster" "gcp_example" {
 ```
 
 Multi Data Centre Provisioning:
+
+For Multi Data Centre provisioning, please specify `node_size`, `rack_allocation`, `provider` and `bundles` in each `data_centres`;  
+For each `data_centres`, it requires at least one `bundles` to be the base application, e.g. `APACHE_CASSANDRA`.  
 ```
 resource "instaclustr_cluster" "multi_DC_example" {
   cluster_name = "testcluster_multiDC"
