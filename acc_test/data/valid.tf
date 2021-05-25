@@ -31,8 +31,4 @@ resource "instaclustr_cluster" "valid" {
             continuous_backup_enabled = true
         }
     }
-    bundle {
-        bundle = "SPARK"
-        version = "apache-spark:2.3.2.ic1"
-    }
 }

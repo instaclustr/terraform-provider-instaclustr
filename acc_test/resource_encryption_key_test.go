@@ -99,7 +99,7 @@ func testCheckAccEBSResourceDeleted(resourceName, hostname, username, apiKey str
 		client := new(instaclustr.APIClient)
 		client.InitClient(hostname, username, apiKey)
 		err := client.DeleteEncryptionKey(id)
-		if err == nil {
+		if err != nil {
 			return fmt.Errorf("Encryption key %s still exists", id)
 		}
 		return nil

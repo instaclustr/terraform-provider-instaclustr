@@ -43,17 +43,11 @@ resource "instaclustr_cluster" "example" {
 
   bundle {
     bundle = "APACHE_CASSANDRA"
-    version = "3.11.4"
+    version = "3.11.8"
     options = {
       auth_n_authz = true
     }
   }
-
-  bundle {
-    bundle = "SPARK"
-    version = "2.3.2"
-  }
-
 }
 
 data "instaclustr_cluster_credentials" "example_credentials" {
@@ -79,7 +73,7 @@ resource "instaclustr_cluster" "custom_vpc_example" {
 
   bundle {
     bundle = "APACHE_CASSANDRA"
-    version = "3.11.4"
+    version = "3.11.8"
   }
 }
 
@@ -231,7 +225,7 @@ resource "instaclustr_cluster" "private_cluster_example" {
   }
   bundle {
     bundle = "APACHE_CASSANDRA"
-    version = "3.11.4"
+    version = "3.11.8"
   }
 }
 

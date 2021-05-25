@@ -4,6 +4,7 @@
 ![GoLang Version](https://img.shields.io/github/go-mod/go-version/instaclustr/terraform-provider-instaclustr?logo=go&style=for-the-badge)
 ![Latest Release Version](https://img.shields.io/github/v/release/instaclustr/terraform-provider-instaclustr?logo=github&sort=semver&style=for-the-badge)
 ![License](https://img.shields.io/github/license/instaclustr/terraform-provider-instaclustr?style=for-the-badge)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=instaclustr_terraform-provider-instaclustr&metric=alert_status)](https://sonarcloud.io/dashboard?id=instaclustr_terraform-provider-instaclustr)
 
 A [Terraform](http://terraform.io) provider for managing Instaclustr Platform resources.
 
@@ -35,7 +36,7 @@ terraform {
   required_providers {
     instaclustr = {
       source = "instaclustr/instaclustr"
-      version = "1.9.6"
+      version = "1.9.9"
     }
   }
 }
@@ -57,10 +58,39 @@ provider "instaclustr" {
     api_key = "<Your provisioning API key here>"
 }
 ```
-or just input them when Terraform indicates you.
+
+If you wish to keep secrets in the ENV instead of stored in your terraform file use the following method:
+
+In console export the desired variable:
+
+```export api_key={instaclustrAPIkey}```
+
+In your terraform file create a variable:
+```
+variable "api_key" {
+ type = string
+ default = "xxx"
+}
+```
+
+In the provider block use the variable:
+```
+provider "instaclustr" {
+    username={username}
+    api_key = var.api_key
+}
+```
+When running terraform plan/apply, pipe in the variables as follows:
+
+```terraform apply -var= "api_key=$api_key"```
 
 ## Example Usage
 
+It's possible to provision clusters for different cloud providers by changing the variable `cluster_provider`.
+The accepted cloud providers are: `AWS`, `GCP`, `AZURE`.
+
+
+AWS:
 ```
 resource "instaclustr_cluster" "example" {
     cluster_name = "testcluster"
@@ -88,6 +118,60 @@ resource "instaclustr_cluster" "example" {
         bundle = "SPARK"
         version = "2.3.2"
       }
+}
+```
+
+AZURE:
+```
+resource "instaclustr_cluster" "azure_example" {
+  cluster_name = "testcluster"
+  node_size = "Standard_DS2_v2-256"
+  data_centre = "CENTRAL_US"
+  sla_tier = "NON_PRODUCTION"
+  cluster_network = "192.168.0.0/18"
+  private_network_cluster = false
+  cluster_provider = {
+    name = "AZURE"
+  }
+  rack_allocation = {
+    number_of_racks = 3
+    nodes_per_rack = 1
+  }
+
+  bundle {
+    bundle = "APACHE_CASSANDRA"
+    version = "3.11.8"
+    options = {
+      auth_n_authz = true
+    }
+  }
+}
+```
+
+GCP:
+```
+resource "instaclustr_cluster" "gcp_example" {
+  cluster_name = "testclustergcp"
+  node_size = "n1-standard-2"
+  data_centre = "us-east1"
+  sla_tier = "NON_PRODUCTION"
+  cluster_network = "192.168.0.0/18"
+  private_network_cluster = false
+  cluster_provider = {
+    name = "GCP"
+  }
+  rack_allocation = {
+    number_of_racks = 3
+    nodes_per_rack = 1
+  }
+
+  bundle {
+    bundle = "APACHE_CASSANDRA"
+    version = "3.11.8"
+    options = {
+      auth_n_authz = true
+    }
+  }
 }
 ```
 
