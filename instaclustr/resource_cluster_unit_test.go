@@ -460,7 +460,7 @@ func TestDoClusterResizeCA(t *testing.T) {
 	client := MockApiClient{
 		cluster: Cluster{
 			ID:           "mock",
-			BundleType:   "CASSANDRA",
+			BundleType:   "APACHE_CASSANDRA",
 			BundleOption: &BundleOptions{},
 			DataCentres: []DataCentre{
 				{ID: "test"},
@@ -471,11 +471,11 @@ func TestDoClusterResizeCA(t *testing.T) {
 		changes: map[string]MockChange{"node_size": {before: "t3.small", after: "t3.small-v2"}},
 	}
 	bundles := []Bundle{
-		{Bundle: "CASSANDRA"},
+		{Bundle: "APACHE_CASSANDRA"},
 	}
 	err := doClusterResize(client, "mock", data, bundles)
-	if err != nil {
-		t.Fatalf("Expect nil err but got %v", err)
+	if err == nil || err.Error() != "[Error] Cannot resize nodes from t3.small to t3.small-v2" {
+		t.Fatalf("Expect err to be '[Error] Cannot resize nodes from t3.small to t3.small-v2' but got %v", err)
 	}
 	delete(data.changes, "node_size")
 	err = doClusterResize(client, "mock", data, bundles)
