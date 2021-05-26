@@ -403,12 +403,7 @@ func resourceCluster() *schema.Resource {
 	}
 }
 
-func getOkFromResourceData(d *schema.ResourceData, key string) (interface{}, bool) {
-	//This methods is for testing purpose.
-	return d.GetOk(key)
-}
-
-func getNodeSize(d *schema.ResourceData, bundles []Bundle, getOk func(d *schema.ResourceData, key string) (interface{}, bool)) (string, error) {
+func getNodeSize(d resourceDataInterface, bundles []Bundle) (string, error) {
 	for i, bundle := range bundles {
 		if bundle.Bundle == "ELASTICSEARCH" {
 			if len(bundle.Options.MasterNodeSize) == 0 {
@@ -430,7 +425,7 @@ func getNodeSize(d *schema.ResourceData, bundles []Bundle, getOk func(d *schema.
 			}
 		}
 	}
-	if size, ok := getOk(d, "node_size"); !ok || len(size.(string)) == 0 {
+	if size, ok := d.GetOk("node_size"); !ok || len(size.(string)) == 0 {
 		return "", fmt.Errorf("[ERROR] node_size must be set.")
 	} else {
 		return size.(string), nil
@@ -455,7 +450,7 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 
 	clusterProvider.Tags = d.Get("tags").(map[string]interface{})
 
-	size, err := getNodeSize(d, bundles, getOkFromResourceData)
+	size, err := getNodeSize(d, bundles)
 	if err != nil {
 		return err
 	}
@@ -663,22 +658,28 @@ func getBundleIndex(bundleType string, bundles []Bundle) (int, error) {
 	return -1, fmt.Errorf("can't find bundle %s", bundleType)
 }
 
-func hasElasticsearchSizeChanges(bundleIndex int, d *schema.ResourceData) bool {
+func hasElasticsearchSizeChanges(bundleIndex int, d resourceDataInterface) bool {
 	return len(getNewSizeOrEmpty(d, getBundleOptionKey(bundleIndex, "master_node_size"))) > 0 ||
 		len(getNewSizeOrEmpty(d, getBundleOptionKey(bundleIndex, "kibana_node_size"))) > 0 ||
 		len(getNewSizeOrEmpty(d, getBundleOptionKey(bundleIndex, "data_node_size"))) > 0
 }
 
-func hasKafkaSizeChanges(bundleIndex int, d *schema.ResourceData) bool {
+func hasKafkaSizeChanges(bundleIndex int, d resourceDataInterface) bool {
 	return len(getNewSizeOrEmpty(d, getBundleOptionKey(bundleIndex, "zookeeper_node_size"))) > 0 ||
 		len(getNewSizeOrEmpty(d, "node_size")) > 0
 }
 
-func hasCassandraSizeChanges(d *schema.ResourceData) bool {
+func hasCassandraSizeChanges(d resourceDataInterface) bool {
 	return len(getNewSizeOrEmpty(d, "node_size")) > 0
 }
 
-func doClusterResize(client *APIClient, clusterID string, d *schema.ResourceData, bundles []Bundle) error {
+type resourceDataInterface interface {
+	HasChange(key string) bool
+	GetChange(key string) (interface{}, interface{})
+	GetOk(key string) (interface{}, bool)
+}
+
+func doClusterResize(client APIClientInterface, clusterID string, d resourceDataInterface, bundles []Bundle) error {
 	cluster, err := client.ReadCluster(clusterID)
 	if err != nil {
 		return fmt.Errorf("[Error] Error reading cluster: %s", err)
@@ -711,7 +712,7 @@ func doClusterResize(client *APIClient, clusterID string, d *schema.ResourceData
 	}
 }
 
-func getNewSizeOrEmpty(d *schema.ResourceData, key string) string {
+func getNewSizeOrEmpty(d resourceDataInterface, key string) string {
 	if !d.HasChange(key) {
 		return ""
 	}
@@ -767,7 +768,7 @@ func getBundleOptionKey(bundleIndex int, option string) string {
 	return fmt.Sprintf("bundle.%d.options.%s", bundleIndex, option)
 }
 
-func doElasticsearchClusterResize(client *APIClient, cluster *Cluster, d *schema.ResourceData, bundleIndex int) error {
+func doElasticsearchClusterResize(client APIClientInterface, cluster *Cluster, d resourceDataInterface, bundleIndex int) error {
 	kibana := len(cluster.BundleOption.KibanaNodeSize) > 0
 	dataNodes := len(cluster.BundleOption.DataNodeSize) > 0
 	var nodePurpose *NodePurpose
@@ -828,7 +829,7 @@ func getSingleChangedKafkaSizeAndPurpose(brokerSize, zookeeperSize string, dedic
 	return nodeSize, nodePurpose, nil
 }
 
-func doKafkaClusterResize(client *APIClient, cluster *Cluster, d *schema.ResourceData, bundleIndex int) error {
+func doKafkaClusterResize(client APIClientInterface, cluster *Cluster, d resourceDataInterface, bundleIndex int) error {
 	dedicatedZookeeper := cluster.BundleOption.DedicatedZookeeper != nil && *cluster.BundleOption.DedicatedZookeeper
 
 	var nodePurpose *NodePurpose
@@ -856,7 +857,7 @@ func doKafkaClusterResize(client *APIClient, cluster *Cluster, d *schema.Resourc
 	return nil
 }
 
-func doLegacyCassandraClusterResize(client *APIClient, cluster *Cluster, d *schema.ResourceData) error {
+func doLegacyCassandraClusterResize(client APIClientInterface, cluster *Cluster, d resourceDataInterface) error {
 	before, after := d.GetChange("node_size")
 	regex := regexp.MustCompile(`resizeable-(small|large)`)
 	oldNodeClass := regex.FindString(before.(string))

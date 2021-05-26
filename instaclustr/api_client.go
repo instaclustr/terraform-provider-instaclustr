@@ -11,6 +11,11 @@ import (
 	"time"
 )
 
+type APIClientInterface interface {
+	ReadCluster(clusterID string) (*Cluster, error)
+	ResizeCluster(clusterID string, cdcID string, newNodeSize string, nodePurpose *NodePurpose) error
+}
+
 type APIClient struct {
 	username          string
 	apiKey            string

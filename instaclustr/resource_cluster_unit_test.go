@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/hashicorp/terraform/helper/schema"
 	"reflect"
+	"strings"
 	"testing"
 )
 
@@ -221,17 +222,24 @@ func TestGetBundleOptionKey(t *testing.T) {
 }
 
 func TestGetNodeSize(t *testing.T) {
-	helper := func(data *schema.ResourceData, bundles []Bundle, expectedErrMsg, expectedSize string, getOk func(d *schema.ResourceData, key string) (interface{}, bool)) {
-		size, err := getNodeSize(data, bundles, getOk)
+	helper := func(data resourceDataInterface, bundles []Bundle, expectedErrMsg, expectedSize string) {
+		size, err := getNodeSize(data, bundles)
 		if len(expectedErrMsg) > 0 {
 			if err == nil || err.Error() != expectedErrMsg {
 				t.Fatalf("Expect error %s but got %s", expectedErrMsg, err)
 			}
-		} else if size != expectedSize {
-			t.Fatalf("Expect size %s but got %s", expectedSize, size)
+		} else {
+			if err != nil {
+				t.Fatalf("Expect error to be nil but got %s", err)
+			}
+			if size != expectedSize {
+				t.Fatalf("Expect size %s but got %s", expectedSize, size)
+			}
 		}
 	}
-	data := schema.ResourceData{}
+	data := MockResourceData{
+		map[string]MockChange{},
+	}
 	bundles := []Bundle{
 		{
 			Bundle: "ELASTICSEARCH",
@@ -243,7 +251,7 @@ func TestGetNodeSize(t *testing.T) {
 			},
 		},
 	}
-	helper(&data, bundles, "[ERROR] 'master_node_size' is required in the bundle option.", "", getOkFromResourceData)
+	helper(data, bundles, "[ERROR] 'master_node_size' is required in the bundle option.", "")
 
 	bundles = []Bundle{
 		{
@@ -256,10 +264,12 @@ func TestGetNodeSize(t *testing.T) {
 			},
 		},
 	}
-	helper(&data, bundles, "[ERROR] node_size must be set.", "", getOkFromResourceData)
-	helper(&data, bundles, "", "t3.small", func(d *schema.ResourceData, key string) (interface{}, bool) {
-		return "t3.small", true
-	})
+	helper(&data, bundles, "[ERROR] node_size must be set.", "")
+	data.changes["node_size"] = MockChange{
+		before: "",
+		after:  "t3.small",
+	}
+	helper(&data, bundles, "", "t3.small")
 
 	bundles = []Bundle{
 		{
@@ -272,10 +282,13 @@ func TestGetNodeSize(t *testing.T) {
 			},
 		},
 	}
-	helper(&data, bundles, "[ERROR] node_size must be set.", "", getOkFromResourceData)
-	helper(&data, bundles, "", "t3.small", func(d *schema.ResourceData, key string) (interface{}, bool) {
-		return "t3.small", true
-	})
+	delete(data.changes, "node_size")
+	helper(&data, bundles, "[ERROR] node_size must be set.", "")
+	data.changes["node_size"] = MockChange{
+		before: "",
+		after:  "t3.small",
+	}
+	helper(&data, bundles, "", "t3.small")
 
 	dedicatedMaster := true
 	bundles = []Bundle{
@@ -289,7 +302,7 @@ func TestGetNodeSize(t *testing.T) {
 			},
 		},
 	}
-	helper(&data, bundles, "[ERROR] Elasticsearch dedicated master is enabled, 'data_node_size' is required in the bundle option.", "", getOkFromResourceData)
+	helper(&data, bundles, "[ERROR] Elasticsearch dedicated master is enabled, 'data_node_size' is required in the bundle option.", "")
 
 	bundles = []Bundle{
 		{
@@ -302,7 +315,7 @@ func TestGetNodeSize(t *testing.T) {
 			},
 		},
 	}
-	helper(&data, bundles, "", "t3.small-v2", getOkFromResourceData)
+	helper(&data, bundles, "", "t3.small-v2")
 	dedicatedMaster = false
 	bundles = []Bundle{
 		{
@@ -315,7 +328,7 @@ func TestGetNodeSize(t *testing.T) {
 			},
 		},
 	}
-	helper(&data, bundles, "[ERROR] When 'dedicated_master_nodes' is not true , data_node_size can be either null or equal to master_node_size.", "", getOkFromResourceData)
+	helper(&data, bundles, "[ERROR] When 'dedicated_master_nodes' is not true , data_node_size can be either null or equal to master_node_size.", "")
 	bundles = []Bundle{
 		{
 			Bundle: "ELASTICSEARCH",
@@ -327,7 +340,7 @@ func TestGetNodeSize(t *testing.T) {
 			},
 		},
 	}
-	helper(&data, bundles, "", "t3.small", getOkFromResourceData)
+	helper(&data, bundles, "", "t3.small")
 }
 
 func TestGetBundleIndex(t *testing.T) {
@@ -370,5 +383,142 @@ func TestHasCassandraSizeChanges(t *testing.T) {
 	data := schema.ResourceData{}
 	if hasChange := hasCassandraSizeChanges(&data); hasChange {
 		t.Fatalf("Expect false but got %v", hasChange)
+	}
+}
+
+func TestDoClusterResizeDefault(t *testing.T) {
+	err := doClusterResize(MockApiClient{
+		cluster: Cluster{
+			ID:         "REDIS",
+			BundleType: "REDIS",
+		},
+	}, "mock", MockResourceData{}, []Bundle{
+		{Bundle: "REDIS"},
+	})
+	if err == nil || !strings.Contains(err.Error(), "CDC resize does not support:") {
+		t.Fatalf("Expect err with  'CDC resize does not support:' but got %v", err)
+	}
+}
+
+func TestDoClusterResizeES(t *testing.T) {
+	client := MockApiClient{
+		cluster: Cluster{
+			ID:           "mock",
+			BundleType:   "ELASTICSEARCH",
+			BundleOption: &BundleOptions{},
+			DataCentres: []DataCentre{
+				{ID: "test"},
+			},
+		},
+	}
+	data := MockResourceData{
+		changes: map[string]MockChange{"bundle.0.options.master_node_size": {before: "t3.small", after: "t3.small-v2"}},
+	}
+	bundles := []Bundle{
+		{Bundle: "ELASTICSEARCH"},
+	}
+	err := doClusterResize(client, "mock", data, bundles)
+	if err != nil {
+		t.Fatalf("Expect nil err but got %v", err)
+	}
+	delete(data.changes, "bundle.0.options.master_node_size")
+	err = doClusterResize(client, "mock", data, bundles)
+	if err != nil {
+		t.Fatalf("Expect nil err but got %v", err)
+	}
+}
+
+func TestDoClusterResizeKA(t *testing.T) {
+	client := MockApiClient{
+		cluster: Cluster{
+			ID:           "mock",
+			BundleType:   "KAFKA",
+			BundleOption: &BundleOptions{},
+			DataCentres: []DataCentre{
+				{ID: "test"},
+			},
+		},
+	}
+	data := MockResourceData{
+		changes: map[string]MockChange{"node_size": {before: "t3.small", after: "t3.small-v2"}},
+	}
+	bundles := []Bundle{
+		{Bundle: "KAFKA"},
+	}
+	err := doClusterResize(client, "mock", data, bundles)
+	if err != nil {
+		t.Fatalf("Expect nil err but got %v", err)
+	}
+	delete(data.changes, "node_size")
+	err = doClusterResize(client, "mock", data, bundles)
+	if err != nil {
+		t.Fatalf("Expect nil err but got %v", err)
+	}
+}
+
+func TestDoClusterResizeCA(t *testing.T) {
+	client := MockApiClient{
+		cluster: Cluster{
+			ID:           "mock",
+			BundleType:   "CASSANDRA",
+			BundleOption: &BundleOptions{},
+			DataCentres: []DataCentre{
+				{ID: "test"},
+			},
+		},
+	}
+	data := MockResourceData{
+		changes: map[string]MockChange{"node_size": {before: "t3.small", after: "t3.small-v2"}},
+	}
+	bundles := []Bundle{
+		{Bundle: "CASSANDRA"},
+	}
+	err := doClusterResize(client, "mock", data, bundles)
+	if err != nil {
+		t.Fatalf("Expect nil err but got %v", err)
+	}
+	delete(data.changes, "node_size")
+	err = doClusterResize(client, "mock", data, bundles)
+	if err != nil {
+		t.Fatalf("Expect nil err but got %v", err)
+	}
+}
+
+type MockApiClient struct {
+	cluster Cluster
+	err     error
+}
+
+func (m MockApiClient) ReadCluster(clusterID string) (*Cluster, error) {
+	return &m.cluster, m.err
+}
+
+func (m MockApiClient) ResizeCluster(clusterID string, cdcID string, newNodeSize string, nodePurpose *NodePurpose) error {
+	return m.err
+}
+
+type MockChange struct {
+	before interface{}
+	after  interface{}
+}
+
+type MockResourceData struct {
+	changes map[string]MockChange
+}
+
+func (m MockResourceData) HasChange(key string) bool {
+	_, ok := m.changes[key]
+	return ok
+}
+
+func (m MockResourceData) GetChange(key string) (interface{}, interface{}) {
+	return m.changes[key].before, m.changes[key].after
+}
+func (m MockResourceData) GetOk(key string) (interface{}, bool) {
+	change, ok := m.changes[key]
+	if ok {
+		return change.after, ok
+	} else {
+		return nil, ok
 	}
 }
