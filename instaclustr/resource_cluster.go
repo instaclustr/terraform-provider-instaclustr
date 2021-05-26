@@ -824,9 +824,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		if err := d.Set("bundle", bundles); err != nil {
 			return fmt.Errorf("[Error] Error reading cluster: %s", err)
 		}
-	}
 
-	if isClusterSingleDataCentre(*cluster) {
 		clusterProvider := make(map[string]interface{}, 0)
 		mapstructure.Decode(cluster.Provider[0], &clusterProvider)
 		processedClusterProvider := processProvider(d, clusterProvider)
