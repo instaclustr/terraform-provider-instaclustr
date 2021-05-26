@@ -329,3 +329,25 @@ func TestGetNodeSize(t *testing.T) {
 	}
 	helper(&data, bundles, "", "t3.small", getOkFromResourceData)
 }
+
+func TestGetBundleIndex(t *testing.T) {
+	if index, err := getBundleIndex("ELASTICSEARCH", []Bundle{
+		{Bundle: "LOG_SHIPPER"},
+		{Bundle: "ELASTICSEARCH"},
+	}); err != nil || index != 1 {
+		t.Fatalf("Expect no error and 1, got %v and %v", err, index)
+	}
+
+	if index, err := getBundleIndex("ELASTICSEARCH", []Bundle{
+		{Bundle: "ELASTICSEARCH"},
+	}); err != nil || index != 0 {
+		t.Fatalf("Expect no error and 0, got %v and %v", err, index)
+	}
+}
+
+func TestGetNewSizeOrEmpty(t *testing.T) {
+	data := schema.ResourceData{}
+	if size := getNewSizeOrEmpty(&data, "node_size"); size != "" {
+		t.Fatalf("Expect empty string but got %v", size)
+	}
+}
