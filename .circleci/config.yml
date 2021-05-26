@@ -123,7 +123,8 @@ jobs:
       - run: go get -v -t -d ./...
       - build-provider
       - run-unit-tests
-      - sonarcloud/scan
+      - sonarcloud/scan:
+          cache_version: 2
   on-master-build-test:
     docker:
       - image: circleci/golang:1.14
