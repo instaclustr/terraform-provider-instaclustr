@@ -2,6 +2,7 @@ package instaclustr
 
 import (
 	"fmt"
+	"github.com/hashicorp/terraform/helper/schema"
 	"reflect"
 	"testing"
 )
@@ -217,4 +218,121 @@ func TestGetBundleOptionKey(t *testing.T) {
 	helper(0, "test", "bundle.0.options.test")
 	helper(2, "kibana_node_size", "bundle.2.options.kibana_node_size")
 	helper(-1, "kibana_node_size", "bundle.-1.options.kibana_node_size")
+}
+
+func TestGetNodeSize(t *testing.T) {
+	helper := func(data *schema.ResourceData, bundles []Bundle, expectedErrMsg, expectedSize string) {
+		size, err := getNodeSize(data, bundles)
+		if len(expectedErrMsg) > 0 {
+			if err == nil || err.Error() != expectedErrMsg {
+				t.Fatalf("Expect error %s but got %s", expectedErrMsg, err)
+			}
+		} else if size != expectedSize {
+			t.Fatalf("Expect size %s but got %s", expectedSize, size)
+		}
+	}
+	data := schema.ResourceData{}
+	bundles := []Bundle{
+		{
+			Bundle: "ELASTICSEARCH",
+			Options: BundleOptions{
+				DedicatedMasterNodes: nil,
+				MasterNodeSize:       "",
+				KibanaNodeSize:       "",
+				DataNodeSize:         "",
+			},
+		},
+	}
+	helper(&data, bundles, "[ERROR] 'master_node_size' is required in the bundle option.", "")
+
+	bundles = []Bundle{
+		{
+			Bundle: "CASSANDRA",
+			Options: BundleOptions{
+				DedicatedMasterNodes: nil,
+				MasterNodeSize:       "",
+				KibanaNodeSize:       "",
+				DataNodeSize:         "",
+			},
+		},
+	}
+	helper(&data, bundles, "[ERROR] node_size must be set.", "")
+
+	data.Set("node_size", "t3.small")
+	bundles = []Bundle{
+		{
+			Bundle: "CASSANDRA",
+			Options: BundleOptions{
+				DedicatedMasterNodes: nil,
+				MasterNodeSize:       "",
+				KibanaNodeSize:       "",
+				DataNodeSize:         "",
+			},
+		},
+	}
+	helper(&data, bundles, "", "")
+	bundles = []Bundle{
+		{
+			Bundle: "KAFKA",
+			Options: BundleOptions{
+				DedicatedMasterNodes: nil,
+				MasterNodeSize:       "",
+				KibanaNodeSize:       "",
+				DataNodeSize:         "",
+			},
+		},
+	}
+	helper(&data, bundles, "", "")
+
+	dedicatedMaster := true
+	bundles = []Bundle{
+		{
+			Bundle: "ELASTICSEARCH",
+			Options: BundleOptions{
+				DedicatedMasterNodes: &dedicatedMaster,
+				MasterNodeSize:       "t3.small",
+				KibanaNodeSize:       "",
+				DataNodeSize:         "",
+			},
+		},
+	}
+	helper(&data, bundles, "[ERROR] Elasticsearch dedicated master is enabled, 'data_node_size' is required in the bundle option.", "")
+
+	bundles = []Bundle{
+		{
+			Bundle: "ELASTICSEARCH",
+			Options: BundleOptions{
+				DedicatedMasterNodes: &dedicatedMaster,
+				MasterNodeSize:       "t3.small",
+				KibanaNodeSize:       "",
+				DataNodeSize:         "t3.small-v2",
+			},
+		},
+	}
+	helper(&data, bundles, "", "t3.small-v2")
+	dedicatedMaster = false
+	bundles = []Bundle{
+		{
+			Bundle: "ELASTICSEARCH",
+			Options: BundleOptions{
+				DedicatedMasterNodes: &dedicatedMaster,
+				MasterNodeSize:       "t3.small",
+				KibanaNodeSize:       "",
+				DataNodeSize:         "t3.small-v2",
+			},
+		},
+	}
+	helper(&data, bundles, "[ERROR] When 'dedicated_master_nodes' is not true , data_node_size can be either null or equal to master_node_size.", "")
+	bundles = []Bundle{
+		{
+			Bundle: "ELASTICSEARCH",
+			Options: BundleOptions{
+				DedicatedMasterNodes: &dedicatedMaster,
+				MasterNodeSize:       "t3.small",
+				KibanaNodeSize:       "",
+				DataNodeSize:         "t3.small",
+			},
+		},
+	}
+	helper(&data, bundles, "", "t3.small")
 }
