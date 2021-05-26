@@ -738,7 +738,7 @@ func getSingleChangedElasticsearchSizeAndPurpose(kibanaSize, masterSize, dataSiz
 	}
 	if len(dataSize) > 0 {
 		if !dataNodes {
-			return "", "", fmt.Errorf("[ERROR] This cluster does not have data only nodes, so data_node_sise is not used for this cluster. Please use master_node_size to change the size instead")
+			return "", "", fmt.Errorf("[ERROR] This cluster does not have data only nodes, so data_node_size is not used for this cluster. Please use master_node_size to change the size instead")
 		}
 		changedCount += 1
 		nodePurpose = ELASTICSEARCH_DATA_AND_INGEST
@@ -746,14 +746,14 @@ func getSingleChangedElasticsearchSizeAndPurpose(kibanaSize, masterSize, dataSiz
 	}
 	if len(kibanaSize) > 0 {
 		if !kibana {
-			return "", "", fmt.Errorf("[ERROR] This cluster didn't enable Kibana, kibana_node_sise is not used for this cluster. Please use master_node_size to change the size instead")
+			return "", "", fmt.Errorf("[ERROR] This cluster didn't enable Kibana, kibana_node_size is not used for this cluster. Please use master_node_size to change the size instead")
 		}
 		changedCount += 1
 		nodePurpose = ELASTICSEARCH_KIBANA
 		nodeSize = kibanaSize
 	}
 	if changedCount > 1 {
-		return "", "", fmt.Errorf("[ERROR] Please change one size at a time or change all to same size at onece")
+		return "", "", fmt.Errorf("[ERROR] Please change either a single node size at a time or change all nodes to the same size at once")
 	}
 	return nodeSize, nodePurpose, nil
 }
@@ -818,7 +818,7 @@ func getSingleChangedKafkaSizeAndPurpose(brokerSize, zookeeperSize string, dedic
 		changedCount += 1
 	}
 	if changedCount > 1 {
-		return "", "", fmt.Errorf("[ERROR] Please change one size at a time or change all to same size at onece")
+		return "", "", fmt.Errorf("[ERROR] Please change either a single node size at a time or change all nodes to the same size at once")
 	}
 	return nodeSize, nodePurpose, nil
 }
