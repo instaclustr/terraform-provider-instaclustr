@@ -403,7 +403,12 @@ func resourceCluster() *schema.Resource {
 	}
 }
 
-func getNodeSize(d *schema.ResourceData, bundles []Bundle) (string, error) {
+func getOkFromResourceData(d *schema.ResourceData, key string) (interface{}, bool) {
+	//This methods is for testing purpose.
+	return d.GetOk(key)
+}
+
+func getNodeSize(d *schema.ResourceData, bundles []Bundle, getOk func(d *schema.ResourceData, key string) (interface{}, bool)) (string, error) {
 	for i, bundle := range bundles {
 		if bundle.Bundle == "ELASTICSEARCH" {
 			if len(bundle.Options.MasterNodeSize) == 0 {
@@ -425,7 +430,7 @@ func getNodeSize(d *schema.ResourceData, bundles []Bundle) (string, error) {
 			}
 		}
 	}
-	if size, ok := d.GetOk("node_size"); !ok || len(size.(string)) == 0 {
+	if size, ok := getOk(d, "node_size"); !ok || len(size.(string)) == 0 {
 		return "", fmt.Errorf("[ERROR] node_size must be set.")
 	} else {
 		return size.(string), nil
@@ -450,7 +455,7 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 
 	clusterProvider.Tags = d.Get("tags").(map[string]interface{})
 
-	size, err := getNodeSize(d, bundles)
+	size, err := getNodeSize(d, bundles, getOkFromResourceData)
 	if err != nil {
 		return err
 	}

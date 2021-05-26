@@ -221,8 +221,8 @@ func TestGetBundleOptionKey(t *testing.T) {
 }
 
 func TestGetNodeSize(t *testing.T) {
-	helper := func(data *schema.ResourceData, bundles []Bundle, expectedErrMsg, expectedSize string) {
-		size, err := getNodeSize(data, bundles)
+	helper := func(data *schema.ResourceData, bundles []Bundle, expectedErrMsg, expectedSize string, getOk func(d *schema.ResourceData, key string) (interface{}, bool)) {
+		size, err := getNodeSize(data, bundles, getOk)
 		if len(expectedErrMsg) > 0 {
 			if err == nil || err.Error() != expectedErrMsg {
 				t.Fatalf("Expect error %s but got %s", expectedErrMsg, err)
@@ -243,7 +243,7 @@ func TestGetNodeSize(t *testing.T) {
 			},
 		},
 	}
-	helper(&data, bundles, "[ERROR] 'master_node_size' is required in the bundle option.", "")
+	helper(&data, bundles, "[ERROR] 'master_node_size' is required in the bundle option.", "", getOkFromResourceData)
 
 	bundles = []Bundle{
 		{
@@ -256,12 +256,14 @@ func TestGetNodeSize(t *testing.T) {
 			},
 		},
 	}
-	helper(&data, bundles, "[ERROR] node_size must be set.", "")
+	helper(&data, bundles, "[ERROR] node_size must be set.", "", getOkFromResourceData)
+	helper(&data, bundles, "", "t3.small", func(d *schema.ResourceData, key string) (interface{}, bool) {
+		return "t3.small", true
+	})
 
-	data.Set("node_size", "t3.small")
 	bundles = []Bundle{
 		{
-			Bundle: "CASSANDRA",
+			Bundle: "Kafka",
 			Options: BundleOptions{
 				DedicatedMasterNodes: nil,
 				MasterNodeSize:       "",
@@ -270,19 +272,10 @@ func TestGetNodeSize(t *testing.T) {
 			},
 		},
 	}
-	helper(&data, bundles, "", "")
-	bundles = []Bundle{
-		{
-			Bundle: "KAFKA",
-			Options: BundleOptions{
-				DedicatedMasterNodes: nil,
-				MasterNodeSize:       "",
-				KibanaNodeSize:       "",
-				DataNodeSize:         "",
-			},
-		},
-	}
-	helper(&data, bundles, "", "")
+	helper(&data, bundles, "[ERROR] node_size must be set.", "", getOkFromResourceData)
+	helper(&data, bundles, "", "t3.small", func(d *schema.ResourceData, key string) (interface{}, bool) {
+		return "t3.small", true
+	})
 
 	dedicatedMaster := true
 	bundles = []Bundle{
@@ -296,7 +289,7 @@ func TestGetNodeSize(t *testing.T) {
 			},
 		},
 	}
-	helper(&data, bundles, "[ERROR] Elasticsearch dedicated master is enabled, 'data_node_size' is required in the bundle option.", "")
+	helper(&data, bundles, "[ERROR] Elasticsearch dedicated master is enabled, 'data_node_size' is required in the bundle option.", "", getOkFromResourceData)
 
 	bundles = []Bundle{
 		{
@@ -309,7 +302,7 @@ func TestGetNodeSize(t *testing.T) {
 			},
 		},
 	}
-	helper(&data, bundles, "", "t3.small-v2")
+	helper(&data, bundles, "", "t3.small-v2", getOkFromResourceData)
 	dedicatedMaster = false
 	bundles = []Bundle{
 		{
@@ -322,7 +315,7 @@ func TestGetNodeSize(t *testing.T) {
 			},
 		},
 	}
-	helper(&data, bundles, "[ERROR] When 'dedicated_master_nodes' is not true , data_node_size can be either null or equal to master_node_size.", "")
+	helper(&data, bundles, "[ERROR] When 'dedicated_master_nodes' is not true , data_node_size can be either null or equal to master_node_size.", "", getOkFromResourceData)
 	bundles = []Bundle{
 		{
 			Bundle: "ELASTICSEARCH",
@@ -334,5 +327,5 @@ func TestGetNodeSize(t *testing.T) {
 			},
 		},
 	}
-	helper(&data, bundles, "", "t3.small")
+	helper(&data, bundles, "", "t3.small", getOkFromResourceData)
 }
