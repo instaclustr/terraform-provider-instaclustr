@@ -351,3 +351,24 @@ func TestGetNewSizeOrEmpty(t *testing.T) {
 		t.Fatalf("Expect empty string but got %v", size)
 	}
 }
+
+func TestHasElasticsearchSizeChanges(t *testing.T) {
+	data := schema.ResourceData{}
+	if hasChange := hasElasticsearchSizeChanges(0, &data); hasChange {
+		t.Fatalf("Expect false but got %v", hasChange)
+	}
+}
+
+func TestHasKafkaSizeChanges(t *testing.T) {
+	data := schema.ResourceData{}
+	if hasChange := hasKafkaSizeChanges(0, &data); hasChange {
+		t.Fatalf("Expect false but got %v", hasChange)
+	}
+}
+
+func TestHasCassandraSizeChanges(t *testing.T) {
+	data := schema.ResourceData{}
+	if hasChange := hasCassandraSizeChanges(&data); hasChange {
+		t.Fatalf("Expect false but got %v", hasChange)
+	}
+}
