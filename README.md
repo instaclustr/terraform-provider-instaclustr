@@ -4,6 +4,7 @@
 ![GoLang Version](https://img.shields.io/github/go-mod/go-version/instaclustr/terraform-provider-instaclustr?logo=go&style=for-the-badge)
 ![Latest Release Version](https://img.shields.io/github/v/release/instaclustr/terraform-provider-instaclustr?logo=github&sort=semver&style=for-the-badge)
 ![License](https://img.shields.io/github/license/instaclustr/terraform-provider-instaclustr?style=for-the-badge)
+
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=instaclustr_terraform-provider-instaclustr&metric=alert_status)](https://sonarcloud.io/dashboard?id=instaclustr_terraform-provider-instaclustr)
 
 A [Terraform](http://terraform.io) provider for managing Instaclustr Platform resources.
@@ -50,7 +51,7 @@ For further details on Provider installation, and installation on older versions
 
 ## Authentication
 
-This provider requires an API Key in order to provision Instaclustr resources. To create an API key, please log into the [Instaclustr Console](https://console.instaclustr.com) or signup for an account [here](https://console.instaclustr.com/user/signup) if you dont have one.  Navigate to `Account` -> `API Keys` page, locate the `Provisioning` role and click `Generate Key`.  This username and API key combination should then be placed into the provider configuration:
+This provider requires an API Key in order to provision Instaclustr resources. To create an API key, please log into the [Instaclustr Console](https://console.instaclustr.com) or signup for an account [here](https://console.instaclustr.com/user/signup) if you don't have one.  Navigate to `Account` -> `API Keys` page, locate the `Provisioning` role and click `Generate Key`.  This username and API key combination should be placed into the provider configuration:
 
 ```
 provider "instaclustr" {
@@ -76,7 +77,7 @@ variable "api_key" {
 In the provider block use the variable:
 ```
 provider "instaclustr" {
-    username={username}
+    username= "<Your instaclustr username>"
     api_key = var.api_key
 }
 ```
@@ -315,7 +316,7 @@ Firstly thanks!  We value your time and will do our best to review the PR as soo
 4. Run the unit tests by `$ make test`
 7. Create a PR and send it our way :)
 
-Our Circle CI pipeline will automatically run unit tests when a PR is created and new changes are committed.
+Our Circle CI pipeline will automatically run unit tests when a PR is created and new changes committed.
 It is also capable of running the acceptance tests, however our staff needs to give a manual approval to run the tests.
 Passing tests are a requirement to merge a PR. Please let us know when your PR is ready for acceptance tests!
 
@@ -323,7 +324,7 @@ Unit tests are within `instaclustr` folder with `_unit_test` suffix, and used to
 
 #### Acceptance Testing
 
-Acceptance tests are within `acc_test` folder, and used to run end-to-end testing. We recommend using CircleCI to run your acceptance tests, however you can run them locally. Acceptance tests require end to end interaction with the instaclustr platform and will create real (paid) infrastructure. If you wish to perform local testing you must set the variables below and run ```make testacc``` 
+Acceptance tests are within `acc_test` folder, and used to run end-to-end testing. We recommend using CircleCI to run your acceptance tests, however you can run them locally. Acceptance tests require end to end interaction with the instaclustr platform and will create real (paid) infrastructure. If you wish to perform local testing you must set the variables below and run: ```make testacc``` 
 
 
 Variable | Command | Description
@@ -365,13 +366,10 @@ To run a specific test, use the `testtarget` makefile goal.
 
 ## Further information and documentation
 
-This provider makes use of the Instaclustr API.  For further information including latest updates and value definitions, please see [the provisioning API documentation](https://www.instaclustr.com/support/api-integrations/api-reference/provisioning-api/).
+This provider makes use of the Instaclustr API.  For further information including the latest updates and value definitions, please see [the provisioning API documentation](https://www.instaclustr.com/support/api-integrations/api-reference/provisioning-api/).
 
 Please see https://www.instaclustr.com/support/documentation/announcements/instaclustr-open-source-project-status/ for Instaclustr support status of this project.
 
 # License
 
 Apache2 - See the included LICENSE file for more details.
-
-Test
-
