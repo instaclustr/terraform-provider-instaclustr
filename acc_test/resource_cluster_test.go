@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestAccCluster(t *testing.T) {
@@ -281,6 +282,9 @@ func TestAccElasticsearchClusterResize(t *testing.T) {
 				),
 			},
 			{
+				PreConfig: func() {
+					time.Sleep(1 * time.Minute)
+				},
 				Config:      invalidResizeConfig,
 				ExpectError: regexp.MustCompile("t3.small"),
 			},

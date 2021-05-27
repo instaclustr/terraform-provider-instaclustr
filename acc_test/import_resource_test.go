@@ -10,6 +10,7 @@ import (
 	"regexp"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestAccCluster_importBasic(t *testing.T) {
@@ -194,6 +195,9 @@ func TestKafkaUserResource_importBasic(t *testing.T) {
 				},
 			},
 			{
+				PreConfig: func() {
+					time.Sleep(6 * time.Minute)
+				},
 				Config:      invalidResizeConfig,
 				ExpectError: regexp.MustCompile("t3.small-20-gp2"),
 			},
