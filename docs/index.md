@@ -30,9 +30,14 @@ terraform {
   }
 }
 
+variable "api_key" {
+ type = string
+ default = "xxx"
+}
+
 provider "instaclustr" {
-  username = "<Your instaclustr username here>"
-  api_key = "<Your provisioning API key here>"
+    username= "<Your instaclustr username>"
+    api_key = var.api_key
 }
 
 resource "instaclustr_cluster" "example" {
@@ -67,5 +72,3 @@ resource "instaclustr_cluster" "example" {
   }
 }
 ```
-
-
