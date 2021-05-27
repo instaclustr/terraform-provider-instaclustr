@@ -283,6 +283,7 @@ func TestAccElasticsearchClusterResize(t *testing.T) {
 			},
 			{
 				PreConfig: func() {
+					fmt.Println("Sleep for 1 minutes to wait for Elasticsearch cluster to be ready for resize.")
 					time.Sleep(1 * time.Minute)
 				},
 				Config:      invalidResizeConfig,

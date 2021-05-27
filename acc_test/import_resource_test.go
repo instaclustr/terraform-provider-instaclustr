@@ -196,6 +196,7 @@ func TestKafkaUserResource_importBasic(t *testing.T) {
 			},
 			{
 				PreConfig: func() {
+					fmt.Println("Sleep for 6 minutes to wait for Kafka cluster to be ready for resize.")
 					time.Sleep(6 * time.Minute)
 				},
 				Config:      invalidResizeConfig,
@@ -205,7 +206,6 @@ func TestKafkaUserResource_importBasic(t *testing.T) {
 				Config: validResizeConfig,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("instaclustr_cluster."+resourceName, "cluster_name", "example_kafka_tf_test"),
-					testCheckClusterResize(resourceName, hostname, username, apiKey, "r5.xlarge-800-gp2"),
 				),
 			},
 		},
