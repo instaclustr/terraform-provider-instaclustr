@@ -128,11 +128,17 @@ jobs:
     docker:
       - image: circleci/golang:1.14
     working_directory: /go/src/github.com/arjunrajshekhar/terraform-provider-instaclustr
+    environment:
+      CIRCLE_PULL_REQUEST: ""
+      CIRCLE_PULL_REQUESTS: ""
+      CI_PULL_REQUEST: ""
+      CI_PULL_REQUESTS: ""
     steps:
       - checkout
       - run: go get -v -t -d ./...
       - build-provider
       - run-unit-tests
+      - sonarcloud/scan
   pr-build-test:
     docker:
       - image: circleci/golang:1.14
@@ -159,6 +165,10 @@ workflows:
           filters:
             branches:
               ignore: master
+      - on-master-build-test:
+          filters:
+            branches:
+              only: master
   acceptance-test-workflow:
     jobs:
       - hold:
@@ -167,12 +177,6 @@ workflows:
             branches:
               ignore: master
       - pr-build-test:
-          context: terraform provider
+          context: terraform provider preprod
           requires:
             - hold
-  master-unit-test-workflow:
-    jobs:
-      - on-master-build-test:
-          filters:
-            branches:
-              only: master
