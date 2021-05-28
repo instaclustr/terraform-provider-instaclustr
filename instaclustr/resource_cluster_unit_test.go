@@ -13,7 +13,7 @@ func TestCreateBundleUserUpdateRequest(t *testing.T) {
 
 	expectedOutput := []byte(fmt.Sprintf("{\"username\":\"%s\",\"password\":\"%s\"}", testUsername, testPassword))
 
-	if !reflect.DeepEqual(testBundleRequest, expectedOutput){
+	if !reflect.DeepEqual(testBundleRequest, expectedOutput) {
 		t.Fatalf("Incorrect request returned.\nExpected:%s\nActual:%s", expectedOutput, testBundleRequest)
 	}
 }
@@ -25,8 +25,8 @@ func TestGetBundleConfig(t *testing.T) {
 	testBundles = append(testBundles, Bundle{Bundle: "KAFKA"})
 	testBundleConfig = getBundleConfig(testBundles)
 	expectedOutput := BundleConfig{
-		IsKafkaCluster: true,
-		HasRestProxy: false,
+		IsKafkaCluster:    true,
+		HasRestProxy:      false,
 		HasSchemaRegistry: false}
 
 	if testBundleConfig != expectedOutput {
@@ -36,8 +36,8 @@ func TestGetBundleConfig(t *testing.T) {
 	testBundles = append(testBundles, Bundle{Bundle: "KAFKA_REST_PROXY"})
 	testBundleConfig = getBundleConfig(testBundles)
 	expectedOutput = BundleConfig{
-		IsKafkaCluster: true,
-		HasRestProxy: true,
+		IsKafkaCluster:    true,
+		HasRestProxy:      true,
 		HasSchemaRegistry: false}
 
 	if testBundleConfig != expectedOutput {
@@ -47,8 +47,8 @@ func TestGetBundleConfig(t *testing.T) {
 	testBundles = append(testBundles, Bundle{Bundle: "KAFKA_SCHEMA_REGISTRY"})
 	testBundleConfig = getBundleConfig(testBundles)
 	expectedOutput = BundleConfig{
-		IsKafkaCluster: true,
-		HasRestProxy: true,
+		IsKafkaCluster:    true,
+		HasRestProxy:      true,
 		HasSchemaRegistry: true}
 
 	if testBundleConfig != expectedOutput {

@@ -3,16 +3,17 @@ package instaclustr
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/mitchellh/mapstructure"
+	"github.com/hashicorp/terraform/helper/validation"
 	"log"
 	"reflect"
 	"regexp"
-	"sort"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/hashicorp/terraform/helper/resource"
+	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/mitchellh/mapstructure"
 )
 
 var (
@@ -50,14 +51,162 @@ func resourceCluster() *schema.Resource {
 			},
 
 			"node_size": {
-				Type:     schema.TypeString,
-				Required: true,
+				Type:          schema.TypeString,
+				Optional:      true,
+				ConflictsWith: []string{"data_centres"},
 			},
 
 			"data_centre": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:          schema.TypeString,
+				Optional:      true,
+				ConflictsWith: []string{"data_centres"},
+				ForceNew:      true,
+			},
+
+			"data_centres": {
+				Type:          schema.TypeSet,
+				Optional:      true,
+				ConflictsWith: []string{"data_centre"},
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"name": {
+							Type:     schema.TypeString,
+							Optional: true,
+							ForceNew: true,
+						},
+
+						"data_centre": {
+							Type:     schema.TypeString,
+							Required: true,
+							ForceNew: true,
+						},
+
+						"network": {
+							Type:     schema.TypeString,
+							Required: true,
+							ForceNew: true,
+						},
+
+						"node_size": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+
+						"rack_allocation": {
+							Type:     schema.TypeMap,
+							Required: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"number_of_racks": {
+										Type:     schema.TypeInt,
+										Required: true,
+										ForceNew: true,
+									},
+									"nodes_per_rack": {
+										Type:     schema.TypeInt,
+										Required: true,
+										ForceNew: true,
+									},
+								},
+							},
+						},
+
+						"provider": {
+							Type:     schema.TypeMap,
+							Required: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"name": {
+										Type:     schema.TypeString,
+										Required: true,
+										ForceNew: true,
+									},
+									"account_name": {
+										Type:     schema.TypeString,
+										Optional: true,
+										ForceNew: true,
+									},
+									"custom_virtual_network_id": {
+										Type:     schema.TypeString,
+										Optional: true,
+										ForceNew: true,
+									},
+									"resource_group": {
+										Type:     schema.TypeString,
+										Optional: true,
+										ForceNew: true,
+									},
+									"disk_encryption_key": {
+										Type:     schema.TypeString,
+										Optional: true,
+										ForceNew: true,
+									},
+								},
+							},
+						},
+
+						"bundles": {
+							Type:     schema.TypeSet,
+							Required: true,
+							Elem: &schema.Resource{
+								Schema: map[string]*schema.Schema{
+									"bundle": {
+										Type:     schema.TypeString,
+										Required: true,
+										ForceNew: true,
+										ValidateFunc: validation.StringInSlice([]string{
+											"APACHE_CASSANDRA",
+											"SPARK",
+										}, false),
+									},
+									"version": {
+										Type:     schema.TypeString,
+										Required: true,
+										ForceNew: true,
+									},
+									"options": {
+										Type:     schema.TypeMap,
+										Optional: true,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"auth_n_authz": {
+													Type:     schema.TypeBool,
+													Optional: true,
+													ForceNew: true,
+												},
+												"client_encryption": {
+													Type:     schema.TypeBool,
+													Optional: true,
+													ForceNew: true,
+												},
+												"password_authentication": {
+													Type:     schema.TypeBool,
+													Optional: true,
+													ForceNew: true,
+												},
+												"use_private_broadcast_rpc_address": {
+													Type:     schema.TypeBool,
+													Optional: true,
+													ForceNew: true,
+												},
+												"lucene_enabled": {
+													Type:     schema.TypeBool,
+													Optional: true,
+													ForceNew: true,
+												},
+												"continuous_backup_enabled": {
+													Type:     schema.TypeBool,
+													Optional: true,
+													ForceNew: true,
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
 			},
 
 			"sla_tier": {
@@ -70,7 +219,6 @@ func resourceCluster() *schema.Resource {
 			"cluster_network": {
 				Type:     schema.TypeString,
 				Optional: true,
-				Default:  "10.224.0.0/12",
 				ForceNew: true,
 			},
 
@@ -107,8 +255,9 @@ func resourceCluster() *schema.Resource {
 			},
 
 			"cluster_provider": {
-				Type:     schema.TypeMap,
-				Required: true,
+				Type:          schema.TypeMap,
+				Optional:      true,
+				ConflictsWith: []string{"data_centres"},
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"name": {
@@ -147,8 +296,9 @@ func resourceCluster() *schema.Resource {
 			},
 
 			"rack_allocation": {
-				Type:     schema.TypeMap,
-				Optional: true,
+				Type:          schema.TypeMap,
+				Optional:      true,
+				ConflictsWith: []string{"data_centres"},
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"number_of_racks": {
@@ -166,8 +316,9 @@ func resourceCluster() *schema.Resource {
 			},
 
 			"bundles": {
-				Type:     schema.TypeList,
-				Optional: true,
+				Type:          schema.TypeSet,
+				Optional:      true,
+				ConflictsWith: []string{"data_centres"},
 				Elem: &schema.Schema{
 					Type:     schema.TypeMap,
 					Elem:     schema.TypeString,
@@ -177,9 +328,10 @@ func resourceCluster() *schema.Resource {
 			},
 
 			"bundle": {
-				Type:     schema.TypeList,
-				Required: true,
-				MinItems: 1,
+				Type:          schema.TypeSet,
+				Optional:      true,
+				ConflictsWith: []string{"data_centres"},
+				MinItems:      1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"bundle": {
@@ -401,16 +553,36 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 
 	clusterProvider.Tags = d.Get("tags").(map[string]interface{})
 
-	createData := CreateRequest{
+	var createData = CreateRequest{
 		ClusterName:           d.Get("cluster_name").(string),
 		Bundles:               bundles,
-		Provider:              clusterProvider,
+		Provider:              &clusterProvider,
 		SlaTier:               d.Get("sla_tier").(string),
 		NodeSize:              d.Get("node_size").(string),
-		DataCentre:            d.Get("data_centre").(string),
-		ClusterNetwork:        d.Get("cluster_network").(string),
 		PrivateNetworkCluster: fmt.Sprintf("%v", d.Get("private_network_cluster")),
 		PCICompliantCluster:   fmt.Sprintf("%v", d.Get("pci_compliant_cluster")),
+	}
+
+	dataCentre := d.Get("data_centre").(string)
+	dataCentres, err := getDataCentres(d)
+	if err != nil {
+		return formatCreateErrMsg(err)
+	}
+
+	// we will throw an error if neither data_centre nor data_centres found
+	if dataCentre == "" && len(dataCentres) == 0 {
+		return fmt.Errorf("[Error] Error creating cluster: either data_centre or data_centres should be provided")
+	}
+
+	var isSingleDCCluster = dataCentre != "" && len(dataCentres) == 0
+
+	// for a single DC cluster
+	if isSingleDCCluster {
+		clusterNetwork := d.Get("cluster_network").(string)
+		createData.DataCentre = dataCentre
+		createData.ClusterNetwork = clusterNetwork
+	} else {
+		createData.DataCentres = dataCentres
 	}
 
 	kafkaSchemaRegistryUserPassword := d.Get("kafka_schema_registry_user_password").(string)
@@ -428,7 +600,7 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	// Some Bundles do not use Rack Allocation so add that separately if needed. (Redis for example)
-	if checkIfBundleRequiresRackAllocation(bundles) {
+	if isSingleDCCluster && checkIfBundleRequiresRackAllocation(bundles) {
 		var rackAllocation RackAllocation
 		err = mapstructure.Decode(d.Get("rack_allocation").(map[string]interface{}), &rackAllocation)
 		if err != nil {
@@ -436,6 +608,14 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		}
 
 		createData.RackAllocation = &rackAllocation
+	}
+
+	// for multi-DC cluster
+	if len(dataCentres) > 1 {
+		createData.RackAllocation = createData.DataCentres[0].RackAllocation
+		createData.NodeSize = createData.DataCentres[0].NodeSize
+		createData.Provider = createData.DataCentres[0].Provider
+		createData.Bundles = createData.DataCentres[0].Bundles
 	}
 
 	var jsonStrCreate []byte
@@ -472,7 +652,6 @@ func waitForClusterStateAndDoUpdate(client *APIClient,
 		//reading cluster details
 		cluster, err := client.ReadCluster(id)
 		resourceClusterRead(d, meta)
-
 
 		if err != nil {
 			return resource.NonRetryableError(fmt.Errorf("[Error] Error retrieving cluster info: %s", err))
@@ -637,66 +816,80 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("cluster_id", cluster.ID)
 	d.Set("cluster_name", cluster.ClusterName)
 
-	clusterProvider := make(map[string]interface{}, 0)
-	mapstructure.Decode(cluster.Provider[0], &clusterProvider)
-	processedClusterProvider := processProvider(d, clusterProvider)
-	d.Set("cluster_provider", processedClusterProvider)
-
-	bundles, err := getBundlesFromCluster(cluster)
-	if err != nil {
-		return err
-	}
-
-	if err := d.Set("bundle", bundles); err != nil {
-		return fmt.Errorf("[Error] Error reading cluster: %s", err)
-	}
-
-	nodeSize := ""
-	/*
-	*  Ideally, we would like this information to be coming directly from the API cluster status.
-	*  Hence, this is a slightly hacky way of ignoring zookeeper node sizes (Kafka bundles specific).
-	 */
-	for _, node := range cluster.DataCentres[0].Nodes {
-		nodeSize = node.Size
-		if !strings.HasPrefix(nodeSize, "zk-") {
-			break
+	if isClusterSingleDataCentre(*cluster) {
+		bundles, err := getBundlesFromCluster(cluster)
+		if err != nil {
+			return err
 		}
-	}
+		if err := d.Set("bundle", bundles); err != nil {
+			return fmt.Errorf("[Error] Error reading cluster: %s", err)
+		}
 
-	//loop over each data centre to determine nodes and racks for rack allocation
-	nodeCount := 0
-	rackList := make([]string, 0)
-	for _, dataCentre := range cluster.DataCentres {
-		for _, node := range dataCentre.Nodes {
+		clusterProvider := make(map[string]interface{}, 0)
+		mapstructure.Decode(cluster.Provider[0], &clusterProvider)
+		processedClusterProvider := processProvider(d, clusterProvider)
+		d.Set("cluster_provider", processedClusterProvider)
+
+		nodeSize := ""
+		/*
+		*  Ideally, we would like this information to be coming directly from the API cluster status.
+		*  Hence, this is a slightly hacky way of ignoring zookeeper node sizes (Kafka bundles specific).
+		 */
+		for _, node := range cluster.DataCentres[0].Nodes {
+			nodeSize = node.Size
+			if !strings.HasPrefix(nodeSize, "zk-") {
+				break
+			}
+		}
+
+		//loop over each data centre to determine nodes and racks for rack allocation
+		nodeCount := 0
+		rackCount := 0
+		rackList := make([]string, 0)
+		for _, node := range cluster.DataCentres[0].Nodes {
 			if !strings.HasPrefix(node.Size, "zk-") {
 				nodeCount += 1
 			}
 			rackList = appendIfMissing(rackList, node.Rack)
 		}
-	}
-	rackCount := len(rackList)
-	nodesPerRack := nodeCount / rackCount
+		rackCount += len(rackList)
 
-	rackAllocation := make(map[string]interface{}, 0)
-	rackAllocation["number_of_racks"] = strconv.Itoa(rackCount)
-	rackAllocation["nodes_per_rack"] = strconv.Itoa(nodesPerRack)
+		nodesPerRack := nodeCount / rackCount
+		rackAllocation := make(map[string]interface{}, 0)
+		rackAllocation["number_of_racks"] = strconv.Itoa(rackCount)
+		rackAllocation["nodes_per_rack"] = strconv.Itoa(nodesPerRack)
 
-	if err := d.Set("rack_allocation", rackAllocation); err != nil {
-		return fmt.Errorf("[Error] Error reading cluster, rack allocation could not be derived: %s", err)
+		if err := d.Set("rack_allocation", rackAllocation); err != nil {
+			return fmt.Errorf("[Error] Error reading cluster, rack allocation could not be derived: %s", err)
+		}
+
+		if len(cluster.DataCentres[0].ResizeTargetNodeSize) > 0 {
+			nodeSize = cluster.DataCentres[0].ResizeTargetNodeSize
+		}
+
+		d.Set("node_size", nodeSize)
+		d.Set("data_centre", cluster.DataCentres[0].Name)
+		d.Set("cluster_network", cluster.DataCentres[0].CdcNetwork)
+	} else {
+		dataCentres, err := getDataCentresFromCluster(cluster)
+		if err != nil {
+			return err
+		}
+		// set data centres
+		if len(dataCentres) > 1 {
+			if err := d.Set("data_centres", dataCentres); err != nil {
+				return fmt.Errorf("[Error] Error setting data centres into terraform state, data centres could not be derived: %s", err)
+			}
+		}
 	}
-	if len(cluster.DataCentres[0].ResizeTargetNodeSize) > 0 {
-		nodeSize = cluster.DataCentres[0].ResizeTargetNodeSize
-	}
-	d.Set("node_size", nodeSize)
-	d.Set("data_centre", cluster.DataCentres[0].Name)
+
 	d.Set("sla_tier", strings.ToUpper(cluster.SlaTier))
-	d.Set("cluster_network", cluster.DataCentres[0].CdcNetwork)
 	d.Set("private_network_cluster", cluster.DataCentres[0].PrivateIPOnly)
 	d.Set("pci_compliant_cluster", cluster.PciCompliance == "ENABLED")
 
 	azList := make([]string, 0)
-	publicContactPointList:= make([]string, 0)
-	privateContactPointList:= make([]string, 0)
+	publicContactPointList := make([]string, 0)
+	privateContactPointList := make([]string, 0)
 
 	for _, dataCentre := range cluster.DataCentres {
 		for _, node := range dataCentre.Nodes {
@@ -711,7 +904,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	if !cluster.DataCentres[0].PrivateIPOnly && len(publicContactPointList) > 0 {
-			err = d.Set("public_contact_point", publicContactPointList)
+		err = d.Set("public_contact_point", publicContactPointList)
 	} else {
 		err = d.Set("public_contact_point", nil)
 	}
@@ -736,7 +929,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	return nil
 }
 
-func getBundlesFromCluster(cluster *Cluster) ([]map[string]interface{}, error) {
+func getBaseBundlesFromCluster(cluster *Cluster) ([]map[string]interface{}, error) {
 	baseBundle := make(map[string]interface{}, 3)
 	baseBundle["bundle"] = cluster.BundleType
 
@@ -754,13 +947,26 @@ func getBundlesFromCluster(cluster *Cluster) ([]map[string]interface{}, error) {
 	bundles := make([]map[string]interface{}, 0)
 	bundles = append(bundles, baseBundle)
 
-	addonBundles := cluster.AddonBundles
+	return bundles, nil
+}
+
+func getBundlesFromCluster(cluster *Cluster) ([]map[string]interface{}, error) {
+	bundles, error := getBaseBundlesFromCluster(cluster)
+	if error != nil {
+		return nil, error
+	}
+
+	addonBundles := make([]map[string]interface{}, 0)
+	for _, addOnBundle := range cluster.AddonBundles {
+		if addOnBundle != nil {
+			addonBundles = append(addonBundles, addOnBundle)
+		}
+	}
 
 	if addonBundles == nil {
 		return nil, nil
 	}
 
-	sort.Slice(addonBundles, func(i, j int) bool {return addonBundles[i]["bundle"].(string) > addonBundles[j]["bundle"].(string)})
 	for _, addonBundle := range addonBundles {
 		if len(addonBundle) != 0 {
 			bundles = append(bundles, addonBundle)
@@ -768,6 +974,55 @@ func getBundlesFromCluster(cluster *Cluster) ([]map[string]interface{}, error) {
 	}
 
 	return bundles, nil
+}
+
+func getDataCentresFromCluster(cluster *Cluster) ([]map[string]interface{}, error) {
+	dataCentres := make([]map[string]interface{}, 0)
+	for _, dataCentre := range cluster.DataCentres {
+		dataCentreMap := make(map[string]interface{})
+		dataCentreMap["name"] = dataCentre.CdcName
+		dataCentreMap["data_centre"] = dataCentre.Name
+		dataCentreMap["network"] = dataCentre.CdcNetwork
+
+		// find the node size for this data centre
+		dataCentreMap["node_size"] = dataCentre.Nodes[0].Size
+
+		// find rack allocation for each data centre
+		nodeCount := 0
+		rackCount := 0
+		rackList := make([]string, 0)
+		for _, node := range dataCentre.Nodes {
+			nodeCount += 1
+			rackList = appendIfMissing(rackList, node.Rack)
+		}
+		rackCount += len(rackList)
+		nodesPerRack := nodeCount / rackCount
+		rackAllocation := make(map[string]interface{}, 0)
+		rackAllocation["number_of_racks"] = strconv.Itoa(rackCount)
+		rackAllocation["nodes_per_rack"] = strconv.Itoa(nodesPerRack)
+		dataCentreMap["rack_allocation"] = rackAllocation
+
+		// find provider for each data centre
+		provider := make(map[string]interface{})
+		provider["name"] = dataCentre.Provider
+		dataCentreMap["provider"] = provider
+
+		// find bundles for each data centre
+		thisDataCentreBundles, _ := getBaseBundlesFromCluster(cluster)
+		if dataCentre.Bundles != nil && len(dataCentre.Bundles) != 0 {
+			for _, thisDataCentreBundle := range dataCentre.Bundles {
+				for _, addOnBundle := range cluster.AddonBundles {
+					if addOnBundle != nil && addOnBundle["bundle"].(string) == thisDataCentreBundle {
+						thisDataCentreBundles = append(thisDataCentreBundles, addOnBundle)
+					}
+				}
+			}
+		}
+		dataCentreMap["bundles"] = thisDataCentreBundles
+
+		dataCentres = append(dataCentres, dataCentreMap)
+	}
+	return dataCentres, nil
 }
 
 func dereferencePointerInStruct(data map[string]interface{}) map[string]interface{} {
@@ -826,9 +1081,13 @@ func resourceClusterStateImport(d *schema.ResourceData, meta interface{}) ([]*sc
 
 func getBundles(d *schema.ResourceData) ([]Bundle, error) {
 	bundles := make([]Bundle, 0)
-	for _, inBundle := range d.Get("bundle").([]interface{}) {
+	for _, inBundle := range d.Get("bundle").(*schema.Set).List() {
 		var bundle Bundle
-		err := mapstructure.WeakDecode(inBundle.(map[string]interface{}), &bundle)
+		inBundleMap := inBundle.(map[string]interface{})
+		if len(inBundleMap["options"].(map[string]interface{})) == 0 {
+			inBundleMap["options"] = nil
+		}
+		err := mapstructure.WeakDecode(inBundleMap, &bundle)
 		if err != nil {
 			return nil, err
 		}
@@ -836,6 +1095,23 @@ func getBundles(d *schema.ResourceData) ([]Bundle, error) {
 	}
 
 	return bundles, nil
+}
+
+func getDataCentres(d *schema.ResourceData) ([]DataCentreCreateRequest, error) {
+	dataCentres_ := d.Get("data_centres").(*schema.Set)
+	dataCentres := make([]DataCentreCreateRequest, 0)
+	for _, inDataCentre := range dataCentres_.List() {
+		var dataCentre DataCentreCreateRequest
+		inDataCentreMap := inDataCentre.(map[string]interface{})
+		inDataCentreBundles := inDataCentreMap["bundles"].(*schema.Set).List()
+		inDataCentreMap["bundles"] = inDataCentreBundles
+		err := mapstructure.WeakDecode(inDataCentreMap, &dataCentre)
+		if err != nil {
+			return nil, err
+		}
+		dataCentres = append(dataCentres, dataCentre)
+	}
+	return dataCentres, nil
 }
 
 func formatCreateErrMsg(err error) error {
@@ -857,4 +1133,11 @@ func checkIfBundleRequiresRackAllocation(bundles []Bundle) bool {
 	}
 
 	return true
+}
+
+func isClusterSingleDataCentre(cluster Cluster) bool {
+	if len(cluster.DataCentres) == 1 {
+		return true
+	}
+	return false
 }

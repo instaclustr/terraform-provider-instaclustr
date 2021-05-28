@@ -13,17 +13,14 @@ import (
 	"testing"
 )
 
-func TestAccCluster(t *testing.T) {
-	testAccProvider := instaclustr.Provider()
-	testAccProviders := map[string]terraform.ResourceProvider{
-		"instaclustr": testAccProvider,
-	}
-	validConfig, _ := ioutil.ReadFile("data/valid.tf")
+func AccClusterResourceTestSteps(t *testing.T, testAccProviders map[string]terraform.ResourceProvider, validConfig []byte) {
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
 	updatedConfig := strings.Replace(oriConfig, "testcluster", "newcluster", 1)
+
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckResourceDeleted("valid", hostname, username, apiKey),
@@ -36,7 +33,7 @@ func TestAccCluster(t *testing.T) {
 				),
 			},
 			{
-				Config:      updatedConfig,
+				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckResourceValid("valid"),
 					testCheckResourceCreated("valid", hostname, username, apiKey),
@@ -44,6 +41,26 @@ func TestAccCluster(t *testing.T) {
 			},
 		},
 	})
+}
+
+func TestAccClusterSingleDC(t *testing.T) {
+	testAccProvider := instaclustr.Provider()
+	testAccProviders := map[string]terraform.ResourceProvider{
+		"instaclustr": testAccProvider,
+	}
+
+	validSingleDCClusterConfig, _ := ioutil.ReadFile("data/valid.tf")
+	AccClusterResourceTestSteps(t, testAccProviders, validSingleDCClusterConfig)
+}
+
+func TestAccClusterMultiDC(t *testing.T) {
+	testAccProvider := instaclustr.Provider()
+	testAccProviders := map[string]terraform.ResourceProvider{
+		"instaclustr": testAccProvider,
+	}
+
+	validMultiDCClusterConfig, _ := ioutil.ReadFile("data/valid_multi_DC_provisioning.tf")
+	AccClusterResourceTestSteps(t, testAccProviders, validMultiDCClusterConfig)
 }
 
 func TestKafkaConnectClusterCreateInstaclustrAWS(t *testing.T) {
@@ -72,7 +89,6 @@ func TestKafkaConnectClusterCreateInstaclustrAWS(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckResourceValid("validKC"),
 					testCheckResourceCreated("validKC", hostname, username, apiKey),
-
 				),
 			},
 		},
@@ -144,7 +160,7 @@ func TestAccClusterResize(t *testing.T) {
 					testCheckResourceValid(resourceName),
 					testCheckResourceCreated(resourceName, hostname, username, apiKey),
 					checkClusterRunning(resourceName, hostname, username, apiKey),
-					testCheckContactIPCorrect(resourceName, hostname, username, apiKey, 3,3),
+					testCheckContactIPCorrect(resourceName, hostname, username, apiKey, 3, 3),
 				),
 			},
 			{
@@ -234,7 +250,6 @@ func TestAccClusterCustomVPC(t *testing.T) {
 	})
 }
 
-
 func TestAccClusterCustomVPCInvalid(t *testing.T) {
 	testAccProvider := instaclustr.Provider()
 	testAccProviders := map[string]terraform.ResourceProvider{
@@ -288,7 +303,7 @@ func testCheckResourceCreated(resourceName, hostname, username, apiKey string) r
 	}
 }
 
-func testCheckContactIPCorrect(resourceName, hostname, username, apiKey string, expectedPrivateContactPointLength int,expectedPublicContactPointLength int) resource.TestCheckFunc {
+func testCheckContactIPCorrect(resourceName, hostname, username, apiKey string, expectedPrivateContactPointLength int, expectedPublicContactPointLength int) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		resourceState := s.Modules[0].Resources["instaclustr_cluster."+resourceName]
 
@@ -322,7 +337,7 @@ func testCheckResourceDeleted(resourceName, hostname, username, apiKey string) r
 
 func testCheckClusterResize(resourceName, hostname, username, apiKey, expectedNodeSize string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		resourceState := s.Modules[0].Resources["instaclustr_cluster." + resourceName]
+		resourceState := s.Modules[0].Resources["instaclustr_cluster."+resourceName]
 		id := resourceState.Primary.Attributes["cluster_id"]
 		client := new(instaclustr.APIClient)
 		client.InitClient(hostname, username, apiKey)
@@ -351,7 +366,7 @@ func TestValidRedisClusterCreate(t *testing.T) {
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
 	resource.Test(t, resource.TestCase{
-		Providers: testAccProviders,
+		Providers:    testAccProviders,
 		CheckDestroy: testCheckResourceDeleted("validRedis", hostname, username, apiKey),
 		Steps: []resource.TestStep{
 			{
@@ -376,7 +391,7 @@ func TestValidApacheZookeeperClusterCreate(t *testing.T) {
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
 	resource.Test(t, resource.TestCase{
-		Providers: testAccProviders,
+		Providers:    testAccProviders,
 		CheckDestroy: testCheckResourceDeleted("validApacheZookeeper", hostname, username, apiKey),
 		Steps: []resource.TestStep{
 			{
