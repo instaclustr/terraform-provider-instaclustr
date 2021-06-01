@@ -243,7 +243,7 @@ func TestGetNodeSize(t *testing.T) {
 	bundles := []Bundle{
 		{
 			Bundle: "ELASTICSEARCH",
-			Options: BundleOptions{
+			Options: &BundleOptions{
 				DedicatedMasterNodes: nil,
 				MasterNodeSize:       "",
 				KibanaNodeSize:       "",
@@ -256,7 +256,7 @@ func TestGetNodeSize(t *testing.T) {
 	bundles = []Bundle{
 		{
 			Bundle: "CASSANDRA",
-			Options: BundleOptions{
+			Options: &BundleOptions{
 				DedicatedMasterNodes: nil,
 				MasterNodeSize:       "",
 				KibanaNodeSize:       "",
@@ -274,7 +274,7 @@ func TestGetNodeSize(t *testing.T) {
 	bundles = []Bundle{
 		{
 			Bundle: "Kafka",
-			Options: BundleOptions{
+			Options: &BundleOptions{
 				DedicatedMasterNodes: nil,
 				MasterNodeSize:       "",
 				KibanaNodeSize:       "",
@@ -294,7 +294,7 @@ func TestGetNodeSize(t *testing.T) {
 	bundles = []Bundle{
 		{
 			Bundle: "ELASTICSEARCH",
-			Options: BundleOptions{
+			Options: &BundleOptions{
 				DedicatedMasterNodes: &dedicatedMaster,
 				MasterNodeSize:       "t3.small",
 				KibanaNodeSize:       "",
@@ -307,7 +307,7 @@ func TestGetNodeSize(t *testing.T) {
 	bundles = []Bundle{
 		{
 			Bundle: "ELASTICSEARCH",
-			Options: BundleOptions{
+			Options: &BundleOptions{
 				DedicatedMasterNodes: &dedicatedMaster,
 				MasterNodeSize:       "t3.small",
 				KibanaNodeSize:       "",
@@ -320,7 +320,7 @@ func TestGetNodeSize(t *testing.T) {
 	bundles = []Bundle{
 		{
 			Bundle: "ELASTICSEARCH",
-			Options: BundleOptions{
+			Options: &BundleOptions{
 				DedicatedMasterNodes: &dedicatedMaster,
 				MasterNodeSize:       "t3.small",
 				KibanaNodeSize:       "",
@@ -332,7 +332,7 @@ func TestGetNodeSize(t *testing.T) {
 	bundles = []Bundle{
 		{
 			Bundle: "ELASTICSEARCH",
-			Options: BundleOptions{
+			Options: &BundleOptions{
 				DedicatedMasterNodes: &dedicatedMaster,
 				MasterNodeSize:       "t3.small",
 				KibanaNodeSize:       "",
