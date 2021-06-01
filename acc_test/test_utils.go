@@ -9,7 +9,6 @@ import (
 	"time"
 )
 
-
 func getOptionalEnv(key, fallback string) string {
 	value := os.Getenv(key)
 	if len(value) == 0 {
@@ -20,7 +19,7 @@ func getOptionalEnv(key, fallback string) string {
 
 func checkClusterRunning(resourceName, hostname, username, apiKey string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		resourceState := s.Modules[0].Resources["instaclustr_cluster." + resourceName]
+		resourceState := s.Modules[0].Resources["instaclustr_cluster."+resourceName]
 		id := resourceState.Primary.Attributes["cluster_id"]
 		client := new(instaclustr.APIClient)
 		client.InitClient(hostname, username, apiKey)
