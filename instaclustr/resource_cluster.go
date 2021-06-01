@@ -577,11 +577,7 @@ func getNodeSize(d resourceDataInterface, bundles []Bundle) (string, error) {
 			}
 		}
 	}
-	if size, ok := d.GetOk("node_size"); !ok || len(size.(string)) == 0 {
-		return "", fmt.Errorf("[ERROR] node_size must be set.")
-	} else {
-		return size.(string), nil
-	}
+	return d.Get("node_size").(string), nil
 }
 
 func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
@@ -857,6 +853,7 @@ type resourceDataInterface interface {
 	HasChange(key string) bool
 	GetChange(key string) (interface{}, interface{})
 	GetOk(key string) (interface{}, bool)
+	Get(key string) interface{}
 }
 
 func doClusterResize(client APIClientInterface, clusterID string, d resourceDataInterface, bundles []Bundle) error {
@@ -1111,15 +1108,15 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		rackAllocation["number_of_racks"] = strconv.Itoa(rackCount)
 		rackAllocation["nodes_per_rack"] = strconv.Itoa(nodesPerRack)
 
-	if err := d.Set("rack_allocation", rackAllocation); err != nil {
-		return fmt.Errorf("[Error] Error reading cluster, rack allocation could not be derived: %s", err)
-	}
-	if len(cluster.DataCentres[0].ResizeTargetNodeSize) > 0 {
-		nodeSize = cluster.DataCentres[0].ResizeTargetNodeSize
-	}
-	if cluster.BundleType != "ELASTICSEARCH" {
-		d.Set("node_size", nodeSize)
-	}
+		if err := d.Set("rack_allocation", rackAllocation); err != nil {
+			return fmt.Errorf("[Error] Error reading cluster, rack allocation could not be derived: %s", err)
+		}
+		if len(cluster.DataCentres[0].ResizeTargetNodeSize) > 0 {
+			nodeSize = cluster.DataCentres[0].ResizeTargetNodeSize
+		}
+		if cluster.BundleType != "ELASTICSEARCH" {
+			d.Set("node_size", nodeSize)
+		}
 		d.Set("data_centre", cluster.DataCentres[0].Name)
 		d.Set("cluster_network", cluster.DataCentres[0].CdcNetwork)
 	} else {
