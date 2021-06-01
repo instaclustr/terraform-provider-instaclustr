@@ -264,7 +264,6 @@ func TestGetNodeSize(t *testing.T) {
 			},
 		},
 	}
-	helper(&data, bundles, "[ERROR] node_size must be set.", "")
 	data.changes["node_size"] = MockChange{
 		before: "",
 		after:  "t3.small",
@@ -282,8 +281,6 @@ func TestGetNodeSize(t *testing.T) {
 			},
 		},
 	}
-	delete(data.changes, "node_size")
-	helper(&data, bundles, "[ERROR] node_size must be set.", "")
 	data.changes["node_size"] = MockChange{
 		before: "",
 		after:  "t3.small",
@@ -514,11 +511,21 @@ func (m MockResourceData) HasChange(key string) bool {
 func (m MockResourceData) GetChange(key string) (interface{}, interface{}) {
 	return m.changes[key].before, m.changes[key].after
 }
+
 func (m MockResourceData) GetOk(key string) (interface{}, bool) {
 	change, ok := m.changes[key]
 	if ok {
 		return change.after, ok
 	} else {
 		return nil, ok
+	}
+}
+
+func (m MockResourceData) Get(key string) interface{} {
+	change, ok := m.changes[key]
+	if ok {
+		return change.after
+	} else {
+		return nil
 	}
 }

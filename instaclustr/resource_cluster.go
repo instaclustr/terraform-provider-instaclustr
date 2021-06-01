@@ -577,7 +577,10 @@ func getNodeSize(d resourceDataInterface, bundles []Bundle) (string, error) {
 			}
 		}
 	}
-	return d.Get("node_size").(string), nil
+	if size, ok := d.Get("node_size").(string); ok {
+		return size, nil
+	}
+	return "", nil
 }
 
 func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
