@@ -245,7 +245,7 @@ func TestKafkaUserResource_importBasic(t *testing.T) {
 					time.Sleep(6 * time.Minute)
 				},
 				Config:      invalidResizeConfig,
-				ExpectError: regexp.MustCompile("t3.small-20-gp2"),
+				ExpectError: regexp.MustCompile("Resize operations do not support downgrading disk sizes"),
 			},
 			{
 				Config: validResizeConfig,
