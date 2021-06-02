@@ -7,6 +7,7 @@ import (
 	"log"
 	"reflect"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -328,7 +329,7 @@ func resourceCluster() *schema.Resource {
 			},
 
 			"bundle": {
-				Type:          schema.TypeSet,
+				Type:          schema.TypeList,
 				Optional:      true,
 				ConflictsWith: []string{"data_centres"},
 				MinItems:      1,
@@ -1219,6 +1220,7 @@ func getBundlesFromCluster(cluster *Cluster) ([]map[string]interface{}, error) {
 		return nil, nil
 	}
 
+	sort.Slice(addonBundles, func(i, j int) bool { return addonBundles[i]["bundle"].(string) > addonBundles[j]["bundle"].(string) })
 	for _, addonBundle := range addonBundles {
 		if len(addonBundle) != 0 {
 			bundles = append(bundles, addonBundle)
@@ -1333,7 +1335,7 @@ func resourceClusterStateImport(d *schema.ResourceData, meta interface{}) ([]*sc
 
 func getBundles(d *schema.ResourceData) ([]Bundle, error) {
 	bundles := make([]Bundle, 0)
-	for _, inBundle := range d.Get("bundle").(*schema.Set).List() {
+	for _, inBundle := range d.Get("bundle").([]interface{}) {
 		var bundle Bundle
 		inBundleMap := inBundle.(map[string]interface{})
 		if len(inBundleMap["options"].(map[string]interface{})) == 0 {
