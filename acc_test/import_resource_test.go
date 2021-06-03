@@ -7,7 +7,10 @@ import (
 	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 	"io/ioutil"
 	"os"
+	"regexp"
+	"strings"
 	"testing"
+	"time"
 )
 
 func TestAccCluster_importBasic(t *testing.T) {
@@ -206,6 +209,9 @@ func TestKafkaUserResource_importBasic(t *testing.T) {
 	zookeeperNodeSize := "zk-developer-t3.small-20"
 
 	createClusterConfig := fmt.Sprintf(string(configBytes1), username, apiKey, hostname, zookeeperNodeSize)
+	validResizeConfig := strings.Replace(createClusterConfig, `t3.medium-80-gp2`, `r5.xlarge-800-gp2`, 1)
+	invalidResizeConfig := strings.Replace(createClusterConfig, `t3.medium-80-gp2`, `t3.small-20-gp2`, 1)
+	resourceName := "kafka_cluster"
 
 	resource.Test(t, resource.TestCase{
 		Providers: testProviders,
@@ -232,6 +238,20 @@ func TestKafkaUserResource_importBasic(t *testing.T) {
 					// wait_for_state is a creation option to ensure IP contact points are ready for other parts of the infrastructure. It cannot be imported.
 					"wait_for_state",
 				},
+			},
+			{
+				PreConfig: func() {
+					fmt.Println("Sleep for 6 minutes to wait for Kafka cluster to be ready for resize.")
+					time.Sleep(6 * time.Minute)
+				},
+				Config:      invalidResizeConfig,
+				ExpectError: regexp.MustCompile("Resize operations do not support downgrading disk sizes"),
+			},
+			{
+				Config: validResizeConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("instaclustr_cluster."+resourceName, "cluster_name", "example_kafka_tf_test"),
+				),
 			},
 		},
 	})

@@ -11,6 +11,11 @@ import (
 	"time"
 )
 
+type APIClientInterface interface {
+	ReadCluster(clusterID string) (*Cluster, error)
+	ResizeCluster(clusterID string, cdcID string, newNodeSize string, nodePurpose *NodePurpose) error
+}
+
 type APIClient struct {
 	username          string
 	apiKey            string
@@ -96,11 +101,12 @@ func (c *APIClient) DeleteCluster(clusterID string) error {
 	return nil
 }
 
-func (c *APIClient) ResizeCluster(clusterID string, cdcID string, newNodeSize string) error {
+func (c *APIClient) ResizeCluster(clusterID string, cdcID string, newNodeSize string, nodePurpose *NodePurpose) error {
 	request := ResizeClusterRequest{
 		NewNodeSize:           newNodeSize,
 		ConcurrentResizes:     1,
 		NotifySupportContacts: "false",
+		NodePurpose:           nodePurpose,
 	}
 	data, err := json.Marshal(request)
 	if err != nil {
