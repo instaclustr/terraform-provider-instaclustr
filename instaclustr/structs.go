@@ -199,11 +199,21 @@ type CreateKafkaUserRequest struct {
 	Username           string `json:"username"`
 	Password           string `json:"password"`
 	InitialPermissions string `json:"initial-permissions"`
+	Options	*KafkaUserCreateOptions `json:"options,omitempty"`
+}
+
+type KafkaUserCreateOptions struct {
+	SaslScramMechanism *string `json:"sasl-scram-mechanism,omitempty" mapstructure:"sasl-scram-mechanism"`
 }
 
 type UpdateKafkaUserRequest struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
+	Options	*KafkaUserResetPasswordOptions `json:"options,omitempty"`
+}
+
+type KafkaUserResetPasswordOptions struct {
+	SaslScramMechanism *string `json:"sasl-scram-mechanism,omitempty" mapstructure:"sasl-scram-mechanism"`
 }
 
 type DeleteKafkaUserRequest struct {
