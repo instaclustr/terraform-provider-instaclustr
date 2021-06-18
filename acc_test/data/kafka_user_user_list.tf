@@ -42,6 +42,22 @@ resource "instaclustr_kafka_user" "kafka_user_charlie" {
   initial_permissions = "none"
 }
 
+resource "instaclustr_kafka_user" "kafka_user_charlie_scram-sha-512" {
+  cluster_id          = "${instaclustr_cluster.kafka_cluster.id}"
+  username            = "%s"
+  password            = "%s"
+  initial_permissions = "none"
+  options = {"sasl-scram-mechanism": "SCRAM-SHA-512"}
+}
+
+resource "instaclustr_kafka_user" "kafka_user_charlie_empty_options" {
+  cluster_id          = "${instaclustr_cluster.kafka_cluster.id}"
+  username            = "%s"
+  password            = "%s"
+  initial_permissions = "none"
+  options = {}
+}
+
 data "instaclustr_kafka_user_list" "kafka_user_list" {
   cluster_id = "${instaclustr_cluster.kafka_cluster.id}"
 }

@@ -23,15 +23,26 @@ func TestKafkaUserResource(t *testing.T) {
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 
-	kafkaUsername := "charlie"
+	kafkaUsername1 := "charlie1"
+	kafkaUsername2 := "charlie2"
+	kafkaUsername3 := "charlie3"
 	oldPassword := "charlie123!"
 	newPassword := "charlie123standard!"
 	zookeeperNodeSize := "zk-developer-t3.small-20"
 
 	createClusterConfig := fmt.Sprintf(string(configBytes1), username, apiKey, hostname, zookeeperNodeSize)
-	createKafkaUserConfig := fmt.Sprintf(string(configBytes2), username, apiKey, hostname, zookeeperNodeSize, kafkaUsername, oldPassword)
-	createKafkaUserListConfig := fmt.Sprintf(string(configBytes3), username, apiKey, hostname, zookeeperNodeSize, kafkaUsername, oldPassword)
-	updateKafkaUserConfig := fmt.Sprintf(string(configBytes3), username, apiKey, hostname, zookeeperNodeSize, kafkaUsername, newPassword)
+	createKafkaUserConfig := fmt.Sprintf(string(configBytes2), username, apiKey, hostname, zookeeperNodeSize,
+		kafkaUsername1, oldPassword,
+		kafkaUsername2, oldPassword,
+		kafkaUsername3, oldPassword)
+	createKafkaUserListConfig := fmt.Sprintf(string(configBytes3), username, apiKey, hostname, zookeeperNodeSize,
+		kafkaUsername1, oldPassword,
+		kafkaUsername2, oldPassword,
+		kafkaUsername3, oldPassword)
+	updateKafkaUserConfig := fmt.Sprintf(string(configBytes3), username, apiKey, hostname, zookeeperNodeSize,
+		kafkaUsername1, newPassword,
+		kafkaUsername2, newPassword,
+		kafkaUsername3, newPassword)
 
 	resource.Test(t, resource.TestCase{
 		Providers: testProviders,
@@ -69,7 +80,9 @@ func TestKafkaUserResource(t *testing.T) {
 			// i.e., we need to destroy the kafka user resources first.
 			{
 				Config: createClusterConfig,
-				Check:  checkKafkaUserDeleted(kafkaUsername, hostname, username, apiKey),
+				Check:  resource.ComposeTestCheckFunc(checkKafkaUserDeleted(kafkaUsername1, hostname, username, apiKey),
+					checkKafkaUserDeleted(kafkaUsername2, hostname, username, apiKey),
+					checkKafkaUserDeleted(kafkaUsername3, hostname, username, apiKey)),
 			},
 		},
 	})
@@ -92,40 +105,56 @@ func testCheckResourceValidKafka(resourceName string) resource.TestCheckFunc {
 
 func checkKafkaUserCreated(hostname, username, apiKey string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		resourceState := s.Modules[0].Resources["instaclustr_kafka_user.kafka_user_charlie"]
+		var userResources [3]string
+		userResources[0] = "instaclustr_kafka_user.kafka_user_charlie"
+		userResources[1] = "instaclustr_kafka_user.kafka_user_charlie_scram-sha-512"
+		userResources[2] = "instaclustr_kafka_user.kafka_user_charlie_empty_options"
 
-		client := new(instaclustr.APIClient)
-		client.InitClient(hostname, username, apiKey)
-		kafka_username := resourceState.Primary.Attributes["username"]
-		clusterId := resourceState.Primary.Attributes["cluster_id"]
+		OUTER:
+		for _, resourceName := range userResources {
+			resourceState := s.Modules[0].Resources[resourceName]
 
-		usernameList, err := client.ReadKafkaUserList(clusterId)
-		if err != nil {
-			return fmt.Errorf("Failed to read Kafka user list from %s: %s", clusterId, err)
-		}
-		for _, str := range usernameList {
-			if kafka_username == str {
-				return nil
+			client := new(instaclustr.APIClient)
+			client.InitClient(hostname, username, apiKey)
+			kafka_username := resourceState.Primary.Attributes["username"]
+			clusterId := resourceState.Primary.Attributes["cluster_id"]
+
+			usernameList, err := client.ReadKafkaUserList(clusterId)
+			if err != nil {
+				return fmt.Errorf("Failed to read Kafka user list from %s: %s", clusterId, err)
 			}
+			for _, str := range usernameList {
+				if kafka_username == str {
+					continue OUTER
+				}
+			}
+			return fmt.Errorf("User %s is not found within the username list of %s", username, clusterId)
 		}
-		return fmt.Errorf("User %s is not found within the username list of %s", username, clusterId)
+		return nil
 	}
 }
 
 func checkKafkaUserUpdated(newPassword string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		resourceState := s.Modules[0].Resources["instaclustr_kafka_user.kafka_user_charlie"]
-		if resourceState == nil {
-			return fmt.Errorf("instaclustr_kafka_user.kafka_user_charlie resource not found in state.")
-		}
+		var userResources [3]string
+		userResources[0] = "instaclustr_kafka_user.kafka_user_charlie"
+		userResources[1] = "instaclustr_kafka_user.kafka_user_charlie_scram-sha-512"
+		userResources[2] = "instaclustr_kafka_user.kafka_user_charlie_empty_options"
 
-		instanceState := resourceState.Primary
-		if instanceState == nil {
-			return fmt.Errorf("resource has no primary instance")
-		}
+		for _, resourceName := range userResources {
+			resourceState := s.Modules[0].Resources[resourceName]
+			if resourceState == nil {
+				return fmt.Errorf("%s resource not found in state.", resourceName)
+			}
 
-		if instanceState.Attributes["password"] != newPassword {
-			return fmt.Errorf("The new password in the terraform state is not as expected after update: %s != %s", instanceState.Attributes["password"], newPassword)
+			instanceState := resourceState.Primary
+			if instanceState == nil {
+				return fmt.Errorf("resource has no primary instance")
+			}
+
+			if instanceState.Attributes["password"] != newPassword {
+				return fmt.Errorf("The new password in the terraform state is not as expected after update: %s != %s", instanceState.Attributes["password"], newPassword)
+			}
 		}
 		return nil
 	}
