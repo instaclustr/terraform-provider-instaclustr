@@ -205,6 +205,16 @@ resource "instaclustr_kafka_user" "kafka_user_charlie" {
   password = "charlie123!"
 }
 
+resource "instaclustr_kafka_user" "kafka_user_harley" {
+  cluster_id = "${instaclustr_cluster.example_kafka.id}"
+  username = "harley"
+  password = "harley123!"
+  initial_permissions = "standard"
+  options = {
+    sasl-scram-mechanism = "SCRAM-SHA-512"
+  }
+}
+
 data "instaclustr_kafka_user_list" "kafka_user_list" {
   cluster_id = "${instaclustr_cluster.example_kafka.id}"
 }
