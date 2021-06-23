@@ -48,7 +48,6 @@ func resourceKafkaUser() *schema.Resource {
 			"options": {
 				Type:     schema.TypeMap,
 				Optional: true,
-				ForceNew: true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"sasl-scram-mechanism": {
