@@ -105,10 +105,11 @@ func testCheckResourceValidKafka(resourceName string) resource.TestCheckFunc {
 
 func checkKafkaUserCreated(hostname, username, apiKey string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		var userResources [3]string
-		userResources[0] = "instaclustr_kafka_user.kafka_user_charlie"
-		userResources[1] = "instaclustr_kafka_user.kafka_user_charlie_scram-sha-512"
-		userResources[2] = "instaclustr_kafka_user.kafka_user_charlie_empty_options"
+		userResources := [3]string{
+			"instaclustr_kafka_user.kafka_user_charlie",
+			"instaclustr_kafka_user.kafka_user_charlie_scram-sha-512",
+			"instaclustr_kafka_user.kafka_user_charlie_empty_options",
+		}
 
 		OUTER:
 		for _, resourceName := range userResources {
@@ -136,10 +137,11 @@ func checkKafkaUserCreated(hostname, username, apiKey string) resource.TestCheck
 
 func checkKafkaUserUpdated(newPassword string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		var userResources [3]string
-		userResources[0] = "instaclustr_kafka_user.kafka_user_charlie"
-		userResources[1] = "instaclustr_kafka_user.kafka_user_charlie_scram-sha-512"
-		userResources[2] = "instaclustr_kafka_user.kafka_user_charlie_empty_options"
+		userResources := [3]string{
+			"instaclustr_kafka_user.kafka_user_charlie",
+			"instaclustr_kafka_user.kafka_user_charlie_scram-sha-512",
+			"instaclustr_kafka_user.kafka_user_charlie_empty_options",
+		}
 
 		for _, resourceName := range userResources {
 			resourceState := s.Modules[0].Resources[resourceName]
