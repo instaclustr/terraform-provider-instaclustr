@@ -7,6 +7,7 @@ import (
 	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 	"io/ioutil"
 	"os"
+	"regexp"
 	"strconv"
 	"testing"
 )
@@ -19,6 +20,7 @@ func TestKafkaUserResource(t *testing.T) {
 	configBytes1, _ := ioutil.ReadFile("data/kafka_user_create_cluster.tf")
 	configBytes2, _ := ioutil.ReadFile("data/kafka_user_create_user.tf")
 	configBytes3, _ := ioutil.ReadFile("data/kafka_user_user_list.tf")
+	configBytes4, _ := ioutil.ReadFile("data/invalid_kafka_user_create.tf")
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
@@ -26,6 +28,7 @@ func TestKafkaUserResource(t *testing.T) {
 	kafkaUsername1 := "charlie1"
 	kafkaUsername2 := "charlie2"
 	kafkaUsername3 := "charlie3"
+	kafkaUsername4 := "charlie4"
 	oldPassword := "charlie123!"
 	newPassword := "charlie123standard!"
 	zookeeperNodeSize := "zk-developer-t3.small-20"
@@ -43,6 +46,8 @@ func TestKafkaUserResource(t *testing.T) {
 		kafkaUsername1, newPassword,
 		kafkaUsername2, newPassword,
 		kafkaUsername3, newPassword)
+	invalidKafkaUserCreateConfig := fmt.Sprintf(string(configBytes4), username, apiKey, hostname, zookeeperNodeSize,
+		kafkaUsername4, oldPassword)
 
 	resource.Test(t, resource.TestCase{
 		Providers: testProviders,
@@ -83,6 +88,10 @@ func TestKafkaUserResource(t *testing.T) {
 				Check:  resource.ComposeTestCheckFunc(checkKafkaUserDeleted(kafkaUsername1, hostname, username, apiKey),
 					checkKafkaUserDeleted(kafkaUsername2, hostname, username, apiKey),
 					checkKafkaUserDeleted(kafkaUsername3, hostname, username, apiKey)),
+			},
+			{
+				Config: invalidKafkaUserCreateConfig,
+				ExpectError: regexp.MustCompile("invalid value for the 'sasl-scram-mechanism' option"),
 			},
 		},
 	})
