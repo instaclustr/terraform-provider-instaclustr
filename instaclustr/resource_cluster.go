@@ -520,6 +520,11 @@ func resourceCluster() *schema.Resource {
 										Optional: true,
 										ForceNew: true,
 									},
+									"redis_password_auth": {
+										Type:     schema.TypeBool,
+										Optional: true,
+										ForceNew: true,
+									},
 								},
 							},
 						},
