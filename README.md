@@ -110,14 +110,14 @@ resource "instaclustr_cluster" "example" {
     }
     bundle {
         bundle = "APACHE_CASSANDRA"
-        version = "3.11.4"
+        version = "apache_cassandra:3.11.4"
         options = {
           auth_n_authz = true
         }
       }
       bundle {
         bundle = "SPARK"
-        version = "2.3.2"
+        version = "apache-spark:2.3.2"
       }
 }
 ```
@@ -141,7 +141,7 @@ resource "instaclustr_cluster" "azure_example" {
 
   bundle {
     bundle = "APACHE_CASSANDRA"
-    version = "3.11.8"
+    version = "apache_cassandra:3.11.8"
     options = {
       auth_n_authz = true
     }
@@ -168,7 +168,7 @@ resource "instaclustr_cluster" "gcp_example" {
 
   bundle {
     bundle = "APACHE_CASSANDRA"
-    version = "3.11.8"
+    version = "apache_cassandra:3.11.8"
     options = {
       auth_n_authz = true
     }
@@ -199,7 +199,7 @@ resource "instaclustr_cluster" "multi_DC_example" {
     }
     bundles {
       bundle = "APACHE_CASSANDRA"
-      version = "apache-cassandra-3.11.8.ic2"
+      version = "apache-cassandra-3.11.8"
       options = {
         auth_n_authz = true
         use_private_broadcast_rpc_address = false
@@ -210,7 +210,7 @@ resource "instaclustr_cluster" "multi_DC_example" {
     }
     bundles {
       bundle = "SPARK"
-      version = "apache-spark:2.3.2.ic1"
+      version = "apache-spark:2.3.2"
     }
   }
 
@@ -228,7 +228,7 @@ resource "instaclustr_cluster" "multi_DC_example" {
     }
     bundles {
       bundle = "APACHE_CASSANDRA"
-      version = "apache-cassandra-3.11.8.ic2"
+      version = "apache-cassandra-3.11.8"
       options = {
         auth_n_authz = true
         use_private_broadcast_rpc_address = false
@@ -253,7 +253,7 @@ resource "instaclustr_cluster" "multi_DC_example" {
     }
     bundles {
       bundle = "APACHE_CASSANDRA"
-      version = "apache-cassandra-3.11.8.ic2"
+      version = "apache-cassandra-3.11.8"
       options = {
         auth_n_authz = true
         use_private_broadcast_rpc_address = false
@@ -264,7 +264,7 @@ resource "instaclustr_cluster" "multi_DC_example" {
     }
     bundles {
       bundle = "SPARK"
-      version = "apache-spark:2.3.2.ic1"
+      version = "apache-spark:2.3.2"
     }
   }
 }
