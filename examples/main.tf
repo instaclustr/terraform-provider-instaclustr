@@ -43,7 +43,7 @@ resource "instaclustr_cluster" "example" {
 
   bundle {
     bundle = "APACHE_CASSANDRA"
-    version = "3.11.8"
+    version = "apache_cassandra:3.11.8"
     options = {
       auth_n_authz = true
     }
@@ -73,7 +73,7 @@ resource "instaclustr_cluster" "custom_vpc_example" {
 
   bundle {
     bundle = "APACHE_CASSANDRA"
-    version = "3.11.8"
+    version = "apache_cassandra:3.11.8"
   }
 }
 
@@ -121,7 +121,7 @@ resource "instaclustr_cluster" "example_kafka" {
 
   bundle {
     bundle = "KAFKA"
-    version = "2.5.1"
+    version = "apache-kafka:2.5.1"
     options = {
       auth_n_authz = true
       dedicated_zookeeper = true
@@ -132,12 +132,12 @@ resource "instaclustr_cluster" "example_kafka" {
 
   bundle {
     bundle = "KAFKA_REST_PROXY"
-    version = "5.0.0"
+    version = "kafka-rest-proxy:5.0.0"
   }
 
   bundle {
     bundle = "KAFKA_SCHEMA_REGISTRY"
-    version = "5.0.0"
+    version = "kafka-schema-registry:5.0.0"
   }
   kafka_rest_proxy_user_password = "RestProxyTest123test!" // new password for rest proxy bundle user
   kafka_schema_registry_user_password = "SchemaRegistryTest123test!" // new password for schema registry bundle user
@@ -191,7 +191,7 @@ resource "instaclustr_cluster" "validKC" {
 
   bundle {
     bundle = "KAFKA_CONNECT"
-    version = "2.3.1"
+    version = "apache-kafka-connect:2.3.1"
     options = {
       target_kafka_cluster_id = "${instaclustr_cluster.example_kafka.id}"
       vpc_id = "SEPARATE_VPC"
@@ -225,7 +225,7 @@ resource "instaclustr_cluster" "private_cluster_example" {
   }
   bundle {
     bundle = "APACHE_CASSANDRA"
-    version = "3.11.8"
+    version = "apache_cassandra:3.11.8"
   }
 }
 
@@ -241,7 +241,7 @@ resource "instaclustr_cluster" "example-redis" {
 
   bundle {
     bundle = "REDIS"
-    version = "6.0.4"
+    version = "redis:6.0.4"
     options = {
       master_nodes = 3,
       replica_nodes = 3
