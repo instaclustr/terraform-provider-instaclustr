@@ -245,7 +245,7 @@ func TestKafkaUserResource_importBasic(t *testing.T) {
 					time.Sleep(6 * time.Minute)
 				},
 				Config:      invalidResizeConfig,
-				ExpectError: regexp.MustCompile("Resize operations do not support downgrading disk sizes"),
+				ExpectError: regexp.MustCompile("There are no suitable replacement modes for cluster data centre"),
 			},
 			{
 				Config: validResizeConfig,
