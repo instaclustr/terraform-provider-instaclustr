@@ -3,7 +3,7 @@ BIN_NAME="terraform-provider-instaclustr"
 
 
 # for VERSION, don't add prefix "v", e.g., use "1.9.8" instead of "v1.9.8" as it could break circleCI stuff
-VERSION=1.10.3
+VERSION=1.11.0
 INSTALL_FOLDER=$(HOME)/.terraform.d/plugins/terraform.instaclustr.com/instaclustr/instaclustr/$(VERSION)/darwin_amd64
 
 
