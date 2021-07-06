@@ -500,6 +500,11 @@ func resourceCluster() *schema.Resource {
 										Optional: true,
 										ForceNew: true,
 									},
+									"password_auth": {
+										Type:     schema.TypeBool,
+										Optional: true,
+										ForceNew: true,
+									},
 									"dedicated_master_nodes": {
 										Type:     schema.TypeBool,
 										Optional: false,
