@@ -68,7 +68,7 @@ KAFKA_CONNECT|2.3.1, 2.4.1, 2.5.1, 2.6.1|
 REDIS|6.0.9|
 APACHE_ZOOKEEPER|3.5.8|
 
-`bundle.options` - _all properties listed are optional_
+`bundle.options`
 
 Property | Description | For Bundles | Default
 ---------|-------------|-------------|--------
@@ -92,8 +92,9 @@ Property | Description | For Bundles | Default
 `truststore`|Base64 encoded version of the TLS trust store (in JKS format) used to connect to your Kafka Cluster. Only required if connecting to a Non-Instaclustr managed Kafka Cluster with TLS enabled|Kafka Connect
 `master_nodes`|The number of Master nodes in a generated Redis Cluster.|Redis|Required (Integers)
 `replica_nodes`|The number of Replica nodes in a generated Redis Cluster.|Redis|Required (Integers)
+`password_auth`|Accepts true/false. Enables Password Authentication and User Authorization.|Redis|false
 `dedicated_zookeeper`|Indicate whether this Kafka cluster should allocate dedicated Zookeeper nodes|Kafka|false
 `zookeeper_node_size`|If `dedicated_zookeeper` is true, then it is the node size for the dedicated Zookeeper nodes. Have a look [here](https://www.instaclustr.com/support/api-integrations/api-reference/provisioning-api/#section-create-cluster) (Kafka bundle options table) for node size options. |Kafka
 `zookeeper_node_count`|Indicates how many nodes are allocated to be Zookeeper nodes. For KAFKA bundle, if `dedicated_zookeeper` is false, then it indicates how many Kafka nodes also have ZooKeeper services in them. |Kafka, ZooKeeper
-`redis_password_auth`|Accepts true/false. Enables Password Authentication and User Authorization.|Redis|false
+
 

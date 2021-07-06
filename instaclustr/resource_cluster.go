@@ -500,6 +500,11 @@ func resourceCluster() *schema.Resource {
 										Optional: true,
 										ForceNew: true,
 									},
+									"password_auth": {
+										Type:     schema.TypeBool,
+										Optional: true,
+										ForceNew: true,
+									},
 									"dedicated_master_nodes": {
 										Type:     schema.TypeBool,
 										Optional: false,
@@ -517,11 +522,6 @@ func resourceCluster() *schema.Resource {
 									},
 									"kibana_node_size": {
 										Type:     schema.TypeString,
-										Optional: true,
-										ForceNew: true,
-									},
-									"redis_password_auth": {
-										Type:     schema.TypeBool,
 										Optional: true,
 										ForceNew: true,
 									},
