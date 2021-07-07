@@ -3,7 +3,6 @@ package instaclustr
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/mitchellh/mapstructure"
 	"log"
 
 	"github.com/hashicorp/terraform/helper/schema"
@@ -85,12 +84,6 @@ func resourceKafkaUserCreate(d *schema.ResourceData, meta interface{}) error {
 		}
 	}
 
-	var kafkaUserCreateOptions KafkaUserCreateOptions
-	err = mapstructure.Decode(d.Get("options").(map[string]interface{}), &kafkaUserCreateOptions)
-	if err != nil {
-		return err
-	}
-
 	createOptionsData := KafkaUserCreateOptions{
 		SaslScramMechanism: d.Get("sasl_scram_mechanism").(string),
 	}
@@ -128,13 +121,6 @@ func resourceKafkaUserUpdate(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Changing Kafka user password in %s.", d.Get("cluster_id").(string))
 	client := meta.(*Config).Client
 
-	var err error
-	var kafkaUserResetPasswordOptions KafkaUserResetPasswordOptions
-	err = mapstructure.Decode(d.Get("options").(map[string]interface{}), &kafkaUserResetPasswordOptions)
-	if err != nil {
-		return err
-	}
-
 	resetPasswordOptionsData := KafkaUserResetPasswordOptions{
 		SaslScramMechanism: d.Get("sasl_scram_mechanism").(string),
 	}
@@ -145,8 +131,7 @@ func resourceKafkaUserUpdate(d *schema.ResourceData, meta interface{}) error {
 		Options: resetPasswordOptionsData,
 	}
 
-	var jsonStr []byte
-	jsonStr, err = json.Marshal(createData)
+	jsonStr, err := json.Marshal(createData)
 	if err != nil {
 		return fmt.Errorf("[Error] Error creating kafka user update request: %s", err)
 	}
