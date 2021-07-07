@@ -204,7 +204,7 @@ type CreateKafkaUserRequest struct {
 }
 
 type KafkaUserCreateOptions struct {
-	SaslScramMechanism string `json:"sasl-scram-mechanism,omitempty" mapstructure:"sasl-scram-mechanism"`
+	AuthenticationMechanism string `json:"sasl-scram-mechanism,omitempty" mapstructure:"sasl-scram-mechanism"`
 }
 
 type UpdateKafkaUserRequest struct {
@@ -214,7 +214,7 @@ type UpdateKafkaUserRequest struct {
 }
 
 type KafkaUserResetPasswordOptions struct {
-	SaslScramMechanism string `json:"sasl-scram-mechanism,omitempty" mapstructure:"sasl-scram-mechanism"`
+	AuthenticationMechanism string `json:"sasl-scram-mechanism,omitempty" mapstructure:"sasl-scram-mechanism"`
 }
 
 type DeleteKafkaUserRequest struct {

@@ -44,7 +44,7 @@ func resourceKafkaUser() *schema.Resource {
 				ForceNew: true,
 			},
 
-			"sasl_scram_mechanism": {
+			"authentication_mechanism": {
 				Type:     schema.TypeString,
 				Optional: true,
 				Default: "SCRAM-SHA-256",
@@ -85,7 +85,7 @@ func resourceKafkaUserCreate(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	createOptionsData := KafkaUserCreateOptions{
-		SaslScramMechanism: d.Get("sasl_scram_mechanism").(string),
+		AuthenticationMechanism: d.Get("authentication_mechanism").(string),
 	}
 
 	createData := CreateKafkaUserRequest{
@@ -122,7 +122,7 @@ func resourceKafkaUserUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*Config).Client
 
 	resetPasswordOptionsData := KafkaUserResetPasswordOptions{
-		SaslScramMechanism: d.Get("sasl_scram_mechanism").(string),
+		AuthenticationMechanism: d.Get("authentication_mechanism").(string),
 	}
 
 	createData := UpdateKafkaUserRequest{

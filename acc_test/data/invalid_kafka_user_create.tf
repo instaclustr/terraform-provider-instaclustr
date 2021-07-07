@@ -40,5 +40,5 @@ resource "instaclustr_kafka_user" "kafka_user_charlie_invalid" {
   username            = "%s"
   password            = "%s"
   initial_permissions = "none"
-  sasl_scram_mechanism = "ExpectedToFail"
+  authentication_mechanism = "ExpectedToFail"
 }

@@ -47,7 +47,7 @@ resource "instaclustr_kafka_user" "kafka_user_charlie_scram-sha-512" {
   username            = "%s"
   password            = "%s"
   initial_permissions = "none"
-  sasl_scram_mechanism = "SCRAM-SHA-512"
+  authentication_mechanism = "SCRAM-SHA-512"
 }
 
 data "instaclustr_kafka_user_list" "kafka_user_list" {
