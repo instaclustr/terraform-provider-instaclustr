@@ -28,7 +28,6 @@ func TestKafkaUserResource(t *testing.T) {
 	kafkaUsername1 := "charlie1"
 	kafkaUsername2 := "charlie2"
 	kafkaUsername3 := "charlie3"
-	kafkaUsername4 := "charlie4"
 	oldPassword := "charlie123!"
 	newPassword := "charlie123standard!"
 	zookeeperNodeSize := "zk-developer-t3.small-20"
@@ -36,18 +35,15 @@ func TestKafkaUserResource(t *testing.T) {
 	createClusterConfig := fmt.Sprintf(string(configBytes1), username, apiKey, hostname, zookeeperNodeSize)
 	createKafkaUserConfig := fmt.Sprintf(string(configBytes2), username, apiKey, hostname, zookeeperNodeSize,
 		kafkaUsername1, oldPassword,
-		kafkaUsername2, oldPassword,
-		kafkaUsername3, oldPassword)
+		kafkaUsername2, oldPassword)
 	createKafkaUserListConfig := fmt.Sprintf(string(configBytes3), username, apiKey, hostname, zookeeperNodeSize,
 		kafkaUsername1, oldPassword,
-		kafkaUsername2, oldPassword,
-		kafkaUsername3, oldPassword)
+		kafkaUsername2, oldPassword)
 	updateKafkaUserConfig := fmt.Sprintf(string(configBytes3), username, apiKey, hostname, zookeeperNodeSize,
 		kafkaUsername1, newPassword,
-		kafkaUsername2, newPassword,
-		kafkaUsername3, newPassword)
+		kafkaUsername2, newPassword)
 	invalidKafkaUserCreateConfig := fmt.Sprintf(string(configBytes4), username, apiKey, hostname, zookeeperNodeSize,
-		kafkaUsername4, oldPassword)
+		kafkaUsername3, oldPassword)
 
 	resource.Test(t, resource.TestCase{
 		Providers: testProviders,
@@ -114,10 +110,9 @@ func testCheckResourceValidKafka(resourceName string) resource.TestCheckFunc {
 
 func checkKafkaUserCreated(hostname, username, apiKey string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		userResources := [3]string{
+		userResources := [2]string{
 			"instaclustr_kafka_user.kafka_user_charlie",
 			"instaclustr_kafka_user.kafka_user_charlie_scram-sha-512",
-			"instaclustr_kafka_user.kafka_user_charlie_empty_options",
 		}
 
 		OUTER:
@@ -146,10 +141,9 @@ func checkKafkaUserCreated(hostname, username, apiKey string) resource.TestCheck
 
 func checkKafkaUserUpdated(newPassword string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		userResources := [3]string{
+		userResources := [2]string{
 			"instaclustr_kafka_user.kafka_user_charlie",
 			"instaclustr_kafka_user.kafka_user_charlie_scram-sha-512",
-			"instaclustr_kafka_user.kafka_user_charlie_empty_options",
 		}
 
 		for _, resourceName := range userResources {

@@ -45,18 +45,11 @@ func resourceKafkaUser() *schema.Resource {
 				ForceNew: true,
 			},
 
-			"options": {
-				Type:     schema.TypeMap,
+			"sasl_scram_mechanism": {
+				Type:     schema.TypeString,
 				Optional: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"sasl-scram-mechanism": {
-							Type:     schema.TypeString,
-							Optional: true,
-							ForceNew: true,
-						},
-					},
-				},
+				Default: "SCRAM-SHA-256",
+				ForceNew: true,
 			},
 		},
 	}
@@ -98,11 +91,15 @@ func resourceKafkaUserCreate(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
+	createOptionsData := KafkaUserCreateOptions{
+		SaslScramMechanism: d.Get("sasl_scram_mechanism").(string),
+	}
+
 	createData := CreateKafkaUserRequest{
 		Username:           username,
 		Password:           d.Get("password").(string),
 		InitialPermissions: d.Get("initial_permissions").(string),
-		Options: 			&kafkaUserCreateOptions,
+		Options: 			createOptionsData,
 	}
 
 	var jsonStr []byte
@@ -138,10 +135,14 @@ func resourceKafkaUserUpdate(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
+	resetPasswordOptionsData := KafkaUserResetPasswordOptions{
+		SaslScramMechanism: d.Get("sasl_scram_mechanism").(string),
+	}
+
 	createData := UpdateKafkaUserRequest{
 		Username: d.Get("username").(string),
 		Password: d.Get("password").(string),
-		Options: &kafkaUserResetPasswordOptions,
+		Options: resetPasswordOptionsData,
 	}
 
 	var jsonStr []byte
