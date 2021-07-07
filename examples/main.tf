@@ -210,7 +210,7 @@ resource "instaclustr_kafka_user" "kafka_user_harley" {
   username = "harley"
   password = "harley123!"
   initial_permissions = "standard"
-  sasl_scram_mechanism = "SCRAM-SHA-512"
+  authentication_mechanism = "SCRAM-SHA-512"
 }
 
 data "instaclustr_kafka_user_list" "kafka_user_list" {
