@@ -3,7 +3,6 @@ package instaclustr
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/mitchellh/mapstructure"
 	"log"
 
 	"github.com/hashicorp/terraform/helper/schema"
@@ -45,18 +44,11 @@ func resourceKafkaUser() *schema.Resource {
 				ForceNew: true,
 			},
 
-			"options": {
-				Type:     schema.TypeMap,
+			"authentication_mechanism": {
+				Type:     schema.TypeString,
 				Optional: true,
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"sasl-scram-mechanism": {
-							Type:     schema.TypeString,
-							Optional: true,
-							ForceNew: true,
-						},
-					},
-				},
+				Default: "SCRAM-SHA-256",
+				ForceNew: true,
 			},
 		},
 	}
@@ -92,17 +84,15 @@ func resourceKafkaUserCreate(d *schema.ResourceData, meta interface{}) error {
 		}
 	}
 
-	var kafkaUserCreateOptions KafkaUserCreateOptions
-	err = mapstructure.Decode(d.Get("options").(map[string]interface{}), &kafkaUserCreateOptions)
-	if err != nil {
-		return err
+	createOptionsData := KafkaUserCreateOptions{
+		AuthenticationMechanism: d.Get("authentication_mechanism").(string),
 	}
 
 	createData := CreateKafkaUserRequest{
 		Username:           username,
 		Password:           d.Get("password").(string),
 		InitialPermissions: d.Get("initial_permissions").(string),
-		Options: 			&kafkaUserCreateOptions,
+		Options: 			createOptionsData,
 	}
 
 	var jsonStr []byte
@@ -131,21 +121,17 @@ func resourceKafkaUserUpdate(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Changing Kafka user password in %s.", d.Get("cluster_id").(string))
 	client := meta.(*Config).Client
 
-	var err error
-	var kafkaUserResetPasswordOptions KafkaUserResetPasswordOptions
-	err = mapstructure.Decode(d.Get("options").(map[string]interface{}), &kafkaUserResetPasswordOptions)
-	if err != nil {
-		return err
+	resetPasswordOptionsData := KafkaUserResetPasswordOptions{
+		AuthenticationMechanism: d.Get("authentication_mechanism").(string),
 	}
 
 	createData := UpdateKafkaUserRequest{
 		Username: d.Get("username").(string),
 		Password: d.Get("password").(string),
-		Options: &kafkaUserResetPasswordOptions,
+		Options: resetPasswordOptionsData,
 	}
 
-	var jsonStr []byte
-	jsonStr, err = json.Marshal(createData)
+	jsonStr, err := json.Marshal(createData)
 	if err != nil {
 		return fmt.Errorf("[Error] Error creating kafka user update request: %s", err)
 	}

@@ -23,13 +23,7 @@ Property | Description | Default
 `username`|User name for the Kafka user|Required
 `password`|Password for the Kafka user|Required
 `initial_permissions`|Initial permission set (ACL) associated with this user. Possible values are: `standard`, `read-only`, and `none`. | `none`
-`options`|Additional options for Kafka user configuration (see next table for individual options)|{}
-
-N.B. The options available to be set within the `options` property above are:
-
-Option | Description | Default
--------|-------------|--------
-`sasl-scram-mechanism`|The mechanism used to authenticate the user to the cluster. Possible values are: `SCRAM-SHA-256`, `SCRAM-SHA-512`|`SCRAM-SHA-256`
+`authentication_mechanism`|The mechanism used to authenticate the user to the cluster. Possible values are: `SCRAM-SHA-256`, `SCRAM-SHA-512`|`SCRAM-SHA-256`
 
 `instaclustr_kafka_user_list`
 
