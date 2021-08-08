@@ -30,6 +30,7 @@ func Provider() *schema.Provider {
 			"instaclustr_kafka_user":     resourceKafkaUser(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
+			"instaclustr_clusters":            dataSourceClustersList(),
 			"instaclustr_cluster_credentials": dataSourceClusterCredentials(),
 			"instaclustr_kafka_user_list":     dataSourceKafkaUserList(),
 		},
