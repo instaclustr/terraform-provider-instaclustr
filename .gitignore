@@ -3,6 +3,8 @@ test/mock_api_server/__pycache__
 
 vendor
 .idea
+coverage.out
+report.json
 tf.plan
 *.tfstate
 *.tfstate.*
