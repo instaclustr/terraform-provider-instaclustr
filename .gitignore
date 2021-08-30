@@ -3,6 +3,7 @@ test/mock_api_server/__pycache__
 
 vendor
 .idea
+tf.plan
 *.tfstate
 *.tfstate.*
 examples/crash.log
