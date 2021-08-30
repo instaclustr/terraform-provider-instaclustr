@@ -686,6 +686,9 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 	if err != nil {
 		return formatCreateErrMsg(err)
 	}
+
+	log.Printf("[DEBUG] Instaclustr REST API request: %s", jsonStrCreate)
+
 	d.SetId(id)
 	d.Set("cluster_id", id)
 	log.Printf("[INFO] Cluster %s has been created.", id)
@@ -1381,6 +1384,7 @@ func checkIfBundleRequiresRackAllocation(bundles []Bundle) bool {
 	var noRackAllocationBundles = []string{
 		"REDIS",
 		"APACHE_ZOOKEEPER",
+		"POSTGRESQL",
 	}
 
 	for i := 0; i < len(bundles); i++ {

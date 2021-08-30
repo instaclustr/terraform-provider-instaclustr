@@ -56,7 +56,8 @@ type BundleOptions struct {
 	RedisPasswordAuth             *bool  `json:"passwordAuth,omitempty" mapstructure:"password_auth,omitempty"`
 	DedicatedZookeeper            *bool  `json:"dedicatedZookeeper,omitempty" mapstructure:"dedicated_zookeeper,omitempty"`
 	ZookeeperNodeSize             string `json:"zookeeperNodeSize,omitempty" mapstructure:"zookeeper_node_size,omitempty"`
-	ZookeeperNodeCount            int    `json:"zookeeperNodeCount,omitempty" mapstructure:"zookeeper_node_count,omitempty"`
+	ZookeeperNodeCount            int    `json:"numNodes,omitempty" mapstructure:"zookeeper_node_count,omitempty"`
+	PostgresqlNodeCount           int    `json:"postgresqlNodeCount,omitempty" mapstructure:"postgresql_node_count,omitempty"`
 }
 
 type ClusterProvider struct {
