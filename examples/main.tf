@@ -23,7 +23,6 @@ resource "instaclustr_encryption_key" "add_ebs_key" {
   provider = "instaclustr"
 }
 
-
 resource "instaclustr_cluster" "example" {
   cluster_name = "testcluster"
   node_size = "t3.small"
@@ -255,5 +254,26 @@ resource "instaclustr_cluster" "example-redis" {
       master_nodes = 3,
       replica_nodes = 3
     }
+  }
+}
+
+resource "instaclustr_cluster" "example-postgresql" {
+  cluster_name = "testcluster"
+  node_size = "PGS-DEV-t3.small-5"
+  data_centre = "US_WEST_2"
+  sla_tier = "NON_PRODUCTION"
+  cluster_network = "192.168.0.0/18"
+  private_network_cluster = false
+  cluster_provider = {
+    name = "AWS_VPC"
+  }
+
+  bundle {
+    bundle = "POSTGRESQL"
+    version = "13.4"
+    options = {
+      "numNodes": "1",
+      "clientEncryption": "true"
+    },
   }
 }
