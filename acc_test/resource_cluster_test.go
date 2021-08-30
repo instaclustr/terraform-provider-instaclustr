@@ -426,6 +426,31 @@ func TestValidRedisClusterCreate(t *testing.T) {
 	})
 }
 
+func TestValidPostgresqlClusterCreate(t *testing.T) {
+	testAccProvider := instaclustr.Provider()
+	testAccProviders := map[string]terraform.ResourceProvider{
+		"instaclustr": testAccProvider,
+	}
+	validConfig, _ := ioutil.ReadFile("data/valid_postgresql_cluster_create.tf")
+	username := os.Getenv("IC_USERNAME")
+	apiKey := os.Getenv("IC_API_KEY")
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
+	resource.Test(t, resource.TestCase{
+		Providers:    testAccProviders,
+		CheckDestroy: testCheckResourceDeleted("validPostgresql", hostname, username, apiKey),
+		Steps: []resource.TestStep{
+			{
+				Config: oriConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid("validPostgresql"),
+					testCheckResourceCreated("validPostgresql", hostname, username, apiKey),
+				),
+			},
+		},
+	})
+}
+
 func TestValidElasticsearchClusterCreate(t *testing.T) {
 	testAccProvider := instaclustr.Provider()
 	testAccProviders := map[string]terraform.ResourceProvider{

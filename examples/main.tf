@@ -12,9 +12,8 @@ terraform {
 }
 
 provider "instaclustr" {
-  username = "alwyn6"
-  api_key = "4cbb73d1ade5cc2b5b23dc3edf2f11eb"
-  api_hostname = "https://api.dev.instaclustr.com"
+  username = "<Your instaclustr username here>"
+  api_key = "<Your provisioning API key here>"
 }
 
 resource "instaclustr_encryption_key" "add_ebs_key" {
@@ -249,7 +248,7 @@ resource "instaclustr_cluster" "example-redis" {
 
   bundle {
     bundle = "REDIS"
-    version = "6.0.4"
+    version = "6.0.9"
     options = {
       master_nodes = 3,
       replica_nodes = 3
@@ -259,11 +258,10 @@ resource "instaclustr_cluster" "example-redis" {
 
 resource "instaclustr_cluster" "example-postgresql" {
   cluster_name = "testcluster"
-  node_size = "PGS-DEV-t3.small-5"
+  node_size = "postgresql-preview-t3.small-v2-5"
   data_centre = "US_WEST_2"
   sla_tier = "NON_PRODUCTION"
   cluster_network = "192.168.0.0/18"
-  private_network_cluster = false
   cluster_provider = {
     name = "AWS_VPC"
   }
@@ -272,8 +270,8 @@ resource "instaclustr_cluster" "example-postgresql" {
     bundle = "POSTGRESQL"
     version = "13.4"
     options = {
-      "numNodes": "1",
-      "clientEncryption": "true"
-    },
+      postgresql_node_count = 1,
+      client_encryption = true
+    }
   }
 }
