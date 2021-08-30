@@ -12,8 +12,9 @@ terraform {
 }
 
 provider "instaclustr" {
-  username = "<Your instaclustr username here>"
-  api_key = "<Your provisioning API key here>"
+  username = "alwyn6"
+  api_key = "4cbb73d1ade5cc2b5b23dc3edf2f11eb"
+  api_hostname = "https://api.dev.instaclustr.com"
 }
 
 resource "instaclustr_encryption_key" "add_ebs_key" {
@@ -32,9 +33,9 @@ resource "instaclustr_cluster" "example" {
   private_network_cluster = false
   cluster_provider = {
     name = "AWS_VPC",
-    tags = {
-      "myTag" = "myTagValue"
-    }
+  }
+  tags = {
+    "myTag" = "myTagValue"
   }
   rack_allocation = {
     number_of_racks = 3

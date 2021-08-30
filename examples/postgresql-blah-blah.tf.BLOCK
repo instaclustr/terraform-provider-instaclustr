@@ -1,0 +1,39 @@
+# required for terraform version >= 13.
+# Remove the terraform block if you're using a terraform version lower
+terraform {
+  required_providers {
+    instaclustr = {
+      source = "instaclustr/instaclustr"
+      //Change the source as per below to work with a local development copy on terraform version >=13
+      //source = "terraform.instaclustr.com/instaclustr/instaclustr"
+      version = ">= 1.0.0"
+    }
+  }
+}
+
+provider "instaclustr" {
+  username = "alwyn6"
+  api_key = "4cbb73d1ade5cc2b5b23dc3edf2f11eb"
+  api_hostname = "https://api.dev.instaclustr.com"
+}
+
+resource "instaclustr_cluster" "example" {
+  cluster_name = "alwyn-tf-postgres-pp"
+  node_size = "t3.small"
+  data_centre = "US_WEST_2"
+  sla_tier = "NON_PRODUCTION"
+  cluster_network = "192.168.0.0/18"
+  private_network_cluster = false
+  cluster_provider = {
+    name = "AWS_VPC"
+  }
+
+  bundle {
+    bundle = "POSTGRESQL"
+    version = "13.4"
+    options = {
+      "numNodes": "1",
+      "clientEncryption": "true"
+    },
+  }
+}
