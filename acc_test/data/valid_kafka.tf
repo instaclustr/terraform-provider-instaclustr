@@ -5,7 +5,7 @@ provider "instaclustr" {
 }
 resource "instaclustr_cluster" "valid" {
     cluster_name = "test_cluster"
-    node_size = "r5.large-500-gp2"
+    node_size = "KFK-PRD-r6g.large-250"
     data_centre = "US_WEST_2"
     sla_tier = "NON_PRODUCTION"
     cluster_network = "192.168.0.0/18"
