@@ -23,7 +23,7 @@ resource "instaclustr_cluster" "valid" {
 
     bundles {
       bundle = "APACHE_CASSANDRA"
-      version = "apache-cassandra-3.11.8.ic2"
+      version = "apache-cassandra-3.11.8.2"
       options = {
         auth_n_authz = true
         use_private_broadcast_rpc_address = false
@@ -49,7 +49,7 @@ resource "instaclustr_cluster" "valid" {
 
     bundles {
       bundle = "APACHE_CASSANDRA"
-      version = "apache-cassandra-3.11.8.ic2"
+      version = "apache-cassandra-3.11.8.2"
       options = {
         auth_n_authz = true
         use_private_broadcast_rpc_address = false

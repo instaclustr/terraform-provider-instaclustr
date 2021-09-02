@@ -22,7 +22,7 @@ resource "instaclustr_cluster" "valid" {
 
     bundle {
         bundle = "KAFKA"
-        version = "apache-kafka:2.5.1"
+        version = "apache-kafka:2.7.1"
         options = {
             client_encryption = false
             auto_create_topics = true
@@ -34,7 +34,7 @@ resource "instaclustr_cluster" "valid" {
 
     bundle {
         bundle = "KAFKA_SCHEMA_REGISTRY"
-        version = "kafka-schema-registry:5.0.0"
+        version = "kafka-schema-registry:5.0.4"
     }
     bundle {
         bundle = "KAFKA_REST_PROXY"
