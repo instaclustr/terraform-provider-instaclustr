@@ -4,7 +4,7 @@ provider "instaclustr" {
     api_hostname = "%s"
 }
 
-resource "instaclustr_cluster" "validRedis" {
+resource "instaclustr_cluster" "validPostgresql" {
   cluster_name = "testcluster"
   node_size = "postgresql-preview-t3.small-v2-5"
   data_centre = "US_WEST_2"
