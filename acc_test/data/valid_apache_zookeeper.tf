@@ -5,7 +5,7 @@ provider "instaclustr" {
 }
 resource "instaclustr_cluster" "validApacheZookeeper" {
     cluster_name = "test_zookeeper_cluster"
-    node_size = "zk-developer-t3.small-20"
+    node_size = "zookeeper-developer-t3.small-20"
     data_centre = "US_WEST_2"
     sla_tier = "NON_PRODUCTION"
     cluster_network = "192.168.0.0/18"
