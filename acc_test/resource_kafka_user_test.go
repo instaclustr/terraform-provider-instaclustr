@@ -30,7 +30,7 @@ func TestKafkaUserResource(t *testing.T) {
 	kafkaUsername3 := "charlie3"
 	oldPassword := "charlie123!"
 	newPassword := "charlie123standard!"
-	zookeeperNodeSize := "zk-developer-t3.small-20"
+	zookeeperNodeSize := "zookeeper-developer-t3.small-20"
 
 	createClusterConfig := fmt.Sprintf(string(configBytes1), username, apiKey, hostname, zookeeperNodeSize)
 	createKafkaUserConfig := fmt.Sprintf(string(configBytes2), username, apiKey, hostname, zookeeperNodeSize,
