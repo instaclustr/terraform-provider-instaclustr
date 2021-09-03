@@ -245,7 +245,7 @@ func TestKafkaUserResource_importBasic(t *testing.T) {
 					time.Sleep(6 * time.Minute)
 				},
 				Config:      invalidResizeConfig,
-				ExpectError: regexp.MustCompile("The cluster is not currently in a state to support a resize operation"),
+				ExpectError: regexp.MustCompile("There are no suitable replacement modes for cluster data centre"),
 			},
 			{
 				Config: validResizeConfig,
