@@ -525,6 +525,11 @@ func resourceCluster() *schema.Resource {
 										Optional: true,
 										ForceNew: true,
 									},
+									"postgresql_node_count": {
+										Type:     schema.TypeInt,
+										Optional: true,
+										ForceNew: true,
+									},
 								},
 							},
 						},
