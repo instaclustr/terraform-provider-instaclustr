@@ -13,6 +13,10 @@ resource "instaclustr_cluster" "validPostgresql" {
   cluster_provider = {
     name = "AWS_VPC"
   }
+  rack_allocation = {
+    nodes_per_rack = 1
+    number_of_racks = 1
+  }
 
   bundle {
     bundle = "POSTGRESQL"

@@ -245,30 +245,40 @@ resource "instaclustr_cluster" "example-redis" {
   cluster_provider = {
     name = "AWS_VPC"
   }
+  rack_allocation = {
+    nodes_per_rack = 1
+    number_of_racks = 4
+  }
 
   bundle {
     bundle = "REDIS"
-    version = "6.0.9"
+    version = "redis:6.0.9"
     options = {
       master_nodes = 3,
-      replica_nodes = 3
+      replica_nodes = 3,
+      password_auth = false,
+      client_encryption = false
     }
   }
 }
 
 resource "instaclustr_cluster" "example-postgresql" {
   cluster_name = "testcluster"
-  node_size = "postgresql-preview-t3.small-v2-5"
+  node_size = "PGS-DEV-t3.small-5"
   data_centre = "US_WEST_2"
   sla_tier = "NON_PRODUCTION"
   cluster_network = "192.168.0.0/18"
   cluster_provider = {
     name = "AWS_VPC"
   }
+  rack_allocation = {
+    nodes_per_rack = 1
+    number_of_racks = 1
+  }
 
   bundle {
     bundle = "POSTGRESQL"
-    version = "13.4"
+    version = "postgresql:13.4"
     options = {
       postgresql_node_count = 1,
       client_encryption = true
