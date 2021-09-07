@@ -22,7 +22,6 @@ resource "instaclustr_encryption_key" "add_ebs_key" {
   provider = "instaclustr"
 }
 
-
 resource "instaclustr_cluster" "example" {
   cluster_name = "testcluster"
   node_size = "t3.small"
@@ -32,9 +31,9 @@ resource "instaclustr_cluster" "example" {
   private_network_cluster = false
   cluster_provider = {
     name = "AWS_VPC",
-    tags = {
-      "myTag" = "myTagValue"
-    }
+  }
+  tags = {
+    "myTag" = "myTagValue"
   }
   rack_allocation = {
     number_of_racks = 3
@@ -246,13 +245,43 @@ resource "instaclustr_cluster" "example-redis" {
   cluster_provider = {
     name = "AWS_VPC"
   }
+  rack_allocation = {
+    nodes_per_rack = 1
+    number_of_racks = 4
+  }
 
   bundle {
     bundle = "REDIS"
-    version = "6.0.4"
+    version = "redis:6.0.9"
     options = {
       master_nodes = 3,
-      replica_nodes = 3
+      replica_nodes = 3,
+      password_auth = false,
+      client_encryption = false
+    }
+  }
+}
+
+resource "instaclustr_cluster" "example-postgresql" {
+  cluster_name = "testcluster"
+  node_size = "PGS-DEV-t3.small-5"
+  data_centre = "US_WEST_2"
+  sla_tier = "NON_PRODUCTION"
+  cluster_network = "192.168.0.0/18"
+  cluster_provider = {
+    name = "AWS_VPC"
+  }
+  rack_allocation = {
+    nodes_per_rack = 1
+    number_of_racks = 1
+  }
+
+  bundle {
+    bundle = "POSTGRESQL"
+    version = "postgresql:13.4"
+    options = {
+      postgresql_node_count = 1,
+      client_encryption = true
     }
   }
 }

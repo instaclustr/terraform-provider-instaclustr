@@ -5,7 +5,7 @@ provider "instaclustr" {
 }
 resource "instaclustr_cluster" "valid" {
     cluster_name = "test_cluster"
-    node_size = "r5.large-500-gp2"
+    node_size = "KFK-PRD-r6g.large-250"
     data_centre = "US_WEST_2"
     sla_tier = "NON_PRODUCTION"
     cluster_network = "192.168.0.0/18"
@@ -22,7 +22,7 @@ resource "instaclustr_cluster" "valid" {
 
     bundle {
         bundle = "KAFKA"
-        version = "apache-kafka:2.5.1"
+        version = "apache-kafka:2.7.1"
         options = {
             client_encryption = false
             auto_create_topics = true
@@ -34,11 +34,11 @@ resource "instaclustr_cluster" "valid" {
 
     bundle {
         bundle = "KAFKA_SCHEMA_REGISTRY"
-        version = "kafka-schema-registry:5.0.0"
+        version = "kafka-schema-registry:5.0.4.ic1"
     }
     bundle {
         bundle = "KAFKA_REST_PROXY"
-        version = "kafka-rest-proxy:5.0.0"
+        version = "kafka-rest-proxy:5.0.0.ic1"
     }
 
 }

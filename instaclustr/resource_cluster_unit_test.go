@@ -101,6 +101,13 @@ func TestCheckIfBundleRequiresRackAllocation(t *testing.T) {
 		t.Fatalf("Incorrect check performed for APACHE_ZOOKEEPER bundle.\nExpected: %v\nActual: %v\n", false, true)
 	}
 
+	bundles = []Bundle{{Bundle: "POSTGRESQL"}}
+	isRackAllocationRequired = checkIfBundleRequiresRackAllocation(bundles)
+
+	if isRackAllocationRequired == true {
+		t.Fatalf("Incorrect check performed for POSTGRESQL bundle.\nExpected: %v\nActual: %v\n", false, true)
+	}
+
 	bundles = []Bundle{{Bundle: "APACHE_CASSANDRA"}}
 	isRackAllocationRequired = checkIfBundleRequiresRackAllocation(bundles)
 
