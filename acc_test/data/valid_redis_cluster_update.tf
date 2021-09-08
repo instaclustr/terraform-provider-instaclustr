@@ -4,18 +4,16 @@ provider "instaclustr" {
     api_hostname = "%s"
 }
 
-resource "instaclustr_cluster" "invalidRedis" {
+resource "instaclustr_cluster" "validRedis" {
   cluster_name = "tf-redis-test"
-  node_size = "t3.small-20-r"
+  node_size = "r5.large-100-r"
   data_centre = "US_WEST_2"
-  sla_tier = "NON_PRODUCTION"
+  sla_tier = "PRODUCTION"
   cluster_network = "192.168.0.0/18"
+  private_network_cluster = true
+  pci_compliant_cluster   = false
   cluster_provider = {
     name = "AWS_VPC"
-  }
-  rack_allocation = {
-    nodes_per_rack = 1
-    number_of_racks = 4
   }
 
   bundle {
@@ -28,5 +26,7 @@ resource "instaclustr_cluster" "invalidRedis" {
       client_encryption = false
     }
   }
+
+  wait_for_state = "RUNNING"
 }
 

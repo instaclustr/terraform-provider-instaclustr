@@ -317,6 +317,68 @@ func TestAccElasticsearchClusterResize(t *testing.T) {
 	})
 }
 
+// Currently test that the options does re-create the cluster
+func TestAccRedisClusterForceNew(t *testing.T){
+	testAccProviders := map[string]terraform.ResourceProvider{
+		"instaclustr": instaclustr.Provider(),
+	}
+	validConfig, _ := ioutil.ReadFile("data/valid_redis_cluster_update.tf")
+	username := os.Getenv("IC_USERNAME")
+	apiKey := os.Getenv("IC_API_KEY")
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+	resourceName := "validRedis"
+	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
+
+    //fmt.Println("Original Configs, ", oriConfig)
+
+	//validRedisUpdateConfig := strings.Replace(oriConfig, `private_network_cluster = true`, `private_network_cluster = false`, 1)
+	//validRedisUpdateConfig := strings.Replace(oriConfig, `master_nodes = 3,`, `master_nodes = 6,`, 1)
+	//validRedisUpdateConfig  = strings.Replace(validRedisUpdateConfig , `replica_nodes = 3,`, `replica_nodes = 6,`, 1)
+	validRedisUpdateClientEncryptionConfig  := strings.Replace(oriConfig , `client_encryption = false`, `client_encryption = true`, 1)
+	validRedisUpdatePasswordAuthConfig  := strings.Replace(oriConfig , `password_auth = false`, `password_auth = true`, 1)
+
+// 	invalidResizeConfig := strings.Replace(oriConfig, `kibana_node_size = "t3.small-v2",`, `kibana_node_size = "t3.small",`, 1)
+
+
+    resource.Test(t, resource.TestCase{
+        Providers:    testAccProviders,
+        CheckDestroy: testCheckResourceDeleted("validRedis", hostname, username, apiKey),
+        Steps: []resource.TestStep{
+            {
+                Config: oriConfig,
+                Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid(resourceName),
+					testCheckResourceCreated(resourceName, hostname, username, apiKey),
+					testCheckContactIPCorrect(resourceName, hostname, username, apiKey, 4, 0), //Rack Allocation
+                ),
+            },
+            {
+				PreConfig: func() {
+					fmt.Println("Sleep for 1 minutes to wait for Redis cluster to be ready for update.")
+					time.Sleep(1 * time.Minute)
+				},
+                Config: validRedisUpdateClientEncryptionConfig,
+                Check: resource.ComposeTestCheckFunc(
+                    resource.TestCheckResourceAttr("instaclustr_cluster.validRedis", "cluster_name", "tf-redis-test"),
+                    resource.TestCheckResourceAttr("instaclustr_cluster.validRedis", "bundle.0.options.client_encryption", "true"),
+                ),
+            },
+			{
+				PreConfig: func() {
+					fmt.Println("Sleep for 1 minutes to wait for Redis cluster to be ready for update.")
+					time.Sleep(1 * time.Minute)
+				},
+				Config: validRedisUpdatePasswordAuthConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("instaclustr_cluster.validRedis", "cluster_name", "tf-redis-test"),
+					//resource.TestCheckResourceAttr("instaclustr_cluster.validRedis", "bundle.0.options.client_encryption", "true"),
+					resource.TestCheckResourceAttr("instaclustr_cluster.validRedis", "bundle.0.options.password_auth", "true"),
+				),
+			},
+        },
+    })
+}
+
 func testCheckResourceValid(resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		resourceState := s.Modules[0].Resources["instaclustr_cluster."+resourceName]
@@ -476,7 +538,7 @@ func TestInvalidRedisClusterCreate(t *testing.T) {
 	testAccProviders := map[string]terraform.ResourceProvider{
 		"instaclustr": testAccProvider,
 	}
-	invalidConfig, _ := ioutil.ReadFile("data/invalid_elasticsearch_cluster_create.tf")
+	invalidConfig, _ := ioutil.ReadFile("data/invalid_redis_cluster_create.tf")
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
@@ -485,7 +547,7 @@ func TestInvalidRedisClusterCreate(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config:      fmt.Sprintf(string(invalidConfig), username, apiKey, hostname),
-				ExpectError: regexp.MustCompile("When 'dedicated_master_nodes' is not true , data_node_size can be either null or equal to master_node_size."),
+				ExpectError: regexp.MustCompile("'rack_allocation' is not supported in REDIS"),
 			},
 		},
 	})
