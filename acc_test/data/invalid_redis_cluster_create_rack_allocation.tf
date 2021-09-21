@@ -4,18 +4,22 @@ provider "instaclustr" {
     api_hostname = "%s"
 }
 
-resource "instaclustr_cluster" "validRedis" {
+resource "instaclustr_cluster" "invalidRedis" {
   cluster_name = "tf-redis-test"
-//  node_size = "r5.large-100-r"
+//  node_size = "t3.small-20-r"
 //  data_centre = "US_WEST_2"
-  sla_tier = "PRODUCTION"
+  sla_tier = "NON_PRODUCTION"
   cluster_network = "192.168.0.0/18"
   private_network_cluster = true
   pci_compliant_cluster   = false
 //  cluster_provider = {
 //    name = "AWS_VPC"
 //  }
-
+//  rack_allocation = {
+//    nodes_per_rack = 1
+//    number_of_racks = 4
+//  }
+//
 //  bundle {
 //    bundle = "REDIS"
 //    version = "redis:6.0.9"
@@ -26,7 +30,6 @@ resource "instaclustr_cluster" "validRedis" {
 //      client_encryption = false
 //    }
 //  }
-
   data_centres {
     name        = "DC2"
     data_centre = "US_WEST_1"
@@ -34,6 +37,10 @@ resource "instaclustr_cluster" "validRedis" {
     node_size    = "r5.large-100-r"
     provider = {
       name = "AWS_VPC"
+    }
+    rack_allocation = {
+      nodes_per_rack = 1
+      number_of_racks = 4
     }
     bundles {
       bundle = "REDIS"

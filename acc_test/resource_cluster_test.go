@@ -317,7 +317,50 @@ func TestAccElasticsearchClusterResize(t *testing.T) {
 	})
 }
 
-// Currently test that the options does re-create the cluster
+func TestAccRedisClusterAddDC(t *testing.T) {
+	testAccProviders := map[string]terraform.ResourceProvider{
+		"instaclustr": instaclustr.Provider(),
+	}
+	validConfig, _ := ioutil.ReadFile("data/valid_redis_cluster_addDC.tf")
+	username := os.Getenv("IC_USERNAME")
+	apiKey := os.Getenv("IC_API_KEY")
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+
+	//updatedConfig, _ := ioutil.ReadFile("data/valid_redis_cluster_addDC.tf")
+
+	//resourceName := "validRedis"
+	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
+	//newConfig := fmt.Sprintf(string(updatedConfig), username, apiKey, hostname)
+
+	fmt.Println("the original config, ", oriConfig)
+	//fmt.Println("the new config, ", newConfig)
+
+	resource.Test(t, resource.TestCase{
+		Providers:    testAccProviders,
+		CheckDestroy: testCheckResourceDeleted("validRedis", hostname, username, apiKey),
+		Steps: []resource.TestStep{
+			{
+				Config: oriConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid("validRedis"),
+					testCheckResourceCreated("validRedis", hostname, username, apiKey),
+				),
+			},
+			//{
+			//	PreConfig: func() {
+			//		fmt.Println("Update Client Encryption.")
+			//	},
+			//	Config: newConfig,
+			//	Check: resource.ComposeTestCheckFunc(
+			//		resource.TestCheckResourceAttr("instaclustr_cluster.validRedis", "cluster_name", "tf-redis-test"),
+			//		//resource.TestCheckResourceAttr("instaclustr_cluster.validRedis", "bundle.0.options.client_encryption", "true"),
+			//	),
+			//},
+		},
+	})
+}
+
+// Test that the options does re-create the cluster
 func TestAccRedisClusterForceNew(t *testing.T){
 	testAccProviders := map[string]terraform.ResourceProvider{
 		"instaclustr": instaclustr.Provider(),
@@ -332,8 +375,8 @@ func TestAccRedisClusterForceNew(t *testing.T){
     //fmt.Println("Original Configs, ", oriConfig)
 
 	//validRedisUpdateConfig := strings.Replace(oriConfig, `private_network_cluster = true`, `private_network_cluster = false`, 1)
-	//validRedisUpdateConfig := strings.Replace(oriConfig, `master_nodes = 3,`, `master_nodes = 6,`, 1)
-	//validRedisUpdateConfig  = strings.Replace(validRedisUpdateConfig , `replica_nodes = 3,`, `replica_nodes = 6,`, 1)
+	validRedisUpdateMasterNodeCountConfig := strings.Replace(oriConfig, `master_nodes = 3,`, `master_nodes = 6,`, 1)
+	validRedisUpdateReplicaNodeCountConfig  := strings.Replace(oriConfig , `replica_nodes = 3,`, `replica_nodes = 6,`, 1)
 	validRedisUpdateClientEncryptionConfig  := strings.Replace(oriConfig , `client_encryption = false`, `client_encryption = true`, 1)
 	validRedisUpdatePasswordAuthConfig  := strings.Replace(oriConfig , `password_auth = false`, `password_auth = true`, 1)
 
@@ -354,8 +397,7 @@ func TestAccRedisClusterForceNew(t *testing.T){
             },
             {
 				PreConfig: func() {
-					fmt.Println("Sleep for 1 minutes to wait for Redis cluster to be ready for update.")
-					time.Sleep(1 * time.Minute)
+					fmt.Println("Update Client Encryption.")
 				},
                 Config: validRedisUpdateClientEncryptionConfig,
                 Check: resource.ComposeTestCheckFunc(
@@ -365,14 +407,32 @@ func TestAccRedisClusterForceNew(t *testing.T){
             },
 			{
 				PreConfig: func() {
-					fmt.Println("Sleep for 1 minutes to wait for Redis cluster to be ready for update.")
-					time.Sleep(1 * time.Minute)
+					fmt.Println("Update Password Auth.")
 				},
 				Config: validRedisUpdatePasswordAuthConfig,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("instaclustr_cluster.validRedis", "cluster_name", "tf-redis-test"),
-					//resource.TestCheckResourceAttr("instaclustr_cluster.validRedis", "bundle.0.options.client_encryption", "true"),
 					resource.TestCheckResourceAttr("instaclustr_cluster.validRedis", "bundle.0.options.password_auth", "true"),
+				),
+			},
+			{
+				PreConfig: func() {
+					fmt.Println("Update Master Node")
+				},
+				Config: validRedisUpdateMasterNodeCountConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("instaclustr_cluster.validRedis", "cluster_name", "tf-redis-test"),
+					resource.TestCheckResourceAttr("instaclustr_cluster.validRedis", "bundle.0.options.master_nodes", "6"),
+				),
+			},
+			{
+				PreConfig: func() {
+					fmt.Println("Update Replica Node.")
+				},
+				Config: validRedisUpdateReplicaNodeCountConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("instaclustr_cluster.validRedis", "cluster_name", "tf-redis-test"),
+					resource.TestCheckResourceAttr("instaclustr_cluster.validRedis", "bundle.0.options.replica_nodes", "6"),
 				),
 			},
         },
@@ -468,7 +528,7 @@ func TestValidRedisClusterCreate(t *testing.T) {
 	testAccProviders := map[string]terraform.ResourceProvider{
 		"instaclustr": testAccProvider,
 	}
-	validConfig, _ := ioutil.ReadFile("data/valid_redis_cluster_create.tf")
+	validConfig, _ := ioutil.ReadFile("data/valid_redis_cluster_dc.tf")
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
@@ -538,7 +598,9 @@ func TestInvalidRedisClusterCreate(t *testing.T) {
 	testAccProviders := map[string]terraform.ResourceProvider{
 		"instaclustr": testAccProvider,
 	}
-	invalidConfig, _ := ioutil.ReadFile("data/invalid_redis_cluster_create.tf")
+	invalidConfigWith2CDC, _ := ioutil.ReadFile("data/invalid_redis_cluster_create.tf")
+	invalidConfigWithRA, _ := ioutil.ReadFile("data/invalid_redis_cluster_create_rack_allocation.tf")
+	invalidConfigWithMultiDC, _ := ioutil.ReadFile("data/invalid_redis_cluster_dc.tf")
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
@@ -546,8 +608,16 @@ func TestInvalidRedisClusterCreate(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config:      fmt.Sprintf(string(invalidConfig), username, apiKey, hostname),
+				Config:      fmt.Sprintf(string(invalidConfigWith2CDC), username, apiKey, hostname),
+				ExpectError: regexp.MustCompile("Redis does not support multi-dc"),
+			},
+			{
+				Config:      fmt.Sprintf(string(invalidConfigWithRA), username, apiKey, hostname),
 				ExpectError: regexp.MustCompile("'rack_allocation' is not supported in REDIS"),
+			},
+			{
+				Config:      fmt.Sprintf(string(invalidConfigWithMultiDC), username, apiKey, hostname),
+				ExpectError: regexp.MustCompile("Redis only support two cluster data centres"),
 			},
 		},
 	})
