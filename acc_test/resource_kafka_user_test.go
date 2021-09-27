@@ -42,6 +42,10 @@ func TestKafkaUserResource(t *testing.T) {
 	updateKafkaUserConfig := fmt.Sprintf(string(configBytes3), username, apiKey, hostname, zookeeperNodeSize,
 		kafkaUsername1, newPassword,
 		kafkaUsername2, newPassword)
+	invalidKafkaUserCreateConfigDuplicate := fmt.Sprintf(string(configBytes3), username, apiKey, hostname, zookeeperNodeSize,
+		kafkaUsername1, newPassword,
+		kafkaUsername2, newPassword,
+                kafkaUsername1, newPassword)
 	invalidKafkaUserCreateConfig := fmt.Sprintf(string(configBytes4), username, apiKey, hostname, zookeeperNodeSize,
 		kafkaUsername3, oldPassword)
 
@@ -76,6 +80,10 @@ func TestKafkaUserResource(t *testing.T) {
 			{
 				Config: updateKafkaUserConfig,
 				Check:  checkKafkaUserUpdated(newPassword),
+			},
+			{
+				Config: invalidKafkaUserCreateConfigDuplicate,
+				ExpectError: regexp.MustCompile("A Kafka user with this username already exists on this cluster."),
 			},
 			// Can't rely on the resource destruction because we need the destruction to happen in order and checked,
 			// i.e., we need to destroy the kafka user resources first.

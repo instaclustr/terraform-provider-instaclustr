@@ -50,6 +50,12 @@ func resourceKafkaUser() *schema.Resource {
 				Default: "SCRAM-SHA-256",
 				ForceNew: true,
 			},
+			"override_existing_user": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  true,
+				ForceNew: true,
+			},
 		},
 	}
 }
@@ -86,6 +92,7 @@ func resourceKafkaUserCreate(d *schema.ResourceData, meta interface{}) error {
 
 	createOptionsData := KafkaUserCreateOptions{
 		AuthenticationMechanism: d.Get("authentication_mechanism").(string),
+		OverrideExistingUser: d.Get("override_existing_user").(boolean),
 	}
 
 	createData := CreateKafkaUserRequest{

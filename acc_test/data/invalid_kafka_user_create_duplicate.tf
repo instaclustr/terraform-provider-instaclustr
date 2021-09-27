@@ -1,4 +1,4 @@
-// This is part of testing "kafka user" suite, 4 of 5
+// This is part of testing "kafka user" suite, 5 of 5 
 provider "instaclustr" {
   username = "%s"
   api_key = "%s"
@@ -35,10 +35,25 @@ resource "instaclustr_cluster" "kafka_cluster" {
   }
 }
 
-resource "instaclustr_kafka_user" "kafka_user_charlie_invalid" {
+resource "instaclustr_kafka_user" "kafka_user_charlie" {
+  cluster_id = "${instaclustr_cluster.kafka_cluster.id}"
+  username = "%s"
+  password = "%s"
+  initial_permissions = "none"
+}
+
+resource "instaclustr_kafka_user" "kafka_user_charlie_scram-sha-512" {
   cluster_id          = "${instaclustr_cluster.kafka_cluster.id}"
   username            = "%s"
   password            = "%s"
   initial_permissions = "none"
-  authentication_mechanism = "ExpectedToFail"
+  authentication_mechanism = "SCRAM-SHA-512"
+}
+
+resource "instaclustr_kafka_user" "kafka_user_charlie_double" {
+  cluster_id = "${instaclustr_cluster.kafka_cluster.id}"
+  username = "%s"
+  password = "%s"
+  initial_permissions = "none"
+  override_existing_user = false
 }
