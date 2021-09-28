@@ -47,5 +47,25 @@ resource "instaclustr_cluster" "validRedis" {
     }
   }
 
+  data_centres {
+    name        = "DC1"
+    data_centre = "US_WEST_1"
+    network     = "10.1.0.0/18"
+    node_size    = "r5.large-100-r"
+    provider = {
+      name = "AWS_VPC"
+    }
+    bundles {
+      bundle = "REDIS"
+      version = "redis:6.0.9"
+      options = {
+        master_nodes = 3,
+        replica_nodes = 3,
+        password_auth = false,
+        client_encryption = false
+      }
+    }
+  }
+
 }
 

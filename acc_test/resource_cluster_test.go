@@ -321,7 +321,8 @@ func TestAccRedisClusterAddDC(t *testing.T) {
 	testAccProviders := map[string]terraform.ResourceProvider{
 		"instaclustr": instaclustr.Provider(),
 	}
-	validConfig, _ := ioutil.ReadFile("data/valid_redis_cluster_addDC.tf")
+	validConfig, _ := ioutil.ReadFile("data/valid_redis_cluster_create.tf")
+	updatedConfig, _ := ioutil.ReadFile("data/valid_redis_cluster_multidc.tf")
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
@@ -330,10 +331,52 @@ func TestAccRedisClusterAddDC(t *testing.T) {
 
 	//resourceName := "validRedis"
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
-	//newConfig := fmt.Sprintf(string(updatedConfig), username, apiKey, hostname)
+	newConfig := fmt.Sprintf(string(updatedConfig), username, apiKey, hostname)
+
+	newDC := ` data_centres {
+	name        = "DC1"
+	data_centre = "US_WEST_1"
+	network     = "10.1.0.0/18"
+	node_size    = "r5.large-100-r"
+	provider = {
+		name = "AWS_VPC"
+	}
+	bundles {
+		bundle = "REDIS"
+		version = "redis:6.0.9"
+		options = {
+		master_nodes = 3,
+		replica_nodes = 3,
+		password_auth = false,
+		client_encryption = false
+	}
+	}
+}
+
+data_centres {
+	name        = "DC3"
+	data_centre = "US_WEST_1"
+	network     = "10.1.0.0/18"
+	node_size    = "r5.large-100-r"
+	provider = {
+		name = "AWS_VPC"
+	}
+	bundles {
+		bundle = "REDIS"
+		version = "redis:6.0.9"
+		options = {
+		master_nodes = 3,
+		replica_nodes = 3,
+		password_auth = false,
+		client_encryption = false
+	}
+	}
+}
+
+`
 
 	fmt.Println("the original config, ", oriConfig)
-	//fmt.Println("the new config, ", newConfig)
+	fmt.Println("the new config, ", oriConfig+newDC)
 
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
@@ -346,16 +389,17 @@ func TestAccRedisClusterAddDC(t *testing.T) {
 					testCheckResourceCreated("validRedis", hostname, username, apiKey),
 				),
 			},
-			//{
-			//	PreConfig: func() {
-			//		fmt.Println("Update Client Encryption.")
-			//	},
-			//	Config: newConfig,
-			//	Check: resource.ComposeTestCheckFunc(
-			//		resource.TestCheckResourceAttr("instaclustr_cluster.validRedis", "cluster_name", "tf-redis-test"),
-			//		//resource.TestCheckResourceAttr("instaclustr_cluster.validRedis", "bundle.0.options.client_encryption", "true"),
-			//	),
-			//},
+			{
+				PreConfig: func() {
+					fmt.Println("Add DC")
+				},
+				Config: newConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid("validRedis"),
+					//resource.TestCheckResourceAttr("instaclustr_cluster.validRedis", "data_centres.#", "2"),
+					//resource.TestCheckResourceAttr("instaclustr_cluster.validRedis", "bundle.0.options.client_encryption", "true"),
+				),
+			},
 		},
 	})
 }
@@ -528,7 +572,7 @@ func TestValidRedisClusterCreate(t *testing.T) {
 	testAccProviders := map[string]terraform.ResourceProvider{
 		"instaclustr": testAccProvider,
 	}
-	validConfig, _ := ioutil.ReadFile("data/valid_redis_cluster_dc.tf")
+	validConfig, _ := ioutil.ReadFile("data/valid_redis_cluster_create.tf")
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
@@ -600,7 +644,6 @@ func TestInvalidRedisClusterCreate(t *testing.T) {
 	}
 	invalidConfigWith2CDC, _ := ioutil.ReadFile("data/invalid_redis_cluster_create.tf")
 	invalidConfigWithRA, _ := ioutil.ReadFile("data/invalid_redis_cluster_create_rack_allocation.tf")
-	invalidConfigWithMultiDC, _ := ioutil.ReadFile("data/invalid_redis_cluster_dc.tf")
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
@@ -614,10 +657,6 @@ func TestInvalidRedisClusterCreate(t *testing.T) {
 			{
 				Config:      fmt.Sprintf(string(invalidConfigWithRA), username, apiKey, hostname),
 				ExpectError: regexp.MustCompile("'rack_allocation' is not supported in REDIS"),
-			},
-			{
-				Config:      fmt.Sprintf(string(invalidConfigWithMultiDC), username, apiKey, hostname),
-				ExpectError: regexp.MustCompile("Redis only support two cluster data centres"),
 			},
 		},
 	})
