@@ -529,3 +529,31 @@ func (m MockResourceData) Get(key string) interface{} {
 		return nil
 	}
 }
+
+func testResourceExampleInstanceStateDataV0() map[string]interface{} {
+	return map[string]interface{}{
+		"node_size": "test",
+		"data_centres":"",
+		"cluster_network":"US_EAST_1",
+	}
+}
+
+func testResourceExampleInstanceStateDataV1() map[string]interface{} {
+	v0 := testResourceExampleInstanceStateDataV0()
+	return map[string]interface{}{
+		"node_size": v0["node_size"].(string) + ".",
+		"data_centres.0.name": v0["cluster_network"].(string),
+	}
+}
+
+func TestResourceExampleInstanceStateUpgradeV0(t *testing.T) {
+	expected := testResourceExampleInstanceStateDataV1()
+	actual, err := resourceExampleInstanceStateUpgradeV0(testResourceExampleInstanceStateDataV0(), nil)
+	if err != nil {
+		t.Fatalf("error migrating state: %s", err)
+	}
+
+	if !reflect.DeepEqual(expected, actual) {
+		t.Fatalf("\n\nexpected:\n\n%#v\n\ngot:\n\n%#v\n\n", expected, actual)
+	}
+}

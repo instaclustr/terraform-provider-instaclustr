@@ -357,6 +357,12 @@ func resourceCluster() *schema.Resource {
 							Type:     schema.TypeString,
 							Required: true,
 							ForceNew: true,
+							ValidateFunc: func(v interface{}, k string) (warns []string, errs []error) {
+								if v.(string)== "REDIS" {
+									errs = append(errs, fmt.Errorf("[ERROR] please provision Redis with `data_centres` key"))
+								}
+								return
+							},
 						},
 						"version": {
 							Type:     schema.TypeString,
@@ -576,12 +582,55 @@ func resourceCluster() *schema.Resource {
 				},
 			},
 		},
+		SchemaVersion: 1,
+		StateUpgraders: []schema.StateUpgrader{
+			{
+				Type:    resourceExampleInstanceResourceV0().CoreConfigSchema().ImpliedType(),
+				Upgrade: resourceExampleInstanceStateUpgradeV0,
+				Version: 0,
+			},
+		},
 	}
+}
+
+func resourceExampleInstanceResourceV0() *schema.Resource {
+	return &schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"bundle": {
+				Type:          schema.TypeList,
+				Optional:      true,
+				ConflictsWith: []string{"data_centres"},
+				MinItems:      1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"bundle": {
+							Type:     schema.TypeString,
+							Required: true,
+							ForceNew: true,
+						},
+					},
+				},
+			},
+		},
+	}
+}
+// Could we perhaps do this in resourceClusterRead?
+func resourceExampleInstanceStateUpgradeV0(rawState map[string]interface{}, meta interface{}) (map[string]interface{}, error) {
+	log.Println("New Schema Version Detected.")
+	delete(rawState,"cluster_network")
+	delete(rawState, "cluster_provider")
+	delete(rawState, "data_centre")
+	delete(rawState, "bundle")
+	delete(rawState, "node_size")
+	//Redis is not using rack!
+	delete(rawState, "rack_allocation")
+
+	return rawState, nil
 }
 
 func resourceClusterCustomizeDiff(diff *schema.ResourceDiff, i interface{}) error {
 
-	fmt.Println("[INFO] CHECK DIFF")
+	log.Println("[INFO] CHECK DIFF")
 
 
 	if _, useSingleCDCField := diff.GetOk("data_centre");useSingleCDCField {
@@ -616,16 +665,17 @@ func resourceClusterCustomizeDiff(diff *schema.ResourceDiff, i interface{}) erro
 
 func validateRedisCDC(diff *schema.ResourceDiff) error {
 	dataCentres_ := diff.Get("data_centres").(*schema.Set)
-	fmt.Println("Has the cluster been created?", diff.Id())
-	fmt.Println("The number of CDCS", dataCentres_.Len())
+	log.Println("Has the cluster been created?", diff.Id())
+	log.Println("The number of CDCS", dataCentres_.Len())
 	// Check if bundle is Redis by getting the bundle from one of the data centres
 	dataCentresInfo := dataCentres_.List()[0].(map[string]interface{})
 	bundlesInfo := dataCentresInfo["bundles"].(*schema.Set).List()[0].(map[string]interface{})
 	if bundlesInfo["bundle"]=="REDIS"{
-		if diff.Id()=="" && dataCentres_.Len() >1 {
-			fmt.Println("Correctly Entered here when creating cluster with 2 cdc")
-			return fmt.Errorf("[ERROR] Redis does not support multi-dc")
-		} else if diff.Id()!="" && dataCentres_.Len()>2{
+		//if diff.Id()=="" && dataCentres_.Len() >1 {  //Breaks if we are adding dc as customise will check twice, one with state and the other without
+		//	fmt.Println("Correctly Entered here when creating cluster with 2 cdc")
+		//	return fmt.Errorf("[ERROR] Redis does not support multi-dc")
+		//}
+		if diff.Id()!="" && dataCentres_.Len()>2{
 			fmt.Println("Correctly Entered here when cluster has more than 2 cdcs")
 			return fmt.Errorf("[Error] Redis only support two cluster data centres")
 		} else{
@@ -1275,6 +1325,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	bundleInfo, err := getBundlesFromCluster(cluster)
 
 	if isClusterSingleDataCentre(*cluster) && bundleInfo[0]["bundle"]!="REDIS"{
+		log.Println("Redis is Entering here, which it shouldn't")
 	//if isClusterSingleDataCentre(*cluster) {
 		bundles, err := getBundlesFromCluster(cluster)
 		if err != nil {
@@ -1337,7 +1388,8 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 			return err
 		}
 		// set data centres
-		if len(dataCentres) > 1 {
+		if (len(dataCentres) > 1) || (bundleInfo[0]["bundle"]=="REDIS"){
+			log.Println("Setting Data Centres")
 			if err := d.Set("data_centres", dataCentres); err != nil {
 				return fmt.Errorf("[Error] Error setting data centres into terraform state, data centres could not be derived: %s", err)
 			}
@@ -1440,6 +1492,7 @@ func getBundlesFromCluster(cluster *Cluster) ([]map[string]interface{}, error) {
 
 func getDataCentresFromCluster(cluster *Cluster) ([]map[string]interface{}, error) {
 	dataCentres := make([]map[string]interface{}, 0)
+	log.Println("Any Data Centres here?", cluster.DataCentres)
 	for _, dataCentre := range cluster.DataCentres {
 		dataCentreMap := make(map[string]interface{})
 		dataCentreMap["name"] = dataCentre.CdcName
@@ -1484,9 +1537,8 @@ func getDataCentresFromCluster(cluster *Cluster) ([]map[string]interface{}, erro
 			rackAllocation["number_of_racks"] = strconv.Itoa(rackCount)
 			rackAllocation["nodes_per_rack"] = strconv.Itoa(nodesPerRack)
 			dataCentreMap["rack_allocation"] = rackAllocation
-
-			dataCentres = append(dataCentres, dataCentreMap)
 		}
+		dataCentres = append(dataCentres, dataCentreMap)
 	}
 	return dataCentres, nil
 }
