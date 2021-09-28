@@ -1103,7 +1103,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		 */
 		for _, node := range cluster.DataCentres[0].Nodes {
 			nodeSize = node.Size
-			if !strings.HasPrefix(nodeSize, "zk-") {
+			if !strings.HasPrefix(nodeSize, "zk-") && !strings.HasPrefix(nodeSize, "KDZ-") {
 				break
 			}
 		}
@@ -1113,7 +1113,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		rackCount := 0
 		rackList := make([]string, 0)
 		for _, node := range cluster.DataCentres[0].Nodes {
-			if !strings.HasPrefix(node.Size, "zk-") {
+			if !strings.HasPrefix(node.Size, "zk-") && !strings.HasPrefix(node.Size, "KDZ-") {
 				nodeCount += 1
 			}
 			rackList = appendIfMissing(rackList, node.Rack)
@@ -1160,7 +1160,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	for _, dataCentre := range cluster.DataCentres {
 		for _, node := range dataCentre.Nodes {
 			if !stringInSlice(node.Rack, azList) {
-				if !strings.HasPrefix(node.Size, "zk-") {
+				if !strings.HasPrefix(node.Size, "zk-") && !strings.HasPrefix(node.Size, "KDZ-") {
 					azList = appendIfMissing(azList, node.Rack)
 					privateContactPointList = appendIfMissing(privateContactPointList, node.PrivateAddress)
 					publicContactPointList = appendIfMissing(publicContactPointList, node.PublicAddress)

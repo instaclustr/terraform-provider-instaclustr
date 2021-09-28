@@ -7,7 +7,7 @@ provider "instaclustr" {
 
 resource "instaclustr_cluster" "kafka_cluster" {
   cluster_name = "example_kafka_tf_test"
-  node_size = "KFK-DEV-t4g.medium-80"
+  node_size = "%s"
   data_centre = "US_WEST_2"
   sla_tier = "NON_PRODUCTION"
   cluster_network = "192.168.0.0/18"
@@ -22,7 +22,7 @@ resource "instaclustr_cluster" "kafka_cluster" {
 
   bundle {
     bundle = "KAFKA"
-    version = "apache-kafka:2.7.1"
+    version = "%s"
     options = {
       auto_create_topics = true
       client_encryption = false
