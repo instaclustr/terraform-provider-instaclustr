@@ -22,7 +22,7 @@ resource "instaclustr_cluster" "valid" {
 
     bundle {
         bundle = "KAFKA"
-        version = "apache-kafka:2.7.1"
+        version = "apache-kafka:2.7.1.ic1"
         options = {
             client_encryption = false
             auto_create_topics = true
