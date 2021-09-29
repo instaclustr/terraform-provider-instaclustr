@@ -100,7 +100,7 @@ resource "instaclustr_vpc_peering" "example_vpc_peering" {
   cluster_id = "${instaclustr_cluster.example.id}"
   peer_vpc_id = "vpc-123456"
   peer_account_id = "1234567890"
-  peer_subnet = "10.0.0.0/20"
+  peer_subnets = ["10.0.0.0/20", "10.0.32.0/20"]
 }
 
 // Updating the kafka-schema-registry and the kafka-rest-proxy bundle user passwords at the cluster creation time

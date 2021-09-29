@@ -47,8 +47,11 @@ func resourceVpcPeering() *schema.Resource {
 				Required: true,
 			},
 
-			"peer_subnet": {
-				Type:     schema.TypeString,
+			"peer_subnets": {
+				Type: schema.TypeList,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
 				Required: true,
 			},
 
@@ -94,7 +97,7 @@ func resourceVpcPeeringCreate(d *schema.ResourceData, meta interface{}) error {
 	createData := CreateVPCPeeringRequest{
 		PeerVpcID:     d.Get("peer_vpc_id").(string),
 		PeerAccountID: d.Get("peer_account_id").(string),
-		PeerSubnet:    d.Get("peer_subnet").(string),
+		PeerSubnets:   d.Get("peer_subnets").([]interface{}),
 		PeerRegion:    d.Get("peer_region").(string),
 	}
 
@@ -144,7 +147,7 @@ func resourceVpcPeeringRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("peer_vpc_id", vpcPeering.PeerVpcID)
 	d.Set("peer_account_id", vpcPeering.PeerAccountID)
 	d.Set("aws_vpc_connection_id", vpcPeering.AWSVpcConnectionID)
-	d.Set("peer_subnet", vpcPeering.PeerSubnet)
+	d.Set("peer_subnets", vpcPeering.PeerSubnets)
 	d.Set("peer_region", vpcPeering.PeerRegion)
 
 	log.Printf("[INFO] Fetched VPC peering %s info from the remote server.", vpcPeering.ID)
