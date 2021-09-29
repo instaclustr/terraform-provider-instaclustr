@@ -173,11 +173,6 @@ type VPCPeering struct {
 	PeerRegion         string        `json:"peerRegion"`
 }
 
-type VPCPeeringSubnet struct {
-	Network      string `json:"network"`
-	PrefixLength string `json:"prefixLength"`
-}
-
 type ResizeClusterRequest struct {
 	NewNodeSize           string       `json:"newNodeSize"`
 	ConcurrentResizes     int          `json:"concurrentResizes"`
