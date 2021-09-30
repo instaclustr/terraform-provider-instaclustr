@@ -1412,6 +1412,6 @@ func isClusterSingleDataCentre(cluster Cluster) bool {
 // Currently, there is no API to tell if a node should be included as the main contact point
 // or calculated in the rack allocation scheme (that is not returned by the API).
 // Dedicated ZooKeeper nodes fall into this category and require a specific handling by the provider
-func isDedicatedZookeeperNodeSize(nodeSize String) bool {
+func isDedicatedZookeeperNodeSize(nodeSize string) bool {
 	return strings.HasPrefix(nodeSize, "zk-") || strings.HasPrefix(nodeSize, "KDZ-")
 }
