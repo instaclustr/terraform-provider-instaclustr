@@ -206,9 +206,11 @@ func TestKafkaUserResource_importBasic(t *testing.T) {
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 
-	zookeeperNodeSize := "zk-developer-t3.small-20"
-
-	createClusterConfig := fmt.Sprintf(string(configBytes1), username, apiKey, hostname, zookeeperNodeSize)
+	kafkaNodeSize := "KFK-DEV-t4g.medium-80"
+	kafkaVersion := "apache-kafka:2.7.1.ic1"
+	zookeeperNodeSize := "KDZ-DEV-t4g.small-30"
+ 
+	createClusterConfig := fmt.Sprintf(string(configBytes1), username, apiKey, hostname, kafkaNodeSize, kafkaVersion, zookeeperNodeSize)
 	validResizeConfig := strings.Replace(createClusterConfig, `KFK-DEV-t4g.medium-80`, `KFK-PRD-r6g.xlarge-800`, 1)
 	invalidResizeConfig := strings.Replace(createClusterConfig, `KFK-DEV-t4g.medium-80`, `KFK-DEV-t4g.small-30`, 1)
 	resourceName := "kafka_cluster"
