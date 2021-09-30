@@ -98,7 +98,11 @@ func TestAccKafkaCluster_importBasic(t *testing.T) {
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
-	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
+
+	kafkaNodeSize := "KFK-PRD-r6g.large-250"
+	kafkaVersion := "apache-kafka:2.7.1.ic1"
+
+	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname, kafkaNodeSize, kafkaVersion)
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckResourceDeleted("valid", hostname, username, apiKey),
