@@ -1413,5 +1413,5 @@ func isClusterSingleDataCentre(cluster Cluster) bool {
 // or calculated in the rack allocation scheme (that is not returned by the API).
 // Dedicated ZooKeeper nodes fall into this category and require a specific handling by the provider
 func isDedicatedZookeeperNodeSize(nodeSize String) bool {
-	return strings.HasPrefix(nodeSize, "zk-") || !strings.HasPrefix(nodeSize, "KDZ-")
+	return strings.HasPrefix(nodeSize, "zk-") || strings.HasPrefix(nodeSize, "KDZ-")
 }
