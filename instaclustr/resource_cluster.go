@@ -1102,8 +1102,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		*  Hence, this is a slightly hacky way of ignoring zookeeper node sizes (Kafka bundles specific).
 		 */
 		for _, node := range cluster.DataCentres[0].Nodes {
-			nodeSize = node.Size
-			if !strings.HasPrefix(nodeSize, "zk-") && !strings.HasPrefix(nodeSize, "KDZ-") {
+			if !isDedicatedZookeeperNodeSize(node.Size) {
 				break
 			}
 		}
@@ -1113,7 +1112,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		rackCount := 0
 		rackList := make([]string, 0)
 		for _, node := range cluster.DataCentres[0].Nodes {
-			if !strings.HasPrefix(node.Size, "zk-") && !strings.HasPrefix(node.Size, "KDZ-") {
+			if !isDedicatedZookeeperNodeSize(node.Size) {
 				nodeCount += 1
 			}
 			rackList = appendIfMissing(rackList, node.Rack)
@@ -1160,7 +1159,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	for _, dataCentre := range cluster.DataCentres {
 		for _, node := range dataCentre.Nodes {
 			if !stringInSlice(node.Rack, azList) {
-				if !strings.HasPrefix(node.Size, "zk-") && !strings.HasPrefix(node.Size, "KDZ-") {
+				if !isDedicatedZookeeperNodeSize(node.Size) {
 					azList = appendIfMissing(azList, node.Rack)
 					privateContactPointList = appendIfMissing(privateContactPointList, node.PrivateAddress)
 					publicContactPointList = appendIfMissing(publicContactPointList, node.PublicAddress)
@@ -1408,4 +1407,11 @@ func isClusterSingleDataCentre(cluster Cluster) bool {
 		return true
 	}
 	return false
+}
+
+// Currently, there is no API to tell if a node should be included as the main contact point
+// or calculated in the rack allocation scheme (that is not returned by the API).
+// Dedicated ZooKeeper nodes fall into this category and require a specific handling by the provider
+func isDedicatedZookeeperNodeSize(nodeSize String) bool {
+	return strings.HasPrefix(nodeSize, "zk-") || !strings.HasPrefix(nodeSize, "KDZ-")
 }
