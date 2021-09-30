@@ -47,12 +47,19 @@ func resourceVpcPeering() *schema.Resource {
 				Required: true,
 			},
 
+			"peer_subnet": {
+				Type:          schema.TypeString,
+				Optional:      true,
+				ConflictsWith: []string{"peer_subnets"},
+			},
+
 			"peer_subnets": {
-				Type: schema.TypeList,
+				Type: schema.TypeSet,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
-				Required: true,
+				Optional:      true,
+				ConflictsWith: []string{"peer_subnet"},
 			},
 
 			"peer_region": {
@@ -94,11 +101,24 @@ func resourceVpcPeeringCreate(d *schema.ResourceData, meta interface{}) error {
 		timePassed += ClusterReadInterval
 	}
 
-	createData := CreateVPCPeeringRequest{
-		PeerVpcID:     d.Get("peer_vpc_id").(string),
-		PeerAccountID: d.Get("peer_account_id").(string),
-		PeerSubnets:   d.Get("peer_subnets").([]interface{}),
-		PeerRegion:    d.Get("peer_region").(string),
+	createData := CreateVPCPeeringRequest{}
+
+	if _, isSet := d.GetOk("peer_subnet"); isSet {
+		createData = CreateVPCPeeringRequest{
+			PeerVpcID:     d.Get("peer_vpc_id").(string),
+			PeerAccountID: d.Get("peer_account_id").(string),
+			PeerSubnet:    d.Get("peer_subnet").(string),
+			PeerRegion:    d.Get("peer_region").(string),
+		}
+	} else if _, isSet := d.GetOk("peer_subnets"); isSet {
+		createData = CreateVPCPeeringRequest{
+			PeerVpcID:     d.Get("peer_vpc_id").(string),
+			PeerAccountID: d.Get("peer_account_id").(string),
+			PeerSubnets:   d.Get("peer_subnets").(*schema.Set).List(),
+			PeerRegion:    d.Get("peer_region").(string),
+		}
+	} else {
+		return fmt.Errorf("[Error] Error creating peering request - at least one subnet must be specified")
 	}
 
 	var jsonStr []byte
@@ -147,7 +167,10 @@ func resourceVpcPeeringRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("peer_vpc_id", vpcPeering.PeerVpcID)
 	d.Set("peer_account_id", vpcPeering.PeerAccountID)
 	d.Set("aws_vpc_connection_id", vpcPeering.AWSVpcConnectionID)
-	d.Set("peer_subnets", vpcPeering.PeerSubnets)
+	d.Set("peer_subnet", vpcPeering.PeerSubnet)
+	if vpcPeering.PeerSubnet == "" {
+		d.Set("peer_subnets", vpcPeering.PeerSubnets)
+	}
 	d.Set("peer_region", vpcPeering.PeerRegion)
 
 	log.Printf("[INFO] Fetched VPC peering %s info from the remote server.", vpcPeering.ID)

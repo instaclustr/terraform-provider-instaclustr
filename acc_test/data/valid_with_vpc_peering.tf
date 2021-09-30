@@ -35,5 +35,5 @@ resource "instaclustr_vpc_peering" "valid_with_vpc_peering" {
     cluster_id = "${instaclustr_cluster.valid_with_vpc_peering.cluster_id}"
     peer_vpc_id = "vpc-12345678"
     peer_account_id = "494111121110"
-    peer_subnets = ["10.128.176.0/20", "10.129.176.0/20"]
+    peer_subnets = toset(["10.128.176.0/20", "10.129.176.0/20"])
 }
