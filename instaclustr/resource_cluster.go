@@ -1102,7 +1102,8 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		*  Hence, this is a slightly hacky way of ignoring zookeeper node sizes (Kafka bundles specific).
 		 */
 		for _, node := range cluster.DataCentres[0].Nodes {
-			if !isDedicatedZookeeperNodeSize(node.Size) {
+			nodeSize = node.Size
+			if !isDedicatedZookeeperNodeSize(nodeSize) {
 				break
 			}
 		}
