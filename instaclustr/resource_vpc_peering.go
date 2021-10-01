@@ -101,28 +101,13 @@ func resourceVpcPeeringCreate(d *schema.ResourceData, meta interface{}) error {
 		timePassed += ClusterReadInterval
 	}
 
-	createData := CreateVPCPeeringRequest{}
-
-	if _, isSet := d.GetOk("peer_subnet"); isSet {
-		createData = CreateVPCPeeringRequest{
-			PeerVpcID:     d.Get("peer_vpc_id").(string),
-			PeerAccountID: d.Get("peer_account_id").(string),
-			PeerSubnet:    d.Get("peer_subnet").(string),
-			PeerRegion:    d.Get("peer_region").(string),
-		}
-	} else if _, isSet := d.GetOk("peer_subnets"); isSet {
-		createData = CreateVPCPeeringRequest{
-			PeerVpcID:     d.Get("peer_vpc_id").(string),
-			PeerAccountID: d.Get("peer_account_id").(string),
-			PeerSubnets:   d.Get("peer_subnets").(*schema.Set).List(),
-			PeerRegion:    d.Get("peer_region").(string),
-		}
-	} else {
-		return fmt.Errorf("[Error] Error creating peering request - at least one subnet must be specified")
+	createData, err := createVpcPeeringRequest(d)
+	if err != nil {
+		return fmt.Errorf("[Error] Error creating VPC peering request: %s", err)
 	}
 
 	var jsonStr []byte
-	jsonStr, err := json.Marshal(createData)
+	jsonStr, err = json.Marshal(createData)
 	if err != nil {
 		return fmt.Errorf("[Error] Error creating VPC peering request: %s", err)
 	}
@@ -213,4 +198,26 @@ func resourceVpcPeeringStateImport(d *schema.ResourceData, meta interface{}) ([]
 	d.Set("cluster_id", idParts[0])
 	d.Set("vpc_peering_id", idParts[1])
 	return []*schema.ResourceData{d}, nil
+}
+
+func createVpcPeeringRequest(d *schema.ResourceData) (CreateVPCPeeringRequest, error) {
+	result := CreateVPCPeeringRequest{}
+	if _, isSet := d.GetOk("peer_subnet"); isSet {
+		result = CreateVPCPeeringRequest{
+			PeerVpcID:     d.Get("peer_vpc_id").(string),
+			PeerAccountID: d.Get("peer_account_id").(string),
+			PeerSubnet:    d.Get("peer_subnet").(string),
+			PeerRegion:    d.Get("peer_region").(string),
+		}
+	} else if _, isSet := d.GetOk("peer_subnets"); isSet {
+		result = CreateVPCPeeringRequest{
+			PeerVpcID:     d.Get("peer_vpc_id").(string),
+			PeerAccountID: d.Get("peer_account_id").(string),
+			PeerSubnets:   d.Get("peer_subnets").(*schema.Set).List(),
+			PeerRegion:    d.Get("peer_region").(string),
+		}
+	} else {
+		return result, fmt.Errorf("[Error] Error creating peering request - at least one subnet must be specified")
+	}
+	return result, nil
 }

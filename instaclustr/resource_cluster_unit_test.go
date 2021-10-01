@@ -488,6 +488,75 @@ func TestDoClusterResizeCA(t *testing.T) {
 	}
 }
 
+func TestCreateVpcPeeringRequest(t *testing.T) {
+	resourceSchema := map[string]*schema.Schema{
+		"peer_vpc_id": {
+			Type: schema.TypeString,
+		},
+		"peer_account_id": {
+			Type: schema.TypeString,
+		},
+		"peer_subnets": {
+			Type: schema.TypeSet,
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
+			},
+		},
+		"peer_region": {
+			Type: schema.TypeString,
+		},
+	}
+
+	peerSubnets := schema.NewSet(schema.HashString, []interface{}{"10.20.0.0/16", "10.21.0.0/16"})
+	resourceDataMap := map[string]interface{}{
+		"peer_vpc_id":     "vpc-12345678",
+		"peer_account_id": "494111121110",
+		"peer_subnets":    peerSubnets.List(),
+		"peer_region":     "",
+	}
+	resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, resourceDataMap)
+
+	if _, err := createVpcPeeringRequest(resourceLocalData); err != nil {
+		t.Fatalf("Expected nil error but got %v", err)
+	}
+}
+
+func TestCreateVpcPeeringRequestLegacy(t *testing.T) {
+	resourceSchema := map[string]*schema.Schema{
+		"peer_vpc_id": {
+			Type: schema.TypeString,
+		},
+		"peer_account_id": {
+			Type: schema.TypeString,
+		},
+		"peer_subnet": {
+			Type: schema.TypeString,
+		},
+		"peer_region": {
+			Type: schema.TypeString,
+		},
+	}
+
+	resourceDataMap := map[string]interface{}{
+		"peer_vpc_id":     "vpc-12345678",
+		"peer_account_id": "494111121110",
+		"peer_subnet":     "10.20.0.0/16",
+		"peer_region":     "",
+	}
+	resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, resourceDataMap)
+
+	if _, err := createVpcPeeringRequest(resourceLocalData); err != nil {
+		t.Fatalf("Expected nil error but got %v", err)
+	}
+}
+
+func TestCreateVpcPEeringRequestEmpty(t *testing.T) {
+	data := schema.ResourceData{}
+	if _, err := createVpcPeeringRequest(&data); err == nil {
+		t.Fatalf("Expect error creating empty VPC Peering Request but received none")
+	}
+}
+
 type MockApiClient struct {
 	cluster Cluster
 	err     error
