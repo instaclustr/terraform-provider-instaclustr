@@ -167,9 +167,10 @@ func resourceVpcPeeringRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("peer_vpc_id", vpcPeering.PeerVpcID)
 	d.Set("peer_account_id", vpcPeering.PeerAccountID)
 	d.Set("aws_vpc_connection_id", vpcPeering.AWSVpcConnectionID)
-	d.Set("peer_subnet", vpcPeering.PeerSubnet)
 	if vpcPeering.PeerSubnet == "" {
 		d.Set("peer_subnets", vpcPeering.PeerSubnets)
+	} else if len(vpcPeering.PeerSubnets) == 0 {
+		d.Set("peer_subnet", vpcPeering.PeerSubnet)
 	}
 	d.Set("peer_region", vpcPeering.PeerRegion)
 
