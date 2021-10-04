@@ -322,7 +322,7 @@ func TestAccRedisClusterForceNew(t *testing.T){
 	testAccProviders := map[string]terraform.ResourceProvider{
 		"instaclustr": instaclustr.Provider(),
 	}
-	validConfig, _ := ioutil.ReadFile("data/valid_redis_cluster_update.tf")
+	validConfig, _ := ioutil.ReadFile("data/valid_redis_cluster_create.tf")
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)

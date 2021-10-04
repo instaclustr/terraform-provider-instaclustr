@@ -26,5 +26,6 @@ resource "instaclustr_cluster" "validRedis" {
       client_encryption = false
     }
   }
+  wait_for_state = "RUNNING"
 }
 
