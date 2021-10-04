@@ -22,7 +22,7 @@ resource "instaclustr_cluster" "validKC" {
 
     bundle {
         bundle = "KAFKA_CONNECT"
-        version = "2.3.1"
+        version = "2.7.1"
         options = {
             azure_storage_account_name = "%s"
             azure_storage_account_key = "%s"

@@ -209,8 +209,8 @@ func TestKafkaUserResource_importBasic(t *testing.T) {
 	zookeeperNodeSize := "zk-developer-t3.small-20"
 
 	createClusterConfig := fmt.Sprintf(string(configBytes1), username, apiKey, hostname, zookeeperNodeSize)
-	validResizeConfig := strings.Replace(createClusterConfig, `t3.medium-80-gp2`, `r5.xlarge-800-gp2`, 1)
-	invalidResizeConfig := strings.Replace(createClusterConfig, `t3.medium-80-gp2`, `t3.small-20-gp2`, 1)
+	validResizeConfig := strings.Replace(createClusterConfig, `KFK-DEV-t4g.medium-80`, `KFK-PRD-r6g.xlarge-800`, 1)
+	invalidResizeConfig := strings.Replace(createClusterConfig, `KFK-DEV-t4g.medium-80`, `KFK-DEV-t4g.small-30`, 1)
 	resourceName := "kafka_cluster"
 
 	resource.Test(t, resource.TestCase{
