@@ -1,5 +1,5 @@
 
-BIN_NAME="terraform-provider-instaclustr"
+BIN_NAME=terraform-provider-instaclustr
 
 
 # for VERSION, don't add prefix "v", e.g., use "1.9.8" instead of "v1.9.8" as it could break circleCI stuff

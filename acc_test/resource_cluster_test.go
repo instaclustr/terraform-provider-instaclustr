@@ -331,8 +331,8 @@ func TestAccRedisClusterForceNew(t *testing.T){
 
 	validRedisUpdateNodesConfig := strings.Replace(oriConfig, `master_nodes = 3,`, `master_nodes = 6,`, 1)
 	validRedisUpdateNodesConfig  = strings.Replace(validRedisUpdateNodesConfig , `replica_nodes = 3,`, `replica_nodes = 6,`, 1)
-	validRedisUpdateClientEncryptionConfig  := strings.Replace(oriConfig , `client_encryption = false`, `client_encryption = true`, 1)
-	validRedisUpdatePasswordAuthConfig  := strings.Replace(oriConfig , `password_auth = false`, `password_auth = true`, 1)
+	validRedisUpdateClientEncryptionConfig  := strings.Replace(oriConfig , `client_encryption = false,`, `client_encryption = true,`, 1)
+	validRedisUpdatePasswordAuthConfig  := strings.Replace(oriConfig , `password_auth = false,`, `password_auth = true,`, 1)
 
     resource.Test(t, resource.TestCase{
         Providers:    testAccProviders,

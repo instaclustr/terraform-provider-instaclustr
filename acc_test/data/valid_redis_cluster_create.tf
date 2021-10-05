@@ -23,7 +23,7 @@ resource "instaclustr_cluster" "validRedis" {
       master_nodes      = 3,
       replica_nodes     = 3,
       password_auth     = false,
-      client_encryption = false
+      client_encryption = false,
     }
   }
 
