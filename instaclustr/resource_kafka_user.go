@@ -50,6 +50,12 @@ func resourceKafkaUser() *schema.Resource {
 				Default: "SCRAM-SHA-256",
 				ForceNew: true,
 			},
+			"override_existing_user": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  true,
+				ForceNew: true,
+			},
 		},
 	}
 }
@@ -70,22 +76,9 @@ func resourceKafkaUserCreate(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("[Error] Cluster %s is not RUNNING. Currently in %s state", cluster_id, cluster.ClusterStatus)
 	}
 
-	// just use linear search for now to check if the user going to be created is already in the system
-	usernameList, err := client.ReadKafkaUserList(cluster_id)
-	if err != nil {
-		return fmt.Errorf("[Error] Error retrieving kafka user list: %s", err)
-	}
-	for _, str := range usernameList {
-		if str == username {
-			// user is already set, so we don't change anything
-			d.SetId(fmt.Sprintf("%s-%s", cluster_id, username))
-			log.Printf("[INFO] Kafka user %s already exists in %s.", username, cluster_id)
-			return nil
-		}
-	}
-
 	createOptionsData := KafkaUserCreateOptions{
 		AuthenticationMechanism: d.Get("authentication_mechanism").(string),
+		OverrideExistingUser: d.Get("override_existing_user").(bool),
 	}
 
 	createData := CreateKafkaUserRequest{

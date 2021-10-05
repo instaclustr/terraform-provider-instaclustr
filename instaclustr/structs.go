@@ -203,6 +203,7 @@ type CreateKafkaUserRequest struct {
 
 type KafkaUserCreateOptions struct {
 	AuthenticationMechanism string `json:"sasl-scram-mechanism,omitempty" mapstructure:"sasl-scram-mechanism"`
+	OverrideExistingUser    bool   `json:"override-existing-user" mapstructure:"override-existing-user"`
 }
 
 type UpdateKafkaUserRequest struct {
