@@ -1117,7 +1117,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("cluster_id", cluster.ID)
 	d.Set("cluster_name", cluster.ClusterName)
 
-	if isClusterSingleDataCentre(*cluster){
+	if isClusterSingleDataCentre(*cluster) {
 		bundles, err := getBundlesFromCluster(cluster)
 		if err != nil {
 			return err

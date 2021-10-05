@@ -343,7 +343,7 @@ func TestAccRedisClusterForceNew(t *testing.T){
                 Check: resource.ComposeTestCheckFunc(
 					testCheckResourceValid(resourceName),
 					testCheckResourceCreated(resourceName, hostname, username, apiKey),
-					testCheckContactIPCorrect(resourceName, hostname, username, apiKey, 4, 0), //Rack Allocation
+					testCheckContactIPCorrect(resourceName, hostname, username, apiKey, 4, 4),
                 ),
             },
             {
