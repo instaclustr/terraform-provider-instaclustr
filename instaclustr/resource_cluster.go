@@ -1160,6 +1160,12 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		rackAllocation["number_of_racks"] = strconv.Itoa(rackCount)
 		rackAllocation["nodes_per_rack"] = strconv.Itoa(nodesPerRack)
 
+		if cluster.BundleType != "REDIS" {
+			if err := d.Set("rack_allocation", rackAllocation); err != nil {
+				return fmt.Errorf("[Error] Error reading cluster, rack allocation could not be derived: %s", err)
+			}
+		}
+
 		if len(cluster.DataCentres[0].ResizeTargetNodeSize) > 0 {
 			nodeSize = cluster.DataCentres[0].ResizeTargetNodeSize
 		}
@@ -1286,11 +1292,6 @@ func getDataCentresFromCluster(cluster *Cluster) ([]map[string]interface{}, erro
 		// find the node size for this data centre
 		dataCentreMap["node_size"] = dataCentre.Nodes[0].Size
 
-		// find provider for each data centre
-		provider := make(map[string]interface{})
-		provider["name"] = dataCentre.Provider
-		dataCentreMap["provider"] = provider
-
 		// find rack allocation for each data centre
 		nodeCount := 0
 		rackCount := 0
@@ -1305,6 +1306,11 @@ func getDataCentresFromCluster(cluster *Cluster) ([]map[string]interface{}, erro
 		rackAllocation["number_of_racks"] = strconv.Itoa(rackCount)
 		rackAllocation["nodes_per_rack"] = strconv.Itoa(nodesPerRack)
 		dataCentreMap["rack_allocation"] = rackAllocation
+
+		// find provider for each data centre
+		provider := make(map[string]interface{})
+		provider["name"] = dataCentre.Provider
+		dataCentreMap["provider"] = provider
 
 		// find bundles for each data centre
 		thisDataCentreBundles, _ := getBaseBundlesFromCluster(cluster)
