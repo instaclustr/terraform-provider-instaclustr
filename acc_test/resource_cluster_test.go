@@ -329,10 +329,10 @@ func TestAccRedisClusterForceNew(t *testing.T){
 	resourceName := "validRedis"
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
 
-	validRedisUpdateNodesConfig := strings.Replace(oriConfig, `master_nodes = 3,`, `master_nodes = 6,`, 1)
-	validRedisUpdateNodesConfig  = strings.Replace(validRedisUpdateNodesConfig , `replica_nodes = 3,`, `replica_nodes = 6,`, 1)
+	validRedisUpdateNodesConfig := strings.Replace(oriConfig, `master_nodes      = 3,`, `master_nodes      = 6,`, 1)
+	validRedisUpdateNodesConfig  = strings.Replace(validRedisUpdateNodesConfig , `replica_nodes     = 3,`, `replica_nodes     = 6,`, 1)
 	validRedisUpdateClientEncryptionConfig  := strings.Replace(oriConfig , `client_encryption = false,`, `client_encryption = true,`, 1)
-	validRedisUpdatePasswordAuthConfig  := strings.Replace(oriConfig , `password_auth = false,`, `password_auth = true,`, 1)
+	validRedisUpdatePasswordAuthConfig  := strings.Replace(oriConfig , `password_auth     = false,`, `password_auth     = true,`, 1)
 
     resource.Test(t, resource.TestCase{
         Providers:    testAccProviders,
@@ -367,6 +367,9 @@ func TestAccRedisClusterForceNew(t *testing.T){
 				),
 			},
 			{
+				PreConfig: func() {
+					fmt.Println("Update The Number of Master and Replica Nodes.")
+				},
 				Config: validRedisUpdateNodesConfig,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("instaclustr_cluster.validRedis", "cluster_name", "tf-redis-test"),
