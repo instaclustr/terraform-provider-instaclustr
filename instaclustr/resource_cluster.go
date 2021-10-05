@@ -302,6 +302,12 @@ func resourceCluster() *schema.Resource {
 				Type:          schema.TypeMap,
 				Optional:      true,
 				ConflictsWith: []string{"data_centres"},
+				ValidateFunc: func(v interface{}, k string) (warns []string, errs []error) {
+					if v.(string)== "REDIS" {
+						errs = append(errs, fmt.Errorf("[Error] 'rack_allocation' is not supported in REDIS. Please remove this block"))
+					}
+					return
+				},
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"number_of_racks": {
@@ -575,9 +581,6 @@ func resourceClusterCustomizeDiff(diff *schema.ResourceDiff, i interface{}) erro
 
 		// Mainly check Single DC Redis Cluster
 		if bundleMap["bundle"] == "REDIS" {
-			if _, isRackAllocationSet := diff.GetOk("rack_allocation"); isRackAllocationSet {
-				return fmt.Errorf("[Error] 'rack_allocation' is not supported in REDIS")
-			}
 
 			// Remove this logic once INS-13970 is implemented
 			if diff.Id() != "" && (diff.HasChange("bundle.0.options")) {
@@ -887,10 +890,6 @@ func hasKafkaSizeChanges(bundleIndex int, d resourceDataInterface) bool {
 		len(getNewSizeOrEmpty(d, "node_size")) > 0
 }
 
-func hasRedisSizeChanges(bundleIndex int, d resourceDataInterface) bool {
-	return len(getNewSizeOrEmpty(d, "node_size")) > 0
-}
-
 func hasCassandraSizeChanges(d resourceDataInterface) bool {
 	return len(getNewSizeOrEmpty(d, "node_size")) > 0
 }
@@ -929,12 +928,6 @@ func doClusterResize(client APIClientInterface, clusterID string, d resourceData
 			return doKafkaClusterResize(client, cluster, d, bundleIndex)
 		} else {
 			return nil
-		}
-	case "REDIS":
-		if hasRedisSizeChanges(bundleIndex, d) {
-			return fmt.Errorf("CDC resize does not support: %s", cluster.BundleType)
-		} else{
-			return fmt.Errorf("Unknown update operation")
 		}
 	default:
 		return fmt.Errorf("CDC resize does not support: %s", cluster.BundleType)
@@ -1160,10 +1153,12 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		rackAllocation["number_of_racks"] = strconv.Itoa(rackCount)
 		rackAllocation["nodes_per_rack"] = strconv.Itoa(nodesPerRack)
 
-		if cluster.BundleType != "REDIS" {
-			if err := d.Set("rack_allocation", rackAllocation); err != nil {
-				return fmt.Errorf("[Error] Error reading cluster, rack allocation could not be derived: %s", err)
-			}
+		if cluster.BundleType == "REDIS" {
+			rackAllocation = nil
+		}
+
+		if err := d.Set("rack_allocation", rackAllocation); err != nil {
+			return fmt.Errorf("[Error] Error reading cluster, rack allocation could not be derived: %s", err)
 		}
 
 		if len(cluster.DataCentres[0].ResizeTargetNodeSize) > 0 {
