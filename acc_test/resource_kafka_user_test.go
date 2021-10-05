@@ -5,6 +5,7 @@ import (
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
+	
 	"io/ioutil"
 	"os"
 	"regexp"
@@ -21,6 +22,7 @@ func TestKafkaUserResource(t *testing.T) {
 	configBytes2, _ := ioutil.ReadFile("data/kafka_user_create_user.tf")
 	configBytes3, _ := ioutil.ReadFile("data/kafka_user_user_list.tf")
 	configBytes4, _ := ioutil.ReadFile("data/invalid_kafka_user_create.tf")
+	configBytes5, _ := ioutil.ReadFile("data/invalid_kafka_user_create_duplicate.tf")
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
@@ -30,19 +32,25 @@ func TestKafkaUserResource(t *testing.T) {
 	kafkaUsername3 := "charlie3"
 	oldPassword := "charlie123!"
 	newPassword := "charlie123standard!"
-	zookeeperNodeSize := "zk-developer-t3.small-20"
+	kafkaNodeSize := "KFK-DEV-t4g.medium-80"
+	zookeeperNodeSize := "KDZ-DEV-t4g.small-30"
+	kafkaVersion := "apache-kafka:2.7.1.ic1"
 
-	createClusterConfig := fmt.Sprintf(string(configBytes1), username, apiKey, hostname, zookeeperNodeSize)
-	createKafkaUserConfig := fmt.Sprintf(string(configBytes2), username, apiKey, hostname, zookeeperNodeSize,
+	createClusterConfig := fmt.Sprintf(string(configBytes1), username, apiKey, hostname, kafkaNodeSize, kafkaVersion, zookeeperNodeSize)
+	createKafkaUserConfig := fmt.Sprintf(string(configBytes2), username, apiKey, hostname, kafkaNodeSize, kafkaVersion, zookeeperNodeSize,
 		kafkaUsername1, oldPassword,
 		kafkaUsername2, oldPassword)
-	createKafkaUserListConfig := fmt.Sprintf(string(configBytes3), username, apiKey, hostname, zookeeperNodeSize,
+	createKafkaUserListConfig := fmt.Sprintf(string(configBytes3), username, apiKey, hostname, kafkaNodeSize, kafkaVersion, zookeeperNodeSize,
 		kafkaUsername1, oldPassword,
 		kafkaUsername2, oldPassword)
-	updateKafkaUserConfig := fmt.Sprintf(string(configBytes3), username, apiKey, hostname, zookeeperNodeSize,
+	updateKafkaUserConfig := fmt.Sprintf(string(configBytes3), username, apiKey, hostname, kafkaNodeSize, kafkaVersion, zookeeperNodeSize,
 		kafkaUsername1, newPassword,
 		kafkaUsername2, newPassword)
-	invalidKafkaUserCreateConfig := fmt.Sprintf(string(configBytes4), username, apiKey, hostname, zookeeperNodeSize,
+	invalidKafkaUserCreateConfigDuplicate := fmt.Sprintf(string(configBytes5), username, apiKey, hostname, kafkaNodeSize, kafkaVersion, zookeeperNodeSize,
+		kafkaUsername1, newPassword,
+		kafkaUsername2, newPassword,
+                kafkaUsername1, oldPassword)
+	invalidKafkaUserCreateConfig := fmt.Sprintf(string(configBytes4), username, apiKey, hostname, kafkaNodeSize, kafkaVersion, zookeeperNodeSize,
 		kafkaUsername3, oldPassword)
 
 	resource.Test(t, resource.TestCase{
@@ -76,6 +84,10 @@ func TestKafkaUserResource(t *testing.T) {
 			{
 				Config: updateKafkaUserConfig,
 				Check:  checkKafkaUserUpdated(newPassword),
+			},
+			{
+				Config: invalidKafkaUserCreateConfigDuplicate,
+				ExpectError: regexp.MustCompile("A Kafka user with this username already exists on this cluster."),
 			},
 			// Can't rely on the resource destruction because we need the destruction to happen in order and checked,
 			// i.e., we need to destroy the kafka user resources first.
