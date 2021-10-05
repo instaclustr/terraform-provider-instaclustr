@@ -10,6 +10,8 @@ resource "instaclustr_cluster" "invalidRedis" {
   data_centre = "US_WEST_2"
   sla_tier = "NON_PRODUCTION"
   cluster_network = "192.168.0.0/18"
+  private_network_cluster = true
+  pci_compliant_cluster   = false
   cluster_provider = {
     name = "AWS_VPC"
   }
@@ -28,5 +30,7 @@ resource "instaclustr_cluster" "invalidRedis" {
       client_encryption = false
     }
   }
+
+  wait_for_state = "RUNNING"
 }
 

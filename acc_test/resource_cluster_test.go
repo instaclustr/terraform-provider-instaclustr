@@ -317,7 +317,7 @@ func TestAccElasticsearchClusterResize(t *testing.T) {
 	})
 }
 
-// Currently test that the options does re-create the cluster
+// Test that the options does re-create the Redis cluster
 func TestAccRedisClusterForceNew(t *testing.T){
 	testAccProviders := map[string]terraform.ResourceProvider{
 		"instaclustr": instaclustr.Provider(),
@@ -347,6 +347,9 @@ func TestAccRedisClusterForceNew(t *testing.T){
                 ),
             },
             {
+				PreConfig: func() {
+					fmt.Println("Update Client Encryption.")
+				},
                 Config: validRedisUpdateClientEncryptionConfig,
                 Check: resource.ComposeTestCheckFunc(
                     resource.TestCheckResourceAttr("instaclustr_cluster.validRedis", "cluster_name", "tf-redis-test"),
@@ -354,6 +357,9 @@ func TestAccRedisClusterForceNew(t *testing.T){
                 ),
             },
 			{
+				PreConfig: func() {
+					fmt.Println("Update Password Auth.")
+				},
 				Config: validRedisUpdatePasswordAuthConfig,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("instaclustr_cluster.validRedis", "cluster_name", "tf-redis-test"),
@@ -556,7 +562,7 @@ func TestInvalidRedisClusterCreate(t *testing.T) {
 	testAccProviders := map[string]terraform.ResourceProvider{
 		"instaclustr": testAccProvider,
 	}
-	invalidConfig, _ := ioutil.ReadFile("data/invalid_redis_cluster_create.tf")
+	invalidRedisConfig, _ := ioutil.ReadFile("data/invalid_redis_cluster_create.tf")
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
@@ -564,7 +570,7 @@ func TestInvalidRedisClusterCreate(t *testing.T) {
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
-				Config:      fmt.Sprintf(string(invalidConfig), username, apiKey, hostname),
+				Config:      fmt.Sprintf(string(invalidRedisConfig), username, apiKey, hostname),
 				ExpectError: regexp.MustCompile("'rack_allocation' is not supported in REDIS"),
 			},
 		},

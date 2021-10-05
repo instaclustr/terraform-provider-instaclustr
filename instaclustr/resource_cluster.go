@@ -37,7 +37,6 @@ func resourceCluster() *schema.Resource {
 
 		CustomizeDiff: resourceClusterCustomizeDiff,
 
-
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(40 * time.Minute),
 		},
@@ -98,7 +97,7 @@ func resourceCluster() *schema.Resource {
 
 						"rack_allocation": {
 							Type:     schema.TypeMap,
-							Required: true,
+							Optional: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"number_of_racks": {
@@ -161,6 +160,7 @@ func resourceCluster() *schema.Resource {
 										ValidateFunc: validation.StringInSlice([]string{
 											"APACHE_CASSANDRA",
 											"SPARK",
+											"REDIS",
 										}, false),
 									},
 									"version": {
@@ -199,6 +199,21 @@ func resourceCluster() *schema.Resource {
 													ForceNew: true,
 												},
 												"continuous_backup_enabled": {
+													Type:     schema.TypeBool,
+													Optional: true,
+													ForceNew: true,
+												},
+												"master_nodes": {
+													Type:     schema.TypeInt,
+													Optional: true,
+													ForceNew: true,
+												},
+												"replica_nodes": {
+													Type:     schema.TypeInt,
+													Optional: true,
+													ForceNew: true,
+												},
+												"password_auth": {
 													Type:     schema.TypeBool,
 													Optional: true,
 													ForceNew: true,
@@ -342,6 +357,12 @@ func resourceCluster() *schema.Resource {
 							Type:     schema.TypeString,
 							Required: true,
 							ForceNew: true,
+							ValidateFunc: func(v interface{}, k string) (warns []string, errs []error) {
+								if v.(string)== "REDIS" {
+									errs = append(errs, fmt.Errorf("[ERROR] please provision Redis with `data_centres` key"))
+								}
+								return
+							},
 						},
 						"version": {
 							Type:     schema.TypeString,
@@ -666,14 +687,14 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 
 	var isSingleDCCluster = dataCentre != "" && len(dataCentres) == 0
 
-	// for a single DC cluster
-	if isSingleDCCluster {
-		clusterNetwork := d.Get("cluster_network").(string)
-		createData.DataCentre = dataCentre
-		createData.ClusterNetwork = clusterNetwork
-	} else {
-		createData.DataCentres = dataCentres
-	}
+		// for a single DC cluster
+		if isSingleDCCluster {
+			clusterNetwork := d.Get("cluster_network").(string)
+			createData.DataCentre = dataCentre
+			createData.ClusterNetwork = clusterNetwork
+		} else {
+			createData.DataCentres = dataCentres
+		}
 
 	kafkaSchemaRegistryUserPassword := d.Get("kafka_schema_registry_user_password").(string)
 	kafkaRestProxyUserPassword := d.Get("kafka_rest_proxy_user_password").(string)
@@ -699,7 +720,6 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 
 		createData.RackAllocation = &rackAllocation
 	}
-
 	// for multi-DC cluster
 	if len(dataCentres) > 1 {
 		createData.RackAllocation = createData.DataCentres[0].RackAllocation
@@ -773,6 +793,7 @@ func waitForClusterStateAndDoUpdate(client *APIClient,
 }
 
 func resourceClusterUpdate(d *schema.ResourceData, meta interface{}) error {
+	log.Println("[INFO] Cluster Update")
 	d.Partial(true)
 	// currently only cluster resize, kafka-schema-registry user password update and kafka-rest-proxy user password update are supported
 
@@ -941,7 +962,7 @@ func doClusterResize(client APIClientInterface, clusterID string, d resourceData
 		if hasRedisSizeChanges(bundleIndex, d) {
 			return fmt.Errorf("CDC resize does not support: %s", cluster.BundleType)
 		} else{
-			return nil
+			return fmt.Errorf("Unknown update operation")
 		}
 	default:
 		return fmt.Errorf("CDC resize does not support: %s", cluster.BundleType)
@@ -1113,6 +1134,8 @@ func doLegacyCassandraClusterResize(client APIClientInterface, cluster *Cluster,
 }
 
 func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
+	fmt.Println("[INFO] Cluster Read")
+	log.Println("[INFO] Cluster Read")
 	client := meta.(*Config).Client
 	id := d.Get("cluster_id").(string)
 	log.Printf("[INFO] Reading status of cluster %s.", id)
@@ -1124,7 +1147,11 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("cluster_id", cluster.ID)
 	d.Set("cluster_name", cluster.ClusterName)
 
-	if isClusterSingleDataCentre(*cluster) {
+	bundleInfo, err := getBundlesFromCluster(cluster)
+
+	if isClusterSingleDataCentre(*cluster) && bundleInfo[0]["bundle"]!="REDIS"{
+		log.Println("Redis is Entering here, which it shouldn't")
+	//if isClusterSingleDataCentre(*cluster) {
 		bundles, err := getBundlesFromCluster(cluster)
 		if err != nil {
 			return err
@@ -1187,7 +1214,8 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 			return err
 		}
 		// set data centres
-		if len(dataCentres) > 1 {
+		if (len(dataCentres) > 1) || (bundleInfo[0]["bundle"]=="REDIS"){
+			log.Println("Setting Data Centres")
 			if err := d.Set("data_centres", dataCentres); err != nil {
 				return fmt.Errorf("[Error] Error setting data centres into terraform state, data centres could not be derived: %s", err)
 			}
@@ -1290,6 +1318,7 @@ func getBundlesFromCluster(cluster *Cluster) ([]map[string]interface{}, error) {
 
 func getDataCentresFromCluster(cluster *Cluster) ([]map[string]interface{}, error) {
 	dataCentres := make([]map[string]interface{}, 0)
+	log.Println("Any Data Centres here?", cluster.DataCentres)
 	for _, dataCentre := range cluster.DataCentres {
 		dataCentreMap := make(map[string]interface{})
 		dataCentreMap["name"] = dataCentre.CdcName
@@ -1298,21 +1327,6 @@ func getDataCentresFromCluster(cluster *Cluster) ([]map[string]interface{}, erro
 
 		// find the node size for this data centre
 		dataCentreMap["node_size"] = dataCentre.Nodes[0].Size
-
-		// find rack allocation for each data centre
-		nodeCount := 0
-		rackCount := 0
-		rackList := make([]string, 0)
-		for _, node := range dataCentre.Nodes {
-			nodeCount += 1
-			rackList = appendIfMissing(rackList, node.Rack)
-		}
-		rackCount += len(rackList)
-		nodesPerRack := nodeCount / rackCount
-		rackAllocation := make(map[string]interface{}, 0)
-		rackAllocation["number_of_racks"] = strconv.Itoa(rackCount)
-		rackAllocation["nodes_per_rack"] = strconv.Itoa(nodesPerRack)
-		dataCentreMap["rack_allocation"] = rackAllocation
 
 		// find provider for each data centre
 		provider := make(map[string]interface{})
@@ -1332,6 +1346,24 @@ func getDataCentresFromCluster(cluster *Cluster) ([]map[string]interface{}, erro
 		}
 		dataCentreMap["bundles"] = thisDataCentreBundles
 
+		bundleMap := dataCentreMap["bundles"].([]map[string]interface {})
+		bundleInfo := bundleMap[0]
+		if bundleInfo["bundle"] != "REDIS" {
+			// find rack allocation for each data centre
+			nodeCount := 0
+			rackCount := 0
+			rackList := make([]string, 0)
+			for _, node := range dataCentre.Nodes {
+				nodeCount += 1
+				rackList = appendIfMissing(rackList, node.Rack)
+			}
+			rackCount += len(rackList)
+			nodesPerRack := nodeCount / rackCount
+			rackAllocation := make(map[string]interface{}, 0)
+			rackAllocation["number_of_racks"] = strconv.Itoa(rackCount)
+			rackAllocation["nodes_per_rack"] = strconv.Itoa(nodesPerRack)
+			dataCentreMap["rack_allocation"] = rackAllocation
+		}
 		dataCentres = append(dataCentres, dataCentreMap)
 	}
 	return dataCentres, nil
@@ -1386,8 +1418,13 @@ func resourceClusterDelete(d *schema.ResourceData, meta interface{}) error {
 }
 
 func resourceClusterStateImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
+
+	fmt.Println("[INFO] Importing state")
+
 	clusterId := d.Id()
 	d.Set("cluster_id", clusterId)
+
+	fmt.Println("Current state info: ", d.Get("cluster_id"))
 	return []*schema.ResourceData{d}, nil
 }
 
