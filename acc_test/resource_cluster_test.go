@@ -329,16 +329,10 @@ func TestAccRedisClusterForceNew(t *testing.T){
 	resourceName := "validRedis"
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
 
-    //fmt.Println("Original Configs, ", oriConfig)
-
-	//validRedisUpdateConfig := strings.Replace(oriConfig, `private_network_cluster = true`, `private_network_cluster = false`, 1)
-	//validRedisUpdateConfig := strings.Replace(oriConfig, `master_nodes = 3,`, `master_nodes = 6,`, 1)
-	//validRedisUpdateConfig  = strings.Replace(validRedisUpdateConfig , `replica_nodes = 3,`, `replica_nodes = 6,`, 1)
+	validRedisUpdateNodesConfig := strings.Replace(oriConfig, `master_nodes = 3,`, `master_nodes = 6,`, 1)
+	validRedisUpdateNodesConfig  = strings.Replace(validRedisUpdateNodesConfig , `replica_nodes = 3,`, `replica_nodes = 6,`, 1)
 	validRedisUpdateClientEncryptionConfig  := strings.Replace(oriConfig , `client_encryption = false`, `client_encryption = true`, 1)
 	validRedisUpdatePasswordAuthConfig  := strings.Replace(oriConfig , `password_auth = false`, `password_auth = true`, 1)
-
-// 	invalidResizeConfig := strings.Replace(oriConfig, `kibana_node_size = "t3.small-v2",`, `kibana_node_size = "t3.small",`, 1)
-
 
     resource.Test(t, resource.TestCase{
         Providers:    testAccProviders,
@@ -353,10 +347,6 @@ func TestAccRedisClusterForceNew(t *testing.T){
                 ),
             },
             {
-				PreConfig: func() {
-					fmt.Println("Sleep for 1 minutes to wait for Redis cluster to be ready for update.")
-					time.Sleep(1 * time.Minute)
-				},
                 Config: validRedisUpdateClientEncryptionConfig,
                 Check: resource.ComposeTestCheckFunc(
                     resource.TestCheckResourceAttr("instaclustr_cluster.validRedis", "cluster_name", "tf-redis-test"),
@@ -364,15 +354,18 @@ func TestAccRedisClusterForceNew(t *testing.T){
                 ),
             },
 			{
-				PreConfig: func() {
-					fmt.Println("Sleep for 1 minutes to wait for Redis cluster to be ready for update.")
-					time.Sleep(1 * time.Minute)
-				},
 				Config: validRedisUpdatePasswordAuthConfig,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("instaclustr_cluster.validRedis", "cluster_name", "tf-redis-test"),
-					//resource.TestCheckResourceAttr("instaclustr_cluster.validRedis", "bundle.0.options.client_encryption", "true"),
 					resource.TestCheckResourceAttr("instaclustr_cluster.validRedis", "bundle.0.options.password_auth", "true"),
+				),
+			},
+			{
+				Config: validRedisUpdateNodesConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("instaclustr_cluster.validRedis", "cluster_name", "tf-redis-test"),
+					resource.TestCheckResourceAttr("instaclustr_cluster.validRedis", "bundle.0.options.master_nodes", "6"),
+					resource.TestCheckResourceAttr("instaclustr_cluster.validRedis", "bundle.0.options.replica_nodes", "6"),
 				),
 			},
         },

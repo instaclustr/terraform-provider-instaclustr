@@ -35,6 +35,9 @@ func resourceCluster() *schema.Resource {
 			State: resourceClusterStateImport,
 		},
 
+		CustomizeDiff: resourceClusterCustomizeDiff,
+
+
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(40 * time.Minute),
 		},
@@ -565,6 +568,30 @@ func resourceCluster() *schema.Resource {
 		},
 	}
 }
+func resourceClusterCustomizeDiff(diff *schema.ResourceDiff, i interface{}) error {
+
+	if _, isBundle := diff.GetOk("bundle"); isBundle {
+		bundle := diff.Get("bundle").([]interface{})
+		bundleMap := bundle[0].(map[string] interface{})
+
+		// Mainly check Single DC Redis Cluster
+		if bundleMap["bundle"] == "REDIS" {
+			if _, isRackAllocationSet := diff.GetOk("rack_allocation"); isRackAllocationSet {
+				return fmt.Errorf("[Error] 'rack_allocation' is not supported in REDIS")
+			}
+
+			// Remove this logic once INS-13970 is implemented
+			if diff.Id() != "" && (diff.HasChange("bundle.0.options")) {
+				err:=diff.ForceNew("bundle.0.options")
+				if err != nil{
+					return err
+				}
+			}
+		}
+	}
+	return nil
+}
+
 
 func getNodeSize(d resourceDataInterface, bundles []Bundle) (string, error) {
 	for i, bundle := range bundles {
@@ -862,6 +889,15 @@ func hasKafkaSizeChanges(bundleIndex int, d resourceDataInterface) bool {
 		len(getNewSizeOrEmpty(d, "node_size")) > 0
 }
 
+func hasRedisSizeChanges(bundleIndex int, d resourceDataInterface) bool {
+	return len(getNewSizeOrEmpty(d, "node_size")) > 0
+}
+
+func hasRedisNodeCountChanges(bundleIndex int, d resourceDataInterface) bool {
+	return len(getNewSizeOrEmpty(d, getBundleOptionKey(bundleIndex, "master_nodes"))) > 0 ||
+		len(getNewSizeOrEmpty(d, getBundleOptionKey(bundleIndex, "replica_nodes"))) > 0
+}
+
 func hasCassandraSizeChanges(d resourceDataInterface) bool {
 	return len(getNewSizeOrEmpty(d, "node_size")) > 0
 }
@@ -899,6 +935,12 @@ func doClusterResize(client APIClientInterface, clusterID string, d resourceData
 		if hasKafkaSizeChanges(bundleIndex, d) {
 			return doKafkaClusterResize(client, cluster, d, bundleIndex)
 		} else {
+			return nil
+		}
+	case "REDIS":
+		if hasRedisSizeChanges(bundleIndex, d) {
+			return fmt.Errorf("CDC resize does not support: %s", cluster.BundleType)
+		} else{
 			return nil
 		}
 	default:
@@ -1125,8 +1167,11 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		rackAllocation["number_of_racks"] = strconv.Itoa(rackCount)
 		rackAllocation["nodes_per_rack"] = strconv.Itoa(nodesPerRack)
 
-		if err := d.Set("rack_allocation", rackAllocation); err != nil {
-			return fmt.Errorf("[Error] Error reading cluster, rack allocation could not be derived: %s", err)
+		//We do not want to read the rack allocation for Redis Cluster
+		if cluster.BundleType != "REDIS"{
+			if err := d.Set("rack_allocation", rackAllocation); err != nil {
+				return fmt.Errorf("[Error] Error reading cluster, rack allocation could not be derived: %s", err)
+			}
 		}
 		if len(cluster.DataCentres[0].ResizeTargetNodeSize) > 0 {
 			nodeSize = cluster.DataCentres[0].ResizeTargetNodeSize
