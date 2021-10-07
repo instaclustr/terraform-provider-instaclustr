@@ -16,6 +16,11 @@ resource "instaclustr_cluster" "validRedis" {
     name = "AWS_VPC"
   }
 
+  rack_allocation = {
+    number_of_racks = 5
+    nodes_per_rack  = 2
+  }
+
   bundle {
     bundle  = "REDIS"
     version = "redis:6.0.9"
@@ -29,4 +34,3 @@ resource "instaclustr_cluster" "validRedis" {
 
   wait_for_state = "RUNNING"
 }
-
