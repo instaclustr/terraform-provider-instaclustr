@@ -246,10 +246,6 @@ resource "instaclustr_cluster" "example-redis" {
   cluster_provider = {
     name = "AWS_VPC"
   }
-  rack_allocation = {
-    nodes_per_rack = 1
-    number_of_racks = 4
-  }
 
   bundle {
     bundle = "REDIS"
