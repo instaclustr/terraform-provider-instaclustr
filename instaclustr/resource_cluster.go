@@ -35,6 +35,8 @@ func resourceCluster() *schema.Resource {
 			State: resourceClusterStateImport,
 		},
 
+		CustomizeDiff: resourceClusterCustomizeDiff,
+
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(40 * time.Minute),
 		},
@@ -525,6 +527,11 @@ func resourceCluster() *schema.Resource {
 										Optional: true,
 										ForceNew: true,
 									},
+									"postgresql_node_count": {
+										Type:     schema.TypeInt,
+										Optional: true,
+										ForceNew: true,
+									},
 								},
 							},
 						},
@@ -560,6 +567,29 @@ func resourceCluster() *schema.Resource {
 		},
 	}
 }
+func resourceClusterCustomizeDiff(diff *schema.ResourceDiff, i interface{}) error {
+
+	if _, isBundle := diff.GetOk("bundle"); isBundle {
+		bundle := diff.Get("bundle").([]interface{})
+		bundleMap := bundle[0].(map[string] interface{})
+
+		// Mainly check Single DC Redis Cluster
+		if bundleMap["bundle"] == "REDIS" {
+			if _, isRackAllocationSet := diff.GetOk("rack_allocation"); isRackAllocationSet {
+				return fmt.Errorf("[Error] 'rack_allocation' is not supported in REDIS")
+			}
+			// Remove this logic once INS-13970 is implemented
+			if diff.Id() != "" && (diff.HasChange("bundle.0.options")) {
+				err:=diff.ForceNew("bundle.0.options")
+				if err != nil{
+					return err
+				}
+			}
+		}
+	}
+	return nil
+}
+
 
 func getNodeSize(d resourceDataInterface, bundles []Bundle) (string, error) {
 	for i, bundle := range bundles {
@@ -667,7 +697,6 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 
 		createData.RackAllocation = &rackAllocation
 	}
-
 	// for multi-DC cluster
 	if len(dataCentres) > 1 {
 		createData.RackAllocation = createData.DataCentres[0].RackAllocation
@@ -686,6 +715,9 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 	if err != nil {
 		return formatCreateErrMsg(err)
 	}
+
+	log.Printf("[DEBUG] Instaclustr REST API request: %s", jsonStrCreate)
+
 	d.SetId(id)
 	d.Set("cluster_id", id)
 	log.Printf("[INFO] Cluster %s has been created.", id)
@@ -1095,7 +1127,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		 */
 		for _, node := range cluster.DataCentres[0].Nodes {
 			nodeSize = node.Size
-			if !strings.HasPrefix(nodeSize, "zk-") {
+			if !isDedicatedZookeeperNodeSize(nodeSize) {
 				break
 			}
 		}
@@ -1105,7 +1137,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		rackCount := 0
 		rackList := make([]string, 0)
 		for _, node := range cluster.DataCentres[0].Nodes {
-			if !strings.HasPrefix(node.Size, "zk-") {
+			if !isDedicatedZookeeperNodeSize(node.Size) {
 				nodeCount += 1
 			}
 			rackList = appendIfMissing(rackList, node.Rack)
@@ -1117,9 +1149,14 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		rackAllocation["number_of_racks"] = strconv.Itoa(rackCount)
 		rackAllocation["nodes_per_rack"] = strconv.Itoa(nodesPerRack)
 
+		if cluster.BundleType == "REDIS" {
+			rackAllocation = nil
+		}
+
 		if err := d.Set("rack_allocation", rackAllocation); err != nil {
 			return fmt.Errorf("[Error] Error reading cluster, rack allocation could not be derived: %s", err)
 		}
+
 		if len(cluster.DataCentres[0].ResizeTargetNodeSize) > 0 {
 			nodeSize = cluster.DataCentres[0].ResizeTargetNodeSize
 		}
@@ -1152,7 +1189,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	for _, dataCentre := range cluster.DataCentres {
 		for _, node := range dataCentre.Nodes {
 			if !stringInSlice(node.Rack, azList) {
-				if !strings.HasPrefix(node.Size, "zk-") {
+				if !isDedicatedZookeeperNodeSize(node.Size) {
 					azList = appendIfMissing(azList, node.Rack)
 					privateContactPointList = appendIfMissing(privateContactPointList, node.PrivateAddress)
 					publicContactPointList = appendIfMissing(publicContactPointList, node.PublicAddress)
@@ -1381,6 +1418,7 @@ func checkIfBundleRequiresRackAllocation(bundles []Bundle) bool {
 	var noRackAllocationBundles = []string{
 		"REDIS",
 		"APACHE_ZOOKEEPER",
+		"POSTGRESQL",
 	}
 
 	for i := 0; i < len(bundles); i++ {
@@ -1399,4 +1437,11 @@ func isClusterSingleDataCentre(cluster Cluster) bool {
 		return true
 	}
 	return false
+}
+
+// Currently, there is no API to tell if a node should be included as the main contact point
+// or calculated in the rack allocation scheme (that is not returned by the API).
+// Dedicated ZooKeeper nodes fall into this category and require a specific handling by the provider
+func isDedicatedZookeeperNodeSize(nodeSize string) bool {
+	return strings.HasPrefix(nodeSize, "zk-") || strings.HasPrefix(nodeSize, "KDZ-")
 }
