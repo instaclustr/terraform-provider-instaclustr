@@ -1,12 +1,12 @@
 package instaclustr
 
 import (
-    "testing"
-    "github.com/hashicorp/terraform/terraform"
+	"github.com/hashicorp/terraform/terraform"
+	"testing"
 )
 
 func TestProvider(t *testing.T) {
-    if err := Provider().InternalValidate(); err != nil {
+	if err := Provider().InternalValidate(); err != nil {
 		t.Fatalf("err: %s", err)
 	}
 }

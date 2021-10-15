@@ -5,6 +5,8 @@
 ![Latest Release Version](https://img.shields.io/github/v/release/instaclustr/terraform-provider-instaclustr?logo=github&sort=semver&style=for-the-badge)
 ![License](https://img.shields.io/github/license/instaclustr/terraform-provider-instaclustr?style=for-the-badge)
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=instaclustr_terraform-provider-instaclustr&metric=alert_status)](https://sonarcloud.io/dashboard?id=instaclustr_terraform-provider-instaclustr)
+
 A [Terraform](http://terraform.io) provider for managing Instaclustr Platform resources.
 
 It provides a flexible set of resources for provisioning and managing [Instaclustr based clusters](http://instaclustr.com/) via the use of Terraform.
@@ -23,21 +25,19 @@ For further information about Instaclustr, please see [FAQ](https://www.instaclu
 
 ## Requirements
 
-- Terraform v0.10.x - .v0.13.x.
+- Terraform v0.10.x - .v0.15.x.
 - Go 1.14 or higher
 
 ## Using The Provider
 
-To install this provider, copy and paste this code into your Terraform configuration. Then, run terraform init.
-
-Terraform 0.13+
+To install this provider using Terraform 0.13+, copy and paste this code into your Terraform configuration. Then, run terraform init.
 
 ```
 terraform {
   required_providers {
     instaclustr = {
       source = "instaclustr/instaclustr"
-      version = "1.9.6"
+      version = "1.9.9"
     }
   }
 }
@@ -47,11 +47,11 @@ provider "instaclustr" {
 }
 ```
 
-For further details on Provider installation please see the [Terraform installation guide](https://www.terraform.io/docs/plugins/basics.html#installing-a-plugin).
+For further details on Provider installation, and installation on older versions of terraform please see the [Terraform installation guide](https://www.terraform.io/docs/plugins/basics.html#installing-a-plugin).
 
 ## Authentication
 
-This provider requires an API Key in order to provision Instaclustr resources. To create an API key, please log into the [Instaclustr Console](https://console.instaclustr.com) or signup for an account [here](https://console.instaclustr.com/user/signup) if you dont have one.  Navigate to `Account` -> `API Keys` page, locate the `Provisioning` role and click `Generate Key`.  This username and API key combination should then be placed into the provider configuration:
+This provider requires an API Key in order to provision Instaclustr resources. To create an API key, please log into the [Instaclustr Console](https://console.instaclustr.com) or signup for an account [here](https://console.instaclustr.com/user/signup) if you don't have one.  Navigate to `Account` -> `API Keys` page, locate the `Provisioning` role and click `Generate Key`.  This username and API key combination should be placed into the provider configuration:
 
 ```
 provider "instaclustr" {
@@ -59,10 +59,39 @@ provider "instaclustr" {
     api_key = "<Your provisioning API key here>"
 }
 ```
-or just input them when Terraform indicates you.
+
+If you wish to keep secrets in the ENV instead of stored in your terraform file use the following method:
+
+In console export the desired variable:
+
+```export api_key={instaclustrAPIkey}```
+
+In your terraform file create a variable:
+```
+variable "api_key" {
+ type = string
+ default = "xxx"
+}
+```
+
+In the provider block use the variable:
+```
+provider "instaclustr" {
+    username= "<Your instaclustr username>"
+    api_key = var.api_key
+}
+```
+When running terraform plan/apply, pipe in the variables as follows:
+
+```terraform apply -var= "api_key=$api_key"```
 
 ## Example Usage
 
+It's possible to provision clusters for different cloud providers by changing the variable `cluster_provider`.
+The accepted cloud providers are: `AWS`, `GCP`, `AZURE`.
+
+
+AWS:
 ```
 resource "instaclustr_cluster" "example" {
     cluster_name = "testcluster"
@@ -93,9 +122,158 @@ resource "instaclustr_cluster" "example" {
 }
 ```
 
+AZURE:
+```
+resource "instaclustr_cluster" "azure_example" {
+  cluster_name = "testcluster"
+  node_size = "Standard_DS2_v2-256"
+  data_centre = "CENTRAL_US"
+  sla_tier = "NON_PRODUCTION"
+  cluster_network = "192.168.0.0/18"
+  private_network_cluster = false
+  cluster_provider = {
+    name = "AZURE"
+  }
+  rack_allocation = {
+    number_of_racks = 3
+    nodes_per_rack = 1
+  }
+
+  bundle {
+    bundle = "APACHE_CASSANDRA"
+    version = "3.11.8"
+    options = {
+      auth_n_authz = true
+    }
+  }
+}
+```
+
+GCP:
+```
+resource "instaclustr_cluster" "gcp_example" {
+  cluster_name = "testclustergcp"
+  node_size = "n1-standard-2"
+  data_centre = "us-east1"
+  sla_tier = "NON_PRODUCTION"
+  cluster_network = "192.168.0.0/18"
+  private_network_cluster = false
+  cluster_provider = {
+    name = "GCP"
+  }
+  rack_allocation = {
+    number_of_racks = 3
+    nodes_per_rack = 1
+  }
+
+  bundle {
+    bundle = "APACHE_CASSANDRA"
+    version = "3.11.8"
+    options = {
+      auth_n_authz = true
+    }
+  }
+}
+```
+
+Multi Data Centre Provisioning:
+
+For Multi Data Centre provisioning, please specify `node_size`, `rack_allocation`, `provider` and `bundles` in each `data_centres`;  
+For each `data_centres`, it requires at least one `bundles` to be the base application, e.g. `APACHE_CASSANDRA`.  
+```
+resource "instaclustr_cluster" "multi_DC_example" {
+  cluster_name = "testcluster_multiDC"
+  sla_tier     = "NON_PRODUCTION"
+
+  data_centres {
+    name        = "DC1"
+    data_centre = "US_WEST_1"
+    network     = "10.1.0.0/18"
+    node_size    = "m5l-250-v2"
+    rack_allocation = {
+      number_of_racks = 2
+      nodes_per_rack  = 1
+    }
+    provider = {
+      name = "AWS_VPC"
+    }
+    bundles {
+      bundle = "APACHE_CASSANDRA"
+      version = "apache-cassandra-3.11.8.ic2"
+      options = {
+        auth_n_authz = true
+        use_private_broadcast_rpc_address = false
+        client_encryption = false
+        lucene_enabled = false
+        continuous_backup_enabled = true
+      }
+    }
+    bundles {
+      bundle = "SPARK"
+      version = "apache-spark:2.3.2.ic1"
+    }
+  }
+
+  data_centres {
+    name        = "DC2"
+    data_centre = "CENTRAL_US"
+    network     = "10.0.0.0/18"
+    node_size    = "Standard_DS2_v2-256"
+    rack_allocation = {
+      number_of_racks = 2
+      nodes_per_rack  = 1
+    }
+    provider = {
+      name = "AZURE"
+    }
+    bundles {
+      bundle = "APACHE_CASSANDRA"
+      version = "apache-cassandra-3.11.8.ic2"
+      options = {
+        auth_n_authz = true
+        use_private_broadcast_rpc_address = false
+        client_encryption = false
+        lucene_enabled = false
+        continuous_backup_enabled = true
+      }
+    }
+  }
+
+  data_centres {
+    name = "DC3"
+    data_centre = "US_WEST_2"
+    network     = "192.168.0.0/18"
+    node_size    = "m5l-250-v2"
+    rack_allocation = {
+      number_of_racks = 2
+      nodes_per_rack  = 1
+    }
+    provider = {
+      name = "AWS_VPC"
+    }
+    bundles {
+      bundle = "APACHE_CASSANDRA"
+      version = "apache-cassandra-3.11.8.ic2"
+      options = {
+        auth_n_authz = true
+        use_private_broadcast_rpc_address = false
+        client_encryption = false
+        lucene_enabled = false
+        continuous_backup_enabled = true
+      }
+    }
+    bundles {
+      bundle = "SPARK"
+      version = "apache-spark:2.3.2.ic1"
+    }
+  }
+}
+```
+
+
 ## Configuration
 
-Configuration documentation can be found at the [Instacluster Terraform Registry](https://registry.terraform.io/providers/instaclustr/instaclustr/latest/docs/resources/encryption_key)
+Configuration documentation can be found at the [Instaclustr Terraform Registry](https://registry.terraform.io/providers/instaclustr/instaclustr/latest/docs/resources/encryption_key)
 
 ## Bundles and Versions
 
@@ -110,6 +288,7 @@ ELASTICSEARCH|opendistro-for-elasticsearch:1.4.0
 KAFKA_CONNECT|2.3.1, 2.4.1, 2.5.1, 2.6.1|
 REDIS|6.0.9|
 APACHE_ZOOKEEPER|3.5.8|
+POSTGRESQL|13.4|
 
 ### Migrating from 0.0.1 &rarr; 1.0.0+
 A schema change has been made from 0.0.1 which no longer supports the `bundles` argument and uses `bundle` blocks instead. This change can cause `terraform apply` to fail with a message that `bundles` has been removed and/or updating isn't supported. To resolve this -<br>
@@ -138,7 +317,7 @@ Firstly thanks!  We value your time and will do our best to review the PR as soo
 4. Run the unit tests by `$ make test`
 7. Create a PR and send it our way :)
 
-Our Circle CI pipeline will automatically run unit tests when a PR is created and new changes are committed.
+Our Circle CI pipeline will automatically run unit tests when a PR is created and new changes committed.
 It is also capable of running the acceptance tests, however our staff needs to give a manual approval to run the tests.
 Passing tests are a requirement to merge a PR. Please let us know when your PR is ready for acceptance tests!
 
@@ -146,7 +325,7 @@ Unit tests are within `instaclustr` folder with `_unit_test` suffix, and used to
 
 #### Acceptance Testing
 
-Acceptance tests are within `acc_test` folder, and used to run end-to-end testing. We recommend using CircleCI to run your acceptance tests, however you can run them locally. Acceptance tests require end to end interaction with the instaclustr platform and will create real (paid) infrastructure. If you wish to perform local testing you must set the variables below and run ```make testacc``` 
+Acceptance tests are within `acc_test` folder, and used to run end-to-end testing. We recommend using CircleCI to run your acceptance tests, however you can run them locally. Acceptance tests require end to end interaction with the instaclustr platform and will create real (paid) infrastructure. If you wish to perform local testing you must set the variables below and run: ```make testacc``` 
 
 
 Variable | Command | Description
@@ -188,13 +367,10 @@ To run a specific test, use the `testtarget` makefile goal.
 
 ## Further information and documentation
 
-This provider makes use of the Instaclustr API.  For further information including latest updates and value definitions, please see [the provisioning API documentation](https://www.instaclustr.com/support/api-integrations/api-reference/provisioning-api/).
+This provider makes use of the Instaclustr API.  For further information including the latest updates and value definitions, please see [the provisioning API documentation](https://www.instaclustr.com/support/api-integrations/api-reference/provisioning-api/).
 
 Please see https://www.instaclustr.com/support/documentation/announcements/instaclustr-open-source-project-status/ for Instaclustr support status of this project.
 
 # License
 
 Apache2 - See the included LICENSE file for more details.
-
-Test
-

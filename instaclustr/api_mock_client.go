@@ -14,10 +14,10 @@ func (mockFunction RoundTripFunc) RoundTrip(request *http.Request) (*http.Respon
 }
 
 func (c *APIClient) InitMockClient(mockFunction RoundTripFunc) {
-    c.InitClient("", "", "")
+	c.InitClient("", "", "")
 	var client = &http.Client{
 		Timeout:   time.Second * 60,
 		Transport: RoundTripFunc(mockFunction),
-    }
-    c.SetClient(client)
+	}
+	c.SetClient(client)
 }

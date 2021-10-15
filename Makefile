@@ -1,8 +1,9 @@
 
-BIN_NAME="terraform-provider-instaclustr"
+BIN_NAME=terraform-provider-instaclustr
+
 
 # for VERSION, don't add prefix "v", e.g., use "1.9.8" instead of "v1.9.8" as it could break circleCI stuff
-VERSION=1.9.8
+VERSION=1.13.2
 INSTALL_FOLDER=$(HOME)/.terraform.d/plugins/terraform.instaclustr.com/instaclustr/instaclustr/$(VERSION)/darwin_amd64
 
 
@@ -13,14 +14,15 @@ release_version:
 all: build
 
 clean:
-	rm $(BIN_NAME)_v$(VERSION)
-	rm -fr vendor
+	-rm -rf bin/$(BIN_NAME)_v$(VERSION)
+	-rm -rf $(INSTALL_FOLDER)
 
 build:
 	go build $(FLAGS) -o bin/$(BIN_NAME)_v$(VERSION) main.go
 
 test:
-	cd instaclustr && go test -v -timeout 120m -count=1
+	cd instaclustr && go test -v -timeout 120m -count=1 -coverprofile coverage.out -json ./... > report.json
+	@cd instaclustr && cat report.json | sed -n '/Output/p' | jq '.Output' # Prettify the report.json file to print it to stdout
 
 testacc:
 ifndef IC_USERNAME

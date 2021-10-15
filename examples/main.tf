@@ -22,7 +22,6 @@ resource "instaclustr_encryption_key" "add_ebs_key" {
   provider = "instaclustr"
 }
 
-
 resource "instaclustr_cluster" "example" {
   cluster_name = "testcluster"
   node_size = "t3.small"
@@ -32,9 +31,9 @@ resource "instaclustr_cluster" "example" {
   private_network_cluster = false
   cluster_provider = {
     name = "AWS_VPC",
-    tags = {
-      "myTag" = "myTagValue"
-    }
+  }
+  tags = {
+    "myTag" = "myTagValue"
   }
   rack_allocation = {
     number_of_racks = 3
@@ -43,17 +42,11 @@ resource "instaclustr_cluster" "example" {
 
   bundle {
     bundle = "APACHE_CASSANDRA"
-    version = "3.11.4"
+    version = "3.11.8"
     options = {
       auth_n_authz = true
     }
   }
-
-  bundle {
-    bundle = "SPARK"
-    version = "2.3.2"
-  }
-
 }
 
 data "instaclustr_cluster_credentials" "example_credentials" {
@@ -79,7 +72,7 @@ resource "instaclustr_cluster" "custom_vpc_example" {
 
   bundle {
     bundle = "APACHE_CASSANDRA"
-    version = "3.11.4"
+    version = "3.11.8"
   }
 }
 
@@ -153,7 +146,6 @@ resource "instaclustr_cluster" "example_kafka" {
 
 resource "instaclustr_cluster" "example-elasticsearch" {
   cluster_name = "es-cluster"
-  node_size = "m5l-250-v2"
   data_centre = "US_EAST_1"
   sla_tier = "NON_PRODUCTION"
   cluster_network = "192.168.0.0/18"
@@ -173,6 +165,8 @@ resource "instaclustr_cluster" "example-elasticsearch" {
       client_encryption = true,
       dedicated_master_nodes = true,
       master_node_size = "m5l-250-v2",
+      data_node_size = "m5l-250-v2",
+      kibana_node_size = "m5l-250-v2",
       security_plugin = true
     }
   }
@@ -210,6 +204,15 @@ resource "instaclustr_kafka_user" "kafka_user_charlie" {
   password = "charlie123!"
 }
 
+resource "instaclustr_kafka_user" "kafka_user_harley" {
+  cluster_id = "${instaclustr_cluster.example_kafka.id}"
+  username = "harley"
+  password = "harley123!"
+  initial_permissions = "standard"
+  authentication_mechanism = "SCRAM-SHA-512"
+  override_existing_user = false
+}
+
 data "instaclustr_kafka_user_list" "kafka_user_list" {
   cluster_id = "${instaclustr_cluster.example_kafka.id}"
 }
@@ -230,7 +233,7 @@ resource "instaclustr_cluster" "private_cluster_example" {
   }
   bundle {
     bundle = "APACHE_CASSANDRA"
-    version = "3.11.4"
+    version = "3.11.8"
   }
 }
 
@@ -246,10 +249,36 @@ resource "instaclustr_cluster" "example-redis" {
 
   bundle {
     bundle = "REDIS"
-    version = "6.0.4"
+    version = "redis:6.0.9"
     options = {
       master_nodes = 3,
-      replica_nodes = 3
+      replica_nodes = 3,
+      password_auth = false,
+      client_encryption = false
+    }
+  }
+}
+
+resource "instaclustr_cluster" "example-postgresql" {
+  cluster_name = "testcluster"
+  node_size = "PGS-DEV-t3.small-5"
+  data_centre = "US_WEST_2"
+  sla_tier = "NON_PRODUCTION"
+  cluster_network = "192.168.0.0/18"
+  cluster_provider = {
+    name = "AWS_VPC"
+  }
+  rack_allocation = {
+    nodes_per_rack = 1
+    number_of_racks = 1
+  }
+
+  bundle {
+    bundle = "POSTGRESQL"
+    version = "postgresql:13.4"
+    options = {
+      postgresql_node_count = 1,
+      client_encryption = true
     }
   }
 }

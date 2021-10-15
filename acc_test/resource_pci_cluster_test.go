@@ -36,7 +36,7 @@ func TestAccPCICluster(t *testing.T) {
 				),
 			},
 			{
-				Config:      updatedConfig,
+				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckResourceValid("valid"),
 					testCheckResourceCreated("valid", hostname, username, apiKey),
@@ -59,7 +59,6 @@ func TestAccPCIClusterResize(t *testing.T) {
 	invalidResizeClassConfig := strings.Replace(originalConfig, "resizeable-small(r5-l)-v2", "resizeable-large(r5-xl)-v2", 1)
 	invalidResizeConfig := strings.Replace(originalConfig, "resizeable-small(r5-l)-v2", "t3.medium", 1)
 
-
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckPCIResourceDeleted("resizable_pci_cluster", hostname, username, apiKey),
@@ -70,7 +69,7 @@ func TestAccPCIClusterResize(t *testing.T) {
 					testCheckPCIResourceValid("resizable_pci_cluster"),
 					testCheckPCIResourceCreated("resizable_pci_cluster", hostname, username, apiKey),
 					checkClusterRunning("resizable_pci_cluster", hostname, username, apiKey),
-					testCheckContactIPCorrect("resizable_pci_cluster", hostname, username, apiKey, 2,0),
+					testCheckContactIPCorrect("resizable_pci_cluster", hostname, username, apiKey, 2, 0),
 				),
 			},
 			{

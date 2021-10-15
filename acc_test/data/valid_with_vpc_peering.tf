@@ -6,7 +6,7 @@ provider "instaclustr" {
 
 resource "instaclustr_cluster" "valid_with_vpc_peering" {
     cluster_name = "tf_provider_vpc_peering_test"
-    node_size = "t3.small"
+    node_size = "t3.small-v2"
     data_centre = "US_WEST_2"
     sla_tier = "NON_PRODUCTION"
     cluster_network = "192.168.0.0/18"

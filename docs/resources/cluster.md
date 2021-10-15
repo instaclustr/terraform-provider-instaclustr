@@ -21,7 +21,7 @@ Property | Description | Default
 `private_network_cluster`|Accepts true/false. Creates the cluster with private network only.|false
 `pci_compliant_cluster`|Accepts true/false. Creates the cluster with PCI compliance enabled.|false
 `cluster_provider`|The information of infrastructure provider. See below for its properties.|Required
-`rack_allocation`|The number of resources to use. See below for its properties.|Optional, but Required for all Bundle types excluding Redis.
+`rack_allocation`|The number of resources to use. See below for its properties.|Optional, but Required for some Bundle types.
 `bundle`|Array of bundle information. See below for its properties.|Required
 `kafka_rest_proxy_user_password`|The password of kafka rest proxy bundle user, if it is a Kafka cluster with rest-proxy addon. This field is updatable and requires `wait_for_state` to be `RUNNING`.|Optional
 `kafka_schema_registry_user_password`|The password of kafka schema registry bundle user, if it is a Kafka cluster with schema-registry addon. This field is updatable and requires `wait_for_state` to be `RUNNING`.|Optional
@@ -67,13 +67,14 @@ ELASTICSEARCH|opendistro-for-elasticsearch:1.4.0
 KAFKA_CONNECT|2.3.1, 2.4.1, 2.5.1, 2.6.1|
 REDIS|6.0.9|
 APACHE_ZOOKEEPER|3.5.8|
+POSTGRESQL|13.4|
 
-`bundle.options` - _all properties listed are optional_
+`bundle.options`
 
 Property | Description | For Bundles | Default
 ---------|-------------|-------------|--------
 `auth_n_authz`|Accepts true/false. Enables Password Authentication and User Authorization.|Cassandra|false
-`client_encryption`|Accepts true/false. Enables Client ⇄ Node Encryption.|Cassandra, Kafka, Elasticsearch, Spark, Redis, ZooKeeper|false
+`client_encryption`|Accepts true/false. Enables Client ⇄ Node Encryption.|Cassandra, Kafka, Elasticsearch, Spark, Redis, ZooKeeper, PostgreSQL|false
 `dedicated_master_nodes`|Accepts true/false. Enables Dedicated Master Nodes.|Elasticsearch|false
 `master_node_size`|Desired master node size. See [here](https://developer.instaclustr.com/#operation/extendedProvisionRequestHandler) for more details.|Elasticsearch|Required
 `security_plugin`|Accepts true/false. Enables Security Plugin. This option gives an extra layer of security to the cluster. This will automatically enable internode encryption.|Elasticsearch|false
@@ -92,7 +93,10 @@ Property | Description | For Bundles | Default
 `truststore`|Base64 encoded version of the TLS trust store (in JKS format) used to connect to your Kafka Cluster. Only required if connecting to a Non-Instaclustr managed Kafka Cluster with TLS enabled|Kafka Connect
 `master_nodes`|The number of Master nodes in a generated Redis Cluster.|Redis|Required (Integers)
 `replica_nodes`|The number of Replica nodes in a generated Redis Cluster.|Redis|Required (Integers)
+`password_auth`|Accepts true/false. Enables Password Authentication and User Authorization.|Redis|false
 `dedicated_zookeeper`|Indicate whether this Kafka cluster should allocate dedicated Zookeeper nodes|Kafka|false
 `zookeeper_node_size`|If `dedicated_zookeeper` is true, then it is the node size for the dedicated Zookeeper nodes. Have a look [here](https://www.instaclustr.com/support/api-integrations/api-reference/provisioning-api/#section-create-cluster) (Kafka bundle options table) for node size options. |Kafka
 `zookeeper_node_count`|Indicates how many nodes are allocated to be Zookeeper nodes. For KAFKA bundle, if `dedicated_zookeeper` is false, then it indicates how many Kafka nodes also have ZooKeeper services in them. |Kafka, ZooKeeper
+`postgresql_node_count`|The number of nodes in a generated PostgreSQL cluster.|Postgresql|Required (Integers)
+
 

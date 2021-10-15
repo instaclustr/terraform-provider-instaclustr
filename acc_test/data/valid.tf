@@ -6,7 +6,7 @@ provider "instaclustr" {
 
 resource "instaclustr_cluster" "valid" {
     cluster_name = "test_cluster"
-    node_size = "t3.small-v2"
+    node_size = "m5l-250-v2"
     data_centre = "US_WEST_2"
     sla_tier = "NON_PRODUCTION"
     cluster_network = "192.168.0.0/18"
@@ -30,9 +30,5 @@ resource "instaclustr_cluster" "valid" {
             lucene_enabled = false
             continuous_backup_enabled = true
         }
-    }
-    bundle {
-        bundle = "SPARK"
-        version = "apache-spark:2.3.2.ic1"
     }
 }

@@ -8,21 +8,21 @@ import (
 
 func dataSourceClusterCredentials() *schema.Resource {
 	return &schema.Resource{
-		Read:   dataSourceClusterCredentialsRead,
+		Read: dataSourceClusterCredentialsRead,
 
 		Schema: map[string]*schema.Schema{
 			"cluster_id": {
-				Type:     	schema.TypeString,
-				Required: 	true,
+				Type:     schema.TypeString,
+				Required: true,
 			},
 			"cluster_password": {
-				Type:		schema.TypeString,
-				Computed:	true,
-				Sensitive:	true,
+				Type:      schema.TypeString,
+				Computed:  true,
+				Sensitive: true,
 			},
 			"certificate_download": {
-				Type:		schema.TypeString,
-				Computed:	true,
+				Type:     schema.TypeString,
+				Computed: true,
 			},
 		},
 	}
