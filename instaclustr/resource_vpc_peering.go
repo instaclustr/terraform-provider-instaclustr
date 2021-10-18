@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/mitchellh/mapstructure"
 )
 
 func resourceVpcPeering() *schema.Resource {
@@ -201,16 +202,14 @@ func resourceVpcPeeringStateImport(d *schema.ResourceData, meta interface{}) ([]
 }
 
 func createVpcPeeringRequest(d *schema.ResourceData) (CreateVPCPeeringRequest, error) {
-	result := CreateVPCPeeringRequest{
-		PeerVpcID:     d.Get("peer_vpc_id").(string),
-		PeerAccountID: d.Get("peer_account_id").(string),
-		PeerRegion:    d.Get("peer_region").(string),
+	result := CreateVPCPeeringRequest{}
+	err := mapstructure.Decode(d, &result)
+	if err != nil {
+		return result, fmt.Errorf("[Error] Error decoding VPC peering connection request: %s", err)
 	}
-	if _, isSet := d.GetOk("peer_subnet"); isSet {
-		result.PeerSubnet = d.Get("peer_subnet").(string)
-	} else if _, isSet := d.GetOk("peer_subnets"); isSet {
-		result.PeerSubnets = d.Get("peer_subnets").(*schema.Set).List()
-	} else {
+	_, peerSubnetExists := d.GetOk("peer_subnet")
+	_, peerSubnetsExist := d.GetOk("peer_subnets")
+	if !peerSubnetExists && !peerSubnetsExist {
 		return result, fmt.Errorf("[Error] Error creating peering request - at least one subnet must be specified")
 	}
 	return result, nil

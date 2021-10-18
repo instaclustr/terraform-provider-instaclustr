@@ -155,11 +155,11 @@ type Node struct {
 }
 
 type CreateVPCPeeringRequest struct {
-	PeerVpcID     string        `json:"peerVpcId"`
-	PeerAccountID string        `json:"peerAccountId"`
-	PeerSubnet    string        `json:"peerSubnet"`
-	PeerSubnets   []interface{} `json:"peerSubnets"`
-	PeerRegion    string        `json:"peerRegion,omitempty"`
+	PeerVpcID     string        `json:"peerVpcId" mapstructure:"peer_vpc_id"`
+	PeerAccountID string        `json:"peerAccountId" mapstructure:"peer_account_id"`
+	PeerSubnet    string        `json:"peerSubnet" mapstructure:"peer_subnet"`
+	PeerSubnets   []interface{} `json:"peerSubnets" mapstructure:"peer_subnets"`
+	PeerRegion    string        `json:"peerRegion,omitempty" mapstructure:"peer_region,omitempty"`
 }
 
 type VPCPeering struct {
