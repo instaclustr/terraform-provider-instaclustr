@@ -550,13 +550,6 @@ func TestCreateVpcPeeringRequestLegacy(t *testing.T) {
 	}
 }
 
-func TestCreateVpcPEeringRequestEmpty(t *testing.T) {
-	data := schema.ResourceData{}
-	if _, err := createVpcPeeringRequest(&data); err == nil {
-		t.Fatalf("Expect error creating empty VPC Peering Request but received none")
-	}
-}
-
 type MockApiClient struct {
 	cluster Cluster
 	err     error
