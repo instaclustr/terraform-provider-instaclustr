@@ -201,10 +201,11 @@ func resourceVpcPeeringStateImport(d *schema.ResourceData, meta interface{}) ([]
 }
 
 func createVpcPeeringRequest(d *schema.ResourceData) (CreateVPCPeeringRequest, error) {
-	result := CreateVPCPeeringRequest{}
-	result.PeerVpcID = d.Get("peer_vpc_id").(string)
-	result.PeerAccountID = d.Get("peer_account_id").(string)
-	result.PeerRegion = d.Get("peer_region").(string)
+	result := CreateVPCPeeringRequest{
+		PeerVpcID:     d.Get("peer_vpc_id").(string),
+		PeerAccountID: d.Get("peer_account_id").(string),
+		PeerRegion:    d.Get("peer_region").(string),
+	}
 	if _, isSet := d.GetOk("peer_subnet"); isSet {
 		result.PeerSubnet = d.Get("peer_subnet").(string)
 	} else if _, isSet := d.GetOk("peer_subnets"); isSet {
