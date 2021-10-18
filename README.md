@@ -325,7 +325,7 @@ Unit tests are within `instaclustr` folder with `_unit_test` suffix, and used to
 
 #### Acceptance Testing
 
-Acceptance tests are within `acc_test` folder, and used to run end-to-end testing. We recommend using CircleCI to run your acceptance tests, however you can run them locally. Acceptance tests require end to end interaction with the instaclustr platform and will create real (paid) infrastructure. If you wish to perform local testing you must set the variables below and run: ```make testacc``` 
+Acceptance tests are within `acc_test` folder, and used to run end-to-end testing. We recommend using CircleCI to run your acceptance tests, however you can run them locally. Acceptance tests require end to end interaction with the Instaclustr platform and will create real (paid) infrastructure. If you wish to perform local testing you must set the variables below and run: ```make testacc``` 
 
 
 Variable | Command | Description
