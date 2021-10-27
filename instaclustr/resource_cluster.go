@@ -571,7 +571,7 @@ func resourceClusterCustomizeDiff(diff *schema.ResourceDiff, i interface{}) erro
 
 	if _, isBundle := diff.GetOk("bundle"); isBundle {
 		bundle := diff.Get("bundle").([]interface{})
-		bundleMap := bundle[0].(map[string] interface{})
+		bundleMap := bundle[0].(map[string]interface{})
 
 		// Mainly check Single DC Redis Cluster
 		if bundleMap["bundle"] == "REDIS" {
@@ -580,8 +580,8 @@ func resourceClusterCustomizeDiff(diff *schema.ResourceDiff, i interface{}) erro
 			}
 			// Remove this logic once INS-13970 is implemented
 			if diff.Id() != "" && (diff.HasChange("bundle.0.options")) {
-				err:=diff.ForceNew("bundle.0.options")
-				if err != nil{
+				err := diff.ForceNew("bundle.0.options")
+				if err != nil {
 					return err
 				}
 			}
@@ -589,7 +589,6 @@ func resourceClusterCustomizeDiff(diff *schema.ResourceDiff, i interface{}) erro
 	}
 	return nil
 }
-
 
 func getNodeSize(d resourceDataInterface, bundles []Bundle) (string, error) {
 	for i, bundle := range bundles {
@@ -1166,6 +1165,12 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		d.Set("data_centre", cluster.DataCentres[0].Name)
 		d.Set("cluster_network", cluster.DataCentres[0].CdcNetwork)
 	} else {
+
+		log.Printf("DELETING STUFF")
+		if err := deleteAttributesConflictWithDataCentres(d); err != nil {
+			return err
+		}
+
 		dataCentres, err := getDataCentresFromCluster(cluster)
 		if err != nil {
 			return err
@@ -1221,6 +1226,20 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	log.Printf("[INFO] Fetched cluster %s info from the remote server.", cluster.ID)
+	return nil
+}
+
+func deleteAttributesConflictWithDataCentres(d *schema.ResourceData) error {
+	clusterResource := resourceCluster()
+	for key, value := range clusterResource.Schema {
+		for _, conflictsWith := range value.ConflictsWith {
+			if conflictsWith == "data_centres" {
+				if err := d.Set(key, nil); err != nil {
+					return err
+				}
+			}
+		}
+	}
 	return nil
 }
 
