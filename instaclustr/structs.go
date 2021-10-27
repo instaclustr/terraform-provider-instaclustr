@@ -155,27 +155,24 @@ type Node struct {
 }
 
 type CreateVPCPeeringRequest struct {
-	PeerVpcID     string `json:"peerVpcId"`
-	PeerAccountID string `json:"peerAccountId"`
-	PeerSubnet    string `json:"peerSubnet"`
-	PeerRegion    string `json:"peerRegion,omitempty"`
+	PeerVpcID     string        `json:"peerVpcId"`
+	PeerAccountID string        `json:"peerAccountId"`
+	PeerSubnet    string        `json:"peerSubnet"`
+	PeerSubnets   []interface{} `json:"peerSubnets"`
+	PeerRegion    string        `json:"peerRegion,omitempty"`
 }
 
 type VPCPeering struct {
-	ID                 string `json:"id"`
-	AWSVpcConnectionID string `json:"aws_vpc_connection_id"`
-	ClusterDataCentre  string `json:"clusterDataCentre"`
-	VpcID              string `json:"vpcId"`
-	PeerVpcID          string `json:"peerVpcId"`
-	PeerAccountID      string `json:"peerAccountId"`
-	PeerSubnet         string `json:"peerSubnet"`
-	StatusCode         string `json:"statusCode"`
-	PeerRegion         string `json:"peerRegion"`
-}
-
-type VPCPeeringSubnet struct {
-	Network      string `json:"network"`
-	PrefixLength string `json:"prefixLength"`
+	ID                 string        `json:"id"`
+	AWSVpcConnectionID string        `json:"aws_vpc_connection_id"`
+	ClusterDataCentre  string        `json:"clusterDataCentre"`
+	VpcID              string        `json:"vpcId"`
+	PeerVpcID          string        `json:"peerVpcId"`
+	PeerAccountID      string        `json:"peerAccountId"`
+	PeerSubnet         string        `json:"peerSubnet"`
+	PeerSubnets        []interface{} `json:"peerSubnets"`
+	StatusCode         string        `json:"statusCode"`
+	PeerRegion         string        `json:"peerRegion"`
 }
 
 type ResizeClusterRequest struct {
@@ -198,10 +195,10 @@ type UpdateBundleUserRequest struct {
 }
 
 type CreateKafkaUserRequest struct {
-	Username           string `json:"username"`
-	Password           string `json:"password"`
-	InitialPermissions string `json:"initial-permissions"`
-	Options KafkaUserCreateOptions `json:"options,omitempty"`
+	Username           string                 `json:"username"`
+	Password           string                 `json:"password"`
+	InitialPermissions string                 `json:"initial-permissions"`
+	Options            KafkaUserCreateOptions `json:"options,omitempty"`
 }
 
 type KafkaUserCreateOptions struct {
@@ -210,9 +207,9 @@ type KafkaUserCreateOptions struct {
 }
 
 type UpdateKafkaUserRequest struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Options	KafkaUserResetPasswordOptions `json:"options,omitempty"`
+	Username string                        `json:"username"`
+	Password string                        `json:"password"`
+	Options  KafkaUserResetPasswordOptions `json:"options,omitempty"`
 }
 
 type KafkaUserResetPasswordOptions struct {
