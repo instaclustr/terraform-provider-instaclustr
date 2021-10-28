@@ -75,13 +75,13 @@ POSTGRESQL|13.4|
 Property | Description | For Bundles | Default
 ---------|-------------|-------------|--------
 `auth_n_authz`|Accepts true/false. Enables Password Authentication and User Authorization.|Cassandra|false
-`client_encryption`|Accepts true/false. Enables Client ⇄ Node Encryption.|Cassandra, Kafka, Elasticsearch, Spark, Redis, ZooKeeper, PostgreSQL|false
+`client_encryption`|Accepts true/false. Enables Client ⇄ Node Encryption. Enforced to be true for all OpenSearch clusters. |Cassandra, Kafka, Elasticsearch, Spark, Redis, ZooKeeper, PostgreSQL, OpenSearch|false
 `dedicated_master_nodes`|Accepts true/false. Enables Dedicated Master Nodes.|OpenSearch, Elasticsearch|false
 `master_node_size`|Desired master node size. See [here](https://developer.instaclustr.com/#operation/extendedProvisionRequestHandler) for more details.|OpenSearch, Elasticsearch|Required
 `data_node_size`|Desired data node size. Required if `dedicated_master_nodes` is set to true. See [here](https://developer.instaclustr.com/#operation/extendedProvisionRequestHandler) for more details.|OpenSearch, Elasticsearch|
 `kibana_node_size`|Desired master node size. See [here](https://developer.instaclustr.com/#operation/extendedProvisionRequestHandler) for more details. |Elasticsearch|
 `opensearch_dashboards_node_size`|Desired OpenSearch Dashboards node size. See [here](https://developer.instaclustr.com/#operation/extendedProvisionRequestHandler) for more details. |OpenSearch|
-`security_plugin`|Accepts true/false. Enables Security Plugin. This option gives an extra layer of security to the cluster. This will automatically enable internode encryption.|Elasticsearch|false
+`security_plugin`|Accepts true/false. Enables Security Plugin. This option gives an extra layer of security to the cluster. This will automatically enable internode encryption. Enforced to be true for all OpenSearch clusters. |Elasticsearch, OpenSearch|false
 `use_private_broadcast_rpc_address`|Accepts true/false. Enables broadcast of private IPs for auto-discovery.|Cassandra|false
 `lucene_enabled`|Accepts true/false. Enabled Cassandra Lucene Index Plugin.|Cassandra|false
 `continuous_backup_enabled`|Accepts true/false. Enables commitlog backups and increases the frequency of the default snapshot backups.|Cassandra|false
