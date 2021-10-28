@@ -317,8 +317,53 @@ func TestAccElasticsearchClusterResize(t *testing.T) {
 	})
 }
 
+func TestAccOpenSearchClusterResize(t *testing.T) {
+	testAccProviders := map[string]terraform.ResourceProvider{
+		"instaclustr": instaclustr.Provider(),
+	}
+	validConfig, _ := ioutil.ReadFile("data/valid_with_resizable_opensearch_cluster.tf")
+	username := os.Getenv("IC_USERNAME")
+	apiKey := os.Getenv("IC_API_KEY")
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+	resourceName := "resizable_cluster"
+	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
+	validResizeConfig := strings.Replace(oriConfig, `opensearch_dashboards_node_size = "t3.small-v2",`, `opensearch_dashboards_node_size = "m5xl-400-v2",`, 1)
+	invalidResizeConfig := strings.Replace(oriConfig, `opensearch_dashboards_node_size = "t3.small-v2",`, `opensearch_dashboards_node_size = "t3.small",`, 1)
+
+	resource.Test(t, resource.TestCase{
+		Providers:    testAccProviders,
+		CheckDestroy: testCheckResourceDeleted(resourceName, hostname, username, apiKey),
+		Steps: []resource.TestStep{
+			{
+				Config: oriConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid(resourceName),
+					testCheckResourceCreated(resourceName, hostname, username, apiKey),
+					checkClusterRunning(resourceName, hostname, username, apiKey),
+					testCheckContactIPCorrect(resourceName, hostname, username, apiKey, 3, 3),
+				),
+			},
+			{
+				PreConfig: func() {
+					fmt.Println("Sleep for 1 minutes to wait for OpenSearch cluster to be ready for resize.")
+					time.Sleep(1 * time.Minute)
+				},
+				Config:      invalidResizeConfig,
+				ExpectError: regexp.MustCompile("t3.small"),
+			},
+			{
+				Config: validResizeConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_cluster", "cluster_name", "tf-resizable-test"),
+				),
+				ExpectNonEmptyPlan: true,
+			},
+		},
+	})
+}
+
 // Test that the options does re-create the Redis cluster
-func TestAccRedisClusterForceNew(t *testing.T){
+func TestAccRedisClusterForceNew(t *testing.T) {
 	testAccProviders := map[string]terraform.ResourceProvider{
 		"instaclustr": instaclustr.Provider(),
 	}
@@ -330,32 +375,32 @@ func TestAccRedisClusterForceNew(t *testing.T){
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
 
 	validRedisUpdateNodesConfig := strings.Replace(oriConfig, `master_nodes      = 3,`, `master_nodes      = 6,`, 1)
-	validRedisUpdateNodesConfig  = strings.Replace(validRedisUpdateNodesConfig , `replica_nodes     = 3,`, `replica_nodes     = 6,`, 1)
-	validRedisUpdateClientEncryptionConfig  := strings.Replace(oriConfig , `client_encryption = false,`, `client_encryption = true,`, 1)
-	validRedisUpdatePasswordAuthConfig  := strings.Replace(oriConfig , `password_auth     = false,`, `password_auth     = true,`, 1)
+	validRedisUpdateNodesConfig = strings.Replace(validRedisUpdateNodesConfig, `replica_nodes     = 3,`, `replica_nodes     = 6,`, 1)
+	validRedisUpdateClientEncryptionConfig := strings.Replace(oriConfig, `client_encryption = false,`, `client_encryption = true,`, 1)
+	validRedisUpdatePasswordAuthConfig := strings.Replace(oriConfig, `password_auth     = false,`, `password_auth     = true,`, 1)
 
-    resource.Test(t, resource.TestCase{
-        Providers:    testAccProviders,
-        CheckDestroy: testCheckResourceDeleted("validRedis", hostname, username, apiKey),
-        Steps: []resource.TestStep{
-            {
-                Config: oriConfig,
-                Check: resource.ComposeTestCheckFunc(
+	resource.Test(t, resource.TestCase{
+		Providers:    testAccProviders,
+		CheckDestroy: testCheckResourceDeleted("validRedis", hostname, username, apiKey),
+		Steps: []resource.TestStep{
+			{
+				Config: oriConfig,
+				Check: resource.ComposeTestCheckFunc(
 					testCheckResourceValid(resourceName),
 					testCheckResourceCreated(resourceName, hostname, username, apiKey),
 					testCheckContactIPCorrect(resourceName, hostname, username, apiKey, 4, 4),
-                ),
-            },
-            {
+				),
+			},
+			{
 				PreConfig: func() {
 					fmt.Println("Update Client Encryption.")
 				},
-                Config: validRedisUpdateClientEncryptionConfig,
-                Check: resource.ComposeTestCheckFunc(
-                    resource.TestCheckResourceAttr("instaclustr_cluster.validRedis", "cluster_name", "tf-redis-test"),
-                    resource.TestCheckResourceAttr("instaclustr_cluster.validRedis", "bundle.0.options.client_encryption", "true"),
-                ),
-            },
+				Config: validRedisUpdateClientEncryptionConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("instaclustr_cluster.validRedis", "cluster_name", "tf-redis-test"),
+					resource.TestCheckResourceAttr("instaclustr_cluster.validRedis", "bundle.0.options.client_encryption", "true"),
+				),
+			},
 			{
 				PreConfig: func() {
 					fmt.Println("Update Password Auth.")
@@ -377,8 +422,8 @@ func TestAccRedisClusterForceNew(t *testing.T){
 					resource.TestCheckResourceAttr("instaclustr_cluster.validRedis", "bundle.0.options.replica_nodes", "6"),
 				),
 			},
-        },
-    })
+		},
+	})
 }
 
 func testCheckResourceValid(resourceName string) resource.TestCheckFunc {
@@ -540,12 +585,57 @@ func TestValidElasticsearchClusterCreate(t *testing.T) {
 	})
 }
 
+func TestValidOpenSearchClusterCreate(t *testing.T) {
+	testAccProvider := instaclustr.Provider()
+	testAccProviders := map[string]terraform.ResourceProvider{
+		"instaclustr": testAccProvider,
+	}
+	validConfig, _ := ioutil.ReadFile("data/valid_opensearch_cluster_create.tf")
+	username := os.Getenv("IC_USERNAME")
+	apiKey := os.Getenv("IC_API_KEY")
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
+	resource.Test(t, resource.TestCase{
+		Providers:    testAccProviders,
+		CheckDestroy: testCheckResourceDeleted("validOpenSearch", hostname, username, apiKey),
+		Steps: []resource.TestStep{
+			{
+				Config: oriConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid("validOpenSearch"),
+					testCheckResourceCreated("validOpenSearch", hostname, username, apiKey),
+				),
+			},
+		},
+	})
+}
+
 func TestInvalidElasticsearchClusterCreate(t *testing.T) {
 	testAccProvider := instaclustr.Provider()
 	testAccProviders := map[string]terraform.ResourceProvider{
 		"instaclustr": testAccProvider,
 	}
 	invalidConfig, _ := ioutil.ReadFile("data/invalid_elasticsearch_cluster_create.tf")
+	username := os.Getenv("IC_USERNAME")
+	apiKey := os.Getenv("IC_API_KEY")
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+	resource.Test(t, resource.TestCase{
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config:      fmt.Sprintf(string(invalidConfig), username, apiKey, hostname),
+				ExpectError: regexp.MustCompile("When 'dedicated_master_nodes' is not true , data_node_size can be either null or equal to master_node_size."),
+			},
+		},
+	})
+}
+
+func TestInvalidOpenSearchClusterCreate(t *testing.T) {
+	testAccProvider := instaclustr.Provider()
+	testAccProviders := map[string]terraform.ResourceProvider{
+		"instaclustr": testAccProvider,
+	}
+	invalidConfig, _ := ioutil.ReadFile("data/invalid_opensearch_cluster_create.tf")
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
