@@ -172,6 +172,32 @@ resource "instaclustr_cluster" "example-elasticsearch" {
   }
 }
 
+resource "instaclustr_cluster" "example-opensearch" {
+  cluster_name = "es-cluster"
+  data_centre = "US_EAST_1"
+  sla_tier = "NON_PRODUCTION"
+  cluster_network = "192.168.0.0/18"
+  private_network_cluster = false
+  cluster_provider = {
+    name = "AWS_VPC"
+  }
+  rack_allocation = {
+    number_of_racks = 3
+    nodes_per_rack = 1
+  }
+
+  bundle {
+    bundle = "OPENSEARCH"
+    version = "opensearch:1.0.0"
+    options = {
+      dedicated_master_nodes = true,
+      master_node_size = "m5l-250-v2",
+      data_node_size = "m5l-250-v2",
+      opensearch_dashboards_node_size = "m5l-250-v2",
+    }
+  }
+}
+
 resource "instaclustr_cluster" "validKC" {
   cluster_name = "testcluster"
   node_size = "t3.medium-10-gp2"
