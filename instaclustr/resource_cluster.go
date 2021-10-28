@@ -616,7 +616,7 @@ func getNodeSize(d resourceDataInterface, bundles []Bundle) (string, error) {
 			dedicatedMaster := bundle.Options.DedicatedMasterNodes != nil && *bundle.Options.DedicatedMasterNodes
 			if dedicatedMaster {
 				if len(bundle.Options.DataNodeSize) == 0 {
-					return "", fmt.Errorf("[ERROR] Elasticsearch dedicated master is enabled, 'data_node_size' is required in the bundle option.")
+					return "", fmt.Errorf("[ERROR] dedicated master is enabled, 'data_node_size' is required in the bundle option.")
 				}
 				return bundle.Options.DataNodeSize, nil
 			} else {
