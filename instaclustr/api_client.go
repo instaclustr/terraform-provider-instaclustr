@@ -83,6 +83,10 @@ func (c *APIClient) ListClusters() (*[]ClusterListItem, error) {
 	if err != nil {
 		return nil, err
 	}
+	if resp.StatusCode == 404 { // 404s are returned when no clusters are found
+		emptyResponse := make([]ClusterListItem, 0)
+		return &emptyResponse, nil
+	}
 	if resp.StatusCode != 200 {
 		return nil, errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
 	}

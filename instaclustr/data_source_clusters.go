@@ -63,7 +63,7 @@ func dataSourceClustersListRead(d *schema.ResourceData, meta interface{}) error 
 	log.Print("[INFO] Listing all active clusters")
 	clusterList, err := client.ListClusters()
 	if err != nil {
-		return fmt.Errorf("[Error] Error reading cluster credentials: #{err}")
+		return fmt.Errorf("[Error] Error reading cluster list: %s", err)
 	}
 
 	clusters := make([]map[string]interface{}, 0)
