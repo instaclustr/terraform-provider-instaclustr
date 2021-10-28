@@ -1247,7 +1247,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		if len(cluster.DataCentres[0].ResizeTargetNodeSize) > 0 {
 			nodeSize = cluster.DataCentres[0].ResizeTargetNodeSize
 		}
-		if cluster.BundleType != "ELASTICSEARCH" {
+		if cluster.BundleType != "ELASTICSEARCH" && cluster.BundleType != "OPENSEARCH" {
 			d.Set("node_size", nodeSize)
 		}
 		d.Set("data_centre", cluster.DataCentres[0].Name)
