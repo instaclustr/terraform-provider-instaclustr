@@ -63,6 +63,7 @@ SPARK|2.1.3, 2.3.2|APACHE_CASSANDRA
 KAFKA|2.1.1, 2.3.1, 2.4.1, 2.5.1, 2.6.1|
 KAFKA_REST_PROXY|5.0.0|KAFKA
 KAFKA_SCHEMA_REGISTRY|5.0.0|KAFKA
+OPENSEARCH|opensearch:1.0.0
 ELASTICSEARCH|opendistro-for-elasticsearch:1.4.0
 KAFKA_CONNECT|2.3.1, 2.4.1, 2.5.1, 2.6.1|
 REDIS|6.0.9|
@@ -75,8 +76,11 @@ Property | Description | For Bundles | Default
 ---------|-------------|-------------|--------
 `auth_n_authz`|Accepts true/false. Enables Password Authentication and User Authorization.|Cassandra|false
 `client_encryption`|Accepts true/false. Enables Client ⇄ Node Encryption.|Cassandra, Kafka, Elasticsearch, Spark, Redis, ZooKeeper, PostgreSQL|false
-`dedicated_master_nodes`|Accepts true/false. Enables Dedicated Master Nodes.|Elasticsearch|false
-`master_node_size`|Desired master node size. See [here](https://developer.instaclustr.com/#operation/extendedProvisionRequestHandler) for more details.|Elasticsearch|Required
+`dedicated_master_nodes`|Accepts true/false. Enables Dedicated Master Nodes.|OpenSearch, Elasticsearch|false
+`master_node_size`|Desired master node size. See [here](https://developer.instaclustr.com/#operation/extendedProvisionRequestHandler) for more details.|OpenSearch, Elasticsearch|Required
+`data_node_size`|Desired data node size. Required if `dedicated_master_nodes` is set to true. See [here](https://developer.instaclustr.com/#operation/extendedProvisionRequestHandler) for more details.|OpenSearch, Elasticsearch|
+`kibana_node_size`|Desired master node size. See [here](https://developer.instaclustr.com/#operation/extendedProvisionRequestHandler) for more details. |Elasticsearch|
+`opensearch_dashboards_node_size`|Desired OpenSearch Dashboards node size. See [here](https://developer.instaclustr.com/#operation/extendedProvisionRequestHandler) for more details. |OpenSearch|
 `security_plugin`|Accepts true/false. Enables Security Plugin. This option gives an extra layer of security to the cluster. This will automatically enable internode encryption.|Elasticsearch|false
 `use_private_broadcast_rpc_address`|Accepts true/false. Enables broadcast of private IPs for auto-discovery.|Cassandra|false
 `lucene_enabled`|Accepts true/false. Enabled Cassandra Lucene Index Plugin.|Cassandra|false
