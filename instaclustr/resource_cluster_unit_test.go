@@ -118,7 +118,7 @@ func TestCheckIfBundleRequiresRackAllocation(t *testing.T) {
 
 func TestIsElasticsearchSizeAllChange(t *testing.T) {
 	helper := func(kibanaSize, masterSize, dataSize, expectedNewSize string, kibana, dedicatedMaster, expectedIsAll bool) {
-		newSize, isAllChange := isElasticsearchSizeAllChange(kibanaSize, masterSize, dataSize, kibana, dedicatedMaster)
+		newSize, isAllChange := isSearchSizeAllChange(kibanaSize, masterSize, dataSize, kibana, dedicatedMaster)
 		if isAllChange != expectedIsAll {
 			t.Fatalf("changeAll should be %t when using kibanaSize: %s, masterSize: %s, dataSize: %s, kibana: %t, dedicatedMaster: %t", expectedIsAll, kibanaSize, masterSize, dataSize, kibana, dedicatedMaster)
 		}
