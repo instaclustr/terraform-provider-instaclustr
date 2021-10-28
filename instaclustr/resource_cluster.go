@@ -1166,11 +1166,6 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		d.Set("cluster_network", cluster.DataCentres[0].CdcNetwork)
 	} else {
 
-		log.Printf("DELETING STUFF")
-		if err := deleteAttributesConflictWithDataCentres(d); err != nil {
-			return err
-		}
-
 		dataCentres, err := getDataCentresFromCluster(cluster)
 		if err != nil {
 			return err
@@ -1180,6 +1175,10 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 			if err := d.Set("data_centres", dataCentres); err != nil {
 				return fmt.Errorf("[Error] Error setting data centres into terraform state, data centres could not be derived: %s", err)
 			}
+		}
+
+		if err := deleteAttributesConflictWithDataCentres(d); err != nil {
+			return err
 		}
 	}
 
@@ -1233,7 +1232,7 @@ func deleteAttributesConflictWithDataCentres(d *schema.ResourceData) error {
 	clusterResource := resourceCluster()
 	for key, value := range clusterResource.Schema {
 		for _, conflictsWith := range value.ConflictsWith {
-			if conflictsWith == "data_centres" {
+			if _, exist := d.GetOk(key); exist && conflictsWith == "data_centres" {
 				if err := d.Set(key, nil); err != nil {
 					return err
 				}
