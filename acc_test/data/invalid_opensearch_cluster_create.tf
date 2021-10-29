@@ -5,7 +5,7 @@ provider "instaclustr" {
 }
 
 
-resource "instaclustr_cluster" "invalidElasticsearch" {
+resource "instaclustr_cluster" "invalidOpenSearch" {
   cluster_name            = "tf-resizable-opensearch-test"
   data_centre             = "US_WEST_2"
   sla_tier                = "NON_PRODUCTION"
