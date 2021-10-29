@@ -1096,7 +1096,7 @@ func doOpenSearchClusterResize(client APIClientInterface, cluster *Cluster, d re
 	log.Printf("[INFO] Resizing OpenSearch cluster. nodePurpose: %s, newSize: %s", nodePurpose, nodeSize)
 	err := client.ResizeCluster(cluster.ID, cluster.DataCentres[0].ID, nodeSize, nodePurpose)
 	if err != nil {
-		return fmt.Errorf("[Error] Error resizing cluster %s with error %s", cluster.ID, err)
+		return fmt.Errorf("[ERROR] Error resizing cluster %s with error %s", cluster.ID, err)
 	}
 	return nil
 }
