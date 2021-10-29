@@ -3,7 +3,6 @@ package instaclustr
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/hashicorp/terraform/helper/validation"
 	"log"
 	"reflect"
 	"regexp"
@@ -11,6 +10,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/hashicorp/terraform/helper/validation"
 
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -348,8 +349,19 @@ func resourceCluster() *schema.Resource {
 							ForceNew: true,
 						},
 						"options": {
+							// This type is not correct. TypeMaps cannot have complex structures defined in the same way that TypeLists and TypeSets can
+							// See https://www.terraform.io/docs/extend/schemas/schema-types.html
+							// Essentially everything in the Elem property here is being ignored, terraform assumes the element type is string
+							// This should have been implemented as a TypeSet. Unfortunately changing it now would change the syntax
+							// required in the terraform file and so would be a breaking change for existing configurations.
+							// As such, changing this will wait until a major version change.
 							Type:     schema.TypeMap,
 							Optional: true,
+							DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+								// Cover up for the API that has optional arguments that get given default values
+								// and returns the defaults in subsequent calls
+								return old == "false" && new == ""
+							},
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"auth_n_authz": {
