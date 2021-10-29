@@ -173,7 +173,7 @@ resource "instaclustr_cluster" "example-elasticsearch" {
 }
 
 resource "instaclustr_cluster" "example-opensearch" {
-  cluster_name = "es-cluster"
+  cluster_name = "os-cluster"
   data_centre = "US_EAST_1"
   sla_tier = "NON_PRODUCTION"
   cluster_network = "192.168.0.0/18"
