@@ -1,0 +1,23 @@
+{
+  "provider": {
+    "name": "AWS_VPC"
+  },
+  "dataCentre": "US_WEST_1",
+  "name": "DC2",
+  "network": "10.1.0.0/16",
+  "nodeSize": "t3.small-v2",
+  "bundles": [
+    {"bundle": "APACHE_CASSANDRA", "version": "3.11.8", "options":{
+        "authnAuthz": "true",
+        "clientEncryption": "false",
+        "continuous_backup_enabled": "true",
+        "lucene_enabled": "false",
+        "use_private_broadcast_rpc_address": "false"
+        }
+    }
+  ],
+  "rackAllocation": {
+    "numberOfRacks": 3,
+    "nodesPerRack": 1
+  }
+}
