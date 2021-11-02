@@ -73,6 +73,9 @@ func addDCtoCluster(resourceName, hostname, username, apiKey, requestBody string
 			return err
 		}
 		bodyText, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return err
+		}
 		if resp.StatusCode != 202 {
 			return errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
 		}

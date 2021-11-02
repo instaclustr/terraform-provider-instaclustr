@@ -550,6 +550,51 @@ func TestCreateVpcPeeringRequestLegacy(t *testing.T) {
 	}
 }
 
+func TestDeleteAttributesConflictWithDataCentres(t *testing.T) {
+	clusterSchema := map[string]*schema.Schema{
+		"attributeA": {
+			Type:     schema.TypeString,
+			Computed: true,
+		},
+
+		"attributeB": {
+			Type:          schema.TypeString,
+			Required:      true,
+			ConflictsWith: []string{"data_centres"},
+			ForceNew:      true,
+		},
+
+		"attributeC": {
+			Type:          schema.TypeString,
+			Optional:      true,
+			ConflictsWith: []string{"data_centres"},
+			ForceNew:      true,
+		},
+	}
+
+	resourceDataMap := map[string]interface{}{
+		"attributeA": "A",
+		"attributeB": "B",
+		"attributeC": "C",
+	}
+
+	d := schema.TestResourceDataRaw(t, clusterSchema, resourceDataMap)
+
+	if err := deleteAttributesConflictWithDataCentres(clusterSchema, d); err != nil {
+		t.Fatalf("Unexpected error occured during deletion %s", err)
+	}
+
+	helper := func(attribute string, expected interface{}) {
+		if value, _ := d.GetOk(attribute); value != expected {
+			t.Fatalf("%s not modified properly", attribute)
+		}
+	}
+
+	helper("attributeA", "A")
+	helper("attributeB", schema.TypeString.Zero())
+	helper("attributeC", schema.TypeString.Zero())
+}
+
 type MockApiClient struct {
 	cluster Cluster
 	err     error

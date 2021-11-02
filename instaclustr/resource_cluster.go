@@ -1189,7 +1189,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 			}
 		}
 
-		if err := deleteAttributesConflictWithDataCentres(d); err != nil {
+		if err := deleteAttributesConflictWithDataCentres(resourceCluster().Schema, d); err != nil {
 			return err
 		}
 	}
@@ -1240,9 +1240,8 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	return nil
 }
 
-func deleteAttributesConflictWithDataCentres(d *schema.ResourceData) error {
-	clusterResource := resourceCluster()
-	for key, value := range clusterResource.Schema {
+func deleteAttributesConflictWithDataCentres(schema map[string]*schema.Schema, d *schema.ResourceData) error {
+	for key, value := range schema {
 		for _, conflictsWith := range value.ConflictsWith {
 			if _, exist := d.GetOk(key); exist && conflictsWith == "data_centres" {
 				if err := d.Set(key, value.Type.Zero()); err != nil {
