@@ -584,15 +584,15 @@ func TestDeleteAttributesConflictWithDataCentres(t *testing.T) {
 		t.Fatalf("Unexpected error occured during deletion %s", err)
 	}
 
-	helper := func(attribute string, expected interface{}) {
+	checkAttributeValue := func(attribute string, expected interface{}) {
 		if value, _ := d.GetOk(attribute); value != expected {
 			t.Fatalf("%s not modified properly", attribute)
 		}
 	}
 
-	helper("attributeA", "A")
-	helper("attributeB", schema.TypeString.Zero())
-	helper("attributeC", schema.TypeString.Zero())
+	checkAttributeValue("attributeA", "A")
+	checkAttributeValue("attributeB", schema.TypeString.Zero())
+	checkAttributeValue("attributeC", schema.TypeString.Zero())
 }
 
 type MockApiClient struct {
