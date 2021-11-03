@@ -1176,6 +1176,10 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		}
 		d.Set("data_centre", cluster.DataCentres[0].Name)
 		d.Set("cluster_network", cluster.DataCentres[0].CdcNetwork)
+
+		if err := deleteAttributesConflict(resourceCluster().Schema, d, "data_centre"); err != nil {
+			return err
+		}
 	} else {
 
 		dataCentres, err := getDataCentresFromCluster(cluster)
@@ -1189,7 +1193,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 			}
 		}
 
-		if err := deleteAttributesConflictWithDataCentres(resourceCluster().Schema, d); err != nil {
+		if err := deleteAttributesConflict(resourceCluster().Schema, d, "data_centres"); err != nil {
 			return err
 		}
 	}
@@ -1240,10 +1244,10 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	return nil
 }
 
-func deleteAttributesConflictWithDataCentres(schema map[string]*schema.Schema, d *schema.ResourceData) error {
+func deleteAttributesConflict(schema map[string]*schema.Schema, d *schema.ResourceData, conflictAttr string) error {
 	for key, value := range schema {
 		for _, conflictsWith := range value.ConflictsWith {
-			if _, exist := d.GetOk(key); exist && conflictsWith == "data_centres" {
+			if _, exist := d.GetOk(key); exist && conflictsWith == conflictAttr {
 				if err := d.Set(key, value.Type.Zero()); err != nil {
 					return err
 				}

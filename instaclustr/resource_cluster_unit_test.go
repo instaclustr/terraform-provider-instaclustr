@@ -580,7 +580,7 @@ func TestDeleteAttributesConflictWithDataCentres(t *testing.T) {
 
 	d := schema.TestResourceDataRaw(t, clusterSchema, resourceDataMap)
 
-	if err := deleteAttributesConflictWithDataCentres(clusterSchema, d); err != nil {
+	if err := deleteAttributesConflict(clusterSchema, d, "data_centres"); err != nil {
 		t.Fatalf("Unexpected error occured during deletion %s", err)
 	}
 
