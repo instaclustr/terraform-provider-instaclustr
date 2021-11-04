@@ -550,7 +550,7 @@ func TestCreateVpcPeeringRequestLegacy(t *testing.T) {
 	}
 }
 
-func TestDeleteAttributesConflictWithDataCentres(t *testing.T) {
+func TestDeleteAttributesConflict(t *testing.T) {
 	clusterSchema := map[string]*schema.Schema{
 		"attributeA": {
 			Type:     schema.TypeString,
