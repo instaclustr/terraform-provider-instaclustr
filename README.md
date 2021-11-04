@@ -9,11 +9,11 @@
 
 A [Terraform](http://terraform.io) provider for managing Instaclustr Platform resources.
 
-It provides a flexible set of resources for provisioning and managing [Instaclustr based clusters](http://instaclustr.com/) via the use of Terraform.
+It provides a flexible set of resources for provisioning and managing Apache Cassandra, Apache Kafka, Apache Zookeeper, OpenSearch and Redis clusters on the Instaclustr Managed Platform via Terraform.
+
+For further information about Instaclustr, please see [the Instaclustr website](https://instaclustr.com/) and [Support Pages](https://support.instaclustr.com/hc/en-us)
 
 For general information about Terraform, visit the [official website](https://terraform.io/) and [GitHub project page](https://github.com/hashicorp/terraform).
-
-For further information about Instaclustr, please see [FAQ](https://www.instaclustr.com/resources/faqs/) and [Support](https://support.instaclustr.com/hc/en-us)
 
 ## Key benefits
 
