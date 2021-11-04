@@ -106,17 +106,19 @@ Property | Description | For Bundles | Default
 
 ### Elasticsearch and OpenSearch node sizes
 
-Elasticsearch and OpenSearch clusters have a slightly different node size definition compare to other bundles. You don't need to specify the `node_size` cluster level field, but you may specify node sizes using the following field in `bundle.options`.
+Elasticsearch and OpenSearch clusters have a slightly different node size definition compared to other bundles. You don't need to specify the node_size cluster level field, but you may specify node sizes using the following field in bundle.options.
 
 #### master_node_size
-`master_node_size` represent the node size for the cluster's master eligible nodes. This field is **always required** for both OpenSearch and Elasticsearch clusters because master eligible nodes are essential for these clusters.
+`master_node_size` represents the node size for the cluster's master eligible nodes. This field is **always required** for both OpenSearch and Elasticsearch clusters because master eligible nodes are essential for these clusters.
 
 #### data_node_size
-`data_node_size` represent the data nodes that are not master eligible. This field is required when dedicated master is enabled(`dedicated_master_nodes=true`). Non-master eligible data nodes will only exist when dedicated master is enabled or the number_of_racks*nodes_per_rack>3, because the cluster will have exactly 3 master eligible nodes. 
+`data_node_size` is required when dedicated masters are enabled (`dedicated_master_nodes=true`). It represents the data nodes that are not master eligible for these clusters.
+
+When dedicated master nodes are not enabled, the cluster will be provisioned with a uniform size i.e both master_node_size and data_node_size will be the same. These can be resized separately later. For example, a 5 node Elasticsearch/OpenSearch cluster without dedicated masters will have 3 master nodes and 2 data nodes. After the cluster reaches the running state, you can update the data_node_size field (add one if you haven’t already) to resize the two data nodes to another node size.
 
 #### kibana_node_size
-`kibana_node_size` is for Elasticsearch only. It represents the node size for the additional Kibana node. If it is not set, then Kibana node will not be provisioned.
+`kibana_node_size` is for Open Distro for Elasticsearch clusters only. It represents the node size for the additional Kibana node. If it is not set, then a Kibana node will not be provisioned.
 
 #### opensearch_dashboards_node_size
-`opensearch_dashboards_node_size` is for OpenSearch only. It represents the node size for the additional OpenSearch Dashboards node. If it is not set, then OpenSearch Dashboards node will not be provisioned.
+`opensearch_dashboards_node_size`  is for OpenSearch clusters only. It represents the node size for the additional OpenSearch Dashboards node. If it is not set, then an OpenSearch Dashboards node will not be provisioned.
 
