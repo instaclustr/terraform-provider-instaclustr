@@ -20,7 +20,7 @@ resource "instaclustr_cluster" "resizable_cluster" {
     }
     bundle {
         bundle = "ELASTICSEARCH"
-        version = "opendistro-for-elasticsearch:1.8.0"
+        version = "opendistro-for-elasticsearch:1.11.0.ic1"
         options = {
             dedicated_master_nodes = false,
             master_node_size = "t3.small-v2",
