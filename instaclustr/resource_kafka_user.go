@@ -23,6 +23,7 @@ func resourceKafkaUser() *schema.Resource {
 			"cluster_id": {
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
 			},
 
 			"username": {
