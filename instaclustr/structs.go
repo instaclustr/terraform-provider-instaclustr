@@ -53,9 +53,11 @@ type BundleOptions struct {
 	Truststore                    string `json:"truststore,omitempty" mapstructure:"truststore,omitempty"`
 	RedisMasterNodes              int    `json:"masterNodes,omitempty" mapstructure:"master_nodes,omitempty"`
 	RedisReplicaNodes             int    `json:"replicaNodes,omitempty" mapstructure:"replica_nodes,omitempty"`
+	RedisPasswordAuth             *bool  `json:"passwordAuth,omitempty" mapstructure:"password_auth,omitempty"`
 	DedicatedZookeeper            *bool  `json:"dedicatedZookeeper,omitempty" mapstructure:"dedicated_zookeeper,omitempty"`
 	ZookeeperNodeSize             string `json:"zookeeperNodeSize,omitempty" mapstructure:"zookeeper_node_size,omitempty"`
 	ZookeeperNodeCount            int    `json:"zookeeperNodeCount,omitempty" mapstructure:"zookeeper_node_count,omitempty"`
+	PostgresqlNodeCount           int    `json:"postgresqlNodeCount,omitempty" mapstructure:"postgresql_node_count,omitempty"`
 }
 
 type ClusterProvider struct {
@@ -153,27 +155,24 @@ type Node struct {
 }
 
 type CreateVPCPeeringRequest struct {
-	PeerVpcID     string `json:"peerVpcId"`
-	PeerAccountID string `json:"peerAccountId"`
-	PeerSubnet    string `json:"peerSubnet"`
-	PeerRegion    string `json:"peerRegion,omitempty"`
+	PeerVpcID     string        `json:"peerVpcId"`
+	PeerAccountID string        `json:"peerAccountId"`
+	PeerSubnet    string        `json:"peerSubnet"`
+	PeerSubnets   []interface{} `json:"peerSubnets"`
+	PeerRegion    string        `json:"peerRegion,omitempty"`
 }
 
 type VPCPeering struct {
-	ID                 string `json:"id"`
-	AWSVpcConnectionID string `json:"aws_vpc_connection_id"`
-	ClusterDataCentre  string `json:"clusterDataCentre"`
-	VpcID              string `json:"vpcId"`
-	PeerVpcID          string `json:"peerVpcId"`
-	PeerAccountID      string `json:"peerAccountId"`
-	PeerSubnet         string `json:"peerSubnet"`
-	StatusCode         string `json:"statusCode"`
-	PeerRegion         string `json:"peerRegion"`
-}
-
-type VPCPeeringSubnet struct {
-	Network      string `json:"network"`
-	PrefixLength string `json:"prefixLength"`
+	ID                 string        `json:"id"`
+	AWSVpcConnectionID string        `json:"aws_vpc_connection_id"`
+	ClusterDataCentre  string        `json:"clusterDataCentre"`
+	VpcID              string        `json:"vpcId"`
+	PeerVpcID          string        `json:"peerVpcId"`
+	PeerAccountID      string        `json:"peerAccountId"`
+	PeerSubnet         string        `json:"peerSubnet"`
+	PeerSubnets        []interface{} `json:"peerSubnets"`
+	StatusCode         string        `json:"statusCode"`
+	PeerRegion         string        `json:"peerRegion"`
 }
 
 type ResizeClusterRequest struct {
@@ -196,14 +195,25 @@ type UpdateBundleUserRequest struct {
 }
 
 type CreateKafkaUserRequest struct {
-	Username           string `json:"username"`
-	Password           string `json:"password"`
-	InitialPermissions string `json:"initial-permissions"`
+	Username           string                 `json:"username"`
+	Password           string                 `json:"password"`
+	InitialPermissions string                 `json:"initial-permissions"`
+	Options            KafkaUserCreateOptions `json:"options,omitempty"`
+}
+
+type KafkaUserCreateOptions struct {
+	AuthenticationMechanism string `json:"sasl-scram-mechanism,omitempty" mapstructure:"sasl-scram-mechanism"`
+	OverrideExistingUser    bool   `json:"override-existing-user" mapstructure:"override-existing-user"`
 }
 
 type UpdateKafkaUserRequest struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+	Username string                        `json:"username"`
+	Password string                        `json:"password"`
+	Options  KafkaUserResetPasswordOptions `json:"options,omitempty"`
+}
+
+type KafkaUserResetPasswordOptions struct {
+	AuthenticationMechanism string `json:"sasl-scram-mechanism,omitempty" mapstructure:"sasl-scram-mechanism"`
 }
 
 type DeleteKafkaUserRequest struct {

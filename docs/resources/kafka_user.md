@@ -23,6 +23,9 @@ Property | Description | Default
 `username`|User name for the Kafka user|Required
 `password`|Password for the Kafka user|Required
 `initial_permissions`|Initial permission set (ACL) associated with this user. Possible values are: `standard`, `read-only`, and `none`. | `none`
+`authentication_mechanism`|The mechanism used to authenticate the user to the cluster. Possible values are: `SCRAM-SHA-256`, `SCRAM-SHA-512`|`SCRAM-SHA-256`
+`override_existing_user`|Flag to indicate whether we override existing user in the cluster with the same name. Possible values are: `true`, `false`|`true`
+
 
 `instaclustr_kafka_user_list`
 
@@ -37,6 +40,8 @@ resource "instaclustr_kafka_user" "kafka_user_charlie" {
   username = "charlie"
   password = "charlie1!"
   initial_permissions = "none"
+  authentication_mechanism = "SCRAM-SHA-256"
+  override_existing_user = true
 }
 
 

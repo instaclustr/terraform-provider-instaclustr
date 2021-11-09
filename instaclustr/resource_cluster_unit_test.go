@@ -101,6 +101,13 @@ func TestCheckIfBundleRequiresRackAllocation(t *testing.T) {
 		t.Fatalf("Incorrect check performed for APACHE_ZOOKEEPER bundle.\nExpected: %v\nActual: %v\n", false, true)
 	}
 
+	bundles = []Bundle{{Bundle: "POSTGRESQL"}}
+	isRackAllocationRequired = checkIfBundleRequiresRackAllocation(bundles)
+
+	if isRackAllocationRequired == true {
+		t.Fatalf("Incorrect check performed for POSTGRESQL bundle.\nExpected: %v\nActual: %v\n", false, true)
+	}
+
 	bundles = []Bundle{{Bundle: "APACHE_CASSANDRA"}}
 	isRackAllocationRequired = checkIfBundleRequiresRackAllocation(bundles)
 
@@ -478,6 +485,68 @@ func TestDoClusterResizeCA(t *testing.T) {
 	err = doClusterResize(client, "mock", data, bundles)
 	if err != nil {
 		t.Fatalf("Expect nil err but got %v", err)
+	}
+}
+
+func TestCreateVpcPeeringRequest(t *testing.T) {
+	resourceSchema := map[string]*schema.Schema{
+		"peer_vpc_id": {
+			Type: schema.TypeString,
+		},
+		"peer_account_id": {
+			Type: schema.TypeString,
+		},
+		"peer_subnets": {
+			Type: schema.TypeSet,
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
+			},
+		},
+		"peer_region": {
+			Type: schema.TypeString,
+		},
+	}
+
+	peerSubnets := schema.NewSet(schema.HashString, []interface{}{"10.20.0.0/16", "10.21.0.0/16"})
+	resourceDataMap := map[string]interface{}{
+		"peer_vpc_id":     "vpc-12345678",
+		"peer_account_id": "494111121110",
+		"peer_subnets":    peerSubnets.List(),
+		"peer_region":     "",
+	}
+	resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, resourceDataMap)
+
+	if _, err := createVpcPeeringRequest(resourceLocalData); err != nil {
+		t.Fatalf("Expected nil error but got %v", err)
+	}
+}
+
+func TestCreateVpcPeeringRequestLegacy(t *testing.T) {
+	resourceSchema := map[string]*schema.Schema{
+		"peer_vpc_id": {
+			Type: schema.TypeString,
+		},
+		"peer_account_id": {
+			Type: schema.TypeString,
+		},
+		"peer_subnet": {
+			Type: schema.TypeString,
+		},
+		"peer_region": {
+			Type: schema.TypeString,
+		},
+	}
+
+	resourceDataMap := map[string]interface{}{
+		"peer_vpc_id":     "vpc-12345678",
+		"peer_account_id": "494111121110",
+		"peer_subnet":     "10.20.0.0/16",
+		"peer_region":     "",
+	}
+	resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, resourceDataMap)
+
+	if _, err := createVpcPeeringRequest(resourceLocalData); err != nil {
+		t.Fatalf("Expected nil error but got %v", err)
 	}
 }
 

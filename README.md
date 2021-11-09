@@ -9,11 +9,11 @@
 
 A [Terraform](http://terraform.io) provider for managing Instaclustr Platform resources.
 
-It provides a flexible set of resources for provisioning and managing [Instaclustr based clusters](http://instaclustr.com/) via the use of Terraform.
+It provides a flexible set of resources for provisioning and managing Apache Cassandra, Apache Kafka, Apache Zookeeper, OpenSearch and Redis clusters on the Instaclustr Managed Platform via Terraform.
+
+For further information about Instaclustr, please see [the Instaclustr website](https://instaclustr.com/) and [Support Pages](https://support.instaclustr.com/hc/en-us)
 
 For general information about Terraform, visit the [official website](https://terraform.io/) and [GitHub project page](https://github.com/hashicorp/terraform).
-
-For further information about Instaclustr, please see [FAQ](https://www.instaclustr.com/resources/faqs/) and [Support](https://support.instaclustr.com/hc/en-us)
 
 ## Key benefits
 
@@ -288,6 +288,7 @@ ELASTICSEARCH|opendistro-for-elasticsearch:1.4.0
 KAFKA_CONNECT|2.3.1, 2.4.1, 2.5.1, 2.6.1|
 REDIS|6.0.9|
 APACHE_ZOOKEEPER|3.5.8|
+POSTGRESQL|13.4|
 
 ### Migrating from 0.0.1 &rarr; 1.0.0+
 A schema change has been made from 0.0.1 which no longer supports the `bundles` argument and uses `bundle` blocks instead. This change can cause `terraform apply` to fail with a message that `bundles` has been removed and/or updating isn't supported. To resolve this -<br>
@@ -324,7 +325,7 @@ Unit tests are within `instaclustr` folder with `_unit_test` suffix, and used to
 
 #### Acceptance Testing
 
-Acceptance tests are within `acc_test` folder, and used to run end-to-end testing. We recommend using CircleCI to run your acceptance tests, however you can run them locally. Acceptance tests require end to end interaction with the instaclustr platform and will create real (paid) infrastructure. If you wish to perform local testing you must set the variables below and run: ```make testacc``` 
+Acceptance tests are within `acc_test` folder, and used to run end-to-end testing. We recommend using CircleCI to run your acceptance tests, however you can run them locally. Acceptance tests require end to end interaction with the Instaclustr platform and will create real (paid) infrastructure. If you wish to perform local testing you must set the variables below and run: ```make testacc``` 
 
 
 Variable | Command | Description

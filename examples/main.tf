@@ -22,7 +22,6 @@ resource "instaclustr_encryption_key" "add_ebs_key" {
   provider = "instaclustr"
 }
 
-
 resource "instaclustr_cluster" "example" {
   cluster_name = "testcluster"
   node_size = "t3.small"
@@ -32,9 +31,9 @@ resource "instaclustr_cluster" "example" {
   private_network_cluster = false
   cluster_provider = {
     name = "AWS_VPC",
-    tags = {
-      "myTag" = "myTagValue"
-    }
+  }
+  tags = {
+    "myTag" = "myTagValue"
   }
   rack_allocation = {
     number_of_racks = 3
@@ -101,7 +100,7 @@ resource "instaclustr_vpc_peering" "example_vpc_peering" {
   cluster_id = "${instaclustr_cluster.example.id}"
   peer_vpc_id = "vpc-123456"
   peer_account_id = "1234567890"
-  peer_subnet = "10.0.0.0/20"
+  peer_subnets = toset(["10.0.0.0/20", "10.0.32.0/20"])
 }
 
 // Updating the kafka-schema-registry and the kafka-rest-proxy bundle user passwords at the cluster creation time
@@ -205,6 +204,15 @@ resource "instaclustr_kafka_user" "kafka_user_charlie" {
   password = "charlie123!"
 }
 
+resource "instaclustr_kafka_user" "kafka_user_harley" {
+  cluster_id = "${instaclustr_cluster.example_kafka.id}"
+  username = "harley"
+  password = "harley123!"
+  initial_permissions = "standard"
+  authentication_mechanism = "SCRAM-SHA-512"
+  override_existing_user = false
+}
+
 data "instaclustr_kafka_user_list" "kafka_user_list" {
   cluster_id = "${instaclustr_cluster.example_kafka.id}"
 }
@@ -241,10 +249,36 @@ resource "instaclustr_cluster" "example-redis" {
 
   bundle {
     bundle = "REDIS"
-    version = "redis:6.0.4"
+    version = "redis:6.0.9"
     options = {
       master_nodes = 3,
-      replica_nodes = 3
+      replica_nodes = 3,
+      password_auth = false,
+      client_encryption = false
+    }
+  }
+}
+
+resource "instaclustr_cluster" "example-postgresql" {
+  cluster_name = "testcluster"
+  node_size = "PGS-DEV-t3.small-5"
+  data_centre = "US_WEST_2"
+  sla_tier = "NON_PRODUCTION"
+  cluster_network = "192.168.0.0/18"
+  cluster_provider = {
+    name = "AWS_VPC"
+  }
+  rack_allocation = {
+    nodes_per_rack = 1
+    number_of_racks = 1
+  }
+
+  bundle {
+    bundle = "POSTGRESQL"
+    version = "postgresql:13.4"
+    options = {
+      postgresql_node_count = 1,
+      client_encryption = true
     }
   }
 }

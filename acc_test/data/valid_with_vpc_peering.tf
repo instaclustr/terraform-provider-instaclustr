@@ -6,7 +6,7 @@ provider "instaclustr" {
 
 resource "instaclustr_cluster" "valid_with_vpc_peering" {
     cluster_name = "tf_provider_vpc_peering_test"
-    node_size = "t3.small"
+    node_size = "t3.small-v2"
     data_centre = "US_WEST_2"
     sla_tier = "NON_PRODUCTION"
     cluster_network = "192.168.0.0/18"
@@ -35,5 +35,19 @@ resource "instaclustr_vpc_peering" "valid_with_vpc_peering" {
     cluster_id = "${instaclustr_cluster.valid_with_vpc_peering.cluster_id}"
     peer_vpc_id = "vpc-12345678"
     peer_account_id = "494111121110"
-    peer_subnet = "10.128.176.0/20"
+    peer_subnets = toset(["10.128.176.0/20", "10.129.176.0/20"])
+}
+
+resource "instaclustr_vpc_peering" "valid_with_vpc_peering_single_subnet" {
+    cluster_id = "${instaclustr_cluster.valid_with_vpc_peering.cluster_id}"
+    peer_vpc_id = "vpc-12345679"
+    peer_account_id = "494111121110"
+    peer_subnets = toset(["10.130.176.0/20"])
+}
+
+resource "instaclustr_vpc_peering" "valid_with_vpc_peering_legacy" {
+    cluster_id = "${instaclustr_cluster.valid_with_vpc_peering.cluster_id}"
+    peer_vpc_id = "vpc-12345680"
+    peer_account_id = "494111121110"
+    peer_subnet = "10.131.176.0/20"
 }
