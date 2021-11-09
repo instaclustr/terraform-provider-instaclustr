@@ -199,7 +199,7 @@ resource "instaclustr_cluster" "multi_DC_example" {
     }
     bundles {
       bundle = "APACHE_CASSANDRA"
-      version = "apache-cassandra-3.11.8"
+      version = "apache-cassandra-3.11.8.ic2"
       options = {
         auth_n_authz = true
         use_private_broadcast_rpc_address = false
@@ -210,7 +210,7 @@ resource "instaclustr_cluster" "multi_DC_example" {
     }
     bundles {
       bundle = "SPARK"
-      version = "apache-spark:2.3.2"
+      version = "apache-spark:2.3.2.ic1"
     }
   }
 
@@ -228,7 +228,7 @@ resource "instaclustr_cluster" "multi_DC_example" {
     }
     bundles {
       bundle = "APACHE_CASSANDRA"
-      version = "apache-cassandra-3.11.8"
+      version = "apache-cassandra-3.11.8.ic2"
       options = {
         auth_n_authz = true
         use_private_broadcast_rpc_address = false
@@ -253,7 +253,7 @@ resource "instaclustr_cluster" "multi_DC_example" {
     }
     bundles {
       bundle = "APACHE_CASSANDRA"
-      version = "apache-cassandra-3.11.8"
+      version = "apache-cassandra-3.11.8.ic2"
       options = {
         auth_n_authz = true
         use_private_broadcast_rpc_address = false
@@ -264,7 +264,7 @@ resource "instaclustr_cluster" "multi_DC_example" {
     }
     bundles {
       bundle = "SPARK"
-      version = "apache-spark:2.3.2"
+      version = "apache-spark:2.3.2.ic1"
     }
   }
 }
