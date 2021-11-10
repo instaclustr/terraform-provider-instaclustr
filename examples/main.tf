@@ -42,7 +42,7 @@ resource "instaclustr_cluster" "example" {
 
   bundle {
     bundle = "APACHE_CASSANDRA"
-    version = "apache_cassandra:3.11.8"
+    version = "apache_cassandra-3.11.8.ic2"
     options = {
       auth_n_authz = true
     }
@@ -72,7 +72,7 @@ resource "instaclustr_cluster" "custom_vpc_example" {
 
   bundle {
     bundle = "APACHE_CASSANDRA"
-    version = "apache_cassandra:3.11.8"
+    version = "apache-cassandra-3.11.8.ic2"
   }
 }
 
@@ -233,7 +233,7 @@ resource "instaclustr_cluster" "private_cluster_example" {
   }
   bundle {
     bundle = "APACHE_CASSANDRA"
-    version = "apache_cassandra:3.11.8"
+    version = "apache-cassandra-3.11.8.ic2"
   }
 }
 
