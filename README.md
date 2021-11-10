@@ -95,7 +95,7 @@ AWS:
 ```
 resource "instaclustr_cluster" "example" {
     cluster_name = "testcluster"
-    node_size = "t3.small"
+    node_size = "m5l-250-v2"
     data_centre = "US_WEST_2"
     sla_tier = "NON_PRODUCTION"
     cluster_network = "192.168.0.0/18"
@@ -110,14 +110,14 @@ resource "instaclustr_cluster" "example" {
     }
     bundle {
         bundle = "APACHE_CASSANDRA"
-        version = "apache_cassandra:3.11.4"
+        version = "apache-cassandra-3.11.8.ic2"
         options = {
           auth_n_authz = true
         }
       }
       bundle {
         bundle = "SPARK"
-        version = "apache-spark:2.3.2"
+        version = "apache-spark:2.3.2.ic1"
       }
 }
 ```
@@ -141,7 +141,7 @@ resource "instaclustr_cluster" "azure_example" {
 
   bundle {
     bundle = "APACHE_CASSANDRA"
-    version = "apache_cassandra:3.11.8"
+    version = "apache-cassandra-3.11.8.ic2"
     options = {
       auth_n_authz = true
     }
@@ -168,7 +168,7 @@ resource "instaclustr_cluster" "gcp_example" {
 
   bundle {
     bundle = "APACHE_CASSANDRA"
-    version = "apache_cassandra:3.11.8"
+    version = "apache-cassandra-3.11.8.ic2"
     options = {
       auth_n_authz = true
     }
