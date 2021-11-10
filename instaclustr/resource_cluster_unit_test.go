@@ -567,7 +567,7 @@ func TestDeleteAttributesConflict(t *testing.T) {
 		"attributeC": {
 			Type:          schema.TypeString,
 			Optional:      true,
-			ConflictsWith: []string{"data_centres"},
+			ConflictsWith: []string{"data_centre"},
 			ForceNew:      true,
 		},
 	}
@@ -592,7 +592,7 @@ func TestDeleteAttributesConflict(t *testing.T) {
 
 	checkAttributeValue("attributeA", "A")
 	checkAttributeValue("attributeB", schema.TypeString.Zero())
-	checkAttributeValue("attributeC", schema.TypeString.Zero())
+	checkAttributeValue("attributeC", "C")
 }
 
 type MockApiClient struct {

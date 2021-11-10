@@ -1246,10 +1246,13 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 
 func deleteAttributesConflict(schema map[string]*schema.Schema, d *schema.ResourceData, conflictAttr string) error {
 	for key, value := range schema {
-		for _, conflictsWith := range value.ConflictsWith {
-			if _, exist := d.GetOk(key); exist && conflictsWith == conflictAttr {
-				if err := d.Set(key, value.Type.Zero()); err != nil {
-					return err
+		if _, exist := d.GetOk(key); exist {
+			for _, conflictsWith := range value.ConflictsWith {
+				if conflictsWith == conflictAttr {
+					if err := d.Set(key, value.Type.Zero()); err != nil {
+						return err
+					}
+					break
 				}
 			}
 		}
