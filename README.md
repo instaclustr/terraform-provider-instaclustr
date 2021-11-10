@@ -284,7 +284,8 @@ SPARK|2.1.3, 2.3.2|APACHE_CASSANDRA
 KAFKA|2.1.1, 2.3.1, 2.4.1, 2.5.1, 2.6.1|
 KAFKA_REST_PROXY|5.0.0|KAFKA
 KAFKA_SCHEMA_REGISTRY|5.0.0|KAFKA
-ELASTICSEARCH|opendistro-for-elasticsearch:1.4.0
+OPENSEARCH|opensearch:1.0.0
+ELASTICSEARCH|opendistro-for-elasticsearch:1.8.0, opendistro-for-elasticsearch:1.11.0.ic1
 KAFKA_CONNECT|2.3.1, 2.4.1, 2.5.1, 2.6.1|
 REDIS|6.0.9|
 APACHE_ZOOKEEPER|3.5.8|
