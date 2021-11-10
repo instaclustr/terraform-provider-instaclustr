@@ -42,7 +42,7 @@ resource "instaclustr_cluster" "example" {
 
   bundle {
     bundle = "APACHE_CASSANDRA"
-    version = "apache_cassandra-3.11.8.ic2"
+    version = "apache-cassandra-3.11.8.ic2"
     options = {
       auth_n_authz = true
     }
