@@ -118,7 +118,7 @@ func TestCheckIfBundleRequiresRackAllocation(t *testing.T) {
 
 func TestIsElasticsearchSizeAllChange(t *testing.T) {
 	helper := func(kibanaSize, masterSize, dataSize, expectedNewSize string, kibana, dedicatedMaster, expectedIsAll bool) {
-		newSize, isAllChange := isElasticsearchSizeAllChange(kibanaSize, masterSize, dataSize, kibana, dedicatedMaster)
+		newSize, isAllChange := isSearchSizeAllChange(kibanaSize, masterSize, dataSize, kibana, dedicatedMaster)
 		if isAllChange != expectedIsAll {
 			t.Fatalf("changeAll should be %t when using kibanaSize: %s, masterSize: %s, dataSize: %s, kibana: %t, dedicatedMaster: %t", expectedIsAll, kibanaSize, masterSize, dataSize, kibana, dedicatedMaster)
 		}
@@ -187,6 +187,39 @@ func TestGetSingleChangedElasticsearchSizeAndPurpose(t *testing.T) {
 	helper("", "t3.small-v2", "", "t3.small-v2", true, true, false, ELASTICSEARCH_MASTER)
 	helper("", "t3.small-v2", "", "t3.small-v2", true, false, false, ELASTICSEARCH_MASTER)
 	helper("", "", "t3.small-v2", "t3.small-v2", true, true, false, ELASTICSEARCH_DATA_AND_INGEST)
+}
+
+func TestGetSingleChangedOpenSearchSizeAndPurpose(t *testing.T) {
+	helper := func(openSearchDashboardsSize, masterSize, dataSize, expectedNewSize string, openSearchDashboards, dedicatedMaster, expectErr bool, expectedNodePurpose NodePurpose) {
+		newSize, nodePurpose, err := getSingleChangedOpenSearchSizeAndPurpose(openSearchDashboardsSize, masterSize, dataSize, openSearchDashboards, dedicatedMaster)
+		if expectErr {
+			if err == nil {
+				t.Fatalf("expect error when using openSearchDashboardsSize: %s, masterSize: %s, dataSize: %s, openSearchDashboards: %t, dedicatedMaster: %t", openSearchDashboardsSize, masterSize, dataSize, openSearchDashboards, dedicatedMaster)
+			} else {
+				return
+			}
+		}
+		if err != nil {
+			t.Fatalf("got unexpected error: %s when using openSearchDashboardsSize: %s, masterSize: %s, dataSize: %s, openSearchDashboards: %t, dedicatedMaster: %t", err.Error(), openSearchDashboardsSize, masterSize, dataSize, openSearchDashboards, dedicatedMaster)
+		}
+		if newSize != expectedNewSize {
+			t.Fatalf("newSize should be %s when using openSearchDashboardsSize: %s, masterSize: %s, dataSize: %s, openSearchDashboards: %t, dedicatedMaster:%t", expectedNewSize, openSearchDashboardsSize, masterSize, dataSize, openSearchDashboards, dedicatedMaster)
+		}
+		if nodePurpose.String() != expectedNodePurpose.String() {
+			t.Fatalf("nodePurpose should be %s when using openSearchDashboardsSize: %s, masterSize: %s, dataSize: %s, openSearchDashboards: %t, dedicatedMaster:%t", expectedNodePurpose, openSearchDashboardsSize, masterSize, dataSize, openSearchDashboards, dedicatedMaster)
+		}
+	}
+	helper("t3.small-v2", "t3.small-v2", "t3.small-v2", "t3.small-v2", true, true, true, OPENSEARCH_DASHBOARDS)
+	helper("", "", "t3.small-v2", "t3.small-v2", true, false, true, OPENSEARCH_DASHBOARDS)
+	helper("t3.small-v2", "", "", "t3.small-v2", false, false, true, OPENSEARCH_DASHBOARDS)
+	helper("t3.small-v2", "", "t3.small-v2", "t3.small-v2", false, false, true, OPENSEARCH_DASHBOARDS)
+	helper("t3.small-v2", "", "t3.small-v2", "t3.small-v2", false, false, true, OPENSEARCH_DASHBOARDS)
+
+	helper("t3.small-v2", "", "", "t3.small-v2", true, false, false, OPENSEARCH_DASHBOARDS)
+	helper("t3.small-v2", "", "", "t3.small-v2", true, true, false, OPENSEARCH_DASHBOARDS)
+	helper("", "t3.small-v2", "", "t3.small-v2", true, true, false, OPENSEARCH_MASTER)
+	helper("", "t3.small-v2", "", "t3.small-v2", true, false, false, OPENSEARCH_MASTER)
+	helper("", "", "t3.small-v2", "t3.small-v2", true, true, false, OPENSEARCH_DATA_AND_INGEST)
 }
 
 func TestGetSingleChangedKafkaSizeAndPurpose(t *testing.T) {
@@ -262,6 +295,14 @@ func TestGetNodeSize(t *testing.T) {
 
 	bundles = []Bundle{
 		{
+			Bundle:  "OPENSEARCH",
+			Options: &BundleOptions{},
+		},
+	}
+	helper(data, bundles, "[ERROR] 'master_node_size' is required in the bundle option.", "")
+
+	bundles = []Bundle{
+		{
 			Bundle: "CASSANDRA",
 			Options: &BundleOptions{
 				DedicatedMasterNodes: nil,
@@ -306,7 +347,18 @@ func TestGetNodeSize(t *testing.T) {
 			},
 		},
 	}
-	helper(&data, bundles, "[ERROR] Elasticsearch dedicated master is enabled, 'data_node_size' is required in the bundle option.", "")
+	helper(&data, bundles, "[ERROR] dedicated master is enabled, 'data_node_size' is required in the bundle option.", "")
+
+	bundles = []Bundle{
+		{
+			Bundle: "OPENSEARCH",
+			Options: &BundleOptions{
+				DedicatedMasterNodes: &dedicatedMaster,
+				MasterNodeSize:       "t3.small",
+			},
+		},
+	}
+	helper(&data, bundles, "[ERROR] dedicated master is enabled, 'data_node_size' is required in the bundle option.", "")
 
 	bundles = []Bundle{
 		{
@@ -315,6 +367,18 @@ func TestGetNodeSize(t *testing.T) {
 				DedicatedMasterNodes: &dedicatedMaster,
 				MasterNodeSize:       "t3.small",
 				KibanaNodeSize:       "",
+				DataNodeSize:         "t3.small-v2",
+			},
+		},
+	}
+	helper(&data, bundles, "", "t3.small-v2")
+
+	bundles = []Bundle{
+		{
+			Bundle: "OPENSEARCH",
+			Options: &BundleOptions{
+				DedicatedMasterNodes: &dedicatedMaster,
+				MasterNodeSize:       "t3.small",
 				DataNodeSize:         "t3.small-v2",
 			},
 		},
@@ -335,11 +399,33 @@ func TestGetNodeSize(t *testing.T) {
 	helper(&data, bundles, "[ERROR] When 'dedicated_master_nodes' is not true , data_node_size can be either null or equal to master_node_size.", "")
 	bundles = []Bundle{
 		{
+			Bundle: "OPENSEARCH",
+			Options: &BundleOptions{
+				DedicatedMasterNodes: &dedicatedMaster,
+				MasterNodeSize:       "t3.small",
+				DataNodeSize:         "t3.small-v2",
+			},
+		},
+	}
+	helper(&data, bundles, "[ERROR] When 'dedicated_master_nodes' is not true , data_node_size can be either null or equal to master_node_size.", "")
+	bundles = []Bundle{
+		{
 			Bundle: "ELASTICSEARCH",
 			Options: &BundleOptions{
 				DedicatedMasterNodes: &dedicatedMaster,
 				MasterNodeSize:       "t3.small",
 				KibanaNodeSize:       "",
+				DataNodeSize:         "t3.small",
+			},
+		},
+	}
+	helper(&data, bundles, "", "t3.small")
+	bundles = []Bundle{
+		{
+			Bundle: "OPENSEARCH",
+			Options: &BundleOptions{
+				DedicatedMasterNodes: &dedicatedMaster,
+				MasterNodeSize:       "t3.small",
 				DataNodeSize:         "t3.small",
 			},
 		},
@@ -355,8 +441,21 @@ func TestGetBundleIndex(t *testing.T) {
 		t.Fatalf("Expect no error and 1, got %v and %v", err, index)
 	}
 
+	if index, err := getBundleIndex("OPENSEARCH", []Bundle{
+		{Bundle: "LOG_SHIPPER"},
+		{Bundle: "OPENSEARCH"},
+	}); err != nil || index != 1 {
+		t.Fatalf("Expect no error and 1, got %v and %v", err, index)
+	}
+
 	if index, err := getBundleIndex("ELASTICSEARCH", []Bundle{
 		{Bundle: "ELASTICSEARCH"},
+	}); err != nil || index != 0 {
+		t.Fatalf("Expect no error and 0, got %v and %v", err, index)
+	}
+
+	if index, err := getBundleIndex("OPENSEARCH", []Bundle{
+		{Bundle: "OPENSEARCH"},
 	}); err != nil || index != 0 {
 		t.Fatalf("Expect no error and 0, got %v and %v", err, index)
 	}
@@ -372,6 +471,13 @@ func TestGetNewSizeOrEmpty(t *testing.T) {
 func TestHasElasticsearchSizeChanges(t *testing.T) {
 	data := schema.ResourceData{}
 	if hasChange := hasElasticsearchSizeChanges(0, &data); hasChange {
+		t.Fatalf("Expect false but got %v", hasChange)
+	}
+}
+
+func TestHasOpenSearchSizeChanges(t *testing.T) {
+	data := schema.ResourceData{}
+	if hasChange := hasOpenSearchSizeChanges(0, &data); hasChange {
 		t.Fatalf("Expect false but got %v", hasChange)
 	}
 }
@@ -420,6 +526,34 @@ func TestDoClusterResizeES(t *testing.T) {
 	}
 	bundles := []Bundle{
 		{Bundle: "ELASTICSEARCH"},
+	}
+	err := doClusterResize(client, "mock", data, bundles)
+	if err != nil {
+		t.Fatalf("Expect nil err but got %v", err)
+	}
+	delete(data.changes, "bundle.0.options.master_node_size")
+	err = doClusterResize(client, "mock", data, bundles)
+	if err != nil {
+		t.Fatalf("Expect nil err but got %v", err)
+	}
+}
+
+func TestDoClusterResizeOpenSearch(t *testing.T) {
+	client := MockApiClient{
+		cluster: Cluster{
+			ID:           "mock",
+			BundleType:   "OPENSEARCH",
+			BundleOption: &BundleOptions{},
+			DataCentres: []DataCentre{
+				{ID: "test"},
+			},
+		},
+	}
+	data := MockResourceData{
+		changes: map[string]MockChange{"bundle.0.options.master_node_size": {before: "t3.small", after: "t3.small-v2"}},
+	}
+	bundles := []Bundle{
+		{Bundle: "OPENSEARCH"},
 	}
 	err := doClusterResize(client, "mock", data, bundles)
 	if err != nil {
