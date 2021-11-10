@@ -539,6 +539,11 @@ func resourceCluster() *schema.Resource {
 										Optional: true,
 										ForceNew: true,
 									},
+									"opensearch_dashboards_node_size": {
+										Type:     schema.TypeString,
+										Optional: true,
+										ForceNew: true,
+									},
 									"postgresql_node_count": {
 										Type:     schema.TypeInt,
 										Optional: true,
@@ -604,14 +609,14 @@ func resourceClusterCustomizeDiff(diff *schema.ResourceDiff, i interface{}) erro
 
 func getNodeSize(d resourceDataInterface, bundles []Bundle) (string, error) {
 	for i, bundle := range bundles {
-		if bundle.Bundle == "ELASTICSEARCH" {
+		if bundle.Bundle == "ELASTICSEARCH" || bundle.Bundle == "OPENSEARCH" {
 			if len(bundle.Options.MasterNodeSize) == 0 {
 				return "", fmt.Errorf("[ERROR] 'master_node_size' is required in the bundle option.")
 			}
 			dedicatedMaster := bundle.Options.DedicatedMasterNodes != nil && *bundle.Options.DedicatedMasterNodes
 			if dedicatedMaster {
 				if len(bundle.Options.DataNodeSize) == 0 {
-					return "", fmt.Errorf("[ERROR] Elasticsearch dedicated master is enabled, 'data_node_size' is required in the bundle option.")
+					return "", fmt.Errorf("[ERROR] dedicated master is enabled, 'data_node_size' is required in the bundle option.")
 				}
 				return bundle.Options.DataNodeSize, nil
 			} else {
@@ -892,6 +897,12 @@ func hasElasticsearchSizeChanges(bundleIndex int, d resourceDataInterface) bool 
 		len(getNewSizeOrEmpty(d, getBundleOptionKey(bundleIndex, "data_node_size"))) > 0
 }
 
+func hasOpenSearchSizeChanges(bundleIndex int, d resourceDataInterface) bool {
+	return len(getNewSizeOrEmpty(d, getBundleOptionKey(bundleIndex, "master_node_size"))) > 0 ||
+		len(getNewSizeOrEmpty(d, getBundleOptionKey(bundleIndex, "opensearch_dashboards_node_size"))) > 0 ||
+		len(getNewSizeOrEmpty(d, getBundleOptionKey(bundleIndex, "data_node_size"))) > 0
+}
+
 func hasKafkaSizeChanges(bundleIndex int, d resourceDataInterface) bool {
 	return len(getNewSizeOrEmpty(d, getBundleOptionKey(bundleIndex, "zookeeper_node_size"))) > 0 ||
 		len(getNewSizeOrEmpty(d, "node_size")) > 0
@@ -930,6 +941,12 @@ func doClusterResize(client APIClientInterface, clusterID string, d resourceData
 		} else {
 			return nil
 		}
+	case "OPENSEARCH":
+		if hasOpenSearchSizeChanges(bundleIndex, d) {
+			return doOpenSearchClusterResize(client, cluster, d, bundleIndex)
+		} else {
+			return nil
+		}
 	case "KAFKA":
 		if hasKafkaSizeChanges(bundleIndex, d) {
 			return doKafkaClusterResize(client, cluster, d, bundleIndex)
@@ -949,11 +966,11 @@ func getNewSizeOrEmpty(d resourceDataInterface, key string) string {
 	return after.(string)
 }
 
-func isElasticsearchSizeAllChange(kibanaSize, masterSize, dataSize string, kibana, dataNodes bool) (string, bool) {
+func isSearchSizeAllChange(dashboardSize, masterSize, dataSize string, dashboard, dataNodes bool) (string, bool) {
 	if len(masterSize) == 0 {
 		return "", false
 	}
-	if kibana && (len(kibanaSize) == 0 || kibanaSize != masterSize) {
+	if dashboard && (len(dashboardSize) == 0 || dashboardSize != masterSize) {
 		return "", false
 	}
 	if dataNodes && (len(dataSize) == 0 || dataSize != masterSize) {
@@ -993,6 +1010,37 @@ func getSingleChangedElasticsearchSizeAndPurpose(kibanaSize, masterSize, dataSiz
 	return nodeSize, nodePurpose, nil
 }
 
+func getSingleChangedOpenSearchSizeAndPurpose(openSearchDashboardsSize, masterSize, dataSize string, openSearchDashboards, dataNodes bool) (string, NodePurpose, error) {
+	changedCount := 0
+	var nodePurpose NodePurpose
+	var nodeSize string
+	if len(masterSize) > 0 {
+		changedCount += 1
+		nodePurpose = OPENSEARCH_MASTER
+		nodeSize = masterSize
+	}
+	if len(dataSize) > 0 {
+		if !dataNodes {
+			return "", "", fmt.Errorf("[ERROR] This cluster does not have data only nodes, so data_node_size is not used for this cluster. Please use master_node_size to change the size instead")
+		}
+		changedCount += 1
+		nodePurpose = OPENSEARCH_DATA_AND_INGEST
+		nodeSize = dataSize
+	}
+	if len(openSearchDashboardsSize) > 0 {
+		if !openSearchDashboards {
+			return "", "", fmt.Errorf("[ERROR] This cluster didn't enable OpenSearch Dashboards, opensearch_dashboards_node_size is not used for this cluster. Please use master_node_size to change the size instead")
+		}
+		changedCount += 1
+		nodePurpose = OPENSEARCH_DASHBOARDS
+		nodeSize = openSearchDashboardsSize
+	}
+	if changedCount > 1 {
+		return "", "", fmt.Errorf("[ERROR] Please change either a single node size at a time or change all nodes to the same size at once")
+	}
+	return nodeSize, nodePurpose, nil
+}
+
 func getBundleOptionKey(bundleIndex int, option string) string {
 	return fmt.Sprintf("bundle.%d.options.%s", bundleIndex, option)
 }
@@ -1006,7 +1054,7 @@ func doElasticsearchClusterResize(client APIClientInterface, cluster *Cluster, d
 	kibanaNewSize := getNewSizeOrEmpty(d, getBundleOptionKey(bundleIndex, "kibana_node_size"))
 	dataNewSize := getNewSizeOrEmpty(d, getBundleOptionKey(bundleIndex, "data_node_size"))
 
-	if newSize, isAllChange := isElasticsearchSizeAllChange(kibanaNewSize, masterNewSize, dataNewSize, kibana, dataNodes); isAllChange {
+	if newSize, isAllChange := isSearchSizeAllChange(kibanaNewSize, masterNewSize, dataNewSize, kibana, dataNodes); isAllChange {
 		nodeSize = newSize
 		nodePurpose = nil
 	} else {
@@ -1021,6 +1069,34 @@ func doElasticsearchClusterResize(client APIClientInterface, cluster *Cluster, d
 	err := client.ResizeCluster(cluster.ID, cluster.DataCentres[0].ID, nodeSize, nodePurpose)
 	if err != nil {
 		return fmt.Errorf("[Error] Error resizing cluster %s with error %s", cluster.ID, err)
+	}
+	return nil
+}
+
+func doOpenSearchClusterResize(client APIClientInterface, cluster *Cluster, d resourceDataInterface, bundleIndex int) error {
+	openSearchDashboards := len(cluster.BundleOption.OpenSearchDashboardsNodeSize) > 0
+	dataNodes := len(cluster.BundleOption.DataNodeSize) > 0
+	var nodePurpose *NodePurpose
+	var nodeSize string
+	masterNewSize := getNewSizeOrEmpty(d, getBundleOptionKey(bundleIndex, "master_node_size"))
+	openSearchDashboardsNewSize := getNewSizeOrEmpty(d, getBundleOptionKey(bundleIndex, "opensearch_dashboards_node_size"))
+	dataNewSize := getNewSizeOrEmpty(d, getBundleOptionKey(bundleIndex, "data_node_size"))
+
+	if newSize, isAllChange := isSearchSizeAllChange(openSearchDashboardsNewSize, masterNewSize, dataNewSize, openSearchDashboards, dataNodes); isAllChange {
+		nodeSize = newSize
+		nodePurpose = nil
+	} else {
+		newSize, purpose, err := getSingleChangedOpenSearchSizeAndPurpose(openSearchDashboardsNewSize, masterNewSize, dataNewSize, openSearchDashboards, dataNodes)
+		if err != nil {
+			return err
+		}
+		nodeSize = newSize
+		nodePurpose = &purpose
+	}
+	log.Printf("[INFO] Resizing OpenSearch cluster. nodePurpose: %s, newSize: %s", nodePurpose, nodeSize)
+	err := client.ResizeCluster(cluster.ID, cluster.DataCentres[0].ID, nodeSize, nodePurpose)
+	if err != nil {
+		return fmt.Errorf("[ERROR] Error resizing cluster %s with error %s", cluster.ID, err)
 	}
 	return nil
 }
@@ -1171,7 +1247,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		if len(cluster.DataCentres[0].ResizeTargetNodeSize) > 0 {
 			nodeSize = cluster.DataCentres[0].ResizeTargetNodeSize
 		}
-		if cluster.BundleType != "ELASTICSEARCH" {
+		if cluster.BundleType != "ELASTICSEARCH" && cluster.BundleType != "OPENSEARCH" {
 			d.Set("node_size", nodeSize)
 		}
 		d.Set("data_centre", cluster.DataCentres[0].Name)

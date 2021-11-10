@@ -160,7 +160,7 @@ resource "instaclustr_cluster" "example-elasticsearch" {
 
   bundle {
     bundle = "ELASTICSEARCH"
-    version = "opendistro-for-elasticsearch:1.4.0"
+    version = "opendistro-for-elasticsearch:1.11.0.ic1"
     options = {
       client_encryption = true,
       dedicated_master_nodes = true,
@@ -168,6 +168,32 @@ resource "instaclustr_cluster" "example-elasticsearch" {
       data_node_size = "m5l-250-v2",
       kibana_node_size = "m5l-250-v2",
       security_plugin = true
+    }
+  }
+}
+
+resource "instaclustr_cluster" "example-opensearch" {
+  cluster_name = "os-cluster"
+  data_centre = "US_EAST_1"
+  sla_tier = "NON_PRODUCTION"
+  cluster_network = "192.168.0.0/18"
+  private_network_cluster = false
+  cluster_provider = {
+    name = "AWS_VPC"
+  }
+  rack_allocation = {
+    number_of_racks = 3
+    nodes_per_rack = 1
+  }
+
+  bundle {
+    bundle = "OPENSEARCH"
+    version = "opensearch:1.0.0"
+    options = {
+      dedicated_master_nodes = true,
+      master_node_size = "m5l-250-v2",
+      data_node_size = "m5l-250-v2",
+      opensearch_dashboards_node_size = "m5l-250-v2",
     }
   }
 }
