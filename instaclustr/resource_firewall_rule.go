@@ -13,7 +13,6 @@ func resourceFirewallRule() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceFirewallRuleCreate,
 		Read:   resourceFirewallRuleRead,
-		Update: resourceFirewallRuleUpdate,
 		Delete: resourceFirewallRuleDelete,
 
 		Importer: &schema.ResourceImporter{
@@ -24,20 +23,24 @@ func resourceFirewallRule() *schema.Resource {
 			"cluster_id": {
 				Type:     schema.TypeString,
 				Required: true,
+				ForceNew: true,
 			},
 
 			"rule_cidr": {
 				Type:     schema.TypeString,
 				Optional: true,
+				ForceNew: true,
 			},
 			"rule_security_group_id": {
 				Type:     schema.TypeString,
 				Optional: true,
+				ForceNew: true,
 			},
 
 			"rules": {
 				Type:     schema.TypeList,
 				Required: true,
+				ForceNew: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeMap,
 					Elem: schema.TypeString,
@@ -137,10 +140,6 @@ func resourceFirewallRuleStateImport(d *schema.ResourceData, meta interface{}) (
 	d.Set("cluster_id", idParts[0])
 	d.Set("rule_cidr", idParts[1])
 	return []*schema.ResourceData{d}, nil
-}
-
-func resourceFirewallRuleUpdate(d *schema.ResourceData, meta interface{}) error {
-	return nil
 }
 
 func resourceFirewallRuleDelete(d *schema.ResourceData, meta interface{}) error {

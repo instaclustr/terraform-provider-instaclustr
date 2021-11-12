@@ -9,11 +9,11 @@
 
 A [Terraform](http://terraform.io) provider for managing Instaclustr Platform resources.
 
-It provides a flexible set of resources for provisioning and managing [Instaclustr based clusters](http://instaclustr.com/) via the use of Terraform.
+It provides a flexible set of resources for provisioning and managing Apache Cassandra, Apache Kafka, Apache Zookeeper, OpenSearch and Redis clusters on the Instaclustr Managed Platform via Terraform.
+
+For further information about Instaclustr, please see [the Instaclustr website](https://instaclustr.com/) and [Support Pages](https://support.instaclustr.com/hc/en-us)
 
 For general information about Terraform, visit the [official website](https://terraform.io/) and [GitHub project page](https://github.com/hashicorp/terraform).
-
-For further information about Instaclustr, please see [FAQ](https://www.instaclustr.com/resources/faqs/) and [Support](https://support.instaclustr.com/hc/en-us)
 
 ## Key benefits
 
@@ -95,7 +95,7 @@ AWS:
 ```
 resource "instaclustr_cluster" "example" {
     cluster_name = "testcluster"
-    node_size = "t3.small"
+    node_size = "m5l-250-v2"
     data_centre = "US_WEST_2"
     sla_tier = "NON_PRODUCTION"
     cluster_network = "192.168.0.0/18"
@@ -110,14 +110,14 @@ resource "instaclustr_cluster" "example" {
     }
     bundle {
         bundle = "APACHE_CASSANDRA"
-        version = "3.11.4"
+        version = "apache-cassandra-3.11.8.ic2"
         options = {
           auth_n_authz = true
         }
       }
       bundle {
         bundle = "SPARK"
-        version = "2.3.2"
+        version = "apache-spark:2.3.2.ic1"
       }
 }
 ```
@@ -141,7 +141,7 @@ resource "instaclustr_cluster" "azure_example" {
 
   bundle {
     bundle = "APACHE_CASSANDRA"
-    version = "3.11.8"
+    version = "apache-cassandra-3.11.8.ic2"
     options = {
       auth_n_authz = true
     }
@@ -168,7 +168,7 @@ resource "instaclustr_cluster" "gcp_example" {
 
   bundle {
     bundle = "APACHE_CASSANDRA"
-    version = "3.11.8"
+    version = "apache-cassandra-3.11.8.ic2"
     options = {
       auth_n_authz = true
     }
@@ -284,7 +284,8 @@ SPARK|2.1.3, 2.3.2|APACHE_CASSANDRA
 KAFKA|2.1.1, 2.3.1, 2.4.1, 2.5.1, 2.6.1|
 KAFKA_REST_PROXY|5.0.0|KAFKA
 KAFKA_SCHEMA_REGISTRY|5.0.0|KAFKA
-ELASTICSEARCH|opendistro-for-elasticsearch:1.4.0
+OPENSEARCH|opensearch:1.0.0
+ELASTICSEARCH|opendistro-for-elasticsearch:1.8.0, opendistro-for-elasticsearch:1.11.0.ic1
 KAFKA_CONNECT|2.3.1, 2.4.1, 2.5.1, 2.6.1|
 REDIS|6.0.9|
 APACHE_ZOOKEEPER|3.5.8|

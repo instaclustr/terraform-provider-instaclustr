@@ -26,6 +26,7 @@ type BundleOptions struct {
 	DedicatedMasterNodes          *bool  `json:"dedicatedMasterNodes,omitempty" mapstructure:"dedicated_master_nodes,omitempty"`
 	MasterNodeSize                string `json:"masterNodeSize,omitempty" mapstructure:"master_node_size,omitempty"`
 	KibanaNodeSize                string `json:"kibanaNodeSize,omitempty" mapstructure:"kibana_node_size,omitempty"`
+	OpenSearchDashboardsNodeSize  string `json:"openSearchDashboardsNodeSize,omitempty" mapstructure:"opensearch_dashboards_node_size,omitempty"`
 	DataNodeSize                  string `json:"dataNodeSize,omitempty" mapstructure:"data_node_size,omitempty"`
 	SecurityPlugin                *bool  `json:"securityPlugin,omitempty" mapstructure:"security_plugin,omitempty"`
 	UsePrivateBroadcastRpcAddress *bool  `json:"usePrivateBroadcastRPCAddress,omitempty" mapstructure:"use_private_broadcast_rpc_address,omitempty"`
