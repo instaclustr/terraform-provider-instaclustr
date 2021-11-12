@@ -38,13 +38,13 @@ resource "instaclustr_cluster" "kafka_cluster" {
 resource "instaclustr_kafka_topic" "kafka_topic_test" {
   cluster_id = "${instaclustr_cluster.kafka_cluster.id}"
   topic = "%s"
-  replication-factor = 3
+  replication_factor = 3
   partitions = 3
 }
 
 resource "instaclustr_kafka_topic" "kafka_topic_test2" {
   cluster_id = "${instaclustr_cluster.kafka_cluster.id}"
   topic = "%s"
-  replication-factor = 3
+  replication_factor = 3
   partitions = 3
 }

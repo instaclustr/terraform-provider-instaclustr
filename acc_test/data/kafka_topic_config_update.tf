@@ -38,7 +38,7 @@ resource "instaclustr_cluster" "kafka_cluster" {
 resource "instaclustr_kafka_topic" "kafka_topic_test" {
   cluster_id = "${instaclustr_cluster.kafka_cluster.id}"
   topic = "%s"
-  replication-factor = 3
+  replication_factor = 3
   partitions = 3
   config {
     min_insync_replicas = 2
@@ -50,7 +50,7 @@ resource "instaclustr_kafka_topic" "kafka_topic_test" {
 resource "instaclustr_kafka_topic" "kafka_topic_test2" {
   cluster_id = "${instaclustr_cluster.kafka_cluster.id}"
   topic = "%s"
-  replication-factor = 3
+  replication_factor = 3
   partitions = 3
   config {
     cleanup_policy = "delete"

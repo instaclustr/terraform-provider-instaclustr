@@ -28,7 +28,7 @@ type DeleteKafkaUserRequest struct {
 
 type CreateKafkaTopicRequest struct {
 	Topic             string `json:"topic"`
-	ReplicationFactor int    `json:"replication-factor" mapstructure:"replication-factor"`
+	ReplicationFactor int    `json:"replication-factor" mapstructure:"replication_factor"`
 	Partitions        int    `json:"partitions"`
 }
 
