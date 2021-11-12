@@ -29,11 +29,11 @@ func TestAPIDeleteKafkaTopic(t *testing.T) {
 
 func TestAPIClientReadKafkaTopicConfig(t *testing.T) {
 	filename := "data/valid_kafka_topic_config.json"
-	parse_file, err := ioutil.ReadFile(filename)
+	parseFile, err := ioutil.ReadFile(filename)
 	if err != nil {
 		t.Fatalf("Failed to load %s: %s", filename, err)
 	}
-	jsonStr := fmt.Sprintf("%s", parse_file)
+	jsonStr := fmt.Sprintf("%s", parseFile)
 	client := SetupMock(t, "should-be-uuid/kafka/topics/test/config", jsonStr, 200)
 	values, err2 := client.ReadKafkaTopicConfig("should-be-uuid", "test")
 	if err2 != nil {
@@ -41,6 +41,23 @@ func TestAPIClientReadKafkaTopicConfig(t *testing.T) {
 	}
 	if (*values).Config.CompressionType != "producer" || *(*values).Config.MessageDownconversionEnable != true ||
 		(*values).Config.MinInsyncReplicas != 2 {
+		t.Fatalf("Values do not match.")
+	}
+}
+
+func TestAPIClientCreateKafkaTopicList(t *testing.T) {
+	filename := "data/valid_kafka_topic_list.json"
+	parseFile, err := ioutil.ReadFile(filename)
+	if err != nil {
+		t.Fatalf("Failed to load %s: %s", filename, err)
+	}
+	jsonStr := fmt.Sprintf("%s", parseFile)
+	client := SetupMock(t, "should-be-uuid/kafka/topics", jsonStr, 200)
+	topicList, err2 := client.ReadKafkaTopicList("should-be-uuid")
+	if err2 != nil {
+		t.Fatalf("Failed to create kafka topic: %s", err2)
+	}
+	if topicList.Topics[0] != "test1" || topicList.Topics[1] != "test2" {
 		t.Fatalf("Values do not match.")
 	}
 }
