@@ -156,38 +156,33 @@ func checkKafkaTopicListCreated(hostname, username, apiKey string) resource.Test
 
 func checkKafkaTopicUpdated(hostname, username, apiKey string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		topicResources := [2]string{
-			"instaclustr_kafka_topic.kafka_topic_test",
-			"instaclustr_kafka_topic.kafka_topic_test2",
-		}
 		client := new(instaclustr.APIClient)
 		client.InitClient(hostname, username, apiKey)
+		resourceName := "instaclustr_kafka_topic.kafka_topic_test2"
 
-		for _, resourceName := range topicResources {
-			resourceState := s.Modules[0].Resources[resourceName]
-			if resourceState == nil {
-				return fmt.Errorf("%s resource not found in state.", resourceName)
-			}
-			clusterId := resourceState.Primary.Attributes["cluster_id"]
-			instanceState := resourceState.Primary
-			if instanceState == nil {
-				return fmt.Errorf("resource has no primary instance")
-			}
-			kafka_topic_name := instanceState.Attributes["topic"]
-			kafkaTopicConfig, err := client.ReadKafkaTopicConfig(clusterId, kafka_topic_name)
-			if err != nil {
-				return fmt.Errorf("Failed to read Kafka topic %s's config: %s", kafka_topic_name, err)
-			}
+		resourceState := s.Modules[0].Resources[resourceName]
+		if resourceState == nil {
+			return fmt.Errorf("%s resource not found in state.", resourceName)
+		}
+		clusterId := resourceState.Primary.Attributes["cluster_id"]
+		instanceState := resourceState.Primary
+		if instanceState == nil {
+			return fmt.Errorf("resource has no primary instance")
+		}
+		kafka_topic_name := instanceState.Attributes["topic"]
+		kafkaTopicConfig, err := client.ReadKafkaTopicConfig(clusterId, kafka_topic_name)
+		if err != nil {
+			return fmt.Errorf("Failed to read Kafka topic %s's config: %s", kafka_topic_name, err)
+		}
 
-			if kafkaTopicConfig.Config.MinInsyncReplicas != 2 || *kafkaTopicConfig.Config.MessageDownconversionEnable != false ||
-				*kafkaTopicConfig.Config.UncleanLeaderElectionEnable != true {
-				return fmt.Errorf("The topic %s's configs in the cluster are not updated as expected.", kafka_topic_name)
-			}
+		if kafkaTopicConfig.Config.MinInsyncReplicas != 2 || kafkaTopicConfig.Config.MessageFormatVersion != "2.3-IV1" ||
+			*kafkaTopicConfig.Config.UncleanLeaderElectionEnable != true {
+			return fmt.Errorf("The topic %s's configs in the cluster are not updated as expected.", kafka_topic_name)
+		}
 
-			if instanceState.Attributes["config.0.min_insync_replicas"] != "2" || instanceState.Attributes["config.0.message_downconversion_enable"] != "false" ||
-				instanceState.Attributes["config.0.unclean_leader_election_enable"] != "true" {
-				return fmt.Errorf("The topic %s's configs in the terraform state are not updated as expected.", kafka_topic_name)
-			}
+		if instanceState.Attributes["config.0.min_insync_replicas"] != "2" || instanceState.Attributes["config.0.message_format_version"] != "2.3-IV1" ||
+			instanceState.Attributes["config.0.unclean_leader_election_enable"] != "true" {
+			return fmt.Errorf("The topic %s's configs in the terraform state are not updated as expected.", kafka_topic_name)
 		}
 		return nil
 	}
