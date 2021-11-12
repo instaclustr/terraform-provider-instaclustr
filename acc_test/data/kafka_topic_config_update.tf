@@ -1,0 +1,87 @@
+// This is part of testing "kafka topic" suite, 5 of 5
+provider "instaclustr" {
+  username = "%s"
+  api_key = "%s"
+  api_hostname = "%s"
+}
+
+resource "instaclustr_cluster" "kafka_cluster" {
+  cluster_name = "example_kafka_tf_test"
+  node_size = "%s"
+  data_centre = "US_WEST_2"
+  sla_tier = "NON_PRODUCTION"
+  cluster_network = "192.168.0.0/18"
+  wait_for_state = "RUNNING"
+  cluster_provider = {
+    name = "AWS_VPC"
+  }
+  rack_allocation = {
+    number_of_racks = 3
+    nodes_per_rack = 1
+  }
+
+  bundle {
+    bundle = "KAFKA"
+    version = "%s"
+    options = {
+      auto_create_topics = true
+      client_encryption = false
+      dedicated_zookeeper = true
+      delete_topics = true
+      number_partitions = 3
+      zookeeper_node_size = "%s"
+      zookeeper_node_count = 3
+    }
+  }
+}
+
+resource "instaclustr_kafka_topic" "kafka_topic_test" {
+  cluster_id = "${instaclustr_cluster.kafka_cluster.id}"
+  topic = "%s"
+  replication-factor = 3
+  partitions = 3
+  config {
+    min_insync_replicas = 2
+    message_downconversion_enable = false
+    unclean_leader_election_enable = true
+  }
+}
+
+resource "instaclustr_kafka_topic" "kafka_topic_test2" {
+  cluster_id = "${instaclustr_cluster.kafka_cluster.id}"
+  topic = "%s"
+  replication-factor = 3
+  partitions = 3
+  config {
+    cleanup_policy = "delete"
+    compression_type = "producer"
+    delete_retention_ms = 86400000
+    file_delete_delay_ms = 60000
+    flush_messages = "9223372036854775807"
+    flush_ms = "9223372036854775807"
+    follower_replication_throttled_replicas = ""
+    index_interval_bytes = 4096
+    leader_replication_throttled_replicas = ""
+    max_compaction_lag_ms = "9223372036854775807"
+    max_message_bytes = 1048588
+    message_downconversion_enable = false // This is changed from true -> false
+    message_format_version = "3.0-IV1"
+    message_timestamp_difference_max_ms = "9223372036854775807"
+    message_timestamp_type = "CreateTime"
+    min_cleanable_dirty_ratio = 0.5
+    min_compaction_lag_ms = 0
+    min_insync_replicas = 2 // This is changed from 1 -> 2
+    preallocate = false
+    retention_bytes = -1
+    retention_ms = 604800000
+    segment_bytes = 1073741824
+    segment_index_bytes = 10485760
+    segment_jitter_ms = 0
+    segment_ms = 604800000
+    unclean_leader_election_enable = true // This is changed from false -> true
+  }
+}
+
+data "instaclustr_kafka_topic_list" "kafka_topic_list" {
+  cluster_id = "${instaclustr_cluster.kafka_cluster.id}"
+}
