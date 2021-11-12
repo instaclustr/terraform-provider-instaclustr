@@ -65,7 +65,6 @@ resource "instaclustr_kafka_topic" "kafka_topic_test2" {
     max_compaction_lag_ms = "9223372036854775807"
     max_message_bytes = 1048588
     message_downconversion_enable = false // This is changed from true -> false
-    message_format_version = "3.0-IV1"
     message_timestamp_difference_max_ms = "9223372036854775807"
     message_timestamp_type = "CreateTime"
     min_cleanable_dirty_ratio = 0.5
