@@ -18,7 +18,7 @@ func dataSourceKafkaTopicList() *schema.Resource {
 			},
 
 			"topics": &schema.Schema{
-				Type: schema.TypeSet,
+				Type: schema.TypeList,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
