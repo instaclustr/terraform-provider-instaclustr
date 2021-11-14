@@ -1,10 +1,12 @@
 package test
 
 import (
+	"errors"
 	"fmt"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
 	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
+	"io/ioutil"
 	"os"
 	"time"
 )
@@ -51,6 +53,32 @@ func checkClusterRunning(resourceName, hostname, username, apiKey string) resour
 		// wait another minute after cluster goes to RUNNING to make sure all operations will work
 		// sometimes says cluster is not ready for resizing
 		time.Sleep(60 * time.Second)
+		return nil
+	}
+}
+
+func addDCtoCluster(resourceName, hostname, username, apiKey, requestBody string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		resourceState := s.Modules[0].Resources["instaclustr_cluster."+resourceName]
+		id := resourceState.Primary.Attributes["cluster_id"]
+		client := new(instaclustr.APIClient)
+		client.InitClient(hostname, username, apiKey)
+		body, _ := ioutil.ReadFile(requestBody)
+
+		// Adding a new DC to an existing cluster
+		url := fmt.Sprintf("%s/provisioning/v1/%s/cluster-data-centres", hostname, id)
+		resp, err := client.MakeRequest(url, "POST", body)
+
+		if err != nil {
+			return err
+		}
+		bodyText, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return err
+		}
+		if resp.StatusCode != 202 {
+			return errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
+		}
 		return nil
 	}
 }

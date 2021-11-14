@@ -1252,7 +1252,12 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		}
 		d.Set("data_centre", cluster.DataCentres[0].Name)
 		d.Set("cluster_network", cluster.DataCentres[0].CdcNetwork)
+
+		if err := deleteAttributesConflict(resourceCluster().Schema, d, "data_centre"); err != nil {
+			return err
+		}
 	} else {
+
 		dataCentres, err := getDataCentresFromCluster(cluster)
 		if err != nil {
 			return err
@@ -1262,6 +1267,10 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 			if err := d.Set("data_centres", dataCentres); err != nil {
 				return fmt.Errorf("[Error] Error setting data centres into terraform state, data centres could not be derived: %s", err)
 			}
+		}
+
+		if err := deleteAttributesConflict(resourceCluster().Schema, d, "data_centres"); err != nil {
+			return err
 		}
 	}
 
@@ -1308,6 +1317,22 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	log.Printf("[INFO] Fetched cluster %s info from the remote server.", cluster.ID)
+	return nil
+}
+
+func deleteAttributesConflict(schema map[string]*schema.Schema, d *schema.ResourceData, conflictAttr string) error {
+	for key, value := range schema {
+		if _, exist := d.GetOk(key); exist {
+			for _, conflictsWith := range value.ConflictsWith {
+				if conflictsWith == conflictAttr {
+					if err := d.Set(key, value.Type.Zero()); err != nil {
+						return err
+					}
+					break
+				}
+			}
+		}
+	}
 	return nil
 }
 

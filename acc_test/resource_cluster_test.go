@@ -721,6 +721,46 @@ func TestAccClusterCredentials(t *testing.T) {
 	})
 }
 
+func TestCheckSingleDCRefreshToMultiDC(t *testing.T) {
+	testAccProvider := instaclustr.Provider()
+	testAccProviders := map[string]terraform.ResourceProvider{
+		"instaclustr": testAccProvider,
+	}
+
+	username := os.Getenv("IC_USERNAME")
+	apiKey := os.Getenv("IC_API_KEY")
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+
+	validSingleDCConfig, _ := ioutil.ReadFile("data/valid_single_dc_cluster.tf")
+	singleDCConfig := fmt.Sprintf(string(validSingleDCConfig), username, apiKey, hostname)
+
+	validMultiDCConfig, _ := ioutil.ReadFile("data/valid_multi_dc_cluster.tf")
+	multiDCConfig := fmt.Sprintf(string(validMultiDCConfig), username, apiKey, hostname)
+
+	attributesConflictWithDataCentres := []string{"data_centre",
+		"node_size", "rack_allocation", "network", "cluster_provider", "bundle"}
+
+	resource.Test(t, resource.TestCase{
+		Providers:    testAccProviders,
+		CheckDestroy: testCheckResourceDeleted("dc_test_cluster", hostname, username, apiKey),
+		Steps: []resource.TestStep{
+			{
+				Config:             singleDCConfig,
+				ExpectNonEmptyPlan: true,
+				Check: resource.ComposeTestCheckFunc(
+					addDCtoCluster("dc_test_cluster", hostname, username, apiKey, "data/valid_add_dc.json"),
+				),
+			},
+			{
+				Config: multiDCConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceStateAttributesDeleted("dc_test_cluster", attributesConflictWithDataCentres...),
+				),
+			},
+		},
+	})
+}
+
 func testCheckClusterCredentials(hostname, username, apiKey string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		resourceState := s.Modules[0].Resources["data.instaclustr_cluster_credentials.cluster_credentials"]
@@ -746,6 +786,26 @@ func testCheckClusterCredentials(hostname, username, apiKey string) resource.Tes
 			return fmt.Errorf("Client encryption is disabled")
 		}
 
+		return nil
+	}
+}
+
+func testCheckResourceStateAttributesDeleted(resourceName string, attributeNames ...string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		resourceState := s.Modules[0].Resources["instaclustr_cluster."+resourceName]
+		attributes := resourceState.Primary.Attributes
+		for _, givenAttribute := range attributeNames {
+			exist := false
+			for _, attribute := range attributes {
+				if attribute == givenAttribute {
+					exist = true
+					break
+				}
+			}
+			if exist {
+				return fmt.Errorf("Attribute %s exists", givenAttribute)
+			}
+		}
 		return nil
 	}
 }
