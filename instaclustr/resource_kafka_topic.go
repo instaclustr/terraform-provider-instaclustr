@@ -232,12 +232,12 @@ func resourceKafkaTopicRead(d *schema.ResourceData, meta interface{}) error {
 	configList := make([]map[string]interface{}, 0)
 	err = mapstructure.Decode(kafkaTopicConfig.Config, &config)
 	if err != nil {
-		return err
+		return fmt.Errorf("[Error] Error decoding the fetched kafka topic %s's config to a map", topic)
 	}
 	configList = append(configList, config)
 	err = d.Set("config", configList)
 	if err != nil {
-		return err
+		return fmt.Errorf("[Error] Error setting the kafka topic %s's config to Terraform state", topic)
 	}
 
 	log.Printf("[INFO] Successfully fetch the config of topic %s.", topic)
@@ -262,7 +262,7 @@ func resourceKafkaTopicUpdate(d *schema.ResourceData, meta interface{}) error {
 
 	// This is for when only replication_factor or partitions are changed, but we don't support changing them currently
 	if !d.HasChange("config") {
-		log.Printf("[INFO] Currently we only supprot updating topic's config. There are no changes in topic %s's config.", topic)
+		log.Printf("[INFO] Currently we only support updating topic's config. There are no changes in topic %s's config.", topic)
 		return nil
 	}
 	// This is for when there is no config{} block in the resource, or the whole config{} is removed from the resource.
@@ -274,13 +274,13 @@ func resourceKafkaTopicUpdate(d *schema.ResourceData, meta interface{}) error {
 
 	changedConfigMap, err := getChangedConfigMap(d)
 	if err != nil {
-		return err
+		return fmt.Errorf("[Error] Error getting the changed config map for topic %s", topic)
 	}
 	if len(changedConfigMap) == 0 {
 		log.Printf("[INFO] There are no configs to be updated.")
 		err = resourceKafkaTopicRead(d, meta)
 		if err != nil {
-			return err
+			return fmt.Errorf("[Error] Error reading the updated topic config for topic %s", topic)
 		}
 		return nil
 	}
@@ -288,7 +288,7 @@ func resourceKafkaTopicUpdate(d *schema.ResourceData, meta interface{}) error {
 	var kafkaTopicConfigOptions KafkaTopicConfigOptions
 	err = mapstructure.Decode(changedConfigMap, &kafkaTopicConfigOptions)
 	if err != nil {
-		return err
+		return fmt.Errorf("[Error] Error decoding the changed config map to KafkaTopicConfigOptions for topic %s", topic)
 	}
 
 	updateKafkaTopicRequest := UpdateKafkaTopicRequest{
@@ -308,7 +308,7 @@ func resourceKafkaTopicUpdate(d *schema.ResourceData, meta interface{}) error {
 	//Reading updated configs
 	err = resourceKafkaTopicRead(d, meta)
 	if err != nil {
-		return err
+		return fmt.Errorf("[Error] Error reading the updated topic config for topic %s", topic)
 	}
 
 	log.Printf("[INFO] The configs of Kafka topic %s has been updated.", topic)
@@ -324,11 +324,11 @@ func getChangedConfigMap(d *schema.ResourceData) (map[string]interface{}, error)
 	// Decode twice here because zero-value non-pointers need to be removed
 	err := mapstructure.Decode(newConfig, &kafkaTopicConfig)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("[Error] Error decoding the config {} block to KafkaTopicConfigOptions")
 	}
 	err = mapstructure.Decode(kafkaTopicConfig, &decodedConfigMap)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("[Error] Error decoding KafkaTopicConfigOptions to a map")
 	}
 
 	// The following block is to get what configs are indeed changed
