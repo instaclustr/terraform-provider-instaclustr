@@ -33,7 +33,7 @@ func dataSourceKafkaTopicListRead(d *schema.ResourceData, meta interface{}) erro
 
 	topicList, err := client.ReadKafkaTopicList(d.Get("cluster_id").(string))
 	if err != nil {
-		return fmt.Errorf("[Error] Error fetching the kafka user list: %s", err)
+		return fmt.Errorf("[Error] Error fetching the kafka user list: %w", err)
 	}
 
 	d.SetId(fmt.Sprintf("%s-topic-list", d.Get("cluster_id").(string)))

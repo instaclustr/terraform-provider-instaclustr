@@ -207,6 +207,22 @@ func resourceKafkaTopicRead(d *schema.ResourceData, meta interface{}) error {
 	topic := d.Get("topic").(string)
 	client := meta.(*Config).Client
 
+	topicList, err := client.ReadKafkaTopicList(cluster_id)
+	if err != nil {
+		return fmt.Errorf("[Error] Error fetching the kafka user list: %w", err)
+	}
+	var topicExist bool
+	for _, t := range topicList.Topics {
+		if t == topic {
+			topicExist = true
+		}
+	}
+	if !topicExist {
+		d.SetId("")
+		log.Printf("[INFO] Topic %s not found in cluster %s.", topic, cluster_id)
+		return nil
+	}
+
 	// Cluster has to reach running state first
 	cluster, err := client.ReadCluster(cluster_id)
 	if err != nil {
