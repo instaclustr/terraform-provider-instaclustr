@@ -61,3 +61,16 @@ func TestAPIClientCreateKafkaTopicList(t *testing.T) {
 		t.Fatalf("Values do not match.")
 	}
 }
+
+func TestAPIClientCreateKafkaUser(t *testing.T) {
+	filename := "data/valid_kafka_user.json"
+	jsonStr, err := ioutil.ReadFile(filename)
+	if err != nil {
+		t.Fatalf("Failed to load %s: %s", filename, err)
+	}
+	client := SetupMock(t, "should-be-uuid/kafka/users", `{"id":"should-be-uuid"}`, 201)
+	err2 := client.CreateKafkaUser("should-be-uuid", jsonStr)
+	if err2 != nil {
+		t.Fatalf("Failed to create kafka user: %s", err2)
+	}
+}
