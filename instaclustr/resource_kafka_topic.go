@@ -175,7 +175,7 @@ func resourceKafkaTopicCreate(d *schema.ResourceData, meta interface{}) error {
 	// Cluster has to reach running state first
 	cluster, err := client.ReadCluster(cluster_id)
 	if err != nil {
-		return fmt.Errorf("[Error] Error in getting the status of the cluster: %s", err)
+		return fmt.Errorf("[Error] Error in getting the status of the cluster: %w", err)
 	}
 	if cluster.ClusterStatus != "RUNNING" {
 		return fmt.Errorf("[Error] Cluster %s is not RUNNING. Currently in %s state", cluster_id, cluster.ClusterStatus)
@@ -188,12 +188,12 @@ func resourceKafkaTopicCreate(d *schema.ResourceData, meta interface{}) error {
 	var jsonStr []byte
 	jsonStr, err = json.Marshal(createKafkaTopicRequest)
 	if err != nil {
-		return fmt.Errorf("[Error] Error creating kafka topic creation request: %s", err)
+		return fmt.Errorf("[Error] Error creating kafka topic creation request: %w", err)
 	}
 
 	err = client.CreateKafkaTopic(cluster_id, jsonStr)
 	if err != nil {
-		return fmt.Errorf("[Error] Error creating kafka topic: %s", err)
+		return fmt.Errorf("[Error] Error creating kafka topic: %w", err)
 	}
 
 	d.SetId(fmt.Sprintf("%s&%s", cluster_id, topic))
@@ -210,7 +210,7 @@ func resourceKafkaTopicRead(d *schema.ResourceData, meta interface{}) error {
 	// Cluster has to reach running state first
 	cluster, err := client.ReadCluster(cluster_id)
 	if err != nil {
-		return fmt.Errorf("[Error] Error in getting the status of the cluster: %s", err)
+		return fmt.Errorf("[Error] Error in getting the status of the cluster: %w", err)
 	}
 	if cluster.ClusterStatus != "RUNNING" {
 		return fmt.Errorf("[Error] Cluster %s is not RUNNING. Currently in %s state", cluster_id, cluster.ClusterStatus)
@@ -218,7 +218,7 @@ func resourceKafkaTopicRead(d *schema.ResourceData, meta interface{}) error {
 	log.Printf("[INFO] Reading the config of topic %s.", topic)
 	kafkaTopicConfig, err := client.ReadKafkaTopicConfig(cluster_id, topic)
 	if err != nil {
-		return fmt.Errorf("[Error] Error reading Kafka topic %s's config: %s", topic, err)
+		return fmt.Errorf("[Error] Error reading Kafka topic %s's config: %w", topic, err)
 	}
 
 	// It won't read the topic's config if the config{} block is missing in the resource
@@ -232,12 +232,12 @@ func resourceKafkaTopicRead(d *schema.ResourceData, meta interface{}) error {
 	configList := make([]map[string]interface{}, 0)
 	err = mapstructure.Decode(kafkaTopicConfig.Config, &config)
 	if err != nil {
-		return fmt.Errorf("[Error] Error decoding the fetched kafka topic %s's config to a map", topic)
+		return fmt.Errorf("[Error] Error decoding the fetched kafka topic %s's config to a map: %w", topic, err)
 	}
 	configList = append(configList, config)
 	err = d.Set("config", configList)
 	if err != nil {
-		return fmt.Errorf("[Error] Error setting the kafka topic %s's config to Terraform state", topic)
+		return fmt.Errorf("[Error] Error setting the kafka topic %s's config to Terraform state: %w", topic, err)
 	}
 
 	log.Printf("[INFO] Successfully fetch the config of topic %s.", topic)
@@ -274,13 +274,13 @@ func resourceKafkaTopicUpdate(d *schema.ResourceData, meta interface{}) error {
 
 	changedConfigMap, err := getChangedConfigMap(d)
 	if err != nil {
-		return fmt.Errorf("[Error] Error getting the changed config map for topic %s", topic)
+		return fmt.Errorf("[Error] Error getting the changed config map for topic %s: %w", topic, err)
 	}
 	if len(changedConfigMap) == 0 {
 		log.Printf("[INFO] There are no configs to be updated.")
 		err = resourceKafkaTopicRead(d, meta)
 		if err != nil {
-			return fmt.Errorf("[Error] Error reading the updated topic config for topic %s", topic)
+			return fmt.Errorf("[Error] Error reading the updated topic config for topic %s: %w", topic, err)
 		}
 		return nil
 	}
@@ -288,7 +288,7 @@ func resourceKafkaTopicUpdate(d *schema.ResourceData, meta interface{}) error {
 	var kafkaTopicConfigOptions KafkaTopicConfigOptions
 	err = mapstructure.Decode(changedConfigMap, &kafkaTopicConfigOptions)
 	if err != nil {
-		return fmt.Errorf("[Error] Error decoding the changed config map to KafkaTopicConfigOptions for topic %s", topic)
+		return fmt.Errorf("[Error] Error decoding the changed config map to KafkaTopicConfigOptions for topic %s: %w", topic, err)
 	}
 
 	updateKafkaTopicRequest := UpdateKafkaTopicRequest{
@@ -297,18 +297,18 @@ func resourceKafkaTopicUpdate(d *schema.ResourceData, meta interface{}) error {
 
 	jsonStr, err := json.Marshal(updateKafkaTopicRequest)
 	if err != nil {
-		return fmt.Errorf("[Error] Error creating kafka topic update request: %s", err)
+		return fmt.Errorf("[Error] Error creating kafka topic update request: %w", err)
 	}
 
 	err = client.UpdateKafkaTopic(cluster_id, topic, jsonStr)
 	if err != nil {
-		return fmt.Errorf("[Error] Error updating the config of Kafka topic %s: %s", topic, err)
+		return fmt.Errorf("[Error] Error updating the config of Kafka topic %s: %w", topic, err)
 	}
 
 	//Reading updated configs
 	err = resourceKafkaTopicRead(d, meta)
 	if err != nil {
-		return fmt.Errorf("[Error] Error reading the updated topic config for topic %s", topic)
+		return fmt.Errorf("[Error] Error reading the updated topic config for topic %s: %w", topic, err)
 	}
 
 	log.Printf("[INFO] The configs of Kafka topic %s has been updated.", topic)
@@ -324,11 +324,11 @@ func getChangedConfigMap(d *schema.ResourceData) (map[string]interface{}, error)
 	// Decode twice here because zero-value non-pointers need to be removed
 	err := mapstructure.Decode(newConfig, &kafkaTopicConfig)
 	if err != nil {
-		return nil, fmt.Errorf("[Error] Error decoding the config {} block to KafkaTopicConfigOptions")
+		return nil, fmt.Errorf("[Error] Error decoding the config {} block to KafkaTopicConfigOptions: %w", err)
 	}
 	err = mapstructure.Decode(kafkaTopicConfig, &decodedConfigMap)
 	if err != nil {
-		return nil, fmt.Errorf("[Error] Error decoding KafkaTopicConfigOptions to a map")
+		return nil, fmt.Errorf("[Error] Error decoding KafkaTopicConfigOptions to a map: %w", err)
 	}
 
 	// The following block is to get what configs are indeed changed
@@ -361,7 +361,7 @@ func resourceKafkaTopicDelete(d *schema.ResourceData, meta interface{}) error {
 
 	err := client.DeleteKafkaTopic(cluster_id, topic)
 	if err != nil {
-		return fmt.Errorf("[Error] Error deleting Kafka topic %s: %s", topic, err)
+		return fmt.Errorf("[Error] Error deleting Kafka topic %s: %w", topic, err)
 	}
 	d.SetId("")
 	d.Set("cluster_id", "")
