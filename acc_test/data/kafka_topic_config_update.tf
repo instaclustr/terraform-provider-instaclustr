@@ -1,4 +1,4 @@
-// This is part of testing "kafka topic" suite, 5 of 5
+// This is part of testing "kafka topic" suite, 4 of 4
 provider "instaclustr" {
   username = "%s"
   api_key = "%s"
