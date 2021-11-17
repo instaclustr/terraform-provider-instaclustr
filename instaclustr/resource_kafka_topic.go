@@ -231,17 +231,26 @@ func resourceKafkaTopicRead(d *schema.ResourceData, meta interface{}) error {
 	if cluster.ClusterStatus != "RUNNING" {
 		return fmt.Errorf("[Error] Cluster %s is not RUNNING. Currently in %s state", cluster_id, cluster.ClusterStatus)
 	}
-	log.Printf("[INFO] Reading the config of topic %s.", topic)
-	kafkaTopicConfig, err := client.ReadKafkaTopicConfig(cluster_id, topic)
+
+	log.Printf("[INFO] Reading the replication facotr and number of partitions of topic %s.", topic)
+	kafkaTopic, err := client.ReadKafkaTopic(cluster_id, topic)
 	if err != nil {
-		return fmt.Errorf("[Error] Error reading Kafka topic %s's config: %w", topic, err)
+		return fmt.Errorf("[Error] Error reading Kafka topic %s's replication facotr and number of partitions: %w", topic, err)
 	}
+	d.Set("replication_factor", kafkaTopic.ReplicationFactor)
+	d.Set("partitions", kafkaTopic.Partitions)
 
 	// It won't read the topic's config if the config{} block is missing in the resource
 	if len(d.Get("config").([]interface{})) == 0 {
 		log.Printf("[INFO] A block of config{} needs to be provided in the resource to read the topic's config.")
 		log.Printf("[INFO] Topic %s's config is not read.", topic)
 		return nil
+	}
+
+	log.Printf("[INFO] Reading the config of topic %s.", topic)
+	kafkaTopicConfig, err := client.ReadKafkaTopicConfig(cluster_id, topic)
+	if err != nil {
+		return fmt.Errorf("[Error] Error reading Kafka topic %s's config: %w", topic, err)
 	}
 
 	config := make(map[string]interface{}, 0)
@@ -389,10 +398,23 @@ func resourceKafkaTopicDelete(d *schema.ResourceData, meta interface{}) error {
 
 func resourceKafkaTopicStateImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	idParts := strings.Split(d.Id(), "&")
-	if len(idParts) != 2 || idParts[0] == "" || idParts[1] == "" {
-		return nil, fmt.Errorf("[Error] Unexpected format of ID (%q), expected <CLUSTER-ID>&<TOPIC>", d.Id())
+	if len(idParts) == 2 {
+		if idParts[0] == "" || idParts[1] == "" {
+			return nil, fmt.Errorf("[Error] Unexpected format of ID (%q), expected <CLUSTER-ID>&<TOPIC>", d.Id())
+		}
+		d.Set("cluster_id", idParts[0])
+		d.Set("topic", idParts[1])
+		return []*schema.ResourceData{d}, nil
 	}
-	d.Set("cluster_id", idParts[0])
-	d.Set("topic", idParts[1])
-	return []*schema.ResourceData{d}, nil
+	if len(idParts) == 3 {
+		if idParts[0] == "" || idParts[1] == "" || idParts[2] != "config" {
+			return nil, fmt.Errorf("[Error] Unexpected format of ID (%q), expected <CLUSTER-ID>&<TOPIC>&config", d.Id())
+		}
+		d.Set("cluster_id", idParts[0])
+		d.Set("topic", idParts[1])
+		config := make([]interface{}, 1)
+		d.Set("config", config)
+		return []*schema.ResourceData{d}, nil
+	}
+	return nil, fmt.Errorf("[Error] Unexpected format of ID (%q), expected <CLUSTER-ID>&<TOPIC> or <CLUSTER-ID>&<TOPIC>&config", d.Id())
 }

@@ -133,3 +133,21 @@ func (c *APIClient) ReadKafkaTopicConfig(clusterID string, topic string) (*Kafka
 	}
 	return &kafkaTopicConfig, nil
 }
+
+func (c *APIClient) ReadKafkaTopic(clusterID string, topic string) (*CreateKafkaTopicRequest, error) {
+	url := fmt.Sprintf("%s/provisioning/v1/%s/kafka/topics/%s", c.apiServerHostname, clusterID, topic)
+	resp, err := c.MakeRequest(url, "GET", nil)
+	if err != nil {
+		return nil, err
+	}
+	bodyText, err := ioutil.ReadAll(resp.Body)
+	if resp.StatusCode != 200 {
+		return nil, errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
+	}
+	var kafkaTopic CreateKafkaTopicRequest
+	err = json.Unmarshal(bodyText, &kafkaTopic)
+	if err != nil {
+		return nil, errors.New(fmt.Sprintf("Could not unmarshal JSON - Status code: %d, message: %s", resp.StatusCode, bodyText))
+	}
+	return &kafkaTopic, nil
+}

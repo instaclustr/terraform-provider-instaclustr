@@ -7,7 +7,7 @@ import (
 )
 
 func TestAPIClientCreateKafkaTopic(t *testing.T) {
-	filename := "data/valid_kafka_topic.json"
+	filename := "data/valid_kafka_topic_create.json"
 	jsonStr, err := ioutil.ReadFile(filename)
 	if err != nil {
 		t.Fatalf("Failed to load %s: %s", filename, err)
@@ -58,6 +58,24 @@ func TestAPIClientCreateKafkaTopicList(t *testing.T) {
 		t.Fatalf("Failed to create kafka topic: %s", err2)
 	}
 	if topicList.Topics[0] != "test1" || topicList.Topics[1] != "test2" {
+		t.Fatalf("Values do not match.")
+	}
+}
+
+func TestAPIClientReadKafkaTopic(t *testing.T) {
+	filename := "data/valid_kafka_topic_read.json"
+	parseFile, err := ioutil.ReadFile(filename)
+	if err != nil {
+		t.Fatalf("Failed to load %s: %s", filename, err)
+	}
+	jsonStr := fmt.Sprintf("%s", parseFile)
+	client := SetupMock(t, "should-be-uuid/kafka/topics/test", jsonStr, 200)
+	values, err2 := client.ReadKafkaTopic("should-be-uuid", "test")
+	if err2 != nil {
+		t.Fatalf("Failed to read Kafka topic config: %s", err2)
+	}
+	if (*values).Topic != "test" || (*values).ReplicationFactor != 3 ||
+		(*values).Partitions != 3 {
 		t.Fatalf("Values do not match.")
 	}
 }
