@@ -92,3 +92,20 @@ func TestAPIClientCreateKafkaUser(t *testing.T) {
 		t.Fatalf("Failed to create kafka user: %s", err2)
 	}
 }
+
+func TestAPIClientCreateKafkaUserList(t *testing.T) {
+	filename := "data/valid_kafka_user_list.json"
+	parseFile, err := ioutil.ReadFile(filename)
+	if err != nil {
+		t.Fatalf("Failed to load %s: %s", filename, err)
+	}
+	jsonStr := fmt.Sprintf("%s", parseFile)
+	client := SetupMock(t, "should-be-uuid/kafka/users", jsonStr, 200)
+	topicList, err2 := client.ReadKafkaUserList("should-be-uuid")
+	if err2 != nil {
+		t.Fatalf("Failed to create kafka topic: %s", err2)
+	}
+	if topicList[0] != "test1" || topicList[1] != "test2" || topicList[2] != "test3" {
+		t.Fatalf("Values do not match.")
+	}
+}
