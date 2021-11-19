@@ -363,6 +363,52 @@ func TestAccOpenSearchClusterResize(t *testing.T) {
 	})
 }
 
+func TestAccRedisClusterResize(t *testing.T) {
+	testAccProviders := map[string]terraform.ResourceProvider{
+		"instaclustr": instaclustr.Provider(),
+	}
+	validConfig, _ := ioutil.ReadFile("data/valid_with_resizable_redis_cluster.tf")
+	username := os.Getenv("IC_USERNAME")
+	apiKey := os.Getenv("IC_API_KEY")
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+	resourceName := "resizable_cluster"
+	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
+	validResizeConfig := strings.Replace(oriConfig, `node_size               = "t3.small-20-r"`, `node_size               = "t3.medium-80-r"`, 1)
+	invalidResizeConfig := strings.Replace(oriConfig, `node_size               = "t3.small-20-r"`, `node_size               = "t3.small"`, 1)
+	fmt.Println(validResizeConfig)
+	resource.Test(t, resource.TestCase{
+		Providers:    testAccProviders,
+		CheckDestroy: testCheckResourceDeleted(resourceName, hostname, username, apiKey),
+		Steps: []resource.TestStep{
+			{
+				Config: oriConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid(resourceName),
+					testCheckResourceCreated(resourceName, hostname, username, apiKey),
+					checkClusterRunning(resourceName, hostname, username, apiKey),
+					testCheckContactIPCorrect(resourceName, hostname, username, apiKey, 5, 5),
+				),
+			},
+			{
+				PreConfig: func() {
+					fmt.Println("Sleep for 5 minutes to wait for Redis cluster to be ready for resize.")
+					time.Sleep(5 * time.Minute)
+				},
+				Config:      invalidResizeConfig,
+				ExpectError: regexp.MustCompile("t3.small"),
+			},
+			{
+				Config: validResizeConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_cluster", "cluster_name", "tf-resizable-test"),
+					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_cluster", "node_size", "t3.medium-80-r"),
+					testCheckClusterResize("resizable_cluster", hostname, username, apiKey, "t3.medium-80-r"),
+				),
+			},
+		},
+	})
+}
+
 // Test that the options does re-create the Redis cluster
 // Disabling for now as it's failing for an unknown reason, blocking acc tests passing and isn't seen as terribly important to REDIS
 func disabled_TestAccRedisClusterForceNew(t *testing.T) {
