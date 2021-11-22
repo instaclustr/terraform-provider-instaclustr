@@ -1193,13 +1193,6 @@ func doLegacyCassandraClusterResize(client APIClientInterface, cluster *Cluster,
 	return nil
 }
 
-func isRedisSizeAllChange(nodeSize string) (string, bool) {
-	if len(nodeSize) == 0 {
-		return "", false
-	}
-	return nodeSize, true
-}
-
 func getChangedRedisSizeAndPurpose(nodeSize string) (string, NodePurpose, error) {
 	if len(nodeSize) > 0 {
 		return nodeSize, REDIS, nil
