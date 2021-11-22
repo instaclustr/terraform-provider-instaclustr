@@ -13,6 +13,7 @@ const (
 	OPENSEARCH_COORDINATOR                    = "OPENSEARCH_COORDINATOR"
 	KAFKA_BROKER                              = "KAFKA_BROKER"
 	KAFKA_DEDICATED_ZOOKEEPER                 = "KAFKA_DEDICATED_ZOOKEEPER"
+	CASSANDRA                                 = "CASSANDRA"
 )
 
 func (p NodePurpose) String() string {

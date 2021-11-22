@@ -1174,7 +1174,11 @@ func doLegacyCassandraClusterResize(client APIClientInterface, cluster *Cluster,
 		return fmt.Errorf("[Error] Cannot resize nodes from %s to %s", before, after)
 	}
 
-	err := client.ResizeCluster(cluster.ID, cluster.DataCentres[0].ID, after.(string), nil)
+	var nodePurpose *NodePurpose
+	var np NodePurpose = CASSANDRA
+	nodePurpose = &np
+
+	err := client.ResizeCluster(cluster.ID, cluster.DataCentres[0].ID, after.(string), nodePurpose)
 	if err != nil {
 		return fmt.Errorf("[Error] Error resizing cluster %s with error %s", cluster.ID, err)
 	}
