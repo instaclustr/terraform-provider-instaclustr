@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"reflect"
-	"regexp"
 	"sort"
 	"strconv"
 	"strings"
@@ -1163,16 +1162,7 @@ func doKafkaClusterResize(client APIClientInterface, cluster *Cluster, d resourc
 }
 
 func doLegacyCassandraClusterResize(client APIClientInterface, cluster *Cluster, d resourceDataInterface) error {
-	before, after := d.GetChange("node_size")
-	regex := regexp.MustCompile(`resizeable-(small|large)`)
-	oldNodeClass := regex.FindString(before.(string))
-	newNodeClass := regex.FindString(after.(string))
-
-	isNotResizable := oldNodeClass == ""
-	isNotSameSizeClass := newNodeClass != oldNodeClass
-	if isNotResizable || isNotSameSizeClass {
-		return fmt.Errorf("[Error] Cannot resize nodes from %s to %s", before, after)
-	}
+	_, after := d.GetChange("node_size")
 
 	var nodePurpose *NodePurpose
 	var np NodePurpose = CASSANDRA
