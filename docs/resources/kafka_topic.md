@@ -26,7 +26,7 @@ terraform import instaclustr_kafka_topic.<resource-name> "<cluster-id>&<topic-na
 ```shell
 terraform import instaclustr_kafka_topic.<resource-name> "<cluster-id>&<topic-name>&config"
 ```
-Replace <resource-name>, <cluster-id>, and <topic-name> with the real ones, keep this "&" symbol in the command
+Replace \<resource-name\>, \<cluster-id\>, and \<topic-name\> with the real ones, keep this "&" symbol in the command
 
 ### Example
 ```shell
