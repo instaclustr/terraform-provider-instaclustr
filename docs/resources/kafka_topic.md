@@ -77,6 +77,7 @@ retention_bytes | int | None
 segment_ms | int | None
 message_timestamp_difference_max_ms | string<sup>* | None
 segment_index_bytes | int | None
+
 <sup>* Indeed an int value, using string because terraform has difficulties parsing big int, it will lose precision.
 
 ## Usage
