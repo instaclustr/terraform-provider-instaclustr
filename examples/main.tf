@@ -308,3 +308,18 @@ resource "instaclustr_cluster" "example-postgresql" {
     }
   }
 }
+
+resource "instaclustr_kafka_acl" "example-acl" {
+  cluster_id = "${instaclustr_cluster.example.id}"
+  principal = "User:test"
+  host = ""
+  resource_type = "TOPIC"
+  resource_name = "*"
+  operation = "ALL"
+  permission_type = "ALLOW"
+  pattern_type = "LITERAL"
+}
+
+data "instaclustr_kafka_acl_list" "example-acl-list" {
+  cluster_id = "${instaclustr_cluster.example.id}"
+}

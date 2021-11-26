@@ -27,6 +27,10 @@ func TestKafkaUserResource(t *testing.T) {
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 
+	configBytesAcl1, _ := ioutil.ReadFile("data/kafka_acl_create_acl.tf")
+	configBytesAcl2, _ := ioutil.ReadFile("data/kafka_acl_create_acl_duplicate.tf")
+	configBytesAcl3, _ := ioutil.ReadFile("data/kafka_acl_list.tf")
+
 	kafkaUsername1 := "charlie1"
 	kafkaUsername2 := "charlie2"
 	kafkaUsername3 := "charlie3"
@@ -35,6 +39,16 @@ func TestKafkaUserResource(t *testing.T) {
 	kafkaNodeSize := "KFK-DEV-t4g.medium-80"
 	zookeeperNodeSize := "KDZ-DEV-t4g.small-30"
 	kafkaVersion := "apache-kafka:2.7.1.ic1"
+
+	acl := KafkaAcl {
+		Principal	"User:test",
+		Host		"*",
+		ResourceType 	"TOPIC",
+		ResourceName 	"*",
+		Operation 	"ALL",
+		PermissionType 	"ALLOW",
+		PatternType 	"LITERAL",
+	}
 
 	createClusterConfig := fmt.Sprintf(string(configBytes1), username, apiKey, hostname, kafkaNodeSize, kafkaVersion, zookeeperNodeSize)
 	createKafkaUserConfig := fmt.Sprintf(string(configBytes2), username, apiKey, hostname, kafkaNodeSize, kafkaVersion, zookeeperNodeSize,
@@ -53,6 +67,14 @@ func TestKafkaUserResource(t *testing.T) {
 	invalidKafkaUserCreateConfig := fmt.Sprintf(string(configBytes4), username, apiKey, hostname, kafkaNodeSize, kafkaVersion, zookeeperNodeSize,
 		kafkaUsername3, oldPassword)
 
+	createKafkaAclConfig := fmt.Sprintf(string(configBytes2), username, apiKey, hostname, kafkaNodeSize, kafkaVersion, zookeeperNodeSize,
+		acl.Principal, acl.Host, acl.ResourceType, acl.ResourceName, acl.Operation, acl.PermissionType, acl.PatternType)
+	invalidKafkaAclCreateConfigDuplicate := fmt.Sprintf(string(configBytes2), username, apiKey, hostname, kafkaNodeSize, kafkaVersion, zookeeperNodeSize,
+		acl.Principal, acl.Host, acl.ResourceType, acl.ResourceName, acl.Operation, acl.PermissionType, acl.PatternType,
+		acl.Principal, acl.Host, acl.ResourceType, acl.ResourceName, acl.Operation, acl.PermissionType, acl.PatternType)
+	createKafkaAclListConfig := fmt.Sprintf(string(configBytes2), username, apiKey, hostname, kafkaNodeSize, kafkaVersion, zookeeperNodeSize,
+		kafkaUsername1, oldPassword,
+	
 	resource.Test(t, resource.TestCase{
 		Providers: testProviders,
 		Steps: []resource.TestStep{
@@ -100,6 +122,29 @@ func TestKafkaUserResource(t *testing.T) {
 			{
 				Config: invalidKafkaUserCreateConfig,
 				ExpectError: regexp.MustCompile("invalid value for the 'sasl-scram-mechanism' option"),
+			},
+			// Kafka ACL test
+			{
+				Config: createKafkaAclConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValidKafka("instaclustr_kafka_acl.test_acl"),
+					checkKafkaAclCreated(hostname, username, apiKey),
+				),
+			},
+			{
+				Config: invalidKafkaAclCreateConfigDuplicate,
+				ExpectError: regexp.MustCompile("[Error] Error creating kafka ACL: the resource already exists, use terraform import instead.")
+			},
+			{
+				Config: createClusterConfig,
+				Check:  checkKafkaAclDeleted(acl, hostname, username, apiKey)
+			},
+			{
+				Config: createKafkaAclListConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValidKafka("data.instaclustr_kafka_acl_list.test_acl_list"),
+					checkKafkaAclListCreated(hostname, username, apiKey),
+				),
 			},
 		},
 	})
@@ -222,6 +267,110 @@ func checkKafkaUserListCreated(hostname, username, apiKey string) resource.TestC
 			if resourceUser != kafka_username {
 				return fmt.Errorf("List of Kafka users of the Kafka cluster and resource are different (Index %d: %s != %s). ", index, resourceUser, kafka_username)
 			}
+		}
+
+		return nil
+	}
+}
+
+func checkKafkaAclCreated(hostname string, username string, apiKey string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		resourceState := s.Modules[0].Resources["instaclustr_kafka_acl.kafka_acl"]
+
+		client := new(instaclustr.APIClient)
+		client.InitClient(hostname, username, apiKey)
+
+		principal := resourceState.Primary.Attributes["principal"]
+		clusterId := resourceState.Primary.Attributes["cluster_id"]
+		host := resourceState.Primary.Attributes["host"]
+		resourceType := resourceState.Primary.Attributes["resource_type"]
+		resourceName := resourceState.Primary.Attributes["resource_name"]
+		operation := resourceState.Primary.Attributes["operation"]
+		permissionType := resourceState.Primary.Attributes["permission_type"]
+		patternType := resourceState.Primary.Attributes["pattern_type"]
+
+		data := KafkaAcl {
+			Principal:	principal,
+			Host:		host,
+			ResourceType: 	resourceType,
+			ResourceName:	resourceName,
+			Operation: 	operation,
+			PermissionType: permissionType,
+			PatternType: 	patternType,
+		}
+
+		var jsonStr []byte
+		jsonStr, err := json.Marshall(data)
+		if err != nil {
+			return fmt.Errorf("[Error] Error creating kafka ACL read request: %s", err)
+		}
+
+		acls, err := client.ReadKafkaAcls(clusterId, jsonStr)
+		if err != nil {
+			return fmt.Errorf("Failed to read Kafka ACL list from %s: %s", clusterId, err)
+		}
+
+		if len(acls) == 0 {
+			return fmt.Errorf("The ACL is not found in the cluster", clusterId)
+		}
+
+		return nil
+	}
+}
+
+func checkKafkaAclDeleted(acl KafkaAcl, hostname string, username string, apiKey string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		// the resource for the kafka user has been deleted, therefore we need to get the cluster id from the cluster resource
+		resourceState := s.Modules[0].Resources["instaclustr_cluster.kafka_cluster"]
+		clusterId := resourceState.Primary.Attributes["cluster_id"]
+
+		client := new(instaclustr.APIClient)
+		client.InitClient(hostname, username, apiKey)
+
+		var jsonStr []byte
+		jsonStr, err := json.Marshal(acl)
+		acls, err := client.ReadKafkaAcls(clusterId, jsonStr)
+		if err != nil {
+			return fmt.Errorf("Failed to read Kafka ACL list from %s: %s", clusterId, err)
+		}
+	
+		if len(acls) > 0 {
+		}
+			return fmt.Errorf("Kafka ACL still exists in %s", clusterId)
+		}
+		return nil
+	}
+}
+
+func checkKafkaAclListCreated(hostname, username, apiKey string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		resourceState := s.Modules[0].Resources["data.instaclustr_kafka_acl_list.kafka_acl_list"]
+
+		client := new(instaclustr.APIClient)
+		client.InitClient(hostname, username, apiKey)
+		clusterId := resourceState.Primary.Attributes["cluster_id"]
+
+		data := KafkaAcl {
+			ResourceType: 	"ANY",
+			Operation: 	"ANY",
+			PermissionType: "ANY",
+			PatternType: 	"ANY",
+		}
+
+		var jsonStr []byte
+		jsonStr, err := json.Marshall(data)
+		if err != nil {
+			return fmt.Errorf("[Error] Error creating kafka ACL read request: %s", err)
+		}
+
+		aclList, err := client.ReadKafkaUserAcl(clusterId, jsonStr)
+		if err != nil {
+			return fmt.Errorf("Failed to read Kafka ACL list from %s: %s", clusterId, err)
+		}
+
+		resourceListLen, _ := strconv.Atoi(resourceState.Primary.Attributes["acls.#"])
+		if resourceListLen != len(aclList) {
+			return fmt.Errorf("List of Kafka Acls of the Kafka cluster and resource are different (Length %d != %d). ", resourceListLen, len(aclList))
 		}
 
 		return nil
