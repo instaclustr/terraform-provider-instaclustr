@@ -5,8 +5,8 @@ description: |-
   
 ---
 
-# Resource  `instaclustr_kafka_topic` and Data Source `instaclustr_kafka_topic_list`
-Resources for managing Kafka topics for a Kafka cluster.
+# Resource  `instaclustr_kafka_topic`
+A resource for managing Kafka topics for a Kafka cluster.
 Kafka topic list is a read-only data source used to get the list of kafka topics in a cluster,
 while Kafka topic is a resource used to create topics, read topics' replication-factor and partitions, 
 read topics' configs, update topics' configs, and delete Kafka topics.
