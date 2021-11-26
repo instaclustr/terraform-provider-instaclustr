@@ -3,6 +3,7 @@ test/mock_api_server/__pycache__
 
 vendor
 .idea
+.vscode
 coverage.out
 report.json
 tf.plan
