@@ -19,3 +19,10 @@ Property | Description | Default
 ---------|-------------|--------
 `cluster_id`|The ID of an existing Instaclustr Kafka managed cluster. |Required
 
+#### Example
+```terraform
+data "instaclustr_kafka_topic_list" "kafka_topic_list" {
+  cluster_id = "${instaclustr_cluster.kafka_cluster.id}"
+}
+```
+
