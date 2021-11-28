@@ -80,7 +80,7 @@ func resourceKafkaAclCreate(d *schema.ResourceData, meta interface{}) error {
 	// Cluster has to reach running state first
 	cluster, err := client.ReadCluster(cluster_id)
 	if err != nil {
-		return fmt.Errorf("[Error] Error in getting the status of the cluster: %s", err)
+		return fmt.Errorf("[Error] Error in getting the status of the cluster: %w", err)
 	}
 	if cluster.ClusterStatus != "RUNNING" {
 		return fmt.Errorf("[Error] Cluster %s is not RUNNING. Currently in %s state", cluster_id, cluster.ClusterStatus)
@@ -100,12 +100,12 @@ func resourceKafkaAclCreate(d *schema.ResourceData, meta interface{}) error {
 	jsonStr, err = json.Marshal(createData)
 
 	if err != nil {
-		return fmt.Errorf("[Error] Error creating kafka ACL creation request: %s", err)
+		return fmt.Errorf("[Error] Error creating kafka ACL creation request: %w", err)
 	}
 
 	remoteAcls, err := client.ReadKafkaAcls(cluster_id, jsonStr)
 	if err != nil {
-		return fmt.Errorf("[Error] Error reading kafka ACL: %s", err)
+		return fmt.Errorf("[Error] Error reading kafka ACL: %w", err)
 	}
 	
 	// When we pass the exact parameters, there should be at most 1 ACL in the list (or none if no ACL match).
@@ -117,7 +117,7 @@ func resourceKafkaAclCreate(d *schema.ResourceData, meta interface{}) error {
 
 	err = client.CreateKafkaAcl(cluster_id, jsonStr)
 	if err != nil {
-		return fmt.Errorf("[Error] Error creating kafka ACL: %s", err)
+		return fmt.Errorf("[Error] Error creating kafka ACL: %w", err)
 	}
 
 	d.SetId(fmt.Sprintf("%s&%s&%s&%s&%s&%s&%s&%s", cluster_id, principal, host, resourceType, resourceName, operation, permissionType, patternType))
@@ -155,7 +155,7 @@ func resourceKafkaAclRead(d *schema.ResourceData, meta interface{}) error {
 	// Cluster has to reach running state first
 	cluster, err := client.ReadCluster(cluster_id)
 	if err != nil {
-		return fmt.Errorf("[Error] Error in getting the status of the cluster: %s", err)
+		return fmt.Errorf("[Error] Error in getting the status of the cluster: %w", err)
 	}
 	if cluster.ClusterStatus != "RUNNING" {
 		return fmt.Errorf("[Error] Cluster %s is not RUNNING. Currently in %s state", cluster_id, cluster.ClusterStatus)
@@ -174,12 +174,12 @@ func resourceKafkaAclRead(d *schema.ResourceData, meta interface{}) error {
 	var jsonStr []byte
 	jsonStr, err = json.Marshal(data)
 	if err != nil {
-		return fmt.Errorf("[Error] Error creating kafka ACL read request: %s", err)
+		return fmt.Errorf("[Error] Error creating kafka ACL read request: %w", err)
 	}
 
 	remoteAcls, err := client.ReadKafkaAcls(cluster_id, jsonStr)
 	if err != nil {
-		return fmt.Errorf("[Error] Error reading kafka ACL: %s", err)
+		return fmt.Errorf("[Error] Error reading kafka ACL: %w", err)
 	}
 	
 	// When we pass the exact parameters, there should be at most 1 ACL in the list (or none if no ACL match).
@@ -218,12 +218,12 @@ func resourceKafkaAclDelete(d *schema.ResourceData, meta interface{}) error {
 	var jsonStr []byte
 	jsonStr, err := json.Marshal(data)
 	if err != nil {
-		return fmt.Errorf("[Error] Error creating kafka ACL delete request: %s", err)
+		return fmt.Errorf("[Error] Error creating kafka ACL delete request: %w", err)
 	}
 
 	err = client.DeleteKafkaAcl(cluster_id, jsonStr)
 	if err != nil {
-		return fmt.Errorf("[Error] Error deleting Kafka ACL: %s", err)
+		return fmt.Errorf("[Error] Error deleting Kafka ACL: %w", err)
 	}
 
 	removeKafkaAclResource(d)

@@ -42,7 +42,7 @@ func dataSourceKafkaAclListRead(d *schema.ResourceData, meta interface{}) error 
 	var jsonStr []byte
 	jsonStr, err := json.Marshal(data)
 	if err != nil {
-		return fmt.Errorf("[Error] Error creating kafka ACL read request: %s", err)
+		return fmt.Errorf("[Error] Error creating kafka ACL read request: %w", err)
 	}
 	acls, err := client.ReadKafkaAcls(cluster_id, jsonStr)
 
