@@ -6,7 +6,6 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/mitchellh/mapstructure"
 	"log"
-	"reflect"
 	"strings"
 )
 
@@ -220,6 +219,48 @@ func resourceKafkaTopicCreate(d *schema.ResourceData, meta interface{}) error {
 	d.SetId(fmt.Sprintf("%s&%s", cluster_id, topic))
 
 	log.Printf("[INFO] Kafka topic %s has been created.", topic)
+
+	configList := d.Get("config").([]interface{})
+	if len(configList) == 1 {
+		log.Printf("[INFO] Updating the config of Kafka topic %s in %s.", topic, cluster_id)
+		updateConfig := d.Get("config").([]interface{})[0].(map[string]interface{})
+
+		err = updateUtilities(d, meta, updateConfig, topic, client, cluster_id)
+		if err != nil {
+			return fmt.Errorf("[Error] Error updating the config of Kafka topic %s: %w", topic, err)
+		}
+	}
+	return nil
+}
+
+func updateUtilities(d *schema.ResourceData, meta interface{}, configMap map[string]interface{}, topic string, client *APIClient, cluster_id string) error {
+	var kafkaTopicConfigOptions KafkaTopicConfigOptions
+	err := mapstructure.Decode(configMap, &kafkaTopicConfigOptions)
+	if err != nil {
+		return fmt.Errorf("[Error] Error decoding the changed config map to KafkaTopicConfigOptions for topic %s: %w", topic, err)
+	}
+
+	updateKafkaTopicRequest := UpdateKafkaTopicRequest{
+		Config: &kafkaTopicConfigOptions,
+	}
+
+	jsonStr, err := json.Marshal(updateKafkaTopicRequest)
+	if err != nil {
+		return fmt.Errorf("[Error] Error creating kafka topic update request: %w", err)
+	}
+
+	err = client.UpdateKafkaTopic(cluster_id, topic, jsonStr)
+	if err != nil {
+		return fmt.Errorf("[Error] Error updating the config of Kafka topic %s: %w", topic, err)
+	}
+
+	//Reading updated configs
+	err = resourceKafkaTopicRead(d, meta)
+	if err != nil {
+		return fmt.Errorf("[Error] Error reading the updated topic config for topic %s: %w", topic, err)
+	}
+
+	log.Printf("[INFO] The configs of Kafka topic %s has been updated.", topic)
 	return nil
 }
 
@@ -253,7 +294,7 @@ func resourceKafkaTopicRead(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("[Error] Cluster %s is not RUNNING. Currently in %s state", cluster_id, cluster.ClusterStatus)
 	}
 
-	log.Printf("[INFO] Reading the replication facotr and number of partitions of topic %s.", topic)
+	log.Printf("[INFO] Reading the replication factor and number of partitions of topic %s.", topic)
 	kafkaTopic, err := client.ReadKafkaTopic(cluster_id, topic)
 	if err != nil {
 		return fmt.Errorf("[Error] Error reading Kafka topic %s's replication facotr and number of partitions: %w", topic, err)
@@ -314,33 +355,10 @@ func resourceKafkaTopicUpdate(d *schema.ResourceData, meta interface{}) error {
 		return nil
 	}
 
-	var kafkaTopicConfigOptions KafkaTopicConfigOptions
-	err = mapstructure.Decode(changedConfigMap, &kafkaTopicConfigOptions)
-	if err != nil {
-		return fmt.Errorf("[Error] Error decoding the changed config map to KafkaTopicConfigOptions for topic %s: %w", topic, err)
-	}
-
-	updateKafkaTopicRequest := UpdateKafkaTopicRequest{
-		Config: &kafkaTopicConfigOptions,
-	}
-
-	jsonStr, err := json.Marshal(updateKafkaTopicRequest)
-	if err != nil {
-		return fmt.Errorf("[Error] Error creating kafka topic update request: %w", err)
-	}
-
-	err = client.UpdateKafkaTopic(cluster_id, topic, jsonStr)
+	err = updateUtilities(d, meta, changedConfigMap, topic, client, cluster_id)
 	if err != nil {
 		return fmt.Errorf("[Error] Error updating the config of Kafka topic %s: %w", topic, err)
 	}
-
-	//Reading updated configs
-	err = resourceKafkaTopicRead(d, meta)
-	if err != nil {
-		return fmt.Errorf("[Error] Error reading the updated topic config for topic %s: %w", topic, err)
-	}
-
-	log.Printf("[INFO] The configs of Kafka topic %s has been updated.", topic)
 	return nil
 }
 
@@ -366,20 +384,8 @@ func getChangedConfigMap(d *schema.ResourceData) (map[string]interface{}, error)
 	// The following block is to get what configs are indeed changed
 	for k, v := range newConfig {
 		key := fmt.Sprintf("config.0.%s", k)
-		valueOfV := reflect.ValueOf(decodedConfigMap[k])
 		if d.HasChange(key) {
-			before, after := d.GetChange(key)
-			isBeforeZeroValue := before == reflect.Zero(reflect.TypeOf(before)).Interface()
-			isAfterZeroValue := after == reflect.Zero(reflect.TypeOf(after)).Interface()
-			if !isBeforeZeroValue && !isAfterZeroValue {
-				changedConfigMap[k] = v
-			}
-			if !isBeforeZeroValue && isAfterZeroValue && (valueOfV.Kind() == reflect.Ptr) {
-				changedConfigMap[k] = v
-			}
-			if isBeforeZeroValue && !isAfterZeroValue {
-				changedConfigMap[k] = v
-			}
+			changedConfigMap[k] = v
 		}
 	}
 	return changedConfigMap, nil
