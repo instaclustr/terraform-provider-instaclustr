@@ -7,6 +7,16 @@ import (
 	"io/ioutil"
 )
 
+const ERROR_FORMAT_STR = "Status code: %d, message: %s"
+
+// the purpose of this one is mainly for coverage testing
+type KafkaAclAPIClientInterface interface {
+	ReadCluster(clusterID string) (*Cluster, error)			// this is required because we are checking the cluster status
+	ReadKafkaAcls(clusterID string, data []byte) ([]KafkaAcl, error)
+	CreateKafkaAcl(clusterID string, data []byte) error
+	DeleteKafkaAcl(clusterID string, data []byte) error
+}
+
 func (c *APIClient) DeleteKafkaAcl(clusterID string, data []byte) error {
 	url := fmt.Sprintf("%s/provisioning/v1/%s/kafka/acls", c.apiServerHostname, clusterID)
 	resp, err := c.MakeRequest(url, "DELETE", data)
@@ -15,7 +25,7 @@ func (c *APIClient) DeleteKafkaAcl(clusterID string, data []byte) error {
 	}
 	bodyText, err := ioutil.ReadAll(resp.Body)
 	if resp.StatusCode != 200 {
-		return errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
+		return errors.New(fmt.Sprintf(ERROR_FORMAT_STR, resp.StatusCode, bodyText))
 	}
 	return nil
 }
@@ -28,7 +38,7 @@ func (c *APIClient) CreateKafkaAcl(clusterID string, data []byte) error {
 	}
 	bodyText, err := ioutil.ReadAll(resp.Body)
 	if resp.StatusCode != 200 {
-		return errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
+		return errors.New(fmt.Sprintf(ERROR_FORMAT_STR, resp.StatusCode, bodyText))
 	}
 	return nil
 }
@@ -41,7 +51,7 @@ func (c *APIClient) ReadKafkaAcls(clusterID string, data []byte) ([]KafkaAcl, er
 	}
 	bodyText, err := ioutil.ReadAll(resp.Body)
 	if resp.StatusCode != 200 {
-		return nil, errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
+		return nil, errors.New(fmt.Sprintf(ERROR_FORMAT_STR, resp.StatusCode, bodyText))
 	}
 
 	var acls KafkaAclList

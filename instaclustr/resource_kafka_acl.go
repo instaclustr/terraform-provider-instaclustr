@@ -64,7 +64,15 @@ func resourceKafkaAcl() *schema.Resource {
 	}
 }
 
-func resourceKafkaAclCreate(d *schema.ResourceData, meta interface{}) error {
+// mainly for coverage testing
+type KafkaAclResourceDataInterface interface {
+	Get(key string) interface{}
+	Set(key string, value interface{}) error
+	SetId(value string)
+	Id() string
+}
+
+func doResourceKafkaAclCreate(d KafkaAclResourceDataInterface, client KafkaAclAPIClientInterface) error {
 	cluster_id := d.Get("cluster_id").(string)
 	principal := d.Get("principal").(string)
 	host := d.Get("host").(string)
@@ -75,7 +83,6 @@ func resourceKafkaAclCreate(d *schema.ResourceData, meta interface{}) error {
 	patternType := d.Get("pattern_type").(string)
 
 	log.Printf("[INFO] Creating Kafka ACL in %s.", cluster_id)
-	client := meta.(*Config).Client
 
 	// Cluster has to reach running state first
 	cluster, err := client.ReadCluster(cluster_id)
@@ -127,7 +134,7 @@ func resourceKafkaAclCreate(d *schema.ResourceData, meta interface{}) error {
 	return nil
 }
 
-func removeKafkaAclResource(d *schema.ResourceData) {
+func removeKafkaAclResource(d KafkaAclResourceDataInterface) {
 	d.SetId("")
 	d.Set("cluster_id", "")
 	d.Set("principal", "")
@@ -139,7 +146,7 @@ func removeKafkaAclResource(d *schema.ResourceData) {
 	d.Set("pattern_type", "")
 }
 
-func resourceKafkaAclRead(d *schema.ResourceData, meta interface{}) error {
+func doResourceKafkaAclRead(d KafkaAclResourceDataInterface, client KafkaAclAPIClientInterface) error {
 	cluster_id := d.Get("cluster_id").(string)
 	principal := d.Get("principal").(string)
 	host := d.Get("host").(string)
@@ -150,7 +157,6 @@ func resourceKafkaAclRead(d *schema.ResourceData, meta interface{}) error {
 	patternType := d.Get("pattern_type").(string)
 
 	log.Printf("[INFO] Reading Kafka ACL in %s.", cluster_id)
-	client := meta.(*Config).Client
 
 	// Cluster has to reach running state first
 	cluster, err := client.ReadCluster(cluster_id)
@@ -192,7 +198,7 @@ func resourceKafkaAclRead(d *schema.ResourceData, meta interface{}) error {
 	return nil
 }
 
-func resourceKafkaAclDelete(d *schema.ResourceData, meta interface{}) error {
+func doResourceKafkaAclDelete(d KafkaAclResourceDataInterface, client KafkaAclAPIClientInterface) error {
 	cluster_id := d.Get("cluster_id").(string)
 	principal := d.Get("principal").(string)
 	host := d.Get("host").(string)
@@ -203,7 +209,6 @@ func resourceKafkaAclDelete(d *schema.ResourceData, meta interface{}) error {
 	patternType := d.Get("pattern_type").(string)
 	
 	log.Printf("[INFO] Deleting Kafka ACL %s in %s.", principal, cluster_id)
-	client := meta.(*Config).Client
 
 	data := KafkaAcl {
 		Principal:	principal,
@@ -247,4 +252,17 @@ func resourceKafkaAclStateImport(d *schema.ResourceData, meta interface{}) ([]*s
 	d.Set("permission_type", idParts[6])
 	d.Set("pattern_type", idParts[7])
 	return []*schema.ResourceData{d}, nil
+}
+
+// Ugly hacks for unit testing
+func resourceKafkaAclCreate(d *schema.ResourceData, meta interface{}) error {
+	return doResourceKafkaAclCreate(d, meta.(*Config).Client)
+} 
+
+func resourceKafkaAclRead(d *schema.ResourceData, meta interface{}) error {
+	return doResourceKafkaAclRead(d, meta.(*Config).Client)
+}
+
+func resourceKafkaAclDelete(d *schema.ResourceData, meta interface{}) error {
+	return doResourceKafkaAclDelete(d, meta.(*Config).Client)
 }

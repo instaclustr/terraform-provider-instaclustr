@@ -28,8 +28,7 @@ func dataSourceKafkaAclList() *schema.Resource {
 	}
 }
 
-func dataSourceKafkaAclListRead(d *schema.ResourceData, meta interface{}) error {
-	client := meta.(*Config).Client
+func doDataSourceKafkaAclListRead(d KafkaAclResourceDataInterface, client KafkaAclAPIClientInterface) error {
 	cluster_id := d.Get("cluster_id").(string)
 
 	data := KafkaAcl {
@@ -58,3 +57,9 @@ func dataSourceKafkaAclListRead(d *schema.ResourceData, meta interface{}) error 
 	log.Printf("[INFO] Fetched Kafka acl list in %s.", cluster_id)
 	return nil
 }
+
+// it's a bit ugly of an ugly hack to enable unit testing
+func dataSourceKafkaAclListRead(d *schema.ResourceData, meta interface{}) error {
+	return doDataSourceKafkaAclListRead(d, meta.(*Config).Client)
+}
+
