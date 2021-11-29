@@ -345,7 +345,7 @@ func resourceKafkaTopicUpdate(d *schema.ResourceData, meta interface{}) error {
 }
 
 // Although customStringDiffSuppressFunc can suppress the diff, but when getting the change it still gets all the configs that are
-// not provided in the resource. This function is to filter out the configs that have a real change in their values, it returns
+// not provided in the resource. This function is to filter the configs that have a real change in their values, it returns
 // a map of these configs and their new values.
 func getChangedConfigMap(d *schema.ResourceData) (map[string]interface{}, error) {
 	newConfig := d.Get("config").([]interface{})[0].(map[string]interface{})
