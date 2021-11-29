@@ -45,14 +45,16 @@ func resourceKafkaTopic() *schema.Resource {
 			},
 
 			"config": {
-				Type:     schema.TypeList,
-				Optional: true,
-				MaxItems: 1,
+				Type:             schema.TypeList,
+				Optional:         true,
+				MaxItems:         1,
+				DiffSuppressFunc: customDiffSuppressFunc,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"compression_type": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:             schema.TypeString,
+							Optional:         true,
+							DiffSuppressFunc: customDiffSuppressFunc,
 						},
 						"leader_replication_throttled_replicas": {
 							Type:     schema.TypeString,
@@ -60,8 +62,9 @@ func resourceKafkaTopic() *schema.Resource {
 							Default:  "",
 						},
 						"min_insync_replicas": {
-							Type:     schema.TypeInt,
-							Optional: true,
+							Type:             schema.TypeInt,
+							Optional:         true,
+							DiffSuppressFunc: customDiffSuppressFunc,
 						},
 						"message_downconversion_enable": {
 							Type:     schema.TypeBool,
@@ -74,44 +77,54 @@ func resourceKafkaTopic() *schema.Resource {
 							Default:  0,
 						},
 						"cleanup_policy": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:             schema.TypeString,
+							Optional:         true,
+							DiffSuppressFunc: customDiffSuppressFunc,
 						},
 						"flush_ms": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:             schema.TypeString,
+							Optional:         true,
+							DiffSuppressFunc: customDiffSuppressFunc,
 						},
 						"follower_replication_throttled_replicas": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:             schema.TypeString,
+							Optional:         true,
+							DiffSuppressFunc: customDiffSuppressFunc,
 						},
 						"retention_ms": {
-							Type:     schema.TypeInt,
-							Optional: true,
+							Type:             schema.TypeInt,
+							Optional:         true,
+							DiffSuppressFunc: customDiffSuppressFunc,
 						},
 						"segment_bytes": {
-							Type:     schema.TypeInt,
-							Optional: true,
+							Type:             schema.TypeInt,
+							Optional:         true,
+							DiffSuppressFunc: customDiffSuppressFunc,
 						},
 						"flush_messages": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:             schema.TypeString,
+							Optional:         true,
+							DiffSuppressFunc: customDiffSuppressFunc,
 						},
 						"message_format_version": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:             schema.TypeString,
+							Optional:         true,
+							DiffSuppressFunc: customDiffSuppressFunc,
 						},
 						"file_delete_delay_ms": {
-							Type:     schema.TypeInt,
-							Optional: true,
+							Type:             schema.TypeInt,
+							Optional:         true,
+							DiffSuppressFunc: customDiffSuppressFunc,
 						},
 						"max_compaction_lag_ms": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:             schema.TypeString,
+							Optional:         true,
+							DiffSuppressFunc: customDiffSuppressFunc,
 						},
 						"max_message_bytes": {
-							Type:     schema.TypeInt,
-							Optional: true,
+							Type:             schema.TypeInt,
+							Optional:         true,
+							DiffSuppressFunc: customDiffSuppressFunc,
 						},
 						"min_compaction_lag_ms": {
 							Type:     schema.TypeInt,
@@ -119,8 +132,9 @@ func resourceKafkaTopic() *schema.Resource {
 							Default:  0,
 						},
 						"message_timestamp_type": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:             schema.TypeString,
+							Optional:         true,
+							DiffSuppressFunc: customDiffSuppressFunc,
 						},
 						"preallocate": {
 							Type:     schema.TypeBool,
@@ -128,12 +142,14 @@ func resourceKafkaTopic() *schema.Resource {
 							Default:  false,
 						},
 						"index_interval_bytes": {
-							Type:     schema.TypeInt,
-							Optional: true,
+							Type:             schema.TypeInt,
+							Optional:         true,
+							DiffSuppressFunc: customDiffSuppressFunc,
 						},
 						"min_cleanable_dirty_ratio": {
-							Type:     schema.TypeFloat,
-							Optional: true,
+							Type:             schema.TypeFloat,
+							Optional:         true,
+							DiffSuppressFunc: customDiffSuppressFunc,
 						},
 						"unclean_leader_election_enable": {
 							Type:     schema.TypeBool,
@@ -141,24 +157,29 @@ func resourceKafkaTopic() *schema.Resource {
 							Default:  false,
 						},
 						"delete_retention_ms": {
-							Type:     schema.TypeInt,
-							Optional: true,
+							Type:             schema.TypeInt,
+							Optional:         true,
+							DiffSuppressFunc: customDiffSuppressFunc,
 						},
 						"retention_bytes": {
-							Type:     schema.TypeInt,
-							Optional: true,
+							Type:             schema.TypeInt,
+							Optional:         true,
+							DiffSuppressFunc: customDiffSuppressFunc,
 						},
 						"segment_ms": {
-							Type:     schema.TypeInt,
-							Optional: true,
+							Type:             schema.TypeInt,
+							Optional:         true,
+							DiffSuppressFunc: customDiffSuppressFunc,
 						},
 						"message_timestamp_difference_max_ms": {
-							Type:     schema.TypeString,
-							Optional: true,
+							Type:             schema.TypeString,
+							Optional:         true,
+							DiffSuppressFunc: customDiffSuppressFunc,
 						},
 						"segment_index_bytes": {
-							Type:     schema.TypeInt,
-							Optional: true,
+							Type:             schema.TypeInt,
+							Optional:         true,
+							DiffSuppressFunc: customDiffSuppressFunc,
 						},
 					},
 				},
@@ -240,13 +261,6 @@ func resourceKafkaTopicRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("replication_factor", kafkaTopic.ReplicationFactor)
 	d.Set("partitions", kafkaTopic.Partitions)
 
-	// It won't read the topic's config if the config{} block is missing in the resource
-	if len(d.Get("config").([]interface{})) == 0 {
-		log.Printf("[INFO] A block of config{} needs to be provided in the resource to read the topic's config.")
-		log.Printf("[INFO] Topic %s's config is not read.", topic)
-		return nil
-	}
-
 	log.Printf("[INFO] Reading the config of topic %s.", topic)
 	kafkaTopicConfig, err := client.ReadKafkaTopicConfig(cluster_id, topic)
 	if err != nil {
@@ -273,13 +287,8 @@ func resourceKafkaTopicRead(d *schema.ResourceData, meta interface{}) error {
 // 1. Providing all the possible configs in resource, and modify the ones you want to update. Then keeping all the
 // configs in the resource.
 // 2. Providing some configs (not all) you want to update, and then keep only these configs in the resource.
-// Terraform always detects that there is an update in case 2 if you run the plan again, because resourceKafkaTopicRead
-// reads all the configs, but there are only some of them provided in resource. For the missing configs, Terraform just
-// sets them as their default values.
-//
-// Although Terraform detects an update, func getChangedConfigMap is used to handle case 2. It makes sure that there
-// will not be a real update if the configs in the resources are not changed. So, it's safe to keep only partial of
-// configs in the config{} block, there won't be an update request if their values are same as what have been read.
+// customDiffSuppressFunc is used to handle case 2, it makes sure that Terraform won't detect a change if some configs
+// are not provided in the resource.
 func resourceKafkaTopicUpdate(d *schema.ResourceData, meta interface{}) error {
 	cluster_id := d.Get("cluster_id").(string)
 	topic := d.Get("topic").(string)
@@ -288,11 +297,6 @@ func resourceKafkaTopicUpdate(d *schema.ResourceData, meta interface{}) error {
 	// This is for when only replication_factor or partitions are changed, but we don't support changing them currently
 	if !d.HasChange("config") {
 		log.Printf("[INFO] Currently we only support updating topic's config. There are no changes in topic %s's config.", topic)
-		return nil
-	}
-	// This is for when there is no config{} block in the resource, or the whole config{} is removed from the resource.
-	if len(d.Get("config").([]interface{})) == 0 {
-		log.Printf("[INFO] There are no configs to be updated.")
 		return nil
 	}
 	client := meta.(*Config).Client
@@ -340,6 +344,9 @@ func resourceKafkaTopicUpdate(d *schema.ResourceData, meta interface{}) error {
 	return nil
 }
 
+// Although customDiffSuppressFunc can suppress the diff, but when getting the change it still gets all the configs that are
+// not provided in the resource. This function is to filter out the configs that have a real change in their values, it returns
+// a map of these configs and their new values.
 func getChangedConfigMap(d *schema.ResourceData) (map[string]interface{}, error) {
 	newConfig := d.Get("config").([]interface{})[0].(map[string]interface{})
 	changedConfigMap := make(map[string]interface{}, 0)
@@ -398,23 +405,15 @@ func resourceKafkaTopicDelete(d *schema.ResourceData, meta interface{}) error {
 
 func resourceKafkaTopicStateImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
 	idParts := strings.Split(d.Id(), "&")
-	if len(idParts) == 2 {
-		if idParts[0] == "" || idParts[1] == "" {
-			return nil, fmt.Errorf("[Error] Unexpected format of ID (%q), expected <CLUSTER-ID>&<TOPIC>", d.Id())
-		}
-		d.Set("cluster_id", idParts[0])
-		d.Set("topic", idParts[1])
-		return []*schema.ResourceData{d}, nil
+	if len(idParts) != 2 || idParts[0] == "" || idParts[1] == "" {
+		return nil, fmt.Errorf("[Error] Unexpected format of ID (%q), expected <CLUSTER-ID>&<TOPIC>", d.Id())
 	}
-	if len(idParts) == 3 {
-		if idParts[0] == "" || idParts[1] == "" || idParts[2] != "config" {
-			return nil, fmt.Errorf("[Error] Unexpected format of ID (%q), expected <CLUSTER-ID>&<TOPIC>&config", d.Id())
-		}
-		d.Set("cluster_id", idParts[0])
-		d.Set("topic", idParts[1])
-		config := make([]interface{}, 1)
-		d.Set("config", config)
-		return []*schema.ResourceData{d}, nil
-	}
-	return nil, fmt.Errorf("[Error] Unexpected format of ID (%q), expected <CLUSTER-ID>&<TOPIC> or <CLUSTER-ID>&<TOPIC>&config", d.Id())
+	d.Set("cluster_id", idParts[0])
+	d.Set("topic", idParts[1])
+	return []*schema.ResourceData{d}, nil
+}
+
+//customDiffSuppressFunc is used to suppress the diff if a config is not provided in the resource.
+func customDiffSuppressFunc(k, old, new string, d *schema.ResourceData) bool {
+	return new == "" || new == "0"
 }

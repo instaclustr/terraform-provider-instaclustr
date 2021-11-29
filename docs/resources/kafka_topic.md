@@ -17,21 +17,15 @@ read topics' configs, update topics' configs, and delete Kafka topics.
 You can import the existing topics of a Kafka cluster created via other ways (e.g. API, Console) to your
 terraform resources.
 
-### Import a topic and its replication-factor and partitions
+### Import a topic, its replication-factor, its partitions number, and its configs
 ```shell
 terraform import instaclustr_kafka_topic.<resource-name> "<cluster-id>&<topic-name>"
-```
-
-### Import a topic and its configs
-```shell
-terraform import instaclustr_kafka_topic.<resource-name> "<cluster-id>&<topic-name>&config"
 ```
 Replace `<resource-name>`, `<cluster-id>`, and `<topic-name>` with the real ones, keep this "&" symbol in the command.
 
 ### Example
 ```shell
 terraform import instaclustr_kafka_topic.kafka_topic_test "f4cb7a63-8217-4dc8-ab12-28e54efc00d1&test"
-terraform import instaclustr_kafka_topic.kafka_topic_test "f4cb7a63-8217-4dc8-ab12-28e54efc00d1&test&config"
 ```
 
 After importing, you should see the imported topic in ***terraform.tfstate***.
@@ -84,9 +78,6 @@ segment_index_bytes | int | None
 There are two use cases for updating a Kafka topic's configs.
 1. Providing all the possible configs in resource, and modify the ones you want to update. Then keeping all the configs in the resource.
 2. Providing some configs (not all) you want to update, and then keep only these configs in the resource.
-
-Terraform always detects that there is an update in case 2 if you run the plan again. Although Terraform detects an update, we make sure
-that there will not be a real update request if the configs in the resources are not changed.
 
 ### Case 1 example
 ```terraform
