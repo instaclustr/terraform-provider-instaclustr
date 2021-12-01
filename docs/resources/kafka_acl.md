@@ -6,8 +6,7 @@ description: |-
 ---
 
 # Resource  `instaclustr_kafka_acl`
-Resources for managing Kafka ACL for a Kafka cluster. 
-Kafka ACL is a resource used to create and delete Kafka ACL.
+A resource to manage Kafka ACL for a Kafka cluster.
 
 ## Import
 You can import the existing ACLs of a Kafka cluster created via other ways (e.g., CLI) to your terraform resource.

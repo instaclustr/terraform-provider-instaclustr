@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestAPIDeleteKafkaAcl(t *testing.T) {
+func TestAPIClientDeleteKafkaAcl(t *testing.T) {
 	client := SetupMock(t, "should-be-uuid/kafka/acls", `{"id":"should-be-uuid"}`, 200)
 	err := client.DeleteKafkaAcl("should-be-uuid", nil)
 	if err != nil {
