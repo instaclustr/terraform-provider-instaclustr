@@ -72,15 +72,22 @@ type KafkaAclResourceDataInterface interface {
 	Id() string
 }
 
-func doResourceKafkaAclCreate(d KafkaAclResourceDataInterface, client KafkaAclAPIClientInterface) error {
+func parseResourceData(d KafkaAclResourceDataInterface) (string, KafkaAcl) {
 	cluster_id := d.Get("cluster_id").(string)
-	principal := d.Get("principal").(string)
-	host := d.Get("host").(string)
-	resourceType := d.Get("resource_type").(string)
-	resourceName := d.Get("resource_name").(string)
-	operation := d.Get("operation").(string)
-	permissionType := d.Get("permission_type").(string)
-	patternType := d.Get("pattern_type").(string)
+
+	return cluster_id, KafkaAcl {
+		Principal:	d.Get("principal").(string),
+		Host:		d.Get("host").(string),
+		ResourceType:	d.Get("resource_type").(string),
+		ResourceName: 	d.Get("resource_name").(string),
+		Operation: 	d.Get("operation").(string),
+		PermissionType:	d.Get("permission_type").(string),
+		PatternType: 	d.Get("pattern_type").(string),
+	}
+}
+
+func doResourceKafkaAclCreate(d KafkaAclResourceDataInterface, client KafkaAclAPIClientInterface) error {
+	cluster_id, acl := parseResourceData(d)
 
 	log.Printf("[INFO] Creating Kafka ACL in %s.", cluster_id)
 
@@ -93,18 +100,8 @@ func doResourceKafkaAclCreate(d KafkaAclResourceDataInterface, client KafkaAclAP
 		return fmt.Errorf("[Error] Cluster %s is not RUNNING. Currently in %s state", cluster_id, cluster.ClusterStatus)
 	}
 
-	createData := KafkaAcl {
-		Principal:	principal,
-		Host:		host,
-		ResourceType:	resourceType,
-		ResourceName: 	resourceName,
-		Operation: 	operation,
-		PermissionType:	permissionType,
-		PatternType: 	patternType,
-	}
-
 	var jsonStr []byte
-	jsonStr, err = json.Marshal(createData)
+	jsonStr, err = json.Marshal(acl)
 
 	if err != nil {
 		return fmt.Errorf("[Error] Error creating kafka ACL creation request: %w", err)
@@ -127,10 +124,11 @@ func doResourceKafkaAclCreate(d KafkaAclResourceDataInterface, client KafkaAclAP
 		return fmt.Errorf("[Error] Error creating kafka ACL: %w", err)
 	}
 
-	d.SetId(fmt.Sprintf("%s&%s&%s&%s&%s&%s&%s&%s", cluster_id, principal, host, resourceType, resourceName, operation, permissionType, patternType))
+	d.SetId(fmt.Sprintf("%s&%s&%s&%s&%s&%s&%s&%s", cluster_id, acl.Principal, acl.Host, acl.ResourceType, 
+		acl.ResourceName, acl.Operation, acl.PermissionType, acl.PatternType))
 
 	log.Printf("[INFO] Kafka ACL (principal=%s,host=%s,resourceType=%s,resourceName=%s,operation=%s,permissionType=%s,patternType=%s) has been created.", 
-		principal, host, resourceType, resourceName, operation, permissionType, patternType)
+		acl.Principal, acl.Host, acl.ResourceType, acl.ResourceName, acl.Operation, acl.PermissionType, acl.PatternType)
 	return nil
 }
 
@@ -147,14 +145,7 @@ func removeKafkaAclResource(d KafkaAclResourceDataInterface) {
 }
 
 func doResourceKafkaAclRead(d KafkaAclResourceDataInterface, client KafkaAclAPIClientInterface) error {
-	cluster_id := d.Get("cluster_id").(string)
-	principal := d.Get("principal").(string)
-	host := d.Get("host").(string)
-	resourceType := d.Get("resource_type").(string)
-	resourceName := d.Get("resource_name").(string)
-	operation := d.Get("operation").(string)
-	permissionType := d.Get("permission_type").(string)
-	patternType := d.Get("pattern_type").(string)
+	cluster_id, data := parseResourceData(d)
 
 	log.Printf("[INFO] Reading Kafka ACL in %s.", cluster_id)
 
@@ -165,16 +156,6 @@ func doResourceKafkaAclRead(d KafkaAclResourceDataInterface, client KafkaAclAPIC
 	}
 	if cluster.ClusterStatus != "RUNNING" {
 		return fmt.Errorf("[Error] Cluster %s is not RUNNING. Currently in %s state", cluster_id, cluster.ClusterStatus)
-	}
-
-	data := KafkaAcl {
-		Principal:	principal,
-		Host:		host,
-		ResourceType:	resourceType,
-		ResourceName: 	resourceName,
-		Operation: 	operation,
-		PermissionType:	permissionType,
-		PatternType: 	patternType,
 	}
 
 	var jsonStr []byte
@@ -199,29 +180,12 @@ func doResourceKafkaAclRead(d KafkaAclResourceDataInterface, client KafkaAclAPIC
 }
 
 func doResourceKafkaAclDelete(d KafkaAclResourceDataInterface, client KafkaAclAPIClientInterface) error {
-	cluster_id := d.Get("cluster_id").(string)
-	principal := d.Get("principal").(string)
-	host := d.Get("host").(string)
-	resourceType := d.Get("resource_type").(string)
-	resourceName := d.Get("resource_name").(string)
-	operation := d.Get("operation").(string)
-	permissionType := d.Get("permission_type").(string)
-	patternType := d.Get("pattern_type").(string)
+	cluster_id, acl := parseResourceData(d)
 	
-	log.Printf("[INFO] Deleting Kafka ACL %s in %s.", principal, cluster_id)
-
-	data := KafkaAcl {
-		Principal:	principal,
-		Host:		host,
-		ResourceType:	resourceType,
-		ResourceName: 	resourceName,
-		Operation: 	operation,
-		PermissionType:	permissionType,
-		PatternType: 	patternType,
-	}
+	log.Printf("[INFO] Deleting Kafka ACL in %s.", cluster_id)
 
 	var jsonStr []byte
-	jsonStr, err := json.Marshal(data)
+	jsonStr, err := json.Marshal(acl)
 	if err != nil {
 		return fmt.Errorf("[Error] Error creating kafka ACL delete request: %w", err)
 	}
@@ -233,7 +197,8 @@ func doResourceKafkaAclDelete(d KafkaAclResourceDataInterface, client KafkaAclAP
 
 	removeKafkaAclResource(d)
 
-	log.Printf("[INFO] Kafka ACL %s has been deleted.", principal)
+	log.Printf("[INFO] Kafka ACL (principal=%s,host=%s,resourceType=%s,resourceName=%s,operation=%s,permissionType=%s,patternType=%s) has been deleted.", 
+		acl.Principal, acl.Host, acl.ResourceType, acl.ResourceName, acl.Operation, acl.PermissionType, acl.PatternType)
 	return nil
 }
 
