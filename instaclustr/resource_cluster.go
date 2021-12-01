@@ -792,6 +792,8 @@ func resourceClusterUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*Config).Client
 	clusterID := d.Get("cluster_id").(string)
 
+	log.Printf("[INFO] Updating cluster %s.", clusterID)
+
 	kafkaSchemaRegistryUserUpdate := d.HasChange("kafka_schema_registry_user_password")
 	kafkaRestProxyUserUpdate := d.HasChange("kafka_rest_proxy_user_password")
 
@@ -912,6 +914,10 @@ func hasCassandraSizeChanges(d resourceDataInterface) bool {
 	return len(getNewSizeOrEmpty(d, "node_size")) > 0
 }
 
+func hasRedisSizeChanges(d resourceDataInterface) bool {
+	return len(getNewSizeOrEmpty(d, "node_size")) > 0
+}
+
 type resourceDataInterface interface {
 	HasChange(key string) bool
 	GetChange(key string) (interface{}, interface{})
@@ -950,6 +956,12 @@ func doClusterResize(client APIClientInterface, clusterID string, d resourceData
 	case "KAFKA":
 		if hasKafkaSizeChanges(bundleIndex, d) {
 			return doKafkaClusterResize(client, cluster, d, bundleIndex)
+		} else {
+			return nil
+		}
+	case "REDIS":
+		if hasRedisSizeChanges(d) {
+			return doRedisClusterResize(client, cluster, d, bundleIndex)
 		} else {
 			return nil
 		}
@@ -1181,6 +1193,33 @@ func doLegacyCassandraClusterResize(client APIClientInterface, cluster *Cluster,
 	return nil
 }
 
+func getChangedRedisSizeAndPurpose(nodeSize string) (string, NodePurpose, error) {
+	if len(nodeSize) > 0 {
+		return nodeSize, REDIS, nil
+	}
+	return "", "", fmt.Errorf("[ERROR] Please change node size before resize")
+}
+
+func doRedisClusterResize(client APIClientInterface, cluster *Cluster, d resourceDataInterface, bundleIndex int) error {
+	var nodePurpose *NodePurpose
+	var nodeSize string
+	nodeNewSize := getNewSizeOrEmpty(d, "node_size")
+
+	newSize, purpose, err := getChangedRedisSizeAndPurpose(nodeNewSize)
+	if err != nil {
+		return err
+	}
+	nodeSize = newSize
+	nodePurpose = &purpose
+
+	log.Printf("[INFO] Resizing Redis cluster. nodePurpose: %s, newSize: %s", nodePurpose, nodeSize)
+	err = client.ResizeCluster(cluster.ID, cluster.DataCentres[0].ID, nodeSize, nodePurpose)
+	if err != nil {
+		return fmt.Errorf("[Error] Error resizing cluster %s with error %s", cluster.ID, err)
+	}
+	return nil
+}
+
 func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*Config).Client
 	id := d.Get("cluster_id").(string)
@@ -1252,7 +1291,12 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		}
 		d.Set("data_centre", cluster.DataCentres[0].Name)
 		d.Set("cluster_network", cluster.DataCentres[0].CdcNetwork)
+
+		if err := deleteAttributesConflict(resourceCluster().Schema, d, "data_centre"); err != nil {
+			return err
+		}
 	} else {
+
 		dataCentres, err := getDataCentresFromCluster(cluster)
 		if err != nil {
 			return err
@@ -1262,6 +1306,10 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 			if err := d.Set("data_centres", dataCentres); err != nil {
 				return fmt.Errorf("[Error] Error setting data centres into terraform state, data centres could not be derived: %s", err)
 			}
+		}
+
+		if err := deleteAttributesConflict(resourceCluster().Schema, d, "data_centres"); err != nil {
+			return err
 		}
 	}
 
@@ -1308,6 +1356,22 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	log.Printf("[INFO] Fetched cluster %s info from the remote server.", cluster.ID)
+	return nil
+}
+
+func deleteAttributesConflict(schema map[string]*schema.Schema, d *schema.ResourceData, conflictAttr string) error {
+	for key, value := range schema {
+		if _, exist := d.GetOk(key); exist {
+			for _, conflictsWith := range value.ConflictsWith {
+				if conflictsWith == conflictAttr {
+					if err := d.Set(key, value.Type.Zero()); err != nil {
+						return err
+					}
+					break
+				}
+			}
+		}
+	}
 	return nil
 }
 

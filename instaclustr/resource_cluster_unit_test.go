@@ -499,11 +499,11 @@ func TestHasCassandraSizeChanges(t *testing.T) {
 func TestDoClusterResizeDefault(t *testing.T) {
 	err := doClusterResize(MockApiClient{
 		cluster: Cluster{
-			ID:         "REDIS",
-			BundleType: "REDIS",
+			ID:         "CADENCE",
+			BundleType: "CADENCE",
 		},
 	}, "mock", MockResourceData{}, []Bundle{
-		{Bundle: "REDIS"},
+		{Bundle: "CADENCE"},
 	})
 	if err == nil || !strings.Contains(err.Error(), "CDC resize does not support:") {
 		t.Fatalf("Expect err with  'CDC resize does not support:' but got %v", err)
@@ -622,6 +622,34 @@ func TestDoClusterResizeCA(t *testing.T) {
 	}
 }
 
+func TestDoClusterResizeRedis(t *testing.T) {
+	client := MockApiClient{
+		cluster: Cluster{
+			ID:           "mock",
+			BundleType:   "REDIS",
+			BundleOption: &BundleOptions{},
+			DataCentres: []DataCentre{
+				{ID: "test"},
+			},
+		},
+	}
+	data := MockResourceData{
+		changes: map[string]MockChange{"node_size": {before: "t3.small", after: "t3.small-v2"}},
+	}
+	bundles := []Bundle{
+		{Bundle: "REDIS"},
+	}
+	err := doClusterResize(client, "mock", data, bundles)
+	if err != nil {
+		t.Fatalf("Expect nil err but got %v", err)
+	}
+	delete(data.changes, "node_size")
+	err = doClusterResize(client, "mock", data, bundles)
+	if err != nil {
+		t.Fatalf("Expect nil err but got %v", err)
+	}
+}
+
 func TestCreateVpcPeeringRequest(t *testing.T) {
 	resourceSchema := map[string]*schema.Schema{
 		"peer_vpc_id": {
@@ -682,6 +710,51 @@ func TestCreateVpcPeeringRequestLegacy(t *testing.T) {
 	if _, err := createVpcPeeringRequest(resourceLocalData); err != nil {
 		t.Fatalf("Expected nil error but got %v", err)
 	}
+}
+
+func TestDeleteAttributesConflict(t *testing.T) {
+	clusterSchema := map[string]*schema.Schema{
+		"attributeA": {
+			Type:     schema.TypeString,
+			Computed: true,
+		},
+
+		"attributeB": {
+			Type:          schema.TypeString,
+			Required:      true,
+			ConflictsWith: []string{"data_centres"},
+			ForceNew:      true,
+		},
+
+		"attributeC": {
+			Type:          schema.TypeString,
+			Optional:      true,
+			ConflictsWith: []string{"data_centre"},
+			ForceNew:      true,
+		},
+	}
+
+	resourceDataMap := map[string]interface{}{
+		"attributeA": "A",
+		"attributeB": "B",
+		"attributeC": "C",
+	}
+
+	d := schema.TestResourceDataRaw(t, clusterSchema, resourceDataMap)
+
+	if err := deleteAttributesConflict(clusterSchema, d, "data_centres"); err != nil {
+		t.Fatalf("Unexpected error occured during deletion %s", err)
+	}
+
+	checkAttributeValue := func(attribute string, expected interface{}) {
+		if value, _ := d.GetOk(attribute); value != expected {
+			t.Fatalf("%s not modified properly", attribute)
+		}
+	}
+
+	checkAttributeValue("attributeA", "A")
+	checkAttributeValue("attributeB", schema.TypeString.Zero())
+	checkAttributeValue("attributeC", "C")
 }
 
 type MockApiClient struct {

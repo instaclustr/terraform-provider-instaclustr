@@ -195,32 +195,6 @@ type UpdateBundleUserRequest struct {
 	Password string `json:"password"`
 }
 
-type CreateKafkaUserRequest struct {
-	Username           string                 `json:"username"`
-	Password           string                 `json:"password"`
-	InitialPermissions string                 `json:"initial-permissions"`
-	Options            KafkaUserCreateOptions `json:"options,omitempty"`
-}
-
-type KafkaUserCreateOptions struct {
-	AuthenticationMechanism string `json:"sasl-scram-mechanism,omitempty" mapstructure:"sasl-scram-mechanism"`
-	OverrideExistingUser    bool   `json:"override-existing-user" mapstructure:"override-existing-user"`
-}
-
-type UpdateKafkaUserRequest struct {
-	Username string                        `json:"username"`
-	Password string                        `json:"password"`
-	Options  KafkaUserResetPasswordOptions `json:"options,omitempty"`
-}
-
-type KafkaUserResetPasswordOptions struct {
-	AuthenticationMechanism string `json:"sasl-scram-mechanism,omitempty" mapstructure:"sasl-scram-mechanism"`
-}
-
-type DeleteKafkaUserRequest struct {
-	Username string `json:"username"`
-}
-
 type BundleConfig struct {
 	IsKafkaCluster    bool
 	HasRestProxy      bool
