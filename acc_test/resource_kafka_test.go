@@ -173,7 +173,7 @@ func TestKafkaResources(t *testing.T) {
 					testCheckResourceValidKafka("data.instaclustr_kafka_acl_list.test_acl_list"),
 					checkKafkaAclListCreated(hostname, username, apiKey),
 				),
-			}
+			},
 			// Kafka Topic test
 			{
 				Config: createKafkaTopicConfig,

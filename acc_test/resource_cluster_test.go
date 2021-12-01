@@ -395,24 +395,6 @@ func testCheckResourceCreated(resourceName, hostname, username, apiKey string) r
 	}
 }
 
-func testCheckContactIPCorrect(resourceName, hostname, username, apiKey string, expectedPrivateContactPointLength int, expectedPublicContactPointLength int) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		resourceState := s.Modules[0].Resources["instaclustr_cluster."+resourceName]
-
-		privateContactPoints, _ := strconv.Atoi(resourceState.Primary.Attributes["private_contact_point.#"])
-		publicContactPoints, _ := strconv.Atoi(resourceState.Primary.Attributes["public_contact_point.#"])
-
-		if privateContactPoints != expectedPrivateContactPointLength {
-			return fmt.Errorf("[Error] Expected %v private contact points but found %v", expectedPrivateContactPointLength, privateContactPoints)
-		}
-
-		if publicContactPoints != expectedPublicContactPointLength {
-			return fmt.Errorf("[Error] Expected %v public contact points but found %v", expectedPublicContactPointLength, publicContactPoints)
-		}
-		return nil
-	}
-}
-
 func testCheckResourceDeleted(resourceName, hostname, username, apiKey string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		resourceState := s.Modules[0].Resources["instaclustr_cluster."+resourceName]
