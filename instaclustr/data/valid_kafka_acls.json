@@ -1,0 +1,22 @@
+{
+  "acls" : [
+    {
+      "principal" : "User:test1",
+      "host" : "*",
+      "resourceType" : "CLUSTER",
+      "resourceName" : "kafka-cluster",
+      "operation" : "DESCRIBE",
+      "permissionType" : "ALLOW",
+      "patternType" : "LITERAL"
+    },
+    {
+      "principal" : "User:test2",
+      "host" : "*",
+      "resourceType" : "CLUSTER",
+      "resourceName" : "kafka-cluster",
+      "operation" : "DESCRIBE",
+      "permissionType" : "DENY",
+      "patternType" : "LITERAL"
+    }
+  ]
+}

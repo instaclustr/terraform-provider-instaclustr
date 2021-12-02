@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"os"
 	"regexp"
-	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -390,24 +389,6 @@ func testCheckResourceCreated(resourceName, hostname, username, apiKey string) r
 		}
 		if cluster.ID != id {
 			return fmt.Errorf("Cluster expected %s but got %s", id, cluster.ID)
-		}
-		return nil
-	}
-}
-
-func testCheckContactIPCorrect(resourceName, hostname, username, apiKey string, expectedPrivateContactPointLength int, expectedPublicContactPointLength int) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		resourceState := s.Modules[0].Resources["instaclustr_cluster."+resourceName]
-
-		privateContactPoints, _ := strconv.Atoi(resourceState.Primary.Attributes["private_contact_point.#"])
-		publicContactPoints, _ := strconv.Atoi(resourceState.Primary.Attributes["public_contact_point.#"])
-
-		if privateContactPoints != expectedPrivateContactPointLength {
-			return fmt.Errorf("[Error] Expected %v private contact points but found %v", expectedPrivateContactPointLength, privateContactPoints)
-		}
-
-		if publicContactPoints != expectedPublicContactPointLength {
-			return fmt.Errorf("[Error] Expected %v public contact points but found %v", expectedPublicContactPointLength, publicContactPoints)
 		}
 		return nil
 	}
