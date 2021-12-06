@@ -23,6 +23,7 @@ var (
 		"RUNNING":     true,
 		"PROVISIONED": true,
 	}
+	semanticVersioningPattern, _ = regexp.Compile("([0-9]*\\.){2}[0-9]")
 )
 
 func resourceCluster() *schema.Resource {
@@ -166,6 +167,13 @@ func resourceCluster() *schema.Resource {
 									"version": {
 										Type:     schema.TypeString,
 										Required: true,
+										ForceNew: true,
+										DiffSuppressFunc: versionDiffSuppressFunc,
+									},
+									"patch": {
+										Type: schema.TypeString,
+										Computed: true,
+										Optional: true,
 										ForceNew: true,
 									},
 									"options": {
@@ -346,6 +354,13 @@ func resourceCluster() *schema.Resource {
 						"version": {
 							Type:     schema.TypeString,
 							Required: true,
+							ForceNew: true,
+							DiffSuppressFunc: versionDiffSuppressFunc,
+						},
+						"patch": {
+							Type: schema.TypeString,
+							Computed: true,
+							Optional: true,
 							ForceNew: true,
 						},
 						"options": {
@@ -584,6 +599,13 @@ func resourceCluster() *schema.Resource {
 		},
 	}
 }
+
+func versionDiffSuppressFunc(k, old string, new string, d *schema.ResourceData) bool {
+	oldSemVer := semanticVersioningPattern.FindString(old)
+	newSemVer := semanticVersioningPattern.FindString(new)
+	return oldSemVer == newSemVer
+}
+
 func resourceClusterCustomizeDiff(diff *schema.ResourceDiff, i interface{}) error {
 
 	if _, isBundle := diff.GetOk("bundle"); isBundle {
@@ -1389,6 +1411,7 @@ func getBaseBundlesFromCluster(cluster *Cluster) ([]map[string]interface{}, erro
 
 	baseBundle["options"] = convertedBundleOptions
 	baseBundle["version"] = cluster.BundleVersion
+	baseBundle["patch"] = cluster.BundleVersionPatch
 
 	bundles := make([]map[string]interface{}, 0)
 	bundles = append(bundles, baseBundle)
