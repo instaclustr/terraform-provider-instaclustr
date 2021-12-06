@@ -170,12 +170,6 @@ func resourceCluster() *schema.Resource {
 										ForceNew: true,
 										DiffSuppressFunc: versionDiffSuppressFunc,
 									},
-									"patch": {
-										Type: schema.TypeString,
-										Computed: true,
-										Optional: true,
-										ForceNew: true,
-									},
 									"options": {
 										Type:     schema.TypeMap,
 										Optional: true,
@@ -356,12 +350,6 @@ func resourceCluster() *schema.Resource {
 							Required: true,
 							ForceNew: true,
 							DiffSuppressFunc: versionDiffSuppressFunc,
-						},
-						"patch": {
-							Type: schema.TypeString,
-							Computed: true,
-							Optional: true,
-							ForceNew: true,
 						},
 						"options": {
 							// This type is not correct. TypeMaps cannot have complex structures defined in the same way that TypeLists and TypeSets can
