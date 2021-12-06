@@ -13,7 +13,6 @@ type RuleType struct {
 type Bundle struct {
 	Bundle  string         `json:"bundle" mapstructure:"bundle"`
 	Version string         `json:"version" mapstructure:"version"`
-	// Patch   string         `json:"patch" mapstructure:"patch"`
 	Options *BundleOptions `json:"options,omitempty" mapstructure:"options"`
 }
 
@@ -111,7 +110,6 @@ type Cluster struct {
 	ClusterStatus              string                   `json:"clusterStatus"`
 	BundleType                 string                   `json:"bundleType"`
 	BundleVersion              string                   `json:"bundleVersion"`
-	BundleVersionPatch         string					`json:"bundleVersionPatch"`
 	AddonBundles               []map[string]interface{} `json:"addonBundles"`
 	Username                   string                   `json:"username"`
 	InstaclustrUserPassword    string                   `json:"instaclustrUserPassword"`
