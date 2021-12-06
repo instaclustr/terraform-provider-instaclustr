@@ -680,3 +680,71 @@ func testCheckResourceStateAttributesDeleted(resourceName string, attributeNames
 		return nil
 	}
 }
+
+func TestCheckNoDiffOldToNewBundleVersionFormat(t *testing.T) {
+	testAccProviders := map[string]terraform.ResourceProvider{
+		"instaclustr": instaclustr.Provider(),
+	}
+	validConfig, _ := ioutil.ReadFile("data/valid.tf")
+	username := os.Getenv("IC_USERNAME")
+	apiKey := os.Getenv("IC_API_KEY")
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+	resourceName := "valid"
+	oldVersionConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
+	newVersionConfig := strings.Replace(oldVersionConfig, `version = "apache-cassandra-3.11.8.ic2"`, `version = "3.11.8"`, 1)
+
+	resource.Test(t, resource.TestCase{
+		Providers:    testAccProviders,
+		CheckDestroy: testCheckResourceDeleted(resourceName, hostname, username, apiKey),
+		Steps: []resource.TestStep{
+			{
+				Config: oldVersionConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid(resourceName),
+					testCheckResourceCreated(resourceName, hostname, username, apiKey),
+				),
+			},
+			{
+				Config:      newVersionConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid(resourceName),
+				),
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
+func TestCheckNoDiffNewToOldBundleVersionFormat(t *testing.T) {
+	testAccProviders := map[string]terraform.ResourceProvider{
+		"instaclustr": instaclustr.Provider(),
+	}
+	validConfig, _ := ioutil.ReadFile("data/valid.tf")
+	username := os.Getenv("IC_USERNAME")
+	apiKey := os.Getenv("IC_API_KEY")
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+	resourceName := "valid"
+	oldVersionConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
+	newVersionConfig := strings.Replace(oldVersionConfig, `version = "3.11.8"`, `version = "apache-cassandra-3.11.8.ic2"`, 1)
+
+	resource.Test(t, resource.TestCase{
+		Providers:    testAccProviders,
+		CheckDestroy: testCheckResourceDeleted(resourceName, hostname, username, apiKey),
+		Steps: []resource.TestStep{
+			{
+				Config: oldVersionConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid(resourceName),
+					testCheckResourceCreated(resourceName, hostname, username, apiKey),
+				),
+			},
+			{
+				Config: newVersionConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid(resourceName),
+				),
+				PlanOnly: true,
+			},
+		},
+	})
+}

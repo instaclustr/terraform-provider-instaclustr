@@ -1399,7 +1399,6 @@ func getBaseBundlesFromCluster(cluster *Cluster) ([]map[string]interface{}, erro
 
 	baseBundle["options"] = convertedBundleOptions
 	baseBundle["version"] = cluster.BundleVersion
-	baseBundle["patch"] = cluster.BundleVersionPatch
 
 	bundles := make([]map[string]interface{}, 0)
 	bundles = append(bundles, baseBundle)
