@@ -589,6 +589,13 @@ func resourceCluster() *schema.Resource {
 }
 
 func versionDiffSuppressFunc(k, old string, new string, d *schema.ResourceData) bool {
+	/*
+	 * Ensures that diffs are not shown for versions of different formats
+	 * containing the same sem-ver. For example, all of these are equivalent:
+	 * 3.11.8
+	 * apache-cassandra-3.11.8
+	 * apache-cassandra-3.11.8.ic2
+	*/
 	oldSemVer := semanticVersioningPattern.FindString(old)
 	newSemVer := semanticVersioningPattern.FindString(new)
 	return oldSemVer == newSemVer
