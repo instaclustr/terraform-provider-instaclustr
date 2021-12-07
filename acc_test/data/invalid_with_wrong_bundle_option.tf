@@ -29,11 +29,6 @@ resource "instaclustr_cluster" "invalid" {
 
     bundle {
         bundle = "SPARK"
-        version = "apache-spark:2.3.2.ic1"
-    }
-
-    bundle {
-        bundle = "ZEPPELIN"
-        version = "apache-zeppelin:0.8.0-spark-2.3.2"
+        version = "2.3.2"
     }
 }

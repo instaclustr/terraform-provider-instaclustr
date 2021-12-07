@@ -2,15 +2,16 @@ package test
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
-	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 	"io/ioutil"
 	"os"
 	"regexp"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/hashicorp/terraform/helper/resource"
+	"github.com/hashicorp/terraform/terraform"
+	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 )
 
 func TestAccCluster_importBasic(t *testing.T) {
@@ -211,7 +212,7 @@ func TestKafkaUserResource_importBasic(t *testing.T) {
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 
 	kafkaNodeSize := "KFK-DEV-t4g.medium-80"
-	kafkaVersion := "apache-kafka:2.7.1.ic1"
+	kafkaVersion := "2.7.1"
 	zookeeperNodeSize := "KDZ-DEV-t4g.small-30"
  
 	createClusterConfig := fmt.Sprintf(string(configBytes1), username, apiKey, hostname, kafkaNodeSize, kafkaVersion, zookeeperNodeSize)

@@ -18,7 +18,7 @@ resource "instaclustr_cluster" "validRedis" {
 
   bundle {
     bundle  = "REDIS"
-    version = "redis:6.2.6"
+    version = "6.2.6"
     options = {
       master_nodes      = 3,
       replica_nodes     = 3,
