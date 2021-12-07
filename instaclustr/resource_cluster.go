@@ -936,7 +936,7 @@ func doClusterResize(client APIClientInterface, clusterID string, d resourceData
 	switch cluster.BundleType {
 	case "APACHE_CASSANDRA":
 		if hasCassandraSizeChanges(d) {
-			return doLegacyCassandraClusterResize(client, cluster, d)
+			return doCassandraClusterResize(client, cluster, d)
 		} else {
 			return nil
 		}
@@ -1173,7 +1173,7 @@ func doKafkaClusterResize(client APIClientInterface, cluster *Cluster, d resourc
 	return nil
 }
 
-func doLegacyCassandraClusterResize(client APIClientInterface, cluster *Cluster, d resourceDataInterface) error {
+func doCassandraClusterResize(client APIClientInterface, cluster *Cluster, d resourceDataInterface) error {
 	_, after := d.GetChange("node_size")
 
 	var nodePurpose *NodePurpose
