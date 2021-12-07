@@ -43,7 +43,7 @@ resource "instaclustr_cluster" "valid" {
     name        = "DC2"
     data_centre = "US_WEST_1"
     network     = "10.1.0.0/18"
-    node_size    = "t3.small-v2"
+    node_size    = "m5l-250-v2"
     rack_allocation = {
       number_of_racks = 2
       nodes_per_rack  = 1
