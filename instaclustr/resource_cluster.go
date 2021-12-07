@@ -791,6 +791,8 @@ func resourceClusterUpdate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*Config).Client
 	clusterID := d.Get("cluster_id").(string)
 
+	log.Printf("[INFO] Updating cluster %s.", clusterID)
+
 	kafkaSchemaRegistryUserUpdate := d.HasChange("kafka_schema_registry_user_password")
 	kafkaRestProxyUserUpdate := d.HasChange("kafka_rest_proxy_user_password")
 
@@ -911,6 +913,10 @@ func hasCassandraSizeChanges(d resourceDataInterface) bool {
 	return len(getNewSizeOrEmpty(d, "node_size")) > 0
 }
 
+func hasRedisSizeChanges(d resourceDataInterface) bool {
+	return len(getNewSizeOrEmpty(d, "node_size")) > 0
+}
+
 type resourceDataInterface interface {
 	HasChange(key string) bool
 	GetChange(key string) (interface{}, interface{})
@@ -949,6 +955,12 @@ func doClusterResize(client APIClientInterface, clusterID string, d resourceData
 	case "KAFKA":
 		if hasKafkaSizeChanges(bundleIndex, d) {
 			return doKafkaClusterResize(client, cluster, d, bundleIndex)
+		} else {
+			return nil
+		}
+	case "REDIS":
+		if hasRedisSizeChanges(d) {
+			return doRedisClusterResize(client, cluster, d, bundleIndex)
 		} else {
 			return nil
 		}
@@ -1169,6 +1181,33 @@ func doLegacyCassandraClusterResize(client APIClientInterface, cluster *Cluster,
 	nodePurpose = &np
 
 	err := client.ResizeCluster(cluster.ID, cluster.DataCentres[0].ID, after.(string), nodePurpose)
+	if err != nil {
+		return fmt.Errorf("[Error] Error resizing cluster %s with error %s", cluster.ID, err)
+	}
+	return nil
+}
+
+func getChangedRedisSizeAndPurpose(nodeSize string) (string, NodePurpose, error) {
+	if len(nodeSize) > 0 {
+		return nodeSize, REDIS, nil
+	}
+	return "", "", fmt.Errorf("[ERROR] Please change node size before resize")
+}
+
+func doRedisClusterResize(client APIClientInterface, cluster *Cluster, d resourceDataInterface, bundleIndex int) error {
+	var nodePurpose *NodePurpose
+	var nodeSize string
+	nodeNewSize := getNewSizeOrEmpty(d, "node_size")
+
+	newSize, purpose, err := getChangedRedisSizeAndPurpose(nodeNewSize)
+	if err != nil {
+		return err
+	}
+	nodeSize = newSize
+	nodePurpose = &purpose
+
+	log.Printf("[INFO] Resizing Redis cluster. nodePurpose: %s, newSize: %s", nodePurpose, nodeSize)
+	err = client.ResizeCluster(cluster.ID, cluster.DataCentres[0].ID, nodeSize, nodePurpose)
 	if err != nil {
 		return fmt.Errorf("[Error] Error resizing cluster %s with error %s", cluster.ID, err)
 	}

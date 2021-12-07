@@ -499,11 +499,11 @@ func TestHasCassandraSizeChanges(t *testing.T) {
 func TestDoClusterResizeDefault(t *testing.T) {
 	err := doClusterResize(MockApiClient{
 		cluster: Cluster{
-			ID:         "REDIS",
-			BundleType: "REDIS",
+			ID:         "CADENCE",
+			BundleType: "CADENCE",
 		},
 	}, "mock", MockResourceData{}, []Bundle{
-		{Bundle: "REDIS"},
+		{Bundle: "CADENCE"},
 	})
 	if err == nil || !strings.Contains(err.Error(), "CDC resize does not support:") {
 		t.Fatalf("Expect err with  'CDC resize does not support:' but got %v", err)
@@ -614,6 +614,34 @@ func TestDoClusterResizeCA(t *testing.T) {
 	err := doClusterResize(client, "mock", data, bundles)
 	if err == nil || err.Error() != "[Error] Cannot resize nodes from t3.small to t3.small-v2" {
 		t.Fatalf("Expect err to be '[Error] Cannot resize nodes from t3.small to t3.small-v2' but got %v", err)
+	}
+	delete(data.changes, "node_size")
+	err = doClusterResize(client, "mock", data, bundles)
+	if err != nil {
+		t.Fatalf("Expect nil err but got %v", err)
+	}
+}
+
+func TestDoClusterResizeRedis(t *testing.T) {
+	client := MockApiClient{
+		cluster: Cluster{
+			ID:           "mock",
+			BundleType:   "REDIS",
+			BundleOption: &BundleOptions{},
+			DataCentres: []DataCentre{
+				{ID: "test"},
+			},
+		},
+	}
+	data := MockResourceData{
+		changes: map[string]MockChange{"node_size": {before: "t3.small", after: "t3.small-v2"}},
+	}
+	bundles := []Bundle{
+		{Bundle: "REDIS"},
+	}
+	err := doClusterResize(client, "mock", data, bundles)
+	if err != nil {
+		t.Fatalf("Expect nil err but got %v", err)
 	}
 	delete(data.changes, "node_size")
 	err = doClusterResize(client, "mock", data, bundles)
