@@ -2,10 +2,11 @@ package instaclustr
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform/helper/schema"
 	"reflect"
 	"strings"
 	"testing"
+
+	"github.com/hashicorp/terraform/helper/schema"
 )
 
 func TestCreateBundleUserUpdateRequest(t *testing.T) {
@@ -755,6 +756,43 @@ func TestDeleteAttributesConflict(t *testing.T) {
 	checkAttributeValue("attributeA", "A")
 	checkAttributeValue("attributeB", schema.TypeString.Zero())
 	checkAttributeValue("attributeC", "C")
+}
+
+type VersionDiffState struct {
+	version string
+	diffSuppressed bool
+}
+
+func TestVersionDiffSuppression(t *testing.T) {
+	versions := map[string]VersionDiffState{
+		"apache-cassandra:3.11.8": {
+			version: "3.11.8",
+			diffSuppressed: true,
+		},
+		"3.11.8": {
+			version: "apache-cassandra:3.11.8.ic2",
+			diffSuppressed: true,
+		},
+		"apache-cassandra:3.11.8.ic2": {
+			version: "apache-cassandra:3.0.19",
+			diffSuppressed: false,
+		},
+		"opendistro-for-elasticsearch:1.8.0": {
+			version: "apache-cassandra:3.0.19",
+			diffSuppressed: false,
+		},
+	}
+	for stateVersion, planVersionState := range versions {
+		if versionDiffSuppressFunc("", stateVersion, planVersionState.version, &schema.ResourceData{}) != planVersionState.diffSuppressed {
+			t.Fatalf(
+				"Diff suppression was %v and expected %v for: %s -> %s",
+				!planVersionState.diffSuppressed,
+				planVersionState.diffSuppressed,
+				stateVersion,
+				planVersionState.version,
+			)
+		}
+	}
 }
 
 type MockApiClient struct {

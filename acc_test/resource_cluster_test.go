@@ -21,6 +21,8 @@ func AccClusterResourceTestSteps(t *testing.T, testAccProviders map[string]terra
 
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
 	updatedConfig := strings.Replace(oriConfig, "testcluster", "newcluster", 1)
+	oldToNewVersionConfig := strings.Replace(updatedConfig, `version = "apache-cassandra-3.11.8.ic2"`, `version = "3.11.8"`, 1)
+	newToOldVersionConfig := strings.Replace(updatedConfig, `version = "3.11.8"`, `version = "apache-cassandra-3.11.8.ic2"`, 1)
 
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
@@ -39,6 +41,34 @@ func AccClusterResourceTestSteps(t *testing.T, testAccProviders map[string]terra
 					testCheckResourceValid("valid"),
 					testCheckResourceCreated("valid", hostname, username, apiKey),
 				),
+			},
+			{
+				Config: oldToNewVersionConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid("valid"),
+				),
+				PlanOnly: true,
+			},
+			{
+				Config: oldToNewVersionConfig,
+				Destroy: true,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceDeleted("valid", hostname, username, apiKey),
+				),
+			},
+			{
+				Config: oldToNewVersionConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid("valid"),
+					testCheckResourceCreated("valid", hostname, username, apiKey),
+				),
+			},
+			{
+				Config: newToOldVersionConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid("valid"),
+				),
+				PlanOnly: true,
 			},
 		},
 	})
@@ -679,72 +709,4 @@ func testCheckResourceStateAttributesDeleted(resourceName string, attributeNames
 		}
 		return nil
 	}
-}
-
-func TestCheckNoDiffOldToNewBundleVersionFormat(t *testing.T) {
-	testAccProviders := map[string]terraform.ResourceProvider{
-		"instaclustr": instaclustr.Provider(),
-	}
-	validConfig, _ := ioutil.ReadFile("data/valid.tf")
-	username := os.Getenv("IC_USERNAME")
-	apiKey := os.Getenv("IC_API_KEY")
-	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
-	resourceName := "valid"
-	oldVersionConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
-	newVersionConfig := strings.Replace(oldVersionConfig, `version = "apache-cassandra-3.11.8.ic2"`, `version = "3.11.8"`, 1)
-
-	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		CheckDestroy: testCheckResourceDeleted(resourceName, hostname, username, apiKey),
-		Steps: []resource.TestStep{
-			{
-				Config: oldVersionConfig,
-				Check: resource.ComposeTestCheckFunc(
-					testCheckResourceValid(resourceName),
-					testCheckResourceCreated(resourceName, hostname, username, apiKey),
-				),
-			},
-			{
-				Config:      newVersionConfig,
-				Check: resource.ComposeTestCheckFunc(
-					testCheckResourceValid(resourceName),
-				),
-				PlanOnly: true,
-			},
-		},
-	})
-}
-
-func TestCheckNoDiffNewToOldBundleVersionFormat(t *testing.T) {
-	testAccProviders := map[string]terraform.ResourceProvider{
-		"instaclustr": instaclustr.Provider(),
-	}
-	validConfig, _ := ioutil.ReadFile("data/valid.tf")
-	username := os.Getenv("IC_USERNAME")
-	apiKey := os.Getenv("IC_API_KEY")
-	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
-	resourceName := "valid"
-	oldVersionConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
-	newVersionConfig := strings.Replace(oldVersionConfig, `version = "3.11.8"`, `version = "apache-cassandra-3.11.8.ic2"`, 1)
-
-	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		CheckDestroy: testCheckResourceDeleted(resourceName, hostname, username, apiKey),
-		Steps: []resource.TestStep{
-			{
-				Config: oldVersionConfig,
-				Check: resource.ComposeTestCheckFunc(
-					testCheckResourceValid(resourceName),
-					testCheckResourceCreated(resourceName, hostname, username, apiKey),
-				),
-			},
-			{
-				Config: newVersionConfig,
-				Check: resource.ComposeTestCheckFunc(
-					testCheckResourceValid(resourceName),
-				),
-				PlanOnly: true,
-			},
-		},
-	})
 }
