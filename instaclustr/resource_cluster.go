@@ -23,7 +23,7 @@ var (
 		"RUNNING":     true,
 		"PROVISIONED": true,
 	}
-	semanticVersioningPattern, _ = regexp.Compile("[0-9]+\\.[0-9]+(\\.[0-9]+)*")
+	semanticVersioningPattern, _ = regexp.Compile("[0-9]+(\\.[0-9]+){1,2}")
 )
 
 func resourceCluster() *schema.Resource {
