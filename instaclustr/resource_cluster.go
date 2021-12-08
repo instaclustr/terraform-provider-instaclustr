@@ -67,6 +67,15 @@ func resourceCluster() *schema.Resource {
 				ForceNew:      true,
 			},
 
+			"data_centre_custom_name": {
+				Type:          schema.TypeString,
+				Optional:      true,
+				ConflictsWith: []string{"data_centres"},
+				ForceNew:      true,
+			},
+
+			// TODO Niluka maybe add something here? Resource schema
+
 			"data_centres": {
 				Type:          schema.TypeSet,
 				Optional:      true,
@@ -685,6 +694,7 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		clusterNetwork := d.Get("cluster_network").(string)
 		createData.DataCentre = dataCentre
 		createData.ClusterNetwork = clusterNetwork
+		createData.DataCentreCustomName = d.Get("data_centre_custom_name").(string)
 	} else {
 		createData.DataCentres = dataCentres
 	}
@@ -1291,6 +1301,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		}
 		d.Set("data_centre", cluster.DataCentres[0].Name)
 		d.Set("cluster_network", cluster.DataCentres[0].CdcNetwork)
+		d.Set("data_centre_custom_name", cluster.DataCentres[0].CdcName)
 
 		if err := deleteAttributesConflict(resourceCluster().Schema, d, "data_centre"); err != nil {
 			return err
