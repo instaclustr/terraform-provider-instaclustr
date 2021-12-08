@@ -75,8 +75,6 @@ func resourceCluster() *schema.Resource {
 				DiffSuppressFunc: dcCustomNameDiffSuppressFunc,
 			},
 
-			// TODO Niluka maybe add something here? Resource schema
-
 			"data_centres": {
 				Type:          schema.TypeSet,
 				Optional:      true,
