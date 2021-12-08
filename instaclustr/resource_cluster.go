@@ -72,6 +72,7 @@ func resourceCluster() *schema.Resource {
 				Optional:      true,
 				ConflictsWith: []string{"data_centres"},
 				ForceNew:      true,
+				DiffSuppressFunc: dcCustomNameDiffSuppressFunc,
 			},
 
 			// TODO Niluka maybe add something here? Resource schema
@@ -593,6 +594,12 @@ func resourceCluster() *schema.Resource {
 		},
 	}
 }
+
+//dcCustomNameDiffSuppressFunc is used to suppress the diff if a custom DC name is not provided in the resource
+func dcCustomNameDiffSuppressFunc(k, old, new string, d *schema.ResourceData) bool {
+	return new == ""
+}
+
 func resourceClusterCustomizeDiff(diff *schema.ResourceDiff, i interface{}) error {
 
 	if _, isBundle := diff.GetOk("bundle"); isBundle {
