@@ -21,7 +21,6 @@ func AccClusterResourceTestSteps(t *testing.T, testAccProviders map[string]terra
 
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
 	updatedConfig := strings.Replace(oriConfig, "testcluster", "newcluster", 1)
-	oldToNewVersionConfig := strings.Replace(updatedConfig, `version = "apache-cassandra-3.11.8.ic2"`, `version = "3.11.8"`, 1)
 	newToOldVersionConfig := strings.Replace(updatedConfig, `version = "3.11.8"`, `version = "apache-cassandra-3.11.8.ic2"`, 1)
 
 	resource.Test(t, resource.TestCase{
@@ -50,7 +49,7 @@ func AccClusterResourceTestSteps(t *testing.T, testAccProviders map[string]terra
 				PlanOnly: true,
 			},
 			{
-				Config: newToOldVersionConfig,
+				Config: updatedConfig,
 				Destroy: true,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckResourceDeleted("valid", hostname, username, apiKey),
@@ -64,7 +63,7 @@ func AccClusterResourceTestSteps(t *testing.T, testAccProviders map[string]terra
 				),
 			},
 			{
-				Config: oldToNewVersionConfig,
+				Config: updatedConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckResourceValid("valid"),
 				),
