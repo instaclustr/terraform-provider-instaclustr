@@ -26,6 +26,7 @@ type BundleOptions struct {
 	DedicatedMasterNodes          *bool  `json:"dedicatedMasterNodes,omitempty" mapstructure:"dedicated_master_nodes,omitempty"`
 	MasterNodeSize                string `json:"masterNodeSize,omitempty" mapstructure:"master_node_size,omitempty"`
 	KibanaNodeSize                string `json:"kibanaNodeSize,omitempty" mapstructure:"kibana_node_size,omitempty"`
+	OpenSearchDashboardsNodeSize  string `json:"openSearchDashboardsNodeSize,omitempty" mapstructure:"opensearch_dashboards_node_size,omitempty"`
 	DataNodeSize                  string `json:"dataNodeSize,omitempty" mapstructure:"data_node_size,omitempty"`
 	SecurityPlugin                *bool  `json:"securityPlugin,omitempty" mapstructure:"security_plugin,omitempty"`
 	UsePrivateBroadcastRpcAddress *bool  `json:"usePrivateBroadcastRPCAddress,omitempty" mapstructure:"use_private_broadcast_rpc_address,omitempty"`
@@ -57,6 +58,7 @@ type BundleOptions struct {
 	DedicatedZookeeper            *bool  `json:"dedicatedZookeeper,omitempty" mapstructure:"dedicated_zookeeper,omitempty"`
 	ZookeeperNodeSize             string `json:"zookeeperNodeSize,omitempty" mapstructure:"zookeeper_node_size,omitempty"`
 	ZookeeperNodeCount            int    `json:"zookeeperNodeCount,omitempty" mapstructure:"zookeeper_node_count,omitempty"`
+	PostgresqlNodeCount           int    `json:"postgresqlNodeCount,omitempty" mapstructure:"postgresql_node_count,omitempty"`
 }
 
 type ClusterProvider struct {
@@ -165,27 +167,24 @@ type Node struct {
 }
 
 type CreateVPCPeeringRequest struct {
-	PeerVpcID     string `json:"peerVpcId"`
-	PeerAccountID string `json:"peerAccountId"`
-	PeerSubnet    string `json:"peerSubnet"`
-	PeerRegion    string `json:"peerRegion,omitempty"`
+	PeerVpcID     string        `json:"peerVpcId"`
+	PeerAccountID string        `json:"peerAccountId"`
+	PeerSubnet    string        `json:"peerSubnet"`
+	PeerSubnets   []interface{} `json:"peerSubnets"`
+	PeerRegion    string        `json:"peerRegion,omitempty"`
 }
 
 type VPCPeering struct {
-	ID                 string `json:"id"`
-	AWSVpcConnectionID string `json:"aws_vpc_connection_id"`
-	ClusterDataCentre  string `json:"clusterDataCentre"`
-	VpcID              string `json:"vpcId"`
-	PeerVpcID          string `json:"peerVpcId"`
-	PeerAccountID      string `json:"peerAccountId"`
-	PeerSubnet         string `json:"peerSubnet"`
-	StatusCode         string `json:"statusCode"`
-	PeerRegion         string `json:"peerRegion"`
-}
-
-type VPCPeeringSubnet struct {
-	Network      string `json:"network"`
-	PrefixLength string `json:"prefixLength"`
+	ID                 string        `json:"id"`
+	AWSVpcConnectionID string        `json:"aws_vpc_connection_id"`
+	ClusterDataCentre  string        `json:"clusterDataCentre"`
+	VpcID              string        `json:"vpcId"`
+	PeerVpcID          string        `json:"peerVpcId"`
+	PeerAccountID      string        `json:"peerAccountId"`
+	PeerSubnet         string        `json:"peerSubnet"`
+	PeerSubnets        []interface{} `json:"peerSubnets"`
+	StatusCode         string        `json:"statusCode"`
+	PeerRegion         string        `json:"peerRegion"`
 }
 
 type ResizeClusterRequest struct {
@@ -205,31 +204,6 @@ type EncryptionKey struct {
 type UpdateBundleUserRequest struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
-}
-
-type CreateKafkaUserRequest struct {
-	Username           string `json:"username"`
-	Password           string `json:"password"`
-	InitialPermissions string `json:"initial-permissions"`
-	Options KafkaUserCreateOptions `json:"options,omitempty"`
-}
-
-type KafkaUserCreateOptions struct {
-	AuthenticationMechanism string `json:"sasl-scram-mechanism,omitempty" mapstructure:"sasl-scram-mechanism"`
-}
-
-type UpdateKafkaUserRequest struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-	Options	KafkaUserResetPasswordOptions `json:"options,omitempty"`
-}
-
-type KafkaUserResetPasswordOptions struct {
-	AuthenticationMechanism string `json:"sasl-scram-mechanism,omitempty" mapstructure:"sasl-scram-mechanism"`
-}
-
-type DeleteKafkaUserRequest struct {
-	Username string `json:"username"`
 }
 
 type BundleConfig struct {

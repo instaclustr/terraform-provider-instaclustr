@@ -1,4 +1,4 @@
-// This is part of testing "kafka user" suite, 4 of 4
+// This is part of testing "kafka user" suite, 4 of 5
 provider "instaclustr" {
   username = "%s"
   api_key = "%s"
@@ -7,7 +7,7 @@ provider "instaclustr" {
 
 resource "instaclustr_cluster" "kafka_cluster" {
   cluster_name = "example_kafka_tf_test"
-  node_size = "t3.medium-80-gp2"
+  node_size = "%s"
   data_centre = "US_WEST_2"
   sla_tier = "NON_PRODUCTION"
   cluster_network = "192.168.0.0/18"
@@ -22,7 +22,7 @@ resource "instaclustr_cluster" "kafka_cluster" {
 
   bundle {
     bundle = "KAFKA"
-    version = "apache-kafka:2.5.1"
+    version = "%s"
     options = {
       auto_create_topics = true
       client_encryption = false

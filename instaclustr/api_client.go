@@ -325,56 +325,6 @@ func (c *APIClient) DeleteEncryptionKey(keyID string) error {
 	return nil
 }
 
-func (c *APIClient) ReadKafkaUserList(clusterID string) ([]string, error) {
-	url := fmt.Sprintf("%s/provisioning/v1/%s/kafka/users", c.apiServerHostname, clusterID)
-	resp, err := c.MakeRequest(url, "GET", nil)
-	if err != nil {
-		return nil, err
-	}
-	bodyText, err := ioutil.ReadAll(resp.Body)
-	if resp.StatusCode != 200 {
-		return nil, errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
-	}
-
-	usernameList := []string{}
-	err = json.Unmarshal(bodyText, &usernameList)
-	if err != nil {
-		return nil, err
-	}
-
-	return usernameList, nil
-}
-
-func (c *APIClient) CreateKafkaUser(clusterID string, data []byte) error {
-	url := fmt.Sprintf("%s/provisioning/v1/%s/kafka/users", c.apiServerHostname, clusterID)
-	resp, err := c.MakeRequest(url, "POST", data)
-	if err != nil {
-		return err
-	}
-	bodyText, err := ioutil.ReadAll(resp.Body)
-	if resp.StatusCode != 201 {
-		return errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
-	}
-	return nil
-}
-
-func (c *APIClient) UpdateKafkaUser(clusterID string, data []byte) error {
-	return c.UpdateBundleUser(clusterID, "kafka", data)
-}
-
-func (c *APIClient) DeleteKafkaUser(clusterID string, data []byte) error {
-	url := fmt.Sprintf("%s/provisioning/v1/%s/kafka/users", c.apiServerHostname, clusterID)
-	resp, err := c.MakeRequest(url, "DELETE", data)
-	if err != nil {
-		return err
-	}
-	bodyText, err := ioutil.ReadAll(resp.Body)
-	if resp.StatusCode != 200 {
-		return errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
-	}
-	return nil
-}
-
 func (c *APIClient) UpdateBundleUser(clusterID string, bundle string, data []byte) error {
 	url := fmt.Sprintf("%s/provisioning/v1/%s/%s/users/reset-password", c.apiServerHostname, clusterID, bundle)
 	resp, err := c.MakeRequest(url, "POST", data)

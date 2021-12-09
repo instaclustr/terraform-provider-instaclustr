@@ -2,16 +2,16 @@ package test
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
-	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 	"io/ioutil"
 	"os"
 	"regexp"
-	"strconv"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/hashicorp/terraform/helper/resource"
+	"github.com/hashicorp/terraform/terraform"
+	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 )
 
 func AccClusterResourceTestSteps(t *testing.T, testAccProviders map[string]terraform.ResourceProvider, validConfig []byte) {
@@ -317,6 +317,51 @@ func TestAccElasticsearchClusterResize(t *testing.T) {
 	})
 }
 
+func TestAccOpenSearchClusterResize(t *testing.T) {
+	testAccProviders := map[string]terraform.ResourceProvider{
+		"instaclustr": instaclustr.Provider(),
+	}
+	validConfig, _ := ioutil.ReadFile("data/valid_with_resizable_opensearch_cluster.tf")
+	username := os.Getenv("IC_USERNAME")
+	apiKey := os.Getenv("IC_API_KEY")
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+	resourceName := "resizable_cluster"
+	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
+	validResizeConfig := strings.Replace(oriConfig, `opensearch_dashboards_node_size = "t3.small-v2",`, `opensearch_dashboards_node_size = "m5xl-400-v2",`, 1)
+	invalidResizeConfig := strings.Replace(oriConfig, `opensearch_dashboards_node_size = "t3.small-v2",`, `opensearch_dashboards_node_size = "t3.small",`, 1)
+
+	resource.Test(t, resource.TestCase{
+		Providers:    testAccProviders,
+		CheckDestroy: testCheckResourceDeleted(resourceName, hostname, username, apiKey),
+		Steps: []resource.TestStep{
+			{
+				Config: oriConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid(resourceName),
+					testCheckResourceCreated(resourceName, hostname, username, apiKey),
+					checkClusterRunning(resourceName, hostname, username, apiKey),
+					testCheckContactIPCorrect(resourceName, hostname, username, apiKey, 3, 3),
+				),
+			},
+			{
+				PreConfig: func() {
+					fmt.Println("Sleep for 1 minutes to wait for OpenSearch cluster to be ready for resize.")
+					time.Sleep(1 * time.Minute)
+				},
+				Config:      invalidResizeConfig,
+				ExpectError: regexp.MustCompile("t3.small"),
+			},
+			{
+				Config: validResizeConfig,
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_cluster", "cluster_name", "tf-resizable-test"),
+				),
+				ExpectNonEmptyPlan: true,
+			},
+		},
+	})
+}
+
 func testCheckResourceValid(resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		resourceState := s.Modules[0].Resources["instaclustr_cluster."+resourceName]
@@ -344,24 +389,6 @@ func testCheckResourceCreated(resourceName, hostname, username, apiKey string) r
 		}
 		if cluster.ID != id {
 			return fmt.Errorf("Cluster expected %s but got %s", id, cluster.ID)
-		}
-		return nil
-	}
-}
-
-func testCheckContactIPCorrect(resourceName, hostname, username, apiKey string, expectedPrivateContactPointLength int, expectedPublicContactPointLength int) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		resourceState := s.Modules[0].Resources["instaclustr_cluster."+resourceName]
-
-		privateContactPoints, _ := strconv.Atoi(resourceState.Primary.Attributes["private_contact_point.#"])
-		publicContactPoints, _ := strconv.Atoi(resourceState.Primary.Attributes["public_contact_point.#"])
-
-		if privateContactPoints != expectedPrivateContactPointLength {
-			return fmt.Errorf("[Error] Expected %v private contact points but found %v", expectedPrivateContactPointLength, privateContactPoints)
-		}
-
-		if publicContactPoints != expectedPublicContactPointLength {
-			return fmt.Errorf("[Error] Expected %v public contact points but found %v", expectedPublicContactPointLength, publicContactPoints)
 		}
 		return nil
 	}
@@ -401,25 +428,25 @@ func testCheckClusterResize(resourceName, hostname, username, apiKey, expectedNo
 	}
 }
 
-func TestValidRedisClusterCreate(t *testing.T) {
+func TestValidPostgresqlClusterCreate(t *testing.T) {
 	testAccProvider := instaclustr.Provider()
 	testAccProviders := map[string]terraform.ResourceProvider{
 		"instaclustr": testAccProvider,
 	}
-	validConfig, _ := ioutil.ReadFile("data/valid_redis_cluster_create.tf")
+	validConfig, _ := ioutil.ReadFile("data/valid_postgresql_cluster_create.tf")
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
-		CheckDestroy: testCheckResourceDeleted("validRedis", hostname, username, apiKey),
+		CheckDestroy: testCheckResourceDeleted("validPostgresql", hostname, username, apiKey),
 		Steps: []resource.TestStep{
 			{
 				Config: oriConfig,
 				Check: resource.ComposeTestCheckFunc(
-					testCheckResourceValid("validRedis"),
-					testCheckResourceCreated("validRedis", hostname, username, apiKey),
+					testCheckResourceValid("validPostgresql"),
+					testCheckResourceCreated("validPostgresql", hostname, username, apiKey),
 				),
 			},
 		},
@@ -451,12 +478,57 @@ func TestValidElasticsearchClusterCreate(t *testing.T) {
 	})
 }
 
+func TestValidOpenSearchClusterCreate(t *testing.T) {
+	testAccProvider := instaclustr.Provider()
+	testAccProviders := map[string]terraform.ResourceProvider{
+		"instaclustr": testAccProvider,
+	}
+	validConfig, _ := ioutil.ReadFile("data/valid_opensearch_cluster_create.tf")
+	username := os.Getenv("IC_USERNAME")
+	apiKey := os.Getenv("IC_API_KEY")
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
+	resource.Test(t, resource.TestCase{
+		Providers:    testAccProviders,
+		CheckDestroy: testCheckResourceDeleted("validOpenSearch", hostname, username, apiKey),
+		Steps: []resource.TestStep{
+			{
+				Config: oriConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid("validOpenSearch"),
+					testCheckResourceCreated("validOpenSearch", hostname, username, apiKey),
+				),
+			},
+		},
+	})
+}
+
 func TestInvalidElasticsearchClusterCreate(t *testing.T) {
 	testAccProvider := instaclustr.Provider()
 	testAccProviders := map[string]terraform.ResourceProvider{
 		"instaclustr": testAccProvider,
 	}
 	invalidConfig, _ := ioutil.ReadFile("data/invalid_elasticsearch_cluster_create.tf")
+	username := os.Getenv("IC_USERNAME")
+	apiKey := os.Getenv("IC_API_KEY")
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+	resource.Test(t, resource.TestCase{
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config:      fmt.Sprintf(string(invalidConfig), username, apiKey, hostname),
+				ExpectError: regexp.MustCompile("When 'dedicated_master_nodes' is not true , data_node_size can be either null or equal to master_node_size."),
+			},
+		},
+	})
+}
+
+func TestInvalidOpenSearchClusterCreate(t *testing.T) {
+	testAccProvider := instaclustr.Provider()
+	testAccProviders := map[string]terraform.ResourceProvider{
+		"instaclustr": testAccProvider,
+	}
+	invalidConfig, _ := ioutil.ReadFile("data/invalid_opensearch_cluster_create.tf")
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
@@ -520,6 +592,46 @@ func TestAccClusterCredentials(t *testing.T) {
 	})
 }
 
+func TestCheckSingleDCRefreshToMultiDC(t *testing.T) {
+	testAccProvider := instaclustr.Provider()
+	testAccProviders := map[string]terraform.ResourceProvider{
+		"instaclustr": testAccProvider,
+	}
+
+	username := os.Getenv("IC_USERNAME")
+	apiKey := os.Getenv("IC_API_KEY")
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+
+	validSingleDCConfig, _ := ioutil.ReadFile("data/valid_single_dc_cluster.tf")
+	singleDCConfig := fmt.Sprintf(string(validSingleDCConfig), username, apiKey, hostname)
+
+	validMultiDCConfig, _ := ioutil.ReadFile("data/valid_multi_dc_cluster.tf")
+	multiDCConfig := fmt.Sprintf(string(validMultiDCConfig), username, apiKey, hostname)
+
+	attributesConflictWithDataCentres := []string{"data_centre",
+		"node_size", "rack_allocation", "network", "cluster_provider", "bundle"}
+
+	resource.Test(t, resource.TestCase{
+		Providers:    testAccProviders,
+		CheckDestroy: testCheckResourceDeleted("dc_test_cluster", hostname, username, apiKey),
+		Steps: []resource.TestStep{
+			{
+				Config:             singleDCConfig,
+				ExpectNonEmptyPlan: true,
+				Check: resource.ComposeTestCheckFunc(
+					addDCtoCluster("dc_test_cluster", hostname, username, apiKey, "data/valid_add_dc.json"),
+				),
+			},
+			{
+				Config: multiDCConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceStateAttributesDeleted("dc_test_cluster", attributesConflictWithDataCentres...),
+				),
+			},
+		},
+	})
+}
+
 func testCheckClusterCredentials(hostname, username, apiKey string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		resourceState := s.Modules[0].Resources["data.instaclustr_cluster_credentials.cluster_credentials"]
@@ -545,6 +657,26 @@ func testCheckClusterCredentials(hostname, username, apiKey string) resource.Tes
 			return fmt.Errorf("Client encryption is disabled")
 		}
 
+		return nil
+	}
+}
+
+func testCheckResourceStateAttributesDeleted(resourceName string, attributeNames ...string) resource.TestCheckFunc {
+	return func(s *terraform.State) error {
+		resourceState := s.Modules[0].Resources["instaclustr_cluster."+resourceName]
+		attributes := resourceState.Primary.Attributes
+		for _, givenAttribute := range attributeNames {
+			exist := false
+			for _, attribute := range attributes {
+				if attribute == givenAttribute {
+					exist = true
+					break
+				}
+			}
+			if exist {
+				return fmt.Errorf("Attribute %s exists", givenAttribute)
+			}
+		}
 		return nil
 	}
 }

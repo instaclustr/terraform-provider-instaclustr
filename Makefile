@@ -1,9 +1,9 @@
 
-BIN_NAME="terraform-provider-instaclustr"
+BIN_NAME=terraform-provider-instaclustr
 
 
 # for VERSION, don't add prefix "v", e.g., use "1.9.8" instead of "v1.9.8" as it could break circleCI stuff
-VERSION=1.11.1
+VERSION=1.14.7
 INSTALL_FOLDER=$(HOME)/.terraform.d/plugins/terraform.instaclustr.com/instaclustr/instaclustr/$(VERSION)/darwin_amd64
 
 
@@ -14,8 +14,8 @@ release_version:
 all: build
 
 clean:
-	rm $(BIN_NAME)_v$(VERSION)
-	rm -fr vendor
+	-rm -rf bin/$(BIN_NAME)_v$(VERSION)
+	-rm -rf $(INSTALL_FOLDER)
 
 build:
 	go build $(FLAGS) -o bin/$(BIN_NAME)_v$(VERSION) main.go

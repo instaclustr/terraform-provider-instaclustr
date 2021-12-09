@@ -3,7 +3,6 @@ package instaclustr
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/hashicorp/terraform/helper/validation"
 	"log"
 	"reflect"
 	"regexp"
@@ -11,6 +10,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/hashicorp/terraform/helper/validation"
 
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -34,6 +35,8 @@ func resourceCluster() *schema.Resource {
 		Importer: &schema.ResourceImporter{
 			State: resourceClusterStateImport,
 		},
+
+		CustomizeDiff: resourceClusterCustomizeDiff,
 
 		Timeouts: &schema.ResourceTimeout{
 			Create: schema.DefaultTimeout(40 * time.Minute),
@@ -346,8 +349,19 @@ func resourceCluster() *schema.Resource {
 							ForceNew: true,
 						},
 						"options": {
+							// This type is not correct. TypeMaps cannot have complex structures defined in the same way that TypeLists and TypeSets can
+							// See https://www.terraform.io/docs/extend/schemas/schema-types.html
+							// Essentially everything in the Elem property here is being ignored, terraform assumes the element type is string
+							// This should have been implemented as a TypeSet. Unfortunately changing it now would change the syntax
+							// required in the terraform file and so would be a breaking change for existing configurations.
+							// As such, changing this will wait until a major version change.
 							Type:     schema.TypeMap,
 							Optional: true,
+							DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
+								// Cover up for the API that has optional arguments that get given default values
+								// and returns the defaults in subsequent calls
+								return old == "false" && new == ""
+							},
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"auth_n_authz": {
@@ -525,6 +539,16 @@ func resourceCluster() *schema.Resource {
 										Optional: true,
 										ForceNew: true,
 									},
+									"opensearch_dashboards_node_size": {
+										Type:     schema.TypeString,
+										Optional: true,
+										ForceNew: true,
+									},
+									"postgresql_node_count": {
+										Type:     schema.TypeInt,
+										Optional: true,
+										ForceNew: true,
+									},
 								},
 							},
 						},
@@ -560,17 +584,39 @@ func resourceCluster() *schema.Resource {
 		},
 	}
 }
+func resourceClusterCustomizeDiff(diff *schema.ResourceDiff, i interface{}) error {
+
+	if _, isBundle := diff.GetOk("bundle"); isBundle {
+		bundle := diff.Get("bundle").([]interface{})
+		bundleMap := bundle[0].(map[string]interface{})
+
+		// Mainly check Single DC Redis Cluster
+		if bundleMap["bundle"] == "REDIS" {
+			if _, isRackAllocationSet := diff.GetOk("rack_allocation"); isRackAllocationSet {
+				return fmt.Errorf("[Error] 'rack_allocation' is not supported in REDIS")
+			}
+			// Remove this logic once INS-13970 is implemented
+			if diff.Id() != "" && (diff.HasChange("bundle.0.options")) {
+				err := diff.ForceNew("bundle.0.options")
+				if err != nil {
+					return err
+				}
+			}
+		}
+	}
+	return nil
+}
 
 func getNodeSize(d resourceDataInterface, bundles []Bundle) (string, error) {
 	for i, bundle := range bundles {
-		if bundle.Bundle == "ELASTICSEARCH" {
+		if bundle.Bundle == "ELASTICSEARCH" || bundle.Bundle == "OPENSEARCH" {
 			if len(bundle.Options.MasterNodeSize) == 0 {
 				return "", fmt.Errorf("[ERROR] 'master_node_size' is required in the bundle option.")
 			}
 			dedicatedMaster := bundle.Options.DedicatedMasterNodes != nil && *bundle.Options.DedicatedMasterNodes
 			if dedicatedMaster {
 				if len(bundle.Options.DataNodeSize) == 0 {
-					return "", fmt.Errorf("[ERROR] Elasticsearch dedicated master is enabled, 'data_node_size' is required in the bundle option.")
+					return "", fmt.Errorf("[ERROR] dedicated master is enabled, 'data_node_size' is required in the bundle option.")
 				}
 				return bundle.Options.DataNodeSize, nil
 			} else {
@@ -667,7 +713,6 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 
 		createData.RackAllocation = &rackAllocation
 	}
-
 	// for multi-DC cluster
 	if len(dataCentres) > 1 {
 		createData.RackAllocation = createData.DataCentres[0].RackAllocation
@@ -686,6 +731,9 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 	if err != nil {
 		return formatCreateErrMsg(err)
 	}
+
+	log.Printf("[DEBUG] Instaclustr REST API request: %s", jsonStrCreate)
+
 	d.SetId(id)
 	d.Set("cluster_id", id)
 	log.Printf("[INFO] Cluster %s has been created.", id)
@@ -743,6 +791,8 @@ func resourceClusterUpdate(d *schema.ResourceData, meta interface{}) error {
 
 	client := meta.(*Config).Client
 	clusterID := d.Get("cluster_id").(string)
+
+	log.Printf("[INFO] Updating cluster %s.", clusterID)
 
 	kafkaSchemaRegistryUserUpdate := d.HasChange("kafka_schema_registry_user_password")
 	kafkaRestProxyUserUpdate := d.HasChange("kafka_rest_proxy_user_password")
@@ -849,12 +899,22 @@ func hasElasticsearchSizeChanges(bundleIndex int, d resourceDataInterface) bool 
 		len(getNewSizeOrEmpty(d, getBundleOptionKey(bundleIndex, "data_node_size"))) > 0
 }
 
+func hasOpenSearchSizeChanges(bundleIndex int, d resourceDataInterface) bool {
+	return len(getNewSizeOrEmpty(d, getBundleOptionKey(bundleIndex, "master_node_size"))) > 0 ||
+		len(getNewSizeOrEmpty(d, getBundleOptionKey(bundleIndex, "opensearch_dashboards_node_size"))) > 0 ||
+		len(getNewSizeOrEmpty(d, getBundleOptionKey(bundleIndex, "data_node_size"))) > 0
+}
+
 func hasKafkaSizeChanges(bundleIndex int, d resourceDataInterface) bool {
 	return len(getNewSizeOrEmpty(d, getBundleOptionKey(bundleIndex, "zookeeper_node_size"))) > 0 ||
 		len(getNewSizeOrEmpty(d, "node_size")) > 0
 }
 
 func hasCassandraSizeChanges(d resourceDataInterface) bool {
+	return len(getNewSizeOrEmpty(d, "node_size")) > 0
+}
+
+func hasRedisSizeChanges(d resourceDataInterface) bool {
 	return len(getNewSizeOrEmpty(d, "node_size")) > 0
 }
 
@@ -887,9 +947,21 @@ func doClusterResize(client APIClientInterface, clusterID string, d resourceData
 		} else {
 			return nil
 		}
+	case "OPENSEARCH":
+		if hasOpenSearchSizeChanges(bundleIndex, d) {
+			return doOpenSearchClusterResize(client, cluster, d, bundleIndex)
+		} else {
+			return nil
+		}
 	case "KAFKA":
 		if hasKafkaSizeChanges(bundleIndex, d) {
 			return doKafkaClusterResize(client, cluster, d, bundleIndex)
+		} else {
+			return nil
+		}
+	case "REDIS":
+		if hasRedisSizeChanges(d) {
+			return doRedisClusterResize(client, cluster, d, bundleIndex)
 		} else {
 			return nil
 		}
@@ -906,11 +978,11 @@ func getNewSizeOrEmpty(d resourceDataInterface, key string) string {
 	return after.(string)
 }
 
-func isElasticsearchSizeAllChange(kibanaSize, masterSize, dataSize string, kibana, dataNodes bool) (string, bool) {
+func isSearchSizeAllChange(dashboardSize, masterSize, dataSize string, dashboard, dataNodes bool) (string, bool) {
 	if len(masterSize) == 0 {
 		return "", false
 	}
-	if kibana && (len(kibanaSize) == 0 || kibanaSize != masterSize) {
+	if dashboard && (len(dashboardSize) == 0 || dashboardSize != masterSize) {
 		return "", false
 	}
 	if dataNodes && (len(dataSize) == 0 || dataSize != masterSize) {
@@ -950,6 +1022,37 @@ func getSingleChangedElasticsearchSizeAndPurpose(kibanaSize, masterSize, dataSiz
 	return nodeSize, nodePurpose, nil
 }
 
+func getSingleChangedOpenSearchSizeAndPurpose(openSearchDashboardsSize, masterSize, dataSize string, openSearchDashboards, dataNodes bool) (string, NodePurpose, error) {
+	changedCount := 0
+	var nodePurpose NodePurpose
+	var nodeSize string
+	if len(masterSize) > 0 {
+		changedCount += 1
+		nodePurpose = OPENSEARCH_MASTER
+		nodeSize = masterSize
+	}
+	if len(dataSize) > 0 {
+		if !dataNodes {
+			return "", "", fmt.Errorf("[ERROR] This cluster does not have data only nodes, so data_node_size is not used for this cluster. Please use master_node_size to change the size instead")
+		}
+		changedCount += 1
+		nodePurpose = OPENSEARCH_DATA_AND_INGEST
+		nodeSize = dataSize
+	}
+	if len(openSearchDashboardsSize) > 0 {
+		if !openSearchDashboards {
+			return "", "", fmt.Errorf("[ERROR] This cluster didn't enable OpenSearch Dashboards, opensearch_dashboards_node_size is not used for this cluster. Please use master_node_size to change the size instead")
+		}
+		changedCount += 1
+		nodePurpose = OPENSEARCH_DASHBOARDS
+		nodeSize = openSearchDashboardsSize
+	}
+	if changedCount > 1 {
+		return "", "", fmt.Errorf("[ERROR] Please change either a single node size at a time or change all nodes to the same size at once")
+	}
+	return nodeSize, nodePurpose, nil
+}
+
 func getBundleOptionKey(bundleIndex int, option string) string {
 	return fmt.Sprintf("bundle.%d.options.%s", bundleIndex, option)
 }
@@ -963,7 +1066,7 @@ func doElasticsearchClusterResize(client APIClientInterface, cluster *Cluster, d
 	kibanaNewSize := getNewSizeOrEmpty(d, getBundleOptionKey(bundleIndex, "kibana_node_size"))
 	dataNewSize := getNewSizeOrEmpty(d, getBundleOptionKey(bundleIndex, "data_node_size"))
 
-	if newSize, isAllChange := isElasticsearchSizeAllChange(kibanaNewSize, masterNewSize, dataNewSize, kibana, dataNodes); isAllChange {
+	if newSize, isAllChange := isSearchSizeAllChange(kibanaNewSize, masterNewSize, dataNewSize, kibana, dataNodes); isAllChange {
 		nodeSize = newSize
 		nodePurpose = nil
 	} else {
@@ -978,6 +1081,34 @@ func doElasticsearchClusterResize(client APIClientInterface, cluster *Cluster, d
 	err := client.ResizeCluster(cluster.ID, cluster.DataCentres[0].ID, nodeSize, nodePurpose)
 	if err != nil {
 		return fmt.Errorf("[Error] Error resizing cluster %s with error %s", cluster.ID, err)
+	}
+	return nil
+}
+
+func doOpenSearchClusterResize(client APIClientInterface, cluster *Cluster, d resourceDataInterface, bundleIndex int) error {
+	openSearchDashboards := len(cluster.BundleOption.OpenSearchDashboardsNodeSize) > 0
+	dataNodes := len(cluster.BundleOption.DataNodeSize) > 0
+	var nodePurpose *NodePurpose
+	var nodeSize string
+	masterNewSize := getNewSizeOrEmpty(d, getBundleOptionKey(bundleIndex, "master_node_size"))
+	openSearchDashboardsNewSize := getNewSizeOrEmpty(d, getBundleOptionKey(bundleIndex, "opensearch_dashboards_node_size"))
+	dataNewSize := getNewSizeOrEmpty(d, getBundleOptionKey(bundleIndex, "data_node_size"))
+
+	if newSize, isAllChange := isSearchSizeAllChange(openSearchDashboardsNewSize, masterNewSize, dataNewSize, openSearchDashboards, dataNodes); isAllChange {
+		nodeSize = newSize
+		nodePurpose = nil
+	} else {
+		newSize, purpose, err := getSingleChangedOpenSearchSizeAndPurpose(openSearchDashboardsNewSize, masterNewSize, dataNewSize, openSearchDashboards, dataNodes)
+		if err != nil {
+			return err
+		}
+		nodeSize = newSize
+		nodePurpose = &purpose
+	}
+	log.Printf("[INFO] Resizing OpenSearch cluster. nodePurpose: %s, newSize: %s", nodePurpose, nodeSize)
+	err := client.ResizeCluster(cluster.ID, cluster.DataCentres[0].ID, nodeSize, nodePurpose)
+	if err != nil {
+		return fmt.Errorf("[ERROR] Error resizing cluster %s with error %s", cluster.ID, err)
 	}
 	return nil
 }
@@ -1062,6 +1193,33 @@ func doLegacyCassandraClusterResize(client APIClientInterface, cluster *Cluster,
 	return nil
 }
 
+func getChangedRedisSizeAndPurpose(nodeSize string) (string, NodePurpose, error) {
+	if len(nodeSize) > 0 {
+		return nodeSize, REDIS, nil
+	}
+	return "", "", fmt.Errorf("[ERROR] Please change node size before resize")
+}
+
+func doRedisClusterResize(client APIClientInterface, cluster *Cluster, d resourceDataInterface, bundleIndex int) error {
+	var nodePurpose *NodePurpose
+	var nodeSize string
+	nodeNewSize := getNewSizeOrEmpty(d, "node_size")
+
+	newSize, purpose, err := getChangedRedisSizeAndPurpose(nodeNewSize)
+	if err != nil {
+		return err
+	}
+	nodeSize = newSize
+	nodePurpose = &purpose
+
+	log.Printf("[INFO] Resizing Redis cluster. nodePurpose: %s, newSize: %s", nodePurpose, nodeSize)
+	err = client.ResizeCluster(cluster.ID, cluster.DataCentres[0].ID, nodeSize, nodePurpose)
+	if err != nil {
+		return fmt.Errorf("[Error] Error resizing cluster %s with error %s", cluster.ID, err)
+	}
+	return nil
+}
+
 func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*Config).Client
 	id := d.Get("cluster_id").(string)
@@ -1095,7 +1253,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		 */
 		for _, node := range cluster.DataCentres[0].Nodes {
 			nodeSize = node.Size
-			if !strings.HasPrefix(nodeSize, "zk-") {
+			if !isDedicatedZookeeperNodeSize(nodeSize) {
 				break
 			}
 		}
@@ -1105,7 +1263,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		rackCount := 0
 		rackList := make([]string, 0)
 		for _, node := range cluster.DataCentres[0].Nodes {
-			if !strings.HasPrefix(node.Size, "zk-") {
+			if !isDedicatedZookeeperNodeSize(node.Size) {
 				nodeCount += 1
 			}
 			rackList = appendIfMissing(rackList, node.Rack)
@@ -1117,18 +1275,28 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		rackAllocation["number_of_racks"] = strconv.Itoa(rackCount)
 		rackAllocation["nodes_per_rack"] = strconv.Itoa(nodesPerRack)
 
+		if cluster.BundleType == "REDIS" {
+			rackAllocation = nil
+		}
+
 		if err := d.Set("rack_allocation", rackAllocation); err != nil {
 			return fmt.Errorf("[Error] Error reading cluster, rack allocation could not be derived: %s", err)
 		}
+
 		if len(cluster.DataCentres[0].ResizeTargetNodeSize) > 0 {
 			nodeSize = cluster.DataCentres[0].ResizeTargetNodeSize
 		}
-		if cluster.BundleType != "ELASTICSEARCH" {
+		if cluster.BundleType != "ELASTICSEARCH" && cluster.BundleType != "OPENSEARCH" {
 			d.Set("node_size", nodeSize)
 		}
 		d.Set("data_centre", cluster.DataCentres[0].Name)
 		d.Set("cluster_network", cluster.DataCentres[0].CdcNetwork)
+
+		if err := deleteAttributesConflict(resourceCluster().Schema, d, "data_centre"); err != nil {
+			return err
+		}
 	} else {
+
 		dataCentres, err := getDataCentresFromCluster(cluster)
 		if err != nil {
 			return err
@@ -1138,6 +1306,10 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 			if err := d.Set("data_centres", dataCentres); err != nil {
 				return fmt.Errorf("[Error] Error setting data centres into terraform state, data centres could not be derived: %s", err)
 			}
+		}
+
+		if err := deleteAttributesConflict(resourceCluster().Schema, d, "data_centres"); err != nil {
+			return err
 		}
 	}
 
@@ -1152,7 +1324,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	for _, dataCentre := range cluster.DataCentres {
 		for _, node := range dataCentre.Nodes {
 			if !stringInSlice(node.Rack, azList) {
-				if !strings.HasPrefix(node.Size, "zk-") {
+				if !isDedicatedZookeeperNodeSize(node.Size) {
 					azList = appendIfMissing(azList, node.Rack)
 					privateContactPointList = appendIfMissing(privateContactPointList, node.PrivateAddress)
 					publicContactPointList = appendIfMissing(publicContactPointList, node.PublicAddress)
@@ -1184,6 +1356,22 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	log.Printf("[INFO] Fetched cluster %s info from the remote server.", cluster.ID)
+	return nil
+}
+
+func deleteAttributesConflict(schema map[string]*schema.Schema, d *schema.ResourceData, conflictAttr string) error {
+	for key, value := range schema {
+		if _, exist := d.GetOk(key); exist {
+			for _, conflictsWith := range value.ConflictsWith {
+				if conflictsWith == conflictAttr {
+					if err := d.Set(key, value.Type.Zero()); err != nil {
+						return err
+					}
+					break
+				}
+			}
+		}
+	}
 	return nil
 }
 
@@ -1381,6 +1569,7 @@ func checkIfBundleRequiresRackAllocation(bundles []Bundle) bool {
 	var noRackAllocationBundles = []string{
 		"REDIS",
 		"APACHE_ZOOKEEPER",
+		"POSTGRESQL",
 	}
 
 	for i := 0; i < len(bundles); i++ {
@@ -1399,4 +1588,11 @@ func isClusterSingleDataCentre(cluster Cluster) bool {
 		return true
 	}
 	return false
+}
+
+// Currently, there is no API to tell if a node should be included as the main contact point
+// or calculated in the rack allocation scheme (that is not returned by the API).
+// Dedicated ZooKeeper nodes fall into this category and require a specific handling by the provider
+func isDedicatedZookeeperNodeSize(nodeSize string) bool {
+	return strings.HasPrefix(nodeSize, "zk-") || strings.HasPrefix(nodeSize, "KDZ-")
 }
