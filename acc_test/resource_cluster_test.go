@@ -161,6 +161,7 @@ func TestAccClusterResize(t *testing.T) {
 					testCheckResourceValid(resourceName),
 					testCheckResourceCreated(resourceName, hostname, username, apiKey),
 					checkClusterRunning(resourceName, hostname, username, apiKey),
+					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_cluster", "data_centre_custom_name", "AWS_VPC_US_EAST_1_name"),
 					testCheckContactIPCorrect(resourceName, hostname, username, apiKey, 3, 3),
 				),
 			},
@@ -619,6 +620,7 @@ func TestCheckSingleDCRefreshToMultiDC(t *testing.T) {
 				Config:             singleDCConfig,
 				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("instaclustr_cluster.dc_test_cluster", "data_centre_custom_name", "AWS_VPC_US_EAST_1_name"),
 					addDCtoCluster("dc_test_cluster", hostname, username, apiKey, "data/valid_add_dc.json"),
 				),
 			},
