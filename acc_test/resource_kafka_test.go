@@ -47,7 +47,7 @@ func TestKafkaResources(t *testing.T) {
 	newPassword := "charlie123standard!"
 	kafkaNodeSize := "KFK-DEV-t4g.medium-80"
 	zookeeperNodeSize := "KDZ-DEV-t4g.small-30"
-	kafkaVersion := "apache-kafka:2.7.1.ic1"
+	kafkaVersion := "apache-kafka:2.7.1.ic2"
 	topic1 := "test1"
 	topic2 := "test2"
 
