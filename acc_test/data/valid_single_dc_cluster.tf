@@ -12,6 +12,7 @@ resource "instaclustr_cluster" "dc_test_cluster" {
   cluster_network = "10.0.0.0/16"
   private_network_cluster = false
   pci_compliant_cluster = false
+  data_centre_custom_name = "AWS_VPC_US_EAST_1_name"
   cluster_provider = {
     name = "AWS_VPC"
   }

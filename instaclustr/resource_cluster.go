@@ -67,6 +67,14 @@ func resourceCluster() *schema.Resource {
 				ForceNew:      true,
 			},
 
+			"data_centre_custom_name": {
+				Type:          schema.TypeString,
+				Optional:      true,
+				ConflictsWith: []string{"data_centres"},
+				ForceNew:      true,
+				DiffSuppressFunc: dcCustomNameDiffSuppressFunc,
+			},
+
 			"data_centres": {
 				Type:          schema.TypeSet,
 				Optional:      true,
@@ -624,6 +632,11 @@ func resourceCluster() *schema.Resource {
 	}
 }
 
+//dcCustomNameDiffSuppressFunc is used to suppress the diff if a custom DC name is not provided in the resource
+func dcCustomNameDiffSuppressFunc(k, old, new string, d *schema.ResourceData) bool {
+	return new == ""
+}
+
 func resourceClusterCustomizeDiff(diff *schema.ResourceDiff, i interface{}) error {
 
 	if _, isBundle := diff.GetOk("bundle"); isBundle {
@@ -725,6 +738,7 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		clusterNetwork := d.Get("cluster_network").(string)
 		createData.DataCentre = dataCentre
 		createData.ClusterNetwork = clusterNetwork
+		createData.DataCentreCustomName = d.Get("data_centre_custom_name").(string)
 	} else {
 		createData.DataCentres = dataCentres
 	}
@@ -1332,6 +1346,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		}
 		d.Set("data_centre", cluster.DataCentres[0].Name)
 		d.Set("cluster_network", cluster.DataCentres[0].CdcNetwork)
+		d.Set("data_centre_custom_name", cluster.DataCentres[0].CdcName)
 
 		if err := deleteAttributesConflict(resourceCluster().Schema, d, "data_centre"); err != nil {
 			return err
