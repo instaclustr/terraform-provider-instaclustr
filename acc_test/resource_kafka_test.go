@@ -117,7 +117,7 @@ func TestKafkaResources(t *testing.T) {
 
 	// Kafka Connect tests
 	kcConfig := fmt.Sprintf(string(kcConfigBytes), username, apiKey, hostname, kafkaNodeSize, kafkaVersion, zookeeperNodeSize, kcVersion,
-		S3BucketName, awsAccessKey, awsSecretKey, kcVersion, azureStorageAccountName, azureStorageAccountKey, azureStorageContainerName)
+		S3BucketName, awsAccessKey, awsSecretKey, azureStorageAccountName, azureStorageAccountKey, kcVersion, azureStorageContainerName)
 
 	resource.Test(t, resource.TestCase{
 		Providers: testProviders,
