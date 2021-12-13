@@ -10,8 +10,11 @@ import (
 	"os"
 	"regexp"
 	"strconv"
+
 	"testing"
 )
+
+// we put the test here so that the Kafka cluster can be reused amongst bunch of other Kafka related tests
 
 func TestKafkaResources(t *testing.T) {
 	testProviders := map[string]terraform.ResourceProvider{
@@ -40,6 +43,9 @@ func TestKafkaResources(t *testing.T) {
 	configBytesAcl2, _ := ioutil.ReadFile("data/kafka_acl_create_acl_duplicate.tf")
 	configBytesAcl3, _ := ioutil.ReadFile("data/kafka_acl_list.tf")
 
+	// config bytes for Kafka Connect
+	kcConfigBytes, _ := ioutil.ReadFile("data/kafka_connect_create_cluster.tf")
+
 	kafkaUsername1 := "charlie1"
 	kafkaUsername2 := "charlie2"
 	kafkaUsername3 := "charlie3"
@@ -47,9 +53,16 @@ func TestKafkaResources(t *testing.T) {
 	newPassword := "charlie123standard!"
 	kafkaNodeSize := "KFK-DEV-t4g.medium-80"
 	zookeeperNodeSize := "KDZ-DEV-t4g.small-30"
-	kafkaVersion := "apache-kafka:2.7.1.ic1"
+	kafkaVersion := "apache-kafka:3.0.0.ic1"
+	kcVersion := "kafka-connect:3.0.0.ic1"
 	topic1 := "test1"
 	topic2 := "test2"
+	azureStorageAccountName := os.Getenv("IC_AZURE_STORAGE_ACCOUNT_NAME")
+	azureStorageAccountKey := os.Getenv("IC_AZURE_STORAGE_ACCOUNT_KEY")
+	azureStorageContainerName := os.Getenv("IC_AZURE_STORAGE_CONTAINER_NAME")
+	awsAccessKey := os.Getenv("IC_AWS_ACCESS_KEY")
+	awsSecretKey := os.Getenv("IC_AWS_SECRET_KEY")
+	S3BucketName := os.Getenv("IC_S3_BUCKET_NAME")
 
 	acl := instaclustr.KafkaAcl {
 		Principal:	"User:test",
@@ -78,7 +91,6 @@ func TestKafkaResources(t *testing.T) {
 		kafkaUsername1, oldPassword)
 	invalidKafkaUserCreateConfig := fmt.Sprintf(string(configBytes4), username, apiKey, hostname, kafkaNodeSize, kafkaVersion, zookeeperNodeSize,
 		kafkaUsername3, oldPassword)
-
 	
 	// Kafka topic management tests
 	createKafkaTopicConfig := fmt.Sprintf(string(configBytes6), username, apiKey, hostname, kafkaNodeSize, kafkaVersion, zookeeperNodeSize,
@@ -102,6 +114,10 @@ func TestKafkaResources(t *testing.T) {
 		acl.Principal, acl.Host, acl.ResourceType, acl.ResourceName, acl.Operation, acl.PermissionType, acl.PatternType,
 		acl.Principal, acl.Host, acl.ResourceType, acl.ResourceName, acl.Operation, acl.PermissionType, acl.PatternType)
 	createKafkaAclListConfig := fmt.Sprintf(string(configBytesAcl3), username, apiKey, hostname, kafkaNodeSize, kafkaVersion, zookeeperNodeSize)
+
+	// Kafka Connect tests
+	kcConfig := fmt.Sprintf(string(kcConfigBytes), username, apiKey, hostname, kafkaNodeSize, kafkaVersion, zookeeperNodeSize, kcVersion,
+		S3BucketName, awsAccessKey, awsSecretKey, kcVersion, azureStorageAccountName, azureStorageAccountKey, azureStorageContainerName)
 
 	resource.Test(t, resource.TestCase{
 		Providers: testProviders,
@@ -204,6 +220,16 @@ func TestKafkaResources(t *testing.T) {
 				Config: createClusterConfig,
 				Check: resource.ComposeTestCheckFunc(checkKafkaTopicDeleted(topic1, hostname, username, apiKey),
 					checkKafkaTopicDeleted(topic2, hostname, username, apiKey)),
+			},
+			// Kafka Connect test
+			{
+				Config: kcConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValidKafka("instaclustr_cluster.validKCAws"),
+					testCheckResourceValidKafka("instaclustr_cluster.validKCAzure"),
+					checkClusterRunningWithDelay("validKCAws", hostname, username, apiKey, 0),
+					checkClusterRunningWithDelay("validKCAzure", hostname, username, apiKey, 0),
+				),
 			},
 		},
 	})
