@@ -717,6 +717,39 @@ func TestGCPCreateVpcPeeringRequest(t *testing.T) {
 	}
 }
 
+func TestGCPReadVpcPeeringRequest(t *testing.T) {
+	resourceSchema := map[string]*schema.Schema{
+		"name": {
+			Type: schema.TypeString,
+		},
+		"peer_vpc_network_name": {
+			Type: schema.TypeString,
+		},
+		"peer_project_id": {
+			Type: schema.TypeString,
+		},
+		"peer_subnets": {
+			Type: schema.TypeSet,
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
+			},
+		},
+	}
+
+	peerSubnets := schema.NewSet(schema.HashString, []interface{}{"10.20.0.0/16", "10.21.0.0/16"})
+	resourceDataMap := map[string]interface{}{
+		"name":                  "Kaka",
+		"peer_vpc_network_name": "my-vpc1",
+		"peer_project_id":       "instaclustr-dev",
+		"peer_subnets":          peerSubnets.List(),
+	}
+	resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, resourceDataMap)
+
+	if _, err := GCPcreateVpcPeeringRequest(resourceLocalData); err != nil {
+		t.Fatalf("Expected nil error but got %v", err)
+	}
+}
+
 func TestCreateVpcPeeringRequestLegacy(t *testing.T) {
 	resourceSchema := map[string]*schema.Schema{
 		"peer_vpc_id": {

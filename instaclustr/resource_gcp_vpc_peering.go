@@ -151,10 +151,12 @@ func GCPresourceVpcPeeringRead(d *schema.ResourceData, meta interface{}) error {
 
 	log.Printf("[INFO] Fetched VPC peering %s info from the remote server.", vpcPeering.ID)
 	return nil
+
 }
 
-func resourceGCPVpcPeeringUpdate(d *schema.ResourceData, meta interface{}) error {
+func resourceGCPVpcPeeringUpdate(d *schema.ResourceData) error {
 	return fmt.Errorf("[Error] The VPC peering connection doesn't support update")
+
 }
 
 func GCPresourceVpcPeeringDelete(d *schema.ResourceData, meta interface{}) error {
