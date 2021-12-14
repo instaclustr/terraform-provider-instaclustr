@@ -25,10 +25,6 @@ func dataSourceClustersList() *schema.Resource {
 							Type:     schema.TypeString,
 							Computed: true,
 						},
-						"cassandra_version": {
-							Type:     schema.TypeString,
-							Computed: true,
-						},
 						"node_count": {
 							Type:     schema.TypeInt,
 							Computed: true,
@@ -72,7 +68,6 @@ func dataSourceClustersListRead(d *schema.ResourceData, meta interface{}) error 
 		cluster := make(map[string]interface{})
 		cluster["cluster_id"] = c.ID
 		cluster["cluster_name"] = c.Name
-		cluster["cassandra_version"] = c.CassandraVersion
 		cluster["node_count"] = c.NodeCount
 		cluster["running_node_count"] = c.RunningNodeCount
 		cluster["derived_status"] = c.DerivedStatus

@@ -126,7 +126,6 @@ type Cluster struct {
 type ClusterListItem struct {
 	ID               string `json:"id"`
 	Name             string `json:"name"`
-	CassandraVersion string `json:"cassandraVersion,omitempty"`
 	NodeCount        int    `json:"nodeCount,omitempty"`
 	RunningNodeCount int    `json:"runningNodeCount,omitempty"`
 	DerivedStatus    string `json:"derivedStatus,omitempty"`
