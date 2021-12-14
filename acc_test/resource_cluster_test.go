@@ -44,6 +44,36 @@ func AccClusterResourceTestSteps(t *testing.T, testAccProviders map[string]terra
 	})
 }
 
+func AccGCPClusterResourceTestSteps(t *testing.T, testAccProviders map[string]terraform.ResourceProvider, validConfig []byte) {
+	username := os.Getenv("IC_USERNAME")
+	apiKey := os.Getenv("IC_API_KEY")
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+
+	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
+	updatedConfig := strings.Replace(oriConfig, "testcluster", "newcluster", 1)
+
+	resource.Test(t, resource.TestCase{
+		Providers:    testAccProviders,
+		CheckDestroy: testCheckResourceDeleted("gcp_valid", hostname, username, apiKey),
+		Steps: []resource.TestStep{
+			{
+				Config: oriConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid("gcp_valid"),
+					testCheckResourceCreated("gcp_validgcp_valid", hostname, username, apiKey),
+				),
+			},
+			{
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid("gcp_valid"),
+					testCheckResourceCreated("gcp_valid", hostname, username, apiKey),
+				),
+			},
+		},
+	})
+}
+
 func TestAccClusterSingleDC(t *testing.T) {
 	testAccProvider := instaclustr.Provider()
 	testAccProviders := map[string]terraform.ResourceProvider{
