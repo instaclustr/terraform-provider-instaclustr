@@ -149,8 +149,6 @@ func TestAccClusterResize(t *testing.T) {
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
 	validResizeConfig := strings.Replace(oriConfig, "t3.medium-v2", "m5l-250-v2", 1)
 	invalidDownsizeConfig := strings.Replace(oriConfig, "t3.medium-v2", "t3.small-v2", 1)
-	//resizeable sizes are retired, hence not able to resize to one anymore
-	invalidResizeConfig := strings.Replace(oriConfig, "t3.medium-v2", "resizeable-large(r5-xl)-v2", 1)
 
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
@@ -179,10 +177,6 @@ func TestAccClusterResize(t *testing.T) {
 			},
 			{
 				Config:      invalidDownsizeConfig,
-				ExpectError: regexp.MustCompile("Error resizing cluster"),
-			},
-			{
-				Config:      invalidResizeConfig,
 				ExpectError: regexp.MustCompile("Error resizing cluster"),
 			},
 		},
