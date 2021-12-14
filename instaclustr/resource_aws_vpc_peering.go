@@ -216,3 +216,19 @@ func createVpcPeeringRequest(d *schema.ResourceData) (CreateVPCPeeringRequest, e
 	}
 	return result, nil
 }
+
+func createGCPVpcPeeringRequest(d *schema.ResourceData) (CreateVPCPeeringRequest, error) {
+	result := CreateVPCPeeringRequest{
+		PeerVpcID:     d.Get("peer_vpc_id").(string),
+		PeerAccountID: d.Get("peer_account_id").(string),
+		PeerRegion:    d.Get("peer_region").(string),
+	}
+	if _, isSet := d.GetOk("peer_subnet"); isSet {
+		result.PeerSubnet = d.Get("peer_subnet").(string)
+	} else if _, isSet := d.GetOk("peer_subnets"); isSet {
+		result.PeerSubnets = d.Get("peer_subnets").(*schema.Set).List()
+	} else {
+		return result, fmt.Errorf("[Error] Error creating peering request - at least one subnet must be specified")
+	}
+	return result, nil
+}
