@@ -42,7 +42,7 @@ resource "instaclustr_cluster" "example" {
 
   bundle {
     bundle = "APACHE_CASSANDRA"
-    version = "apache-cassandra-3.11.8.ic2"
+    version = "3.11.8"
     options = {
       auth_n_authz = true
     }
@@ -72,7 +72,7 @@ resource "instaclustr_cluster" "custom_vpc_example" {
 
   bundle {
     bundle = "APACHE_CASSANDRA"
-    version = "apache-cassandra-3.11.8.ic2"
+    version = "3.11.8"
   }
 }
 
@@ -120,7 +120,7 @@ resource "instaclustr_cluster" "example_kafka" {
 
   bundle {
     bundle = "KAFKA"
-    version = "apache-kafka:2.5.1"
+    version = "2.5.1"
     options = {
       auth_n_authz = true
       dedicated_zookeeper = true
@@ -131,12 +131,12 @@ resource "instaclustr_cluster" "example_kafka" {
 
   bundle {
     bundle = "KAFKA_REST_PROXY"
-    version = "kafka-rest-proxy:5.0.0"
+    version = "5.0.0"
   }
 
   bundle {
     bundle = "KAFKA_SCHEMA_REGISTRY"
-    version = "kafka-schema-registry:5.0.0"
+    version = "5.0.0"
   }
   kafka_rest_proxy_user_password = "RestProxyTest123test!" // new password for rest proxy bundle user
   kafka_schema_registry_user_password = "SchemaRegistryTest123test!" // new password for schema registry bundle user
@@ -160,7 +160,7 @@ resource "instaclustr_cluster" "example-elasticsearch" {
 
   bundle {
     bundle = "ELASTICSEARCH"
-    version = "opendistro-for-elasticsearch:1.11.0.ic1"
+    version = "1.11.0"
     options = {
       client_encryption = true,
       dedicated_master_nodes = true,
@@ -188,7 +188,7 @@ resource "instaclustr_cluster" "example-opensearch" {
 
   bundle {
     bundle = "OPENSEARCH"
-    version = "opensearch:1.0.0"
+    version = "1.0.0"
     options = {
       dedicated_master_nodes = true,
       master_node_size = "m5l-250-v2",
@@ -216,7 +216,7 @@ resource "instaclustr_cluster" "validKC" {
 
   bundle {
     bundle = "KAFKA_CONNECT"
-    version = "apache-kafka-connect:2.3.1"
+    version = "2.3.1"
     options = {
       target_kafka_cluster_id = "${instaclustr_cluster.example_kafka.id}"
       vpc_id = "SEPARATE_VPC"
@@ -259,7 +259,7 @@ resource "instaclustr_cluster" "private_cluster_example" {
   }
   bundle {
     bundle = "APACHE_CASSANDRA"
-    version = "apache-cassandra-3.11.8.ic2"
+    version = "3.11.8"
   }
 }
 
@@ -301,7 +301,7 @@ resource "instaclustr_cluster" "example-postgresql" {
 
   bundle {
     bundle = "POSTGRESQL"
-    version = "postgresql:13.4"
+    version = "13.4"
     options = {
       postgresql_node_count = 1,
       client_encryption = true

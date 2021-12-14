@@ -23,6 +23,7 @@ var (
 		"RUNNING":     true,
 		"PROVISIONED": true,
 	}
+	semanticVersioningPattern, _ = regexp.Compile("[0-9]+(\\.[0-9]+){1,2}")
 )
 
 func resourceCluster() *schema.Resource {
@@ -175,6 +176,7 @@ func resourceCluster() *schema.Resource {
 										Type:     schema.TypeString,
 										Required: true,
 										ForceNew: true,
+										DiffSuppressFunc: versionDiffSuppressFunc,
 									},
 									"options": {
 										Type:     schema.TypeMap,
@@ -355,6 +357,7 @@ func resourceCluster() *schema.Resource {
 							Type:     schema.TypeString,
 							Required: true,
 							ForceNew: true,
+							DiffSuppressFunc: versionDiffSuppressFunc,
 						},
 						"options": {
 							// This type is not correct. TypeMaps cannot have complex structures defined in the same way that TypeLists and TypeSets can
@@ -591,6 +594,19 @@ func resourceCluster() *schema.Resource {
 			},
 		},
 	}
+}
+
+func versionDiffSuppressFunc(k, old string, new string, d *schema.ResourceData) bool {
+	/*
+	 * Ensures that diffs are not shown for versions of different formats
+	 * containing the same sem-ver. For example, all of these are equivalent:
+	 * 3.11.8
+	 * apache-cassandra-3.11.8
+	 * apache-cassandra-3.11.8.ic2
+	*/
+	oldSemVer := semanticVersioningPattern.FindString(old)
+	newSemVer := semanticVersioningPattern.FindString(new)
+	return oldSemVer == newSemVer
 }
 
 //dcCustomNameDiffSuppressFunc is used to suppress the diff if a custom DC name is not provided in the resource

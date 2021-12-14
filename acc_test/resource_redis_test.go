@@ -27,8 +27,8 @@ func TestRedisResource(t *testing.T) {
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
 
-	validResizeConfig := strings.Replace(oriConfig, `node_size               = "t3.small-20-r"`, `node_size               = "t3.medium-80-r"`, 1)
-	invalidResizeConfig := strings.Replace(oriConfig, `node_size               = "t3.small-20-r"`, `node_size               = "t3.small"`, 1)
+	validResizeConfig := strings.Replace(oriConfig, `node_size = "t3.small-20-r"`, `node_size = "t3.medium-80-r"`, 1)
+	invalidResizeConfig := strings.Replace(oriConfig, `node_size = "t3.small-20-r"`, `node_size = "t3.small"`, 1)
 
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
