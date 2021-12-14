@@ -27,6 +27,7 @@ func Provider() *schema.Provider {
 			"instaclustr_encryption_key": resourceEncryptionKey(),
 			"instaclustr_firewall_rule":  resourceFirewallRule(),
 			"instaclustr_vpc_peering":    resourceVpcPeering(),
+			"instaclustr_GCPvpc_peering": resourceGCPVpcPeering(),
 			"instaclustr_kafka_user":     resourceKafkaUser(),
 			"instaclustr_kafka_topic":    resourceKafkaTopic(),
 			"instaclustr_kafka_acl":      resourceKafkaAcl(),

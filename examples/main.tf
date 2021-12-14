@@ -3,19 +3,19 @@
 terraform {
   required_providers {
     instaclustr = {
-      source = "instaclustr/instaclustr"
+      //source = "instaclustr/instaclustr"
       //Change the source as per below to work with a local development copy on terraform version >=13
-      //source = "terraform.instaclustr.com/instaclustr/instaclustr"
-      version = ">= 1.0.0"
+      source = "terraform.instaclustr.com/instaclustr/instaclustr"
+      version = ">= 1.14.8"
     }
   }
 }
 
 provider "instaclustr" {
-  username = "<Your instaclustr username here>"
-  api_key = "<Your provisioning API key here>"
+  username = ""
+  api_key = ""
+  
 }
-
 resource "instaclustr_encryption_key" "add_ebs_key" {
   alias = "testkey"
   arn = "<Your KMS key ARN here>"
@@ -48,6 +48,32 @@ resource "instaclustr_cluster" "example" {
     }
   }
 }
+resource "instaclustr_cluster" "gcp_example" {
+  cluster_name = "testclustergcp"
+  node_size = "n1-standard-2"
+  data_centre = "us-east1"
+  sla_tier = "NON_PRODUCTION"
+  cluster_network = "192.168.0.0/18"
+  private_network_cluster = false
+  cluster_provider = {
+    name = "GCP"
+  }
+  rack_allocation = {
+    number_of_racks = 3
+    nodes_per_rack = 1
+  }
+
+  bundle {
+    bundle = "APACHE_CASSANDRA"
+    version = "apache-cassandra-3.11.8.ic2"
+    options = {
+      auth_n_authz = true
+    }
+  }
+}
+
+
+
 
 data "instaclustr_cluster_credentials" "example_credentials" {
   cluster_id = "${instaclustr_cluster.example.id}"
@@ -96,12 +122,29 @@ resource "instaclustr_firewall_rule" "example_firewall_rule_sg" {
   ]
 }
 
+
+
+
+
 resource "instaclustr_vpc_peering" "example_vpc_peering" {
   cluster_id = "${instaclustr_cluster.example.id}"
   peer_vpc_id = "vpc-123456"
   peer_account_id = "1234567890"
   peer_subnets = toset(["10.0.0.0/20", "10.0.32.0/20"])
 }
+
+resource "instaclustr_GCPvpc_peering" "example_vpc_peering" {
+
+  name="name"
+  peer_vpc_network_name = "network name"
+  peer_project_id = "projectId"
+  peer_subnets = toset(["10.10.0.0/16", "10.11.0.0/16"])
+  cluster_id = "${instaclustr_cluster.gcp_example.id}"
+}
+
+
+
+
 
 // Updating the kafka-schema-registry and the kafka-rest-proxy bundle user passwords at the cluster creation time
 resource "instaclustr_cluster" "example_kafka" {
