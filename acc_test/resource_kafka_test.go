@@ -3,15 +3,16 @@ package test
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
-	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 	"io/ioutil"
 	"os"
 	"regexp"
 	"strconv"
 
 	"testing"
+
+	"github.com/hashicorp/terraform/helper/resource"
+	"github.com/hashicorp/terraform/terraform"
+	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 )
 
 // we put the test here so that the Kafka cluster can be reused amongst bunch of other Kafka related tests
