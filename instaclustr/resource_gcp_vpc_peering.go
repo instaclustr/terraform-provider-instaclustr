@@ -205,3 +205,17 @@ func GCPcreateVpcPeeringRequest(d *schema.ResourceData) (CreateGCPVPCPeeringRequ
 	}
 	return result, nil
 }
+
+func GCPcreateVpcPeeringDelete(d *schema.ResourceData) (CreateGCPVPCPeeringRequest, error) {
+	result := CreateGCPVPCPeeringRequest{
+		Name:               d.Get("name").(string),
+		PeerVPCNetworkName: d.Get("peer_vpc_network_name").(string),
+		PeerProjectID:      d.Get("peer_project_id").(string),
+	}
+	if _, isSet := d.GetOk("peer_subnets"); isSet {
+		result.PeerSubnets = d.Get("peer_subnets").(*schema.Set).List()
+	} else {
+		return result, fmt.Errorf("[Error] Error creating GCP VPC peering request - Please check the subnets atleast one subnet must be specified")
+	}
+	return result, nil
+}

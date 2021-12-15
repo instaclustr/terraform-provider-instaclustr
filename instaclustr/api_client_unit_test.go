@@ -39,8 +39,23 @@ func TestAPIClientDelete(t *testing.T) {
 }
 
 func TestAPIClientGCPRead(t *testing.T) {
-	id := "77b5a4e1-c422-4a78-b551-d8fa5c42ad95"
+	id := "77b5a4e1-c422-4a78-b889-d8fa5c42ad95"
 	vpcpeeringid := "3467890"
+	request := fmt.Sprintf("vpc-peering/%s/%s", id, vpcpeeringid)
+	client := SetupMock(t, request, fmt.Sprintf(`{"id":"%s","vpc_peering_id":"%s"}`, id, vpcpeeringid), 202)
+	cluster, err := client.GCPReadVpcPeering(id, vpcpeeringid)
+	//var _, err = client.GCPReadVpcPeering(id, vpcpeeringid)
+	if err != nil {
+		t.Fatalf("Failed to read cluster %s: %s", id, err)
+	}
+	if cluster.ID != id {
+		t.Fatalf("Cluster expected %s but got %s", id, cluster.ID)
+	}
+}
+
+func TestAPIClientGCPReadNull(t *testing.T) {
+	id := "Invalid_ID"
+	vpcpeeringid := "Invalid_VPC"
 	request := fmt.Sprintf("vpc-peering/%s/%s", id, vpcpeeringid)
 	client := SetupMock(t, request, "", 404)
 	var _, err = client.GCPReadVpcPeering(id, vpcpeeringid)
