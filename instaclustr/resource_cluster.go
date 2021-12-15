@@ -993,6 +993,8 @@ type resourceDataInterface interface {
 	GetChange(key string) (interface{}, interface{})
 	GetOk(key string) (interface{}, bool)
 	Get(key string) interface{}
+	Set(key string, value interface{}) error
+	SetId(value string)
 }
 
 func doClusterResize(client APIClientInterface, clusterID string, d resourceDataInterface, bundles []Bundle) error {
@@ -1583,27 +1585,25 @@ func resourceClusterDelete(d *schema.ResourceData, meta interface{}) error {
 	id := d.Get("cluster_id").(string)
 	log.Printf("[INFO] Deleting cluster %s.", id)
 
-	return waitForClusterDependenciesCleanedAndDoDelete(client, d, id)
+	return resource.Retry(d.Timeout(schema.TimeoutDelete), func() *resource.RetryError {
+		return clusterDeleteRetry(client, d, id)
+	})
 }
 
-func waitForClusterDependenciesCleanedAndDoDelete(client *APIClient,
-	d *schema.ResourceData,
-	id string) error {
-	return resource.Retry(d.Timeout(schema.TimeoutDelete), func() *resource.RetryError {
-		fmt.Printf("waiting for the dependencies of cluster %s to be cleaned\n", id)
-		// try to delete until successful or the error is not about dependency
-		err := client.DeleteCluster(id)
-		if err != nil && strings.HasPrefix(err.Error(), "Status code: 409") {
-			return resource.RetryableError(fmt.Errorf("[Error] Dependencies still exist for cluster %s", id))
-		} else if err != nil { // any other error we break
-			return resource.NonRetryableError(fmt.Errorf("[Error] Error deleting cluster: %s", err))
-		}
+func clusterDeleteRetry(client APIClientInterface, d resourceDataInterface, id string) *resource.RetryError {
+	fmt.Printf("waiting for the dependencies of cluster %s to be cleaned\n", id)
+	// try to delete until successful or the error is not about dependency
+	err := client.DeleteCluster(id)
+	if err != nil && strings.HasPrefix(err.Error(), "Status code: 409") {
+		return resource.RetryableError(fmt.Errorf("[Error] Dependencies still exist for cluster %s", id))
+	} else if err != nil { // any other error we break
+		return resource.NonRetryableError(fmt.Errorf("[Error] Error deleting cluster: %s", err))
+	}
 
-		d.SetId("")
-		d.Set("cluster_id", "")
-		log.Printf("[INFO] Cluster %s has been marked for deletion.", id)
-		return nil
-	})
+	d.SetId("")
+	d.Set("cluster_id", "")
+	log.Printf("[INFO] Cluster %s has been marked for deletion.", id)
+	return nil
 }
 
 func resourceClusterStateImport(d *schema.ResourceData, meta interface{}) ([]*schema.ResourceData, error) {
