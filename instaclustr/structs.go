@@ -123,6 +123,16 @@ type Cluster struct {
 	Provider                   []ClusterProvider        `json:"clusterProvider"`
 }
 
+type ClusterListItem struct {
+	ID               string `json:"id"`
+	Name             string `json:"name"`
+	NodeCount        int    `json:"nodeCount,omitempty"`
+	RunningNodeCount int    `json:"runningNodeCount,omitempty"`
+	DerivedStatus    string `json:"derivedStatus,omitempty"`
+	SlaTier          string `json:"slaTier,omitempty"`
+	PciCompliance    string `json:"pciCompliance,omitempty"`
+}
+
 type DataCentre struct {
 	ID                            string          `json:"id,omitempty"`
 	Name                          string          `json:"name" mapstructure:"name"`

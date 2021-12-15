@@ -53,6 +53,11 @@ data "instaclustr_cluster_credentials" "example_credentials" {
   cluster_id = "${instaclustr_cluster.example.id}"
 }
 
+data "instaclustr_clusters" "clusters" {
+  depends_on = ["instaclustr_cluster.example"]
+}
+
+
 resource "instaclustr_cluster" "custom_vpc_example" {
   cluster_name = "testcluster"
   node_size = "t3.small"
