@@ -76,6 +76,7 @@ func GCPresourceVpcPeeringCreate(d *schema.ResourceData, meta interface{}) error
 	client := meta.(*Config).Client
 
 	const ClusterReadInterval = 5
+
 	const WaitForClusterTimeout = 60
 	var cdcID string
 	var latestStatus string
@@ -154,8 +155,10 @@ func GCPresourceVpcPeeringRead(d *schema.ResourceData, meta interface{}) error {
 
 }
 
+const Error = "[Error] The VPC peering connection doesn't support update"
+
 func resourceGCPVpcPeeringUpdate(d *schema.ResourceData) error {
-	return fmt.Errorf("[Error] The VPC peering connection doesn't support update")
+	return fmt.Errorf(Error)
 
 }
 
@@ -177,7 +180,8 @@ func GCPresourceVpcPeeringDelete(d *schema.ResourceData, meta interface{}) error
 	d.SetId("")
 	d.Set("vpc_peering_id", "")
 	d.Set("cdc_id", "")
-	log.Printf("[INFO] VPC peering connection %s has been marked for deletion.", vpcPeeringID)
+	const Print = "[INFO] VPC peering connection %s has been marked for deletion."
+	log.Printf(Print, vpcPeeringID)
 	return nil
 }
 
@@ -201,21 +205,9 @@ func GCPcreateVpcPeeringRequest(d *schema.ResourceData) (CreateGCPVPCPeeringRequ
 	if _, isSet := d.GetOk("peer_subnets"); isSet {
 		result.PeerSubnets = d.Get("peer_subnets").(*schema.Set).List()
 	} else {
-		return result, fmt.Errorf("[Error] Error creating GCP VPC peering request - Please check the subnets atleast one subnet must be specified")
+		const Error2 = "[Error] Error creating GCP VPC peering request - Please check the subnets atleast one subnet must be specified"
+		return result, fmt.Errorf(Error)
 	}
-	return result, nil
-}
 
-func GCPcreateVpcPeeringDelete(d *schema.ResourceData) (CreateGCPVPCPeeringRequest, error) {
-	result := CreateGCPVPCPeeringRequest{
-		Name:               d.Get("name").(string),
-		PeerVPCNetworkName: d.Get("peer_vpc_network_name").(string),
-		PeerProjectID:      d.Get("peer_project_id").(string),
-	}
-	if _, isSet := d.GetOk("peer_subnets"); isSet {
-		result.PeerSubnets = d.Get("peer_subnets").(*schema.Set).List()
-	} else {
-		return result, fmt.Errorf("[Error] Error creating GCP VPC peering request - Please check the subnets atleast one subnet must be specified")
-	}
 	return result, nil
 }
