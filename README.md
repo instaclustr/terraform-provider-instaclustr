@@ -337,30 +337,12 @@ IC_API_KEY|`$ export IC_API_KEY=<your provisioning API key>`|Authorizes Provisio
 KMS_ARN|`$ export KMS_ARN=<your KMS ARN>`|For EBS encryption of nodes. <b><i>Note:</i></b> You cannot use an ARN previously added to your account as an encryption key.
 IC_PROV_ACC_NAME|`$ export IC_PROV_ACC_NAME="<your provider name>"`|Your "Run In Your Own Account" account name.
 IC_PROV_VPC_ID|`$ export IC_PROV_VPC_ID="<your AWS VPC ID>"`|For provisioning into a custom VPC.
-
-#### Environment Variables Specific to Kafka Connect Acceptance Test
-
-These environment variables are optional and only required when we want to do acceptance tests for Kafka Connect.
-It is toggled by setting IC_TEST_KAFKA_CONNECT environment variable.
-
-Variable | Command | Description
----------|-------------|--------
-IC_TEST_KAFKA_CONNECT|`$ export IC_PROV_VPC_ID=1`|Enables acceptance tests for Kafka Connect.
-IC_TARGET_KAFKA_CLUSTER_ID|`$ export IC_PROV_VPC_ID="<target kafka cluster ID>"`|For Kafka Connect connection information. See bundle options.
 IC_AWS_ACCESS_KEY|`$ export IC_PROV_VPC_ID="<access key for the AWS S3 bucket>"`|For Kafka Connect connection information. See bundle options.
 IC_AWS_SECRET_KEY|`$ export IC_PROV_VPC_ID="<secret key for the AWS S3 bucket>"`|For Kafka Connect connection information. See bundle options.
 IC_S3_BUCKET_NAME|`$ export IC_PROV_VPC_ID="<AWS S3 bucket name>"`|For Kafka Connect connection information. See bundle options.
 IC_AZURE_STORAGE_ACCOUNT_NAME|`$ export IC_PROV_VPC_ID="<account name for the AZURE container storage>"`|For Kafka Connect connection information. See bundle options.
 IC_AZURE_STORAGE_ACCOUNT_KEY|`$ export IC_PROV_VPC_ID="<account key for the AZURE container storage>"`|For Kafka Connect connection information. See bundle options.
 IC_AZURE_STORAGE_CONTAINER_NAME|`$ export IC_PROV_VPC_ID="<the name of the AZURE container storage>"`|For Kafka Connect connection information. See bundle options.
-IC_SSL_ENABLED_PROTOCOLS|`$ export IC_PROV_VPC_ID="<SSL enabled protocols>"`|For Kafka Connect connection information. See bundle options.
-IC_SSL_TRUSTSTORE_PASSWORD|`$ export IC_PROV_VPC_ID="<SSL truststore password>"`|For Kafka Connect connection information. See bundle options.
-IC_SSL_PROTOCOL|`$ export IC_PROV_VPC_ID="<SSL protocol>"`|For Kafka Connect connection information. See bundle options.
-IC_SECURITY_PROTOCOL|`$ export IC_PROV_VPC_ID="<Security protocol>"`|For Kafka Connect connection information. See bundle options.
-IC_SASL_MECHANISM|`$ export IC_PROV_VPC_ID="<SASL mechanism>"`|For Kafka Connect connection information. See bundle options.
-IC_SASL_JAAS_CONFIG|`$ export IC_PROV_VPC_ID="<SASL JAAS config>"`|For Kafka Connect connection information. See bundle options.
-IC_BOOTSTRAP_SERVERS|`$ export IC_PROV_VPC_ID="<bootstrap servers>"`|For Kafka Connect connection information. See bundle options.
-IC_TRUSTSTORE|`$ export IC_PROV_VPC_ID="<Base64 encoding of the truststore jks>"`|For Kafka Connect connection information. See bundle options.
 
 #### Running Specific Tests
 To run a specific test, use the `testtarget` makefile goal.
