@@ -142,7 +142,18 @@ func GCPresourceVpcPeeringRead(d *schema.ResourceData, meta interface{}) error {
 	if err != nil {
 		return fmt.Errorf("[Error] Error reading VPC peering connection: %s", err)
 	}
+	err = GCPresourceVpcPeeringReadHelper(d, vpcPeering)
+	if err != nil {
+		return fmt.Errorf("[Error] Error reading VPC peering connection: %s", err)
+	}
+	return nil
 
+}
+
+func GCPresourceVpcPeeringReadHelper(d *schema.ResourceData, vpcPeering *GCPVPCPeering) error {
+	if vpcPeering.ID == "" {
+		return fmt.Errorf("VPC peering ID can't be empty: ")
+	}
 	d.SetId(vpcPeering.ID)
 	d.Set("vpc_peering_id", vpcPeering.ID)
 	d.Set("cdc_id", vpcPeering.ClusterDataCentre)
@@ -152,13 +163,10 @@ func GCPresourceVpcPeeringRead(d *schema.ResourceData, meta interface{}) error {
 
 	log.Printf("[INFO] Fetched VPC peering %s info from the remote server.", vpcPeering.ID)
 	return nil
-
 }
 
-const Error = "[Error] The VPC peering connection doesn't support update"
-
 func resourceGCPVpcPeeringUpdate(d *schema.ResourceData) error {
-	return fmt.Errorf(Error)
+	return fmt.Errorf("[Error] The VPC peering connection doesn't support update")
 
 }
 
@@ -180,8 +188,7 @@ func GCPresourceVpcPeeringDelete(d *schema.ResourceData, meta interface{}) error
 	d.SetId("")
 	d.Set("vpc_peering_id", "")
 	d.Set("cdc_id", "")
-	const Print = "[INFO] VPC peering connection %s has been marked for deletion."
-	log.Printf(Print, vpcPeeringID)
+	log.Printf("[INFO] VPC peering connection %s has been marked for deletion.", vpcPeeringID)
 	return nil
 }
 
@@ -205,9 +212,7 @@ func GCPcreateVpcPeeringRequest(d *schema.ResourceData) (CreateGCPVPCPeeringRequ
 	if _, isSet := d.GetOk("peer_subnets"); isSet {
 		result.PeerSubnets = d.Get("peer_subnets").(*schema.Set).List()
 	} else {
-		const Error2 = "[Error] Error creating GCP VPC peering request - Please check the subnets atleast one subnet must be specified"
-		return result, fmt.Errorf(Error)
+		return result, fmt.Errorf("[Error] Error creating GCP VPC peering request - Please check the subnets atleast one subnet must be specified")
 	}
-
 	return result, nil
 }

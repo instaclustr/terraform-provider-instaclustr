@@ -791,45 +791,105 @@ func TestDeleteAttributesConflict(t *testing.T) {
 	checkAttributeValue("attributeC", "C")
 }
 
-// func TestDelete(t *testing.T) {
-// 	resourceSchema := map[string]*schema.Schema{
-// 		"peer_vpc_id": {
-// 			Type: schema.TypeString,
-// 		},
-// 		"peer_account_id": {
-// 			Type: schema.TypeString,
-// 		},
-// 		"peer_subnet": {
-// 			Type: schema.TypeString,
-// 		},
-// 		"peer_region": {
-// 			Type: schema.TypeString,
-// 		},
-// 	}
+func TestGCPVpcPeeringResourceReadHelperTest(t *testing.T) {
+	resourceSchema := map[string]*schema.Schema{
+		"peer_vpc_id": {
+			Type: schema.TypeString,
+		},
+		"peer_account_id": {
+			Type: schema.TypeString,
+		},
+		"peer_subnet": {
+			Type: schema.TypeString,
+		},
+		"peer_region": {
+			Type: schema.TypeString,
+		},
+	}
 
-// 	resourceDataMap := map[string]interface{}{
-// 		"peer_vpc_id":     "vpc-12345678",
-// 		"peer_account_id": "494111121110",
-// 		"peer_subnet":     "10.20.0.0/16",
-// 		"peer_region":     "",
-// 	}
+	resourceDataMap := map[string]interface{}{
+		"peer_vpc_id":     "vpc-12345678",
+		"peer_account_id": "494111121110",
+		"peer_subnet":     "10.20.0.0/16",
+		"peer_region":     "",
+	}
+	resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, resourceDataMap)
+	p := GCPVPCPeering{
+		ID:                 "Test_ID",
+		ClusterDataCentre:  "123456789565",
+		PeerProjectID:      "ID_Name",
+		PeerVPCNetworkName: "instaclustr_Test",
+	}
 
-// 	d := schema.TestResourceDataRaw(t, resourceSchema, resourceDataMap)
+	if err := GCPresourceVpcPeeringReadHelper(resourceLocalData, &p); err != nil {
+		t.Fatalf("Expected nil error but got %v", err)
+	}
+}
 
-// 	if err := GCPresourceVpcPeeringDelete(resourceSchema, d); err != nil {
-// 		t.Fatalf("Unexpected error occured during deletion %s", err)
-// 	}
+func TestGCPVpcPeeringResourceUpdate(t *testing.T) {
+	resourceSchema := map[string]*schema.Schema{
+		"peer_vpc_id": {
+			Type: schema.TypeString,
+		},
+		"peer_account_id": {
+			Type: schema.TypeString,
+		},
+		"peer_subnet": {
+			Type: schema.TypeString,
+		},
+		"peer_region": {
+			Type: schema.TypeString,
+		},
+	}
 
-// 	checkAttributeValue := func(attribute string, expected interface{}) {
-// 		if value, _ := d.GetOk(attribute); value != expected {
-// 			t.Fatalf("%s not modified properly", attribute)
-// 		}
-// 	}
+	resourceDataMap := map[string]interface{}{
+		"peer_vpc_id":     "vpc-12345678",
+		"peer_account_id": "494111121110",
+		"peer_subnet":     "10.20.0.0/16",
+		"peer_region":     "",
+	}
+	resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, resourceDataMap)
 
-// 	checkAttributeValue("attributeA", "A")
-// 	checkAttributeValue("attributeB", schema.TypeString.Zero())
-// 	checkAttributeValue("attributeC", "C")
-// }
+	if err := resourceGCPVpcPeeringUpdate(resourceLocalData); err == nil {
+		t.Fatalf("Expected nil error but got %v", err)
+	}
+
+}
+
+func TestGCPVpcPeeringResourceDeleteHelperTest(t *testing.T) {
+	resourceSchema := map[string]*schema.Schema{
+		"peer_vpc_id": {
+			Type: schema.TypeString,
+		},
+		"peer_account_id": {
+			Type: schema.TypeString,
+		},
+		"peer_subnet": {
+			Type: schema.TypeString,
+		},
+		"peer_region": {
+			Type: schema.TypeString,
+		},
+	}
+
+	resourceDataMap := map[string]interface{}{
+		"peer_vpc_id":     "vpc-12345678",
+		"peer_account_id": "494111121110",
+		"peer_subnet":     "10.20.0.0/16",
+		"peer_region":     "",
+	}
+	resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, resourceDataMap)
+	p := GCPVPCPeering{
+		ID:                 "Test_ID",
+		ClusterDataCentre:  "123456789565",
+		PeerProjectID:      "ID_Name",
+		PeerVPCNetworkName: "instaclustr_Test",
+	}
+
+	if err := GCPresourceVpcPeeringReadHelper(resourceLocalData, &p); err != nil {
+		t.Fatalf("Expected nil error but got %v", err)
+	}
+}
 
 type MockApiClient struct {
 	cluster Cluster
