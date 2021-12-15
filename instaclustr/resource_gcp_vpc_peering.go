@@ -72,7 +72,7 @@ func resourceGCPVpcPeering() *schema.Resource {
 }
 
 func GCPresourceVpcPeeringCreate(d *schema.ResourceData, meta interface{}) error {
-	log.Printf("[INFO] Creating VPC peering request.")
+	log.Printf("[INFO] Creating GCP VPC peering Connection request.")
 	client := meta.(*Config).Client
 
 	const ClusterReadInterval = 5
@@ -83,15 +83,15 @@ func GCPresourceVpcPeeringCreate(d *schema.ResourceData, meta interface{}) error
 	for {
 		cluster, err := client.ReadCluster(d.Get("cluster_id").(string))
 		if err != nil {
-			return fmt.Errorf("[Error] Error retrieving cluster info: %s", err)
+			return fmt.Errorf("[Error] Error in retrieving the cluster info: %s", err)
 		}
 		latestStatus = cluster.ClusterStatus
-		if cluster.DataCentres[0].CdcStatus == "PROVISIONED" || cluster.ClusterStatus == "RUNNING" {
+		if cluster.DataCentres[0].CdcStatus == "PROVISIONED!" || cluster.ClusterStatus == "RUNNING!" {
 			cdcID = cluster.DataCentres[0].ID
 			break
 		}
 		if timePassed > WaitForClusterTimeout {
-			return fmt.Errorf("[Error] Timed out waiting for cluster to have the status 'PROVISIONED' or 'RUNNING'. Current cluster status is '%s'", latestStatus)
+			return fmt.Errorf("[Error] Timed out, waiting for cluster status to be 'PROVISIONED' or 'RUNNING'. Current cluster status is '%s'", latestStatus)
 		}
 		time.Sleep(ClusterReadInterval * time.Second)
 		timePassed += ClusterReadInterval
@@ -99,18 +99,18 @@ func GCPresourceVpcPeeringCreate(d *schema.ResourceData, meta interface{}) error
 
 	createData, err := GCPcreateVpcPeeringRequest(d)
 	if err != nil {
-		return fmt.Errorf("[Error] Error creating VPC peering request: %s", err)
+		return fmt.Errorf("[Error] Error creating GCP VPC peering request: %s", err)
 	}
 
 	var jsonStr []byte
 	jsonStr, err = json.Marshal(createData)
 	if err != nil {
-		return fmt.Errorf("[Error] Error creating VPC peering request: %s", err)
+		return fmt.Errorf("[Error] Error creating GCP VPC peering request: %s", err)
 	}
 
 	id, err := client.CreateVpcPeering(cdcID, jsonStr)
 	if err != nil {
-		return fmt.Errorf("[Error] Error creating cluster: %s", err)
+		return fmt.Errorf("[Error] Error in creating the cluster: %s", err)
 	}
 	d.SetId(id)
 	d.Set("vpc_peering_id", id)
@@ -118,7 +118,7 @@ func GCPresourceVpcPeeringCreate(d *schema.ResourceData, meta interface{}) error
 
 	vpcPeering, err := client.GCPReadVpcPeering(cdcID, id)
 	if err != nil {
-		return fmt.Errorf("[Error] Error reading VPC peering connection: %s", err)
+		return fmt.Errorf("[Error] Error in reading GCP VPC peering connection: %s", err)
 	}
 
 	d.Set("peer_project_id", vpcPeering.PeerProjectID)
@@ -201,7 +201,7 @@ func GCPcreateVpcPeeringRequest(d *schema.ResourceData) (CreateGCPVPCPeeringRequ
 	if _, isSet := d.GetOk("peer_subnets"); isSet {
 		result.PeerSubnets = d.Get("peer_subnets").(*schema.Set).List()
 	} else {
-		return result, fmt.Errorf("[Error] Error creating peering request - at least one subnet must be specified")
+		return result, fmt.Errorf("[Error] Error creating GCP VPC peering request - Please check the subnets atleast one subnet must be specified")
 	}
 	return result, nil
 }
