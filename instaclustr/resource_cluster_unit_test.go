@@ -856,7 +856,7 @@ func TestGCPVpcPeeringResourceUpdate(t *testing.T) {
 
 }
 
-func TestGCPVpcPeeringResourceDeleteHelperTest(t *testing.T) {
+func TestGCPVpcPeeringResourceHelperTest(t *testing.T) {
 	resourceSchema := map[string]*schema.Schema{
 		"peer_vpc_id": {
 			Type: schema.TypeString,
@@ -880,7 +880,7 @@ func TestGCPVpcPeeringResourceDeleteHelperTest(t *testing.T) {
 	}
 	resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, resourceDataMap)
 	p := GCPVPCPeering{
-		ID:                 "Test_ID",
+		ID:                 "",
 		ClusterDataCentre:  "123456789565",
 		PeerProjectID:      "ID_Name",
 		PeerVPCNetworkName: "instaclustr_Test",

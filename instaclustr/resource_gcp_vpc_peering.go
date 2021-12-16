@@ -152,7 +152,7 @@ func GCPresourceVpcPeeringRead(d *schema.ResourceData, meta interface{}) error {
 
 func GCPresourceVpcPeeringReadHelper(d *schema.ResourceData, vpcPeering *GCPVPCPeering) error {
 	if vpcPeering.ID == "" {
-		return fmt.Errorf("VPC peering ID can't be empty: ")
+		return nil
 	}
 	d.SetId(vpcPeering.ID)
 	d.Set("vpc_peering_id", vpcPeering.ID)
