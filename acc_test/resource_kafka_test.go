@@ -54,8 +54,8 @@ func TestKafkaResources(t *testing.T) {
 	newPassword := "charlie123standard!"
 	kafkaNodeSize := "KFK-DEV-t4g.medium-80"
 	zookeeperNodeSize := "KDZ-DEV-t4g.small-30"
-	kafkaVersion := "apache-kafka:3.0.0.ic1"
-	kcVersion := "kafka-connect:3.0.0.ic1"
+	kafkaVersion := "3.0.0"
+	kcVersion := "3.0.0"
 	topic1 := "test1"
 	topic2 := "test2"
 	azureStorageAccountName := os.Getenv("IC_AZURE_STORAGE_ACCOUNT_NAME")
@@ -228,8 +228,6 @@ func TestKafkaResources(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckResourceValidKafka("instaclustr_cluster.validKCAws"),
 					testCheckResourceValidKafka("instaclustr_cluster.validKCAzure"),
-					checkClusterRunningWithDelay("validKCAws", hostname, username, apiKey, 0),
-					checkClusterRunningWithDelay("validKCAzure", hostname, username, apiKey, 0),
 				),
 			},
 		},

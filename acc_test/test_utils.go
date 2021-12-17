@@ -26,50 +26,36 @@ func checkClusterRunning(resourceName, hostname, username, apiKey string) resour
 	return func(s *terraform.State) error {
 		resourceState := s.Modules[0].Resources["instaclustr_cluster."+resourceName]
 		id := resourceState.Primary.Attributes["cluster_id"]
-		return waitClusterStatus(id, hostname, username, apiKey, "RUNNING", 60)
-	}
-}
+		client := new(instaclustr.APIClient)
+		client.InitClient(hostname, username, apiKey)
 
-func checkClusterRunningWithDelay(resourceName, hostname, username, apiKey string, delayAfter time.Duration) resource.TestCheckFunc {
-	// wait another minute after cluster goes to RUNNING to make sure all operations will work
-	// sometimes says cluster is not ready for resizing
-	return func(s *terraform.State) error {
-		resourceState := s.Modules[0].Resources["instaclustr_cluster."+resourceName]
-		id := resourceState.Primary.Attributes["cluster_id"]
-		return waitClusterStatus(id, hostname, username, apiKey, "RUNNING", delayAfter)
+		const ClusterReadInterval = 5
+		const WaitForClusterTimeout = 40 * 60
+		var latestStatus string
+		timePassed := 0
+		fmt.Print("\033[s")
+		for {
+			cluster, err := client.ReadCluster(id)
+			if err != nil {
+				fmt.Printf("\n")
+				return fmt.Errorf("[Error] Error retrieving cluster info: %s", err)
+			}
+			latestStatus = cluster.ClusterStatus
+			if cluster.ClusterStatus == "RUNNING" {
+				break
+			}
+			if timePassed > WaitForClusterTimeout {
+				fmt.Printf("\n")
+				return fmt.Errorf("[Error] Timed out waiting for cluster to have the status 'RUNNING'. Current cluster status is '%s'", latestStatus)
+			}
+			timePassed += ClusterReadInterval
+			fmt.Printf("\033[u\033[K%ds has elapsed while waiting for the cluster to reach RUNNING.\n", timePasse)
+			time.Sleep(ClusterReadInterval * time.Second)
+		}
+		fmt.Printf("\n")
+		time.Sleep(60 * time.Second)
+		return nil
 	}
-}
-
-func waitClusterStatus(clusterId, hostname, username, apiKey, expectedStatus string, delayAfter time.Duration) error {
-	client := new(instaclustr.APIClient)
-	client.InitClient(hostname, username, apiKey)
-
-	const ClusterReadInterval = 5
-	const WaitForClusterTimeout = 40 * 60
-	var latestStatus string
-	timePassed := 0
-	fmt.Print("\033[s")
-	for {
-		cluster, err := client.ReadCluster(clusterId)
-		if err != nil {
-			fmt.Printf("\n")
-			return fmt.Errorf("[Error] Error retrieving cluster info: %s", err)
-		}
-		latestStatus = cluster.ClusterStatus
-		if cluster.ClusterStatus == expectedStatus {
-			break
-		}
-		if timePassed > WaitForClusterTimeout {
-			fmt.Printf("\n")
-			return fmt.Errorf("[Error] Timed out waiting for cluster to have the status '%s'. Current cluster status is '%s'", expectedStatus, latestStatus)
-		}
-		timePassed += ClusterReadInterval
-		fmt.Printf("\033[u\033[K%ds has elapsed while waiting for the cluster to reach %s.\n", timePassed, expectedStatus)
-		time.Sleep(ClusterReadInterval * time.Second)
-	}
-	fmt.Printf("\n")
-	time.Sleep(delayAfter * time.Second)
-	return nil
 }
 
 func addDCtoCluster(resourceName, hostname, username, apiKey, requestBody string) resource.TestCheckFunc {

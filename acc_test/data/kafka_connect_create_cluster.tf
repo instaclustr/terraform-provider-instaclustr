@@ -50,7 +50,7 @@ resource "instaclustr_kafka_user" "kafka_user_kc_charlie" {
 }
 
 resource "instaclustr_cluster" "validKCAws" {
-    wait_for_state = "PROVISIONED" // no need to wait for RUNNING on this one so that we can have a concurrent KC cluster provisioned at the same time
+    wait_for_state = "RUNNING"
     cluster_name = "tf_testacc_kc_aws_connectors"
     node_size = "KCN-DEV-t4g.medium-30"
     data_centre = "US_WEST_2"
