@@ -21,8 +21,6 @@ func getOptionalEnv(key, fallback string) string {
 }
 
 func checkClusterRunning(resourceName, hostname, username, apiKey string) resource.TestCheckFunc {
-	// wait another minute after cluster goes to RUNNING to make sure all operations will work
-	// sometimes says cluster is not ready for resizing
 	return func(s *terraform.State) error {
 		resourceState := s.Modules[0].Resources["instaclustr_cluster."+resourceName]
 		id := resourceState.Primary.Attributes["cluster_id"]
@@ -49,10 +47,12 @@ func checkClusterRunning(resourceName, hostname, username, apiKey string) resour
 				return fmt.Errorf("[Error] Timed out waiting for cluster to have the status 'RUNNING'. Current cluster status is '%s'", latestStatus)
 			}
 			timePassed += ClusterReadInterval
-			fmt.Printf("\033[u\033[K%ds has elapsed while waiting for the cluster to reach RUNNING.\n", timePasse)
+			fmt.Printf("\033[u\033[K%ds has elapsed while waiting for the cluster to reach RUNNING.\n", timePassed)
 			time.Sleep(ClusterReadInterval * time.Second)
 		}
 		fmt.Printf("\n")
+		// wait another minute after cluster goes to RUNNING to make sure all operations will work
+		// sometimes says cluster is not ready for resizing
 		time.Sleep(60 * time.Second)
 		return nil
 	}
