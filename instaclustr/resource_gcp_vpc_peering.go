@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"time"
 
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -71,33 +70,14 @@ func resourceGCPVpcPeering() *schema.Resource {
 }
 
 func GCPresourceVpcPeeringCreate(d *schema.ResourceData, meta interface{}) error {
-	log.Printf("[INFO] Creating GCP VPC peering Connection request.")
 	client := meta.(*Config).Client
 
-	const ClusterReadInterval = 5
-
-	const WaitForClusterTimeout = 60
-	var cdcID string
-	var latestStatus string
-	timePassed := 0
-	for {
-		cluster, err := client.ReadCluster(d.Get("cluster_id").(string))
-		if err != nil {
-			return fmt.Errorf("[Error] Error in retrieving the cluster info: %s", err)
-		}
-		latestStatus = cluster.ClusterStatus
-		if cluster.DataCentres[0].CdcStatus == "PROVISIONED!" || cluster.ClusterStatus == "RUNNING!" {
-			cdcID = cluster.DataCentres[0].ID
-			break
-		}
-		if timePassed > WaitForClusterTimeout {
-			return fmt.Errorf("[Error] Timed out, waiting for cluster status to be 'PROVISIONED' or 'RUNNING'. Current cluster status is '%s'", latestStatus)
-		}
-		time.Sleep(ClusterReadInterval * time.Second)
-		timePassed += ClusterReadInterval
+	cdcID, err := resourceVpcPeeringCreat(d, meta)
+	if err != nil {
+		return fmt.Errorf("[Error] Error creating VPC peering request: %s", err)
 	}
-
-	createData, err := GCPcreateVpcPeeringRequest(d)
+	var createData CreateGCPVPCPeeringRequest
+	createData, err = GCPcreateVpcPeeringRequest(d)
 	if err != nil {
 		return fmt.Errorf("[Error] Error creating GCP VPC peering request: %s", err)
 	}
@@ -107,16 +87,16 @@ func GCPresourceVpcPeeringCreate(d *schema.ResourceData, meta interface{}) error
 	if err != nil {
 		return fmt.Errorf("[Error] Error creating GCP VPC peering request: %s", err)
 	}
-
-	id, err := client.CreateVpcPeering(cdcID, jsonStr)
+	var id string
+	id, err = client.CreateVpcPeering(cdcID, jsonStr)
 	if err != nil {
 		return fmt.Errorf("[Error] Error in creating the cluster: %s", err)
 	}
 	d.SetId(id)
 	d.Set("vpc_peering_id", id)
 	d.Set("cdc_id", cdcID)
-
-	vpcPeering, err := client.GCPReadVpcPeering(cdcID, id)
+	var vpcPeering *GCPVPCPeering
+	vpcPeering, err = client.GCPReadVpcPeering(cdcID, id)
 	if err != nil {
 		return fmt.Errorf("[Error] Error in reading GCP VPC peering connection: %s", err)
 	}

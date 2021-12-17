@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"strings"
+	"time"
 
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -39,4 +40,32 @@ func resourceVpcPeeringStateImport(d *schema.ResourceData, meta interface{}) ([]
 	d.Set("cluster_id", idParts[0])
 	d.Set("vpc_peering_id", idParts[1])
 	return []*schema.ResourceData{d}, nil
+}
+
+func resourceVpcPeeringCreat(d *schema.ResourceData, meta interface{}) (string, error) {
+	log.Printf("[INFO] Creating VPC peering request.")
+	client := meta.(*Config).Client
+
+	const ClusterReadInterval = 5
+	const WaitForClusterTimeout = 60
+	var cdcID string
+	var latestStatus string
+	timePassed := 0
+	for {
+		cluster, err := client.ReadCluster(d.Get("cluster_id").(string))
+		if err != nil {
+			return "", fmt.Errorf("[Error] Error retrieving cluster info: %s", err)
+		}
+		latestStatus = cluster.ClusterStatus
+		if cluster.DataCentres[0].CdcStatus == "PROVISIONED" || cluster.ClusterStatus == "RUNNING" {
+			cdcID = cluster.DataCentres[0].ID
+			break
+		}
+		if timePassed > WaitForClusterTimeout {
+			return "", fmt.Errorf("[Error] Timed out waiting for cluster to have the status 'PROVISIONED' or 'RUNNING'. Current cluster status is '%s'", latestStatus)
+		}
+		time.Sleep(ClusterReadInterval * time.Second)
+		timePassed += ClusterReadInterval
+	}
+	return cdcID, nil
 }

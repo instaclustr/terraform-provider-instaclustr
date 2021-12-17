@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"time"
 
 	"github.com/hashicorp/terraform/helper/schema"
 )
@@ -76,32 +75,14 @@ func resourceVpcPeering() *schema.Resource {
 }
 
 func resourceVpcPeeringCreate(d *schema.ResourceData, meta interface{}) error {
-	log.Printf("[INFO] Creating VPC peering request.")
 	client := meta.(*Config).Client
 
-	const ClusterReadInterval = 5
-	const WaitForClusterTimeout = 60
-	var cdcID string
-	var latestStatus string
-	timePassed := 0
-	for {
-		cluster, err := client.ReadCluster(d.Get("cluster_id").(string))
-		if err != nil {
-			return fmt.Errorf("[Error] Error retrieving cluster info: %s", err)
-		}
-		latestStatus = cluster.ClusterStatus
-		if cluster.DataCentres[0].CdcStatus == "PROVISIONED" || cluster.ClusterStatus == "RUNNING" {
-			cdcID = cluster.DataCentres[0].ID
-			break
-		}
-		if timePassed > WaitForClusterTimeout {
-			return fmt.Errorf("[Error] Timed out waiting for cluster to have the status 'PROVISIONED' or 'RUNNING'. Current cluster status is '%s'", latestStatus)
-		}
-		time.Sleep(ClusterReadInterval * time.Second)
-		timePassed += ClusterReadInterval
+	cdcID, err := resourceVpcPeeringCreat(d, meta)
+	if err != nil {
+		return fmt.Errorf("[Error] Error creating VPC peering request: %s", err)
 	}
-
-	createData, err := createVpcPeeringRequest(d)
+	var createData CreateVPCPeeringRequest
+	createData, err = createVpcPeeringRequest(d)
 	if err != nil {
 		return fmt.Errorf("[Error] Error creating VPC peering request: %s", err)
 	}
@@ -111,16 +92,16 @@ func resourceVpcPeeringCreate(d *schema.ResourceData, meta interface{}) error {
 	if err != nil {
 		return fmt.Errorf("[Error] Error creating VPC peering request: %s", err)
 	}
-
-	id, err := client.CreateVpcPeering(cdcID, jsonStr)
+	var id string
+	id, err = client.CreateVpcPeering(cdcID, jsonStr)
 	if err != nil {
 		return fmt.Errorf("[Error] Error creating cluster: %s", err)
 	}
 	d.SetId(id)
 	d.Set("vpc_peering_id", id)
 	d.Set("cdc_id", cdcID)
-
-	vpcPeering, err := client.ReadVpcPeering(cdcID, id)
+	var vpcPeering *VPCPeering
+	vpcPeering, err = client.ReadVpcPeering(cdcID, id)
 	if err != nil {
 		return fmt.Errorf("[Error] Error reading VPC peering connection: %s", err)
 	}
