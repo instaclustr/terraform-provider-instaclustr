@@ -32,21 +32,21 @@ resource "instaclustr_cluster" "valid_with_vpc_peering" {
     }
 }
 
-resource "instaclustr_vpc_peering" "valid_with_vpc_peering" {
+resource "instaclustr_vpc_peering_aws" "valid_with_vpc_peering" {
     cluster_id = "${instaclustr_cluster.valid_with_vpc_peering.cluster_id}"
     peer_vpc_id = "vpc-12345678"
     peer_account_id = "494111121110"
     peer_subnets = toset(["10.128.176.0/20", "10.129.176.0/20"])
 }
 
-resource "instaclustr_vpc_peering" "valid_with_vpc_peering_single_subnet" {
+resource "instaclustr_vpc_peering_aws" "valid_with_vpc_peering_single_subnet" {
     cluster_id = "${instaclustr_cluster.valid_with_vpc_peering.cluster_id}"
     peer_vpc_id = "vpc-12345679"
     peer_account_id = "494111121110"
     peer_subnets = toset(["10.130.176.0/20"])
 }
 
-resource "instaclustr_vpc_peering" "valid_with_vpc_peering_legacy" {
+resource "instaclustr_vpc_peering_aws" "valid_with_vpc_peering_legacy" {
     cluster_id = "${instaclustr_cluster.valid_with_vpc_peering.cluster_id}"
     peer_vpc_id = "vpc-12345680"
     peer_account_id = "494111121110"
@@ -76,7 +76,7 @@ resource "instaclustr_cluster" "gcp_example" {
     }
   }
 }
-resource "instaclustr_GCPvpc_peering" "gcp_example" {
+resource "instaclustr_vpc_peering_gcp" "gcp_example" {
 
   name="name"
   peer_vpc_network_name = "my-vpc1"

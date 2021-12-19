@@ -42,7 +42,7 @@ func resourceVpcPeeringStateImport(d *schema.ResourceData, meta interface{}) ([]
 	return []*schema.ResourceData{d}, nil
 }
 
-func resourceVpcPeeringCreat(d *schema.ResourceData, meta interface{}) (string, error) {
+func VpcPeeringCreate(d *schema.ResourceData, meta interface{}) (string, error) {
 	log.Printf("[INFO] Creating VPC peering request.")
 	client := meta.(*Config).Client
 

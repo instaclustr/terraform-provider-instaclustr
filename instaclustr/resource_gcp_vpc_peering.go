@@ -25,6 +25,7 @@ func resourceGCPVpcPeering() *schema.Resource {
 				Type:     schema.TypeString,
 				Required: true,
 			},
+
 			"vpc_peering_id": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -72,7 +73,7 @@ func resourceGCPVpcPeering() *schema.Resource {
 func GCPresourceVpcPeeringCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*Config).Client
 
-	cdcID, err := resourceVpcPeeringCreat(d, meta)
+	cdcID, err := VpcPeeringCreate(d, meta)
 	if err != nil {
 		return fmt.Errorf("[Error] Error creating VPC peering request: %s", err)
 	}
@@ -92,8 +93,6 @@ func GCPresourceVpcPeeringCreate(d *schema.ResourceData, meta interface{}) error
 	if err != nil {
 		return fmt.Errorf("[Error] Error in creating the cluster: %s", err)
 	}
-	d.SetId(id)
-	d.Set("vpc_peering_id", id)
 	d.Set("cdc_id", cdcID)
 	var vpcPeering *GCPVPCPeering
 	vpcPeering, err = client.GCPReadVpcPeering(cdcID, id)

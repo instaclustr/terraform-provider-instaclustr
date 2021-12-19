@@ -3,9 +3,9 @@
 terraform {
   required_providers {
     instaclustr = {
-      //source = "instaclustr/instaclustr"
+      source = "instaclustr/instaclustr"
       //Change the source as per below to work with a local development copy on terraform version >=13
-      source = "terraform.instaclustr.com/instaclustr/instaclustr"
+      //source = "terraform.instaclustr.com/instaclustr/instaclustr"
       version = ">= 1.14.8"
     }
   }
@@ -72,9 +72,6 @@ resource "instaclustr_cluster" "gcp_example" {
   }
 }
 
-
-
-
 data "instaclustr_cluster_credentials" "example_credentials" {
   cluster_id = "${instaclustr_cluster.example.id}"
 }
@@ -122,18 +119,14 @@ resource "instaclustr_firewall_rule" "example_firewall_rule_sg" {
   ]
 }
 
-
-
-
-
-resource "instaclustr_vpc_peering" "example_vpc_peering" {
+resource "instaclustr_vpc_peering_aws" "example_vpc_peering" {
   cluster_id = "${instaclustr_cluster.example.id}"
   peer_vpc_id = "vpc-123456"
   peer_account_id = "1234567890"
   peer_subnets = toset(["10.0.0.0/20", "10.0.32.0/20"])
 }
 
-resource "instaclustr_GCPvpc_peering" "example_vpc_peering" {
+resource "instaclustr_vpc_peering_gcp" "example_vpc_peering" {
 
   name="name"
   peer_vpc_network_name = "network name"
@@ -141,10 +134,6 @@ resource "instaclustr_GCPvpc_peering" "example_vpc_peering" {
   peer_subnets = toset(["10.10.0.0/16", "10.11.0.0/16"])
   cluster_id = "${instaclustr_cluster.gcp_example.id}"
 }
-
-
-
-
 
 // Updating the kafka-schema-registry and the kafka-rest-proxy bundle user passwords at the cluster creation time
 resource "instaclustr_cluster" "example_kafka" {

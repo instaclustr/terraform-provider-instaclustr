@@ -6,7 +6,7 @@ description: |-
 ---
 
 ### Resource: `instaclustr_vpc_peering`  
-A resource for managing VPC peering connections on Instaclustr Managed Platform. This is avaliable for clusters hosted with the AWS provider and the GCP provider.
+A resource for managing VPC peering connections on Instaclustr Managed Platform. This is avaliable for clusters hosted with the AWS and GCP .
   
 When creating this resource, the process will wait for target cluster to be in the `PROVISIONED` or `RUNNING` status. The process will time out after 60 seconds of waiting. 
 
@@ -22,7 +22,7 @@ Property | Description | Default
 
 #### Example
 ```
-resource "instaclustr_vpc_peering" "example_vpc_peering" {
+resource "instaclustr_vpc_peering_aws" "example_vpc_peering" {
     cluster_id = "${instaclustr_cluster.example.cluster_id}"
     peer_vpc_id = "vpc-123456"
     peer_account_id = "1234567890"
@@ -41,9 +41,9 @@ Property | Description | Default
 `peer_region`| The Region code for the accepter VPC, if the accepter VPC is located in a Region other than the Region in which you make the request. | Not Required
 `aws_vpc_connection_id`| The ID of the VPC peering connection. | Computed
 
-#### Example aws
+#### AWS Example
 ```
-resource "instaclustr_vpc_peering" "example_vpc_peering" {
+resource "_instaclustr_vpc_peering_aws" "example_vpc_peering" {
     cluster_id = "${instaclustr_cluster.example.cluster_id}"
     peer_vpc_id = "vpc-123456"
     peer_account_id = "1234567890"
@@ -51,10 +51,9 @@ resource "instaclustr_vpc_peering" "example_vpc_peering" {
 }
 ```
 
-#### Example GCP
+#### GCP Example
 ```
-resource "instaclustr_GCPvpc_peering" "gcp_example" {
-
+resource "instaclustr_vpc_peering_gcp" "gcp_example" {
   name="name"
   peer_vpc_network_name = "my-vpc1"
   peer_project_id = "project-id"

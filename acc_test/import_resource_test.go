@@ -279,15 +279,15 @@ func TestAccVpcPeering_importBasic(t *testing.T) {
 			{
 				Config: config,
 				Check: resource.ComposeTestCheckFunc(
-					checkGCPVpcPeeringState,
+					checkVpcPeeringState,
 					checkVpcPeeringCreated(hostname, username, apiKey),
 				),
 			},
 			{
 				Config:            config,
-				ResourceName:      "instaclustr_vpc_peering.valid_with_vpc_peering",
+				ResourceName:      "instaclustr_vpc_peering_aws.valid_with_vpc_peering",
 				ImportState:       true,
-				ImportStateIdFunc: testAccVpcPeeringImportStateIdFunc("instaclustr_vpc_peering.valid_with_vpc_peering"),
+				ImportStateIdFunc: testAccVpcPeeringImportStateIdFunc("instaclustr_vpc_peering_aws.valid_with_vpc_peering"),
 				ImportStateVerify: true,
 			},
 		},
@@ -346,10 +346,10 @@ func TestGCPAccVpcPeering_importBasic(t *testing.T) {
 			},
 			{
 				Config:       config,
-				ResourceName: "instaclustr_GCPvpc_peering.gcp_example",
+				ResourceName: "instaclustr_vpc_peering_gcp.gcp_example",
 
 				ImportState:       true,
-				ImportStateIdFunc: testAccVpcPeeringImportStateIdFunc("instaclustr_GCPvpc_peering.gcp_example"),
+				ImportStateIdFunc: testAccVpcPeeringImportStateIdFunc("instaclustr_vpc_peering_gcp.gcp_example"),
 				ImportStateVerify: true,
 			},
 		},
