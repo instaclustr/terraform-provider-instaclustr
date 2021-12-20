@@ -74,6 +74,28 @@ func (c *APIClient) CreateCluster(data []byte) (string, error) {
 	return id, nil
 }
 
+func (c *APIClient) ListClusters() (*[]ClusterListItem, error) {
+	url := fmt.Sprintf("%s/provisioning/v1", c.apiServerHostname)
+	resp, err := c.MakeRequest(url, "GET", nil)
+	if err != nil {
+		return nil, err
+	}
+	bodyText, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode == 404 { // 404s are returned when no clusters are found
+		emptyResponse := make([]ClusterListItem, 0)
+		return &emptyResponse, nil
+	}
+	if resp.StatusCode != 200 {
+		return nil, errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
+	}
+	var clusters []ClusterListItem
+	json.Unmarshal(bodyText, &clusters)
+	return &clusters, nil
+}
+
 func (c *APIClient) ReadCluster(clusterID string) (*Cluster, error) {
 	url := fmt.Sprintf("%s/provisioning/v1/%s/terraform-description", c.apiServerHostname, clusterID)
 	resp, err := c.MakeRequest(url, "GET", nil)

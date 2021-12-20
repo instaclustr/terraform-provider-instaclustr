@@ -36,7 +36,7 @@ func dataSourceClusterCredentialsRead(d *schema.ResourceData, meta interface{}) 
 	cluster, err := client.ReadCluster(id)
 
 	if err != nil {
-		return fmt.Errorf("[Error] Error reading cluster credentials: #{err}")
+		return fmt.Errorf("[Error] Error reading cluster credentials: %s", err)
 	}
 
 	d.SetId(fmt.Sprintf("%s-credentials", id))
