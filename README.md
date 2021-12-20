@@ -110,14 +110,14 @@ resource "instaclustr_cluster" "example" {
     }
     bundle {
         bundle = "APACHE_CASSANDRA"
-        version = "apache-cassandra-3.11.8.ic2"
+        version = "3.11.8"
         options = {
           auth_n_authz = true
         }
       }
       bundle {
         bundle = "SPARK"
-        version = "apache-spark:2.3.2.ic1"
+        version = "2.3.2"
       }
 }
 ```
@@ -141,7 +141,7 @@ resource "instaclustr_cluster" "azure_example" {
 
   bundle {
     bundle = "APACHE_CASSANDRA"
-    version = "apache-cassandra-3.11.8.ic2"
+    version = "3.11.8"
     options = {
       auth_n_authz = true
     }
@@ -168,7 +168,7 @@ resource "instaclustr_cluster" "gcp_example" {
 
   bundle {
     bundle = "APACHE_CASSANDRA"
-    version = "apache-cassandra-3.11.8.ic2"
+    version = "3.11.8"
     options = {
       auth_n_authz = true
     }
@@ -199,7 +199,7 @@ resource "instaclustr_cluster" "multi_DC_example" {
     }
     bundles {
       bundle = "APACHE_CASSANDRA"
-      version = "apache-cassandra-3.11.8.ic2"
+      version = "3.11.8"
       options = {
         auth_n_authz = true
         use_private_broadcast_rpc_address = false
@@ -210,7 +210,7 @@ resource "instaclustr_cluster" "multi_DC_example" {
     }
     bundles {
       bundle = "SPARK"
-      version = "apache-spark:2.3.2.ic1"
+      version = "2.3.2"
     }
   }
 
@@ -228,7 +228,7 @@ resource "instaclustr_cluster" "multi_DC_example" {
     }
     bundles {
       bundle = "APACHE_CASSANDRA"
-      version = "apache-cassandra-3.11.8.ic2"
+      version = "3.11.8"
       options = {
         auth_n_authz = true
         use_private_broadcast_rpc_address = false
@@ -253,7 +253,7 @@ resource "instaclustr_cluster" "multi_DC_example" {
     }
     bundles {
       bundle = "APACHE_CASSANDRA"
-      version = "apache-cassandra-3.11.8.ic2"
+      version = "3.11.8"
       options = {
         auth_n_authz = true
         use_private_broadcast_rpc_address = false
@@ -264,7 +264,7 @@ resource "instaclustr_cluster" "multi_DC_example" {
     }
     bundles {
       bundle = "SPARK"
-      version = "apache-spark:2.3.2.ic1"
+      version = "2.3.2"
     }
   }
 }
@@ -284,8 +284,8 @@ SPARK|2.1.3, 2.3.2|APACHE_CASSANDRA
 KAFKA|2.7.1, 2.8.1, 3.0.0|
 KAFKA_REST_PROXY|5.0.0|KAFKA
 KAFKA_SCHEMA_REGISTRY|5.0.0, 5.0.4|KAFKA
-OPENSEARCH|opensearch:1.0.0
-ELASTICSEARCH|opendistro-for-elasticsearch:1.8.0, opendistro-for-elasticsearch:1.11.0.ic1
+OPENSEARCH|1.0.0
+ELASTICSEARCH|1.8.0, 1.11.0
 KAFKA_CONNECT|2.7.1, 2.8.1, 3.0.0|
 REDIS|6.0.9|
 APACHE_ZOOKEEPER|3.5.8|
