@@ -285,9 +285,9 @@ func TestAccVpcPeering_importBasic(t *testing.T) {
 			},
 			{
 				Config:            config,
-				ResourceName:      "instaclustr_vpc_peering_aws.valid_with_vpc_peering",
+				ResourceName:      "instaclustr_vpc_peering.valid_with_vpc_peering",
 				ImportState:       true,
-				ImportStateIdFunc: testAccVpcPeeringImportStateIdFunc("instaclustr_vpc_peering_aws.valid_with_vpc_peering"),
+				ImportStateIdFunc: testAccVpcPeeringImportStateIdFunc("instaclustr_vpc_peering.valid_with_vpc_peering"),
 				ImportStateVerify: true,
 			},
 		},
