@@ -192,7 +192,7 @@ resource "instaclustr_cluster" "example-elasticsearch" {
 
   bundle {
     bundle = "ELASTICSEARCH"
-    version = "opendistro-for-elasticsearch:1.11.0.ic1"
+    version = "opendistro-for-elasticsearch:1.11.0.ic2"
     options = {
       client_encryption = true,
       dedicated_master_nodes = true,
@@ -220,7 +220,7 @@ resource "instaclustr_cluster" "example-opensearch" {
 
   bundle {
     bundle = "OPENSEARCH"
-    version = "opensearch:1.0.0"
+    version = "opensearch:1.0.0.ic2"
     options = {
       dedicated_master_nodes = true,
       master_node_size = "m5l-250-v2",
