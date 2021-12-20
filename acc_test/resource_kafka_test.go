@@ -3,14 +3,15 @@ package test
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
-	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 	"io/ioutil"
 	"os"
 	"regexp"
 	"strconv"
 	"testing"
+
+	"github.com/hashicorp/terraform/helper/resource"
+	"github.com/hashicorp/terraform/terraform"
+	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 )
 
 func TestKafkaResources(t *testing.T) {
@@ -47,18 +48,18 @@ func TestKafkaResources(t *testing.T) {
 	newPassword := "charlie123standard!"
 	kafkaNodeSize := "KFK-DEV-t4g.medium-80"
 	zookeeperNodeSize := "KDZ-DEV-t4g.small-30"
-	kafkaVersion := "apache-kafka:2.7.1.ic1"
+	kafkaVersion := "apache-kafka:2.7.1.ic2"
 	topic1 := "test1"
 	topic2 := "test2"
 
-	acl := instaclustr.KafkaAcl {
-		Principal:	"User:test",
-		Host:		"*",
-		ResourceType: 	"TOPIC",
-		ResourceName: 	"*",
-		Operation: 	"ALL",
+	acl := instaclustr.KafkaAcl{
+		Principal:      "User:test",
+		Host:           "*",
+		ResourceType:   "TOPIC",
+		ResourceName:   "*",
+		Operation:      "ALL",
 		PermissionType: "ALLOW",
-		PatternType: 	"LITERAL",
+		PatternType:    "LITERAL",
 	}
 
 	// Kafka user management tests
@@ -79,7 +80,6 @@ func TestKafkaResources(t *testing.T) {
 	invalidKafkaUserCreateConfig := fmt.Sprintf(string(configBytes4), username, apiKey, hostname, kafkaNodeSize, kafkaVersion, zookeeperNodeSize,
 		kafkaUsername3, oldPassword)
 
-	
 	// Kafka topic management tests
 	createKafkaTopicConfig := fmt.Sprintf(string(configBytes6), username, apiKey, hostname, kafkaNodeSize, kafkaVersion, zookeeperNodeSize,
 		topic1,
@@ -160,7 +160,7 @@ func TestKafkaResources(t *testing.T) {
 				),
 			},
 			{
-				Config: invalidKafkaAclCreateConfigDuplicate,
+				Config:      invalidKafkaAclCreateConfigDuplicate,
 				ExpectError: regexp.MustCompile(".*Error creating kafka ACL: the resource already exists, use terraform import instead."),
 			},
 			{
@@ -467,14 +467,14 @@ func checkKafkaAclCreated(hostname string, username string, apiKey string) resou
 		permissionType := resourceState.Primary.Attributes["permission_type"]
 		patternType := resourceState.Primary.Attributes["pattern_type"]
 
-		data := instaclustr.KafkaAcl {
-			Principal:	principal,
-			Host:		host,
-			ResourceType: 	resourceType,
-			ResourceName:	resourceName,
-			Operation: 	operation,
+		data := instaclustr.KafkaAcl{
+			Principal:      principal,
+			Host:           host,
+			ResourceType:   resourceType,
+			ResourceName:   resourceName,
+			Operation:      operation,
 			PermissionType: permissionType,
-			PatternType: 	patternType,
+			PatternType:    patternType,
 		}
 
 		var jsonStr []byte
@@ -511,7 +511,7 @@ func checkKafkaAclDeleted(acl instaclustr.KafkaAcl, hostname string, username st
 		if err != nil {
 			return fmt.Errorf("Failed to read Kafka ACL list from %s: %s", clusterId, err)
 		}
-	
+
 		if len(acls) > 0 {
 			return fmt.Errorf("Kafka ACL still exists in %s", clusterId)
 		}
@@ -527,11 +527,11 @@ func checkKafkaAclListCreated(hostname, username, apiKey string) resource.TestCh
 		client.InitClient(hostname, username, apiKey)
 		clusterId := resourceState.Primary.Attributes["cluster_id"]
 
-		data := instaclustr.KafkaAcl {
-			ResourceType: 	"ANY",
-			Operation: 	"ANY",
+		data := instaclustr.KafkaAcl{
+			ResourceType:   "ANY",
+			Operation:      "ANY",
 			PermissionType: "ANY",
-			PatternType: 	"ANY",
+			PatternType:    "ANY",
 		}
 
 		var jsonStr []byte
