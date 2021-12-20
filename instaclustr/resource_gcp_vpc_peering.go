@@ -93,6 +93,8 @@ func GCPresourceVpcPeeringCreate(d *schema.ResourceData, meta interface{}) error
 	if err != nil {
 		return fmt.Errorf("[Error] Error in creating the cluster: %s", err)
 	}
+	d.SetId(id)
+	d.Set("vpc_peering_id", id)
 	d.Set("cdc_id", cdcID)
 	var vpcPeering *GCPVPCPeering
 	vpcPeering, err = client.GCPReadVpcPeering(cdcID, id)
@@ -136,7 +138,8 @@ func GCPresourceVpcPeeringReadHelper(d *schema.ResourceData, vpcPeering *GCPVPCP
 	d.Set("vpc_peering_id", vpcPeering.ID)
 	d.Set("cdc_id", vpcPeering.ClusterDataCentre)
 	d.Set("peer_vpc_network_name", vpcPeering.PeerVPCNetworkName)
-
+	d.Set("name", vpcPeering.Name)
+	d.Set("peer_subnets", vpcPeering.PeerSubnets)
 	d.Set("peer_project_id", vpcPeering.PeerProjectID)
 
 	log.Printf("[INFO] Fetched VPC peering %s info from the remote server.", vpcPeering.ID)

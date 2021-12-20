@@ -11,7 +11,6 @@ resource "instaclustr_cluster" "valid_with_vpc_peering" {
     sla_tier = "NON_PRODUCTION"
     cluster_network = "192.168.0.0/18"
     private_network_cluster = false
-    wait_for_state="RUNNING"
     cluster_provider = {
         name = "AWS_VPC"
     }
@@ -34,6 +33,7 @@ resource "instaclustr_cluster" "valid_with_vpc_peering" {
 
 resource "instaclustr_vpc_peering_aws" "valid_with_vpc_peering" {
     cluster_id = "${instaclustr_cluster.valid_with_vpc_peering.cluster_id}"
+    
     peer_vpc_id = "vpc-12345678"
     peer_account_id = "494111121110"
     peer_subnets = toset(["10.128.176.0/20", "10.129.176.0/20"])
@@ -59,7 +59,6 @@ resource "instaclustr_cluster" "gcp_example" {
   sla_tier = "NON_PRODUCTION"
   cluster_network = "192.168.0.0/18"
   private_network_cluster = false
-     wait_for_state="RUNNING"
   cluster_provider = {
     name = "GCP"
   }
@@ -77,10 +76,10 @@ resource "instaclustr_cluster" "gcp_example" {
   }
 }
 resource "instaclustr_vpc_peering_gcp" "gcp_example" {
-
+  cluster_id = "${instaclustr_cluster.gcp_example.id}"
   name="name"
   peer_vpc_network_name = "my-vpc1"
   peer_project_id = "instaclustr-dev"
   peer_subnets = toset(["10.10.0.0/16", "10.11.0.0/16"])
-  cluster_id = "${instaclustr_cluster.gcp_example.id}"
+  
 }
