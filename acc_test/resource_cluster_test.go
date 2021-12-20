@@ -60,7 +60,7 @@ func AccGCPClusterResourceTestSteps(t *testing.T, testAccProviders map[string]te
 				Config: oriConfig,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckResourceValid("gcp_valid"),
-					testCheckResourceCreated("gcp_validgcp_valid", hostname, username, apiKey),
+					testCheckResourceCreated("gcp_valid", hostname, username, apiKey),
 				),
 			},
 			{

@@ -186,7 +186,6 @@ type VPCPeering struct {
 type GCPVPCPeering struct {
 	ID                 string `json:"id"`
 	Name               string `json:"name"`
-	GCPVpcConnectionID string `json:"peerProjectId"`
 	ClusterDataCentre  string `json:"clusterDataCentre"`
 	VpcID              string `json:"vpcNetworkName"`
 	PeerProjectID      string `json:"projectId"`
