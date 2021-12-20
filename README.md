@@ -264,7 +264,7 @@ resource "instaclustr_cluster" "multi_DC_example" {
     }
     bundles {
       bundle = "SPARK"
-      version = "apache-spark:2.3.2.ic2"
+      version = "apache-spark:2.3.2.ic1"
     }
   }
 }
