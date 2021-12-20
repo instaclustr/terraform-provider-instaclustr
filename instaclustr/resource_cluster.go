@@ -1612,7 +1612,7 @@ func resourceClusterStateImport(d *schema.ResourceData, meta interface{}) ([]*sc
 	return []*schema.ResourceData{d}, nil
 }
 
-func getBundles(d *schema.ResourceData) ([]Bundle, error) {
+func getBundles(d resourceDataInterface) ([]Bundle, error) {
 	bundles := make([]Bundle, 0)
 	for _, inBundle := range d.Get("bundle").([]interface{}) {
 		var bundle Bundle
