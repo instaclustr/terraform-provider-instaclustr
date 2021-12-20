@@ -82,6 +82,7 @@ type CreateRequest struct {
 	SlaTier               string                    `json:"slaTier,omitempty"`
 	NodeSize              string                    `json:"nodeSize,omitempty"`
 	DataCentre            string                    `json:"dataCentre,omitempty"`
+	DataCentreCustomName  string                    `json:"dataCentreCustomName,omitempty"`
 	DataCentres           []DataCentreCreateRequest `json:"dataCentres,omitempty"`
 	ClusterNetwork        string                    `json:"clusterNetwork,omitempty"`
 	PrivateNetworkCluster string                    `json:"privateNetworkCluster,omitempty"`
@@ -120,6 +121,16 @@ type Cluster struct {
 	DataCentre                 string                   `json:"dataCentre"`
 	DataCentres                []DataCentre             `json:"dataCentres"`
 	Provider                   []ClusterProvider        `json:"clusterProvider"`
+}
+
+type ClusterListItem struct {
+	ID               string `json:"id"`
+	Name             string `json:"name"`
+	NodeCount        int    `json:"nodeCount,omitempty"`
+	RunningNodeCount int    `json:"runningNodeCount,omitempty"`
+	DerivedStatus    string `json:"derivedStatus,omitempty"`
+	SlaTier          string `json:"slaTier,omitempty"`
+	PciCompliance    string `json:"pciCompliance,omitempty"`
 }
 
 type DataCentre struct {

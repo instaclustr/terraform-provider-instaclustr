@@ -21,6 +21,7 @@ func AccClusterResourceTestSteps(t *testing.T, testAccProviders map[string]terra
 
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
 	updatedConfig := strings.Replace(oriConfig, "testcluster", "newcluster", 1)
+	newToOldVersionConfig := strings.Replace(updatedConfig, `version = "3.11.8"`, `version = "apache-cassandra-3.11.8.ic2"`, 1)
 
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
@@ -39,6 +40,34 @@ func AccClusterResourceTestSteps(t *testing.T, testAccProviders map[string]terra
 					testCheckResourceValid("valid"),
 					testCheckResourceCreated("valid", hostname, username, apiKey),
 				),
+			},
+			{
+				Config: newToOldVersionConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid("valid"),
+				),
+				PlanOnly: true,
+			},
+			{
+				Config: updatedConfig,
+				Destroy: true,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceDeleted("valid", hostname, username, apiKey),
+				),
+			},
+			{
+				Config: newToOldVersionConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid("valid"),
+					testCheckResourceCreated("valid", hostname, username, apiKey),
+				),
+			},
+			{
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid("valid"),
+				),
+				PlanOnly: true,
 			},
 		},
 	})
@@ -191,6 +220,7 @@ func TestAccClusterResize(t *testing.T) {
 					testCheckResourceValid(resourceName),
 					testCheckResourceCreated(resourceName, hostname, username, apiKey),
 					checkClusterRunning(resourceName, hostname, username, apiKey),
+					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_cluster", "data_centre_custom_name", "AWS_VPC_US_EAST_1_name"),
 					testCheckContactIPCorrect(resourceName, hostname, username, apiKey, 3, 3),
 				),
 			},
@@ -649,6 +679,7 @@ func TestCheckSingleDCRefreshToMultiDC(t *testing.T) {
 				Config:             singleDCConfig,
 				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("instaclustr_cluster.dc_test_cluster", "data_centre_custom_name", "AWS_VPC_US_EAST_1_name"),
 					addDCtoCluster("dc_test_cluster", hostname, username, apiKey, "data/valid_add_dc.json"),
 				),
 			},

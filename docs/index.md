@@ -60,7 +60,7 @@ resource "instaclustr_cluster" "example" {
 
   bundle {
     bundle = "APACHE_CASSANDRA"
-    version = "apache-cassandra-3.11.8.ic2"
+    version = "3.11.8"
     options = {
       auth_n_authz = true
     }
@@ -68,7 +68,7 @@ resource "instaclustr_cluster" "example" {
 
   bundle {
     bundle = "SPARK"
-    version = "apache-spark:2.3.2.ic1"
+    version = "2.3.2"
   }
 }
 ```

@@ -20,7 +20,7 @@ resource "instaclustr_cluster" "invalidElasticsearch" {
     }
     bundle {
         bundle = "ELASTICSEARCH"
-        version = "opendistro-for-elasticsearch:1.11.0.ic1"
+        version = "1.11.0"
         options = {
             dedicated_master_nodes = false,
             master_node_size = "m5l-250-v2",
