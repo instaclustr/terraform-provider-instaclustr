@@ -15,8 +15,7 @@ import (
 	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 )
 
-// we put the test here so that the Kafka cluster can be reused amongst bunch of other Kafka related tests
-
+// we put the Kafka Connect cluster test here so that the Kafka cluster can be reused amongst bunch of other Kafka related tests
 func TestKafkaResources(t *testing.T) {
 	testProviders := map[string]terraform.ResourceProvider{
 		"instaclustr": instaclustr.Provider(),
