@@ -23,7 +23,7 @@ resource "instaclustr_cluster" "validApacheZookeeper" {
     
     bundle {
         bundle = "APACHE_ZOOKEEPER"
-        version = "apache-zookeeper:3.5.8"
+        version = "3.5.8"
         options = {
             zookeeper_node_count = 5
         }

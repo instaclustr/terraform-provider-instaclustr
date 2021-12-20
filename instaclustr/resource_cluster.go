@@ -23,6 +23,7 @@ var (
 		"RUNNING":     true,
 		"PROVISIONED": true,
 	}
+	semanticVersioningPattern, _ = regexp.Compile("[0-9]+(\\.[0-9]+){1,2}")
 )
 
 func resourceCluster() *schema.Resource {
@@ -65,6 +66,14 @@ func resourceCluster() *schema.Resource {
 				Optional:      true,
 				ConflictsWith: []string{"data_centres"},
 				ForceNew:      true,
+			},
+
+			"data_centre_custom_name": {
+				Type:          schema.TypeString,
+				Optional:      true,
+				ConflictsWith: []string{"data_centres"},
+				ForceNew:      true,
+				DiffSuppressFunc: dcCustomNameDiffSuppressFunc,
 			},
 
 			"data_centres": {
@@ -167,6 +176,7 @@ func resourceCluster() *schema.Resource {
 										Type:     schema.TypeString,
 										Required: true,
 										ForceNew: true,
+										DiffSuppressFunc: versionDiffSuppressFunc,
 									},
 									"options": {
 										Type:     schema.TypeMap,
@@ -347,6 +357,7 @@ func resourceCluster() *schema.Resource {
 							Type:     schema.TypeString,
 							Required: true,
 							ForceNew: true,
+							DiffSuppressFunc: versionDiffSuppressFunc,
 						},
 						"options": {
 							// This type is not correct. TypeMaps cannot have complex structures defined in the same way that TypeLists and TypeSets can
@@ -584,6 +595,25 @@ func resourceCluster() *schema.Resource {
 		},
 	}
 }
+
+func versionDiffSuppressFunc(k, old string, new string, d *schema.ResourceData) bool {
+	/*
+	 * Ensures that diffs are not shown for versions of different formats
+	 * containing the same sem-ver. For example, all of these are equivalent:
+	 * 3.11.8
+	 * apache-cassandra-3.11.8
+	 * apache-cassandra-3.11.8.ic2
+	*/
+	oldSemVer := semanticVersioningPattern.FindString(old)
+	newSemVer := semanticVersioningPattern.FindString(new)
+	return oldSemVer == newSemVer
+}
+
+//dcCustomNameDiffSuppressFunc is used to suppress the diff if a custom DC name is not provided in the resource
+func dcCustomNameDiffSuppressFunc(k, old, new string, d *schema.ResourceData) bool {
+	return new == ""
+}
+
 func resourceClusterCustomizeDiff(diff *schema.ResourceDiff, i interface{}) error {
 
 	if _, isBundle := diff.GetOk("bundle"); isBundle {
@@ -685,6 +715,7 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		clusterNetwork := d.Get("cluster_network").(string)
 		createData.DataCentre = dataCentre
 		createData.ClusterNetwork = clusterNetwork
+		createData.DataCentreCustomName = d.Get("data_centre_custom_name").(string)
 	} else {
 		createData.DataCentres = dataCentres
 	}
@@ -1291,6 +1322,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		}
 		d.Set("data_centre", cluster.DataCentres[0].Name)
 		d.Set("cluster_network", cluster.DataCentres[0].CdcNetwork)
+		d.Set("data_centre_custom_name", cluster.DataCentres[0].CdcName)
 
 		if err := deleteAttributesConflict(resourceCluster().Schema, d, "data_centre"); err != nil {
 			return err
