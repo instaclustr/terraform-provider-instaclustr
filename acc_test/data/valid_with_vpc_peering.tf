@@ -54,6 +54,7 @@ resource "instaclustr_vpc_peering_aws" "valid_with_vpc_peering_legacy" {
 }
 resource "instaclustr_cluster" "gcp_example" {
   cluster_name = "testclustergcp"
+  wait_for_state = "RUNNING"
   node_size = "n1-standard-2"
   data_centre = "us-east1"
   sla_tier = "NON_PRODUCTION"
