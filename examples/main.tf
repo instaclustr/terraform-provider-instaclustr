@@ -119,7 +119,7 @@ resource "instaclustr_firewall_rule" "example_firewall_rule_sg" {
   ]
 }
 
-resource "instaclustr_vpc_peering_aws" "example_vpc_peering" {
+resource "instaclustr_vpc_peering" "example_vpc_peering" {
   cluster_id = "${instaclustr_cluster.example.id}"
   peer_vpc_id = "vpc-123456"
   peer_account_id = "1234567890"
