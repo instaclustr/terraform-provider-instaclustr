@@ -101,4 +101,3 @@ func testCheckContactIPCorrect(resourceName, hostname, username, apiKey string, 
 		return nil
 	}
 }
-
