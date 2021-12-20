@@ -76,48 +76,28 @@ func TestKafkaResources(t *testing.T) {
 
 	// Kafka user management tests
 	createClusterConfig := fmt.Sprintf(string(configBytes1), username, apiKey, hostname, kafkaNodeSize, kafkaVersion, zookeeperNodeSize)
-	createKafkaUserConfig := fmt.Sprintf(string(configBytes2), username, apiKey, hostname, kafkaNodeSize, kafkaVersion, zookeeperNodeSize,
-		kafkaUsername1, oldPassword,
-		kafkaUsername2, oldPassword)
-	createKafkaUserListConfig := fmt.Sprintf(string(configBytes3), username, apiKey, hostname, kafkaNodeSize, kafkaVersion, zookeeperNodeSize,
-		kafkaUsername1, oldPassword,
-		kafkaUsername2, oldPassword)
-	updateKafkaUserConfig := fmt.Sprintf(string(configBytes3), username, apiKey, hostname, kafkaNodeSize, kafkaVersion, zookeeperNodeSize,
-		kafkaUsername1, newPassword,
-		kafkaUsername2, newPassword)
-	invalidKafkaUserCreateConfigDuplicate := fmt.Sprintf(string(configBytes5), username, apiKey, hostname, kafkaNodeSize, kafkaVersion, zookeeperNodeSize,
-		kafkaUsername1, newPassword,
-		kafkaUsername2, newPassword,
-		kafkaUsername1, oldPassword)
-	invalidKafkaUserCreateConfig := fmt.Sprintf(string(configBytes4), username, apiKey, hostname, kafkaNodeSize, kafkaVersion, zookeeperNodeSize,
-		kafkaUsername3, oldPassword)
+	createKafkaUserConfig := fmt.Sprintf(createClusterConfig + string(configBytes2), kafkaUsername1, oldPassword, kafkaUsername2, oldPassword)
+	createKafkaUserListConfig := fmt.Sprintf(createKafkaUserConfig + string(configBytes3))
+	updateKafkaUserConfig := fmt.Sprintf(createClusterConfig + string(configBytes2), kafkaUsername1, newPassword, kafkaUsername2, newPassword)
+	invalidKafkaUserCreateConfigDuplicate := fmt.Sprintf(updateKafkaUserConfig + string(configBytes5), kafkaUsername1, oldPassword)
+	invalidKafkaUserCreateConfig := fmt.Sprintf(createClusterConfig + string(configBytes4), kafkaUsername3, oldPassword)
 	
 	// Kafka topic management tests
-	createKafkaTopicConfig := fmt.Sprintf(string(configBytes6), username, apiKey, hostname, kafkaNodeSize, kafkaVersion, zookeeperNodeSize,
-		topic1,
-		topic2)
-	createKafkaTopicListConfig := fmt.Sprintf(string(configBytes7), username, apiKey, hostname, kafkaNodeSize, kafkaVersion, zookeeperNodeSize,
-		topic1,
-		topic2)
-	invalidKafkaTopicCreateConfigDuplicate := fmt.Sprintf(string(configBytes8), username, apiKey, hostname, kafkaNodeSize, kafkaVersion, zookeeperNodeSize,
-		topic1,
-		topic2,
-		topic1)
-	updateKafkaTopicConfig := fmt.Sprintf(string(configBytes9), username, apiKey, hostname, kafkaNodeSize, kafkaVersion, zookeeperNodeSize,
-		topic1,
-		topic2)
+	createKafkaTopicConfig := fmt.Sprintf(createClusterConfig + string(configBytes6), topic1, topic2)
+	createKafkaTopicListConfig := fmt.Sprintf(createKafkaTopicConfig + string(configBytes7))
+	invalidKafkaTopicCreateConfigDuplicate := fmt.Sprintf(createKafkaTopicListConfig + string(configBytes8), topic1)
+	updateKafkaTopicConfig := fmt.Sprintf(createClusterConfig + string(configBytes9), topic1, topic2)
 
 	// Kafka ACL management tests
-	createKafkaAclConfig := fmt.Sprintf(string(configBytesAcl1), username, apiKey, hostname, kafkaNodeSize, kafkaVersion, zookeeperNodeSize,
-		acl.Principal, acl.Host, acl.ResourceType, acl.ResourceName, acl.Operation, acl.PermissionType, acl.PatternType)
-	invalidKafkaAclCreateConfigDuplicate := fmt.Sprintf(string(configBytesAcl2), username, apiKey, hostname, kafkaNodeSize, kafkaVersion, zookeeperNodeSize,
-		acl.Principal, acl.Host, acl.ResourceType, acl.ResourceName, acl.Operation, acl.PermissionType, acl.PatternType,
-		acl.Principal, acl.Host, acl.ResourceType, acl.ResourceName, acl.Operation, acl.PermissionType, acl.PatternType)
-	createKafkaAclListConfig := fmt.Sprintf(string(configBytesAcl3), username, apiKey, hostname, kafkaNodeSize, kafkaVersion, zookeeperNodeSize)
+	createKafkaAclConfig := fmt.Sprintf(createClusterConfig + string(configBytesAcl1), acl.Principal, acl.Host,
+		acl.ResourceType, acl.ResourceName, acl.Operation, acl.PermissionType, acl.PatternType)
+	invalidKafkaAclCreateConfigDuplicate := fmt.Sprintf(createKafkaAclConfig + string(configBytesAcl2), acl.Principal,
+		acl.Host, acl.ResourceType, acl.ResourceName, acl.Operation, acl.PermissionType, acl.PatternType)
+	createKafkaAclListConfig := fmt.Sprintf(createClusterConfig + string(configBytesAcl3))
 
 	// Kafka Connect tests
-	kcConfig := fmt.Sprintf(string(kcConfigBytes), username, apiKey, hostname, kafkaNodeSize, kafkaVersion, zookeeperNodeSize, kcVersion,
-		S3BucketName, awsAccessKey, awsSecretKey, azureStorageAccountName, azureStorageAccountKey, kcVersion, azureStorageContainerName)
+	kcConfig := fmt.Sprintf(createClusterConfig + string(kcConfigBytes), kcVersion, S3BucketName, awsAccessKey,
+		awsSecretKey, azureStorageAccountName, azureStorageAccountKey, kcVersion, azureStorageContainerName)
 
 	resource.Test(t, resource.TestCase{
 		Providers: testProviders,
