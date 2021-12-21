@@ -75,7 +75,7 @@ func GCPresourceVpcPeeringCreate(d *schema.ResourceData, meta interface{}) error
 
 	cdcID, err := VpcPeeringCreate(d, meta)
 	if err != nil {
-		return fmt.Errorf("[Error] Failed to call common create functions: %s", err)
+		return fmt.Errorf("[Error] Error creating VPC peering request object: %s", err)
 	}
 	var createData CreateGCPVPCPeeringRequest
 	createData, err = GCPcreateVpcPeeringRequest(d)
