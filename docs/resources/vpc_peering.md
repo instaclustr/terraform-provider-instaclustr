@@ -6,7 +6,7 @@ description: |-
 ---
 
 ### Resource: `instaclustr_vpc_peering`  
-A resource for managing VPC peering connections on Instaclustr Managed Platform. This is avaliable for clusters hosted with the AWS and GCP .
+A resource for managing VPC peering connections on Instaclustr Managed Platform. This is avaliable for clusters hosted with AWS and GCP.
   
 When creating this resource, the process will wait for target cluster to be in the `PROVISIONED` or `RUNNING` status. The process will time out after 60 seconds of waiting. 
 

@@ -821,7 +821,7 @@ func TestGCPVpcPeeringResourceReadHelperTest(t *testing.T) {
 		PeerVPCNetworkName: "instaclustr_Test",
 	}
 
-	if err := GCPresourceVpcPeeringReadHelper(resourceLocalData, &p); err != nil {
+	if err := MapGCPVPCPeeringToResource(resourceLocalData, &p); err != nil {
 		t.Fatalf("Expected nil error but got %v", err)
 	}
 }
@@ -886,7 +886,7 @@ func TestGCPVpcPeeringResourceHelperTest(t *testing.T) {
 		PeerVPCNetworkName: "instaclustr_Test",
 	}
 
-	if err := GCPresourceVpcPeeringReadHelper(resourceLocalData, &p); err != nil {
+	if err := MapGCPVPCPeeringToResource(resourceLocalData, &p); err != nil {
 		t.Fatalf("Expected nil error but got %v", err)
 	}
 }

@@ -75,7 +75,7 @@ func GCPresourceVpcPeeringCreate(d *schema.ResourceData, meta interface{}) error
 
 	cdcID, err := VpcPeeringCreate(d, meta)
 	if err != nil {
-		return fmt.Errorf("[Error] Error creating VPC peering request: %s", err)
+		return fmt.Errorf("[Error] Failed to call common create functions: %s", err)
 	}
 	var createData CreateGCPVPCPeeringRequest
 	createData, err = GCPcreateVpcPeeringRequest(d)
@@ -122,7 +122,7 @@ func GCPresourceVpcPeeringRead(d *schema.ResourceData, meta interface{}) error {
 	if err != nil {
 		return fmt.Errorf("[Error] Error reading VPC peering connection: %s", err)
 	}
-	err = GCPresourceVpcPeeringReadHelper(d, vpcPeering)
+	err = MapGCPVPCPeeringToResource(d, vpcPeering)
 	if err != nil {
 		return fmt.Errorf("[Error] Error reading VPC peering connection: %s", err)
 	}
@@ -130,7 +130,7 @@ func GCPresourceVpcPeeringRead(d *schema.ResourceData, meta interface{}) error {
 
 }
 
-func GCPresourceVpcPeeringReadHelper(d *schema.ResourceData, vpcPeering *GCPVPCPeering) error {
+func MapGCPVPCPeeringToResource(d *schema.ResourceData, vpcPeering *GCPVPCPeering) error {
 	if vpcPeering.ID == "" {
 		return nil
 	}
