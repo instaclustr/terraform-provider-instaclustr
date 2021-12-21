@@ -43,7 +43,7 @@ Property | Description | Default
 
 #### AWS Example
 ```
-resource "_instaclustr_vpc_peering" "example_vpc_peering" {
+resource "instaclustr_vpc_peering" "example_vpc_peering" {
     cluster_id = "${instaclustr_cluster.example.cluster_id}"
     peer_vpc_id = "vpc-123456"
     peer_account_id = "1234567890"

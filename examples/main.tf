@@ -6,14 +6,14 @@ terraform {
       source = "instaclustr/instaclustr"
       //Change the source as per below to work with a local development copy on terraform version >=13
       //source = "terraform.instaclustr.com/instaclustr/instaclustr"
-      version = ">= 1.14.8"
+      version = ">= 1.0.0"
     }
   }
 }
 
 provider "instaclustr" {
-  username = ""
-  api_key = ""
+  username = "<Your instaclustr username here>"
+  api_key = "<Your provisioning API key here>"
   
 }
 resource "instaclustr_encryption_key" "add_ebs_key" {
@@ -65,7 +65,7 @@ resource "instaclustr_cluster" "gcp_example" {
 
   bundle {
     bundle = "APACHE_CASSANDRA"
-    version = "apache-cassandra-3.11.8.ic2"
+    version = "apache-cassandra-3.11.8"
     options = {
       auth_n_authz = true
     }

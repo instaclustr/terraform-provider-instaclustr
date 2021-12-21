@@ -38,7 +38,7 @@ func TestAccVpcPeeringResource(t *testing.T) {
 func checkVpcPeeringState(s *terraform.State) error {
 	resourceState := s.Modules[0].Resources["instaclustr_vpc_peering.valid_with_vpc_peering"]
 	if resourceState == nil {
-		return fmt.Errorf("valid: resource not found in state")
+		return fmt.Errorf("invalid: resource not found in state")
 	}
 
 	instanceState := resourceState.Primary
@@ -111,7 +111,7 @@ func TestGCPAccVpcPeeringResource(t *testing.T) {
 func checkGCPVpcPeeringState(s *terraform.State) error {
 	resourceState := s.Modules[0].Resources["instaclustr_vpc_peering_gcp.gcp_example"]
 	if resourceState == nil {
-		return fmt.Errorf("valid: resource not found in state")
+		return fmt.Errorf("invalid: resource not found in state")
 	}
 
 	instanceState := resourceState.Primary
