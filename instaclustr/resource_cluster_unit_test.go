@@ -791,7 +791,6 @@ func TestDeleteAttributesConflict(t *testing.T) {
 	checkAttributeValue("attributeC", "C")
 }
 
-
 func TestGCPVpcPeeringResourceReadHelperTest(t *testing.T) {
 	resourceSchema := map[string]*schema.Schema{
 		"peer_vpc_id": {
@@ -889,28 +888,30 @@ func TestGCPVpcPeeringResourceHelperTest(t *testing.T) {
 
 	if err := GCPresourceVpcPeeringReadHelper(resourceLocalData, &p); err != nil {
 		t.Fatalf("Expected nil error but got %v", err)
-  }
+	}
+}
+
 type VersionDiffState struct {
-	version string
+	version        string
 	diffSuppressed bool
 }
 
 func TestVersionDiffSuppression(t *testing.T) {
 	versions := map[string]VersionDiffState{
 		"apache-cassandra:3.11.8": {
-			version: "3.11.8",
+			version:        "3.11.8",
 			diffSuppressed: true,
 		},
 		"3.11.8": {
-			version: "apache-cassandra:3.11.8.ic2",
+			version:        "apache-cassandra:3.11.8.ic2",
 			diffSuppressed: true,
 		},
 		"apache-cassandra:3.11.8.ic2": {
-			version: "apache-cassandra:3.0.19",
+			version:        "apache-cassandra:3.0.19",
 			diffSuppressed: false,
 		},
 		"opendistro-for-elasticsearch:1.8.0": {
-			version: "apache-cassandra:3.0.19",
+			version:        "apache-cassandra:3.0.19",
 			diffSuppressed: false,
 		},
 	}
