@@ -69,10 +69,10 @@ func resourceCluster() *schema.Resource {
 			},
 
 			"data_centre_custom_name": {
-				Type:          schema.TypeString,
-				Optional:      true,
-				ConflictsWith: []string{"data_centres"},
-				ForceNew:      true,
+				Type:             schema.TypeString,
+				Optional:         true,
+				ConflictsWith:    []string{"data_centres"},
+				ForceNew:         true,
 				DiffSuppressFunc: dcCustomNameDiffSuppressFunc,
 			},
 
@@ -173,9 +173,9 @@ func resourceCluster() *schema.Resource {
 										}, false),
 									},
 									"version": {
-										Type:     schema.TypeString,
-										Required: true,
-										ForceNew: true,
+										Type:             schema.TypeString,
+										Required:         true,
+										ForceNew:         true,
 										DiffSuppressFunc: versionDiffSuppressFunc,
 									},
 									"options": {
@@ -354,9 +354,9 @@ func resourceCluster() *schema.Resource {
 							ForceNew: true,
 						},
 						"version": {
-							Type:     schema.TypeString,
-							Required: true,
-							ForceNew: true,
+							Type:             schema.TypeString,
+							Required:         true,
+							ForceNew:         true,
 							DiffSuppressFunc: versionDiffSuppressFunc,
 						},
 						"options": {
@@ -603,7 +603,7 @@ func versionDiffSuppressFunc(k, old string, new string, d *schema.ResourceData) 
 	 * 3.11.8
 	 * apache-cassandra-3.11.8
 	 * apache-cassandra-3.11.8.ic2
-	*/
+	 */
 	oldSemVer := semanticVersioningPattern.FindString(old)
 	newSemVer := semanticVersioningPattern.FindString(new)
 	return oldSemVer == newSemVer
