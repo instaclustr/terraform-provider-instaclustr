@@ -52,19 +52,12 @@ func resourceGCPVpcPeering() *schema.Resource {
 				Required: true,
 			},
 
-			"peer_subnet": {
-				Type:          schema.TypeString,
-				Optional:      true,
-				ConflictsWith: []string{"peer_subnets"},
-			},
-
 			"peer_subnets": {
 				Type: schema.TypeSet,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
-				Optional:      true,
-				ConflictsWith: []string{"peer_subnet"},
+				Optional: true,
 			},
 		},
 	}
