@@ -79,7 +79,7 @@ func resourceVpcPeeringCreate(d *schema.ResourceData, meta interface{}) error {
 
 	cdcID, err := VpcPeeringCreate(d, meta)
 	if err != nil {
-		return fmt.Errorf("[Error] Error creating VPC peering request: %s", err)
+		return fmt.Errorf("[Error] Error creating VPC peering request object: %s", err)
 	}
 	var createData CreateVPCPeeringRequest
 	createData, err = createVpcPeeringRequest(d)
