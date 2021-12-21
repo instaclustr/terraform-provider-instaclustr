@@ -46,7 +46,7 @@ ifndef IC_PROV_VPC_ID
 	@echo "IC_PROV_VPC_ID for provisioning API must be set for acceptance tests"
 	@exit 1
 endif
-	cd acc_test && TF_ACC=1 go test -v -timeout 240m -count=1
+	cd acc_test && TF_ACC=1 go test -v -timeout 150m -count=1
 
 
 install:
