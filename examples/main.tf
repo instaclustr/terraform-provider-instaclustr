@@ -28,6 +28,7 @@ resource "instaclustr_cluster" "example" {
   data_centre = "US_WEST_2"
   sla_tier = "NON_PRODUCTION"
   cluster_network = "192.168.0.0/18"
+  wait_for_state="RUNNING"
   private_network_cluster = false
   cluster_provider = {
     name = "AWS_VPC",
@@ -54,6 +55,7 @@ resource "instaclustr_cluster" "gcp_example" {
   data_centre = "us-east1"
   sla_tier = "NON_PRODUCTION"
   cluster_network = "192.168.0.0/18"
+  wait_for_state="RUNNING"
   private_network_cluster = false
   cluster_provider = {
     name = "GCP"
