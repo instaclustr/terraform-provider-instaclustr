@@ -1,6 +1,7 @@
 package instaclustr
 
 import (
+	"errors"
 	"fmt"
 	"reflect"
 	"strings"
@@ -795,6 +796,98 @@ func TestVersionDiffSuppression(t *testing.T) {
 	}
 }
 
+func TestWaitForClusterDependenciesCleanedAndDoDelete(t *testing.T) {
+	mockCluster := Cluster{
+		ID:           "should-be-uuid",
+		BundleType:   "KAFKA",
+	}
+	mockData := MockResourceData{
+		changes: map[string]MockChange{},
+	}
+
+	mockClient409 := MockApiClient{
+		cluster: mockCluster,
+		err: errors.New("Status code: 409"),
+	}
+	err := clusterDeleteRetry(mockClient409, mockData, "should-be-uuid")
+	if !err.Retryable {
+		t.Fatalf("Expected error to be retryable but got non-retryable instead")
+	}
+
+	mockClient404 := MockApiClient{
+		cluster: mockCluster,
+		err: errors.New("Status code: 404"),
+	}
+	err = clusterDeleteRetry(mockClient404, mockData, "should-be-uuid")
+	if err.Retryable {
+		t.Fatalf("Expected error to be non-retryable but got retryable instead")
+	}
+
+	mockClientSuccess := MockApiClient{
+		cluster: mockCluster,
+		err: nil,
+	}
+	err = clusterDeleteRetry(mockClientSuccess, mockData, "should-be-uuid")
+	if err != nil {
+		t.Fatalf("Expect nil err but got %v", err)
+	}
+}
+
+func checkKcCredentialExists(options BundleOptions, keysExist bool) bool {
+	return ((options.SaslJaasConfig != "") == keysExist) || ((options.AWSAccessKeyId != "") == keysExist) ||
+		((options.AWSSecretKey != "") == keysExist) || ((options.AzureStorageAccountKey != "") == keysExist) ||
+		((options.AzureStorageAccountName != "") == keysExist)
+}
+
+func TestGetKafkaConnectCredential(t *testing.T) {
+	// it's fine for clusters with no such property
+	mockBundleOptions := []interface{}{map[string]interface{}{
+		"options" : map[string]interface{}{"nonsense" : "nonsense"},
+	}}
+	mockOptionsChange := MockChange{
+		before: nil,
+		after:  mockBundleOptions,
+	}
+	mockDataNoCredential := MockResourceData{
+		changes: map[string]MockChange{
+			"bundle": mockOptionsChange,
+		},
+	}
+	bundles, err := getBundles(mockDataNoCredential)
+	if err != nil {
+		t.Fatalf("Config without kafka_connect_credential should throw no error")
+	}
+	if checkKcCredentialExists(*bundles[0].Options, true) {
+		t.Fatalf("Config without kafka_connect_credential should not set the Kafka Connect credential in the bundle options")
+	}
+
+	// but if they exists, they are mapped to the right JSON property
+	mockKcCredential := []interface{}{map[string]interface{}{
+		"aws_access_key" : "A",
+		"aws_secret_key" : "B",
+		"azure_storage_account_name" : "C",
+		"azure_storage_account_key" : "D",
+		"sasl_jaas_config" : "E",
+	}}
+	mockKcCredentialChange := MockChange{
+		before: nil,
+		after:  mockKcCredential,
+	}
+	mockDataWithKcCredential := MockResourceData{
+		changes: map[string]MockChange{
+			"bundle": mockOptionsChange,
+			"kafka_connect_credential": mockKcCredentialChange,
+		},
+	}
+	bundles, err = getBundles(mockDataWithKcCredential)
+	if err != nil {
+		t.Fatalf("Config with kafka_connect_credential should throw no error")
+	}
+	if checkKcCredentialExists(*bundles[0].Options, false) {
+		t.Fatalf("Config with kafka_connect_credential should the Kafka Connect credential in the bundle options")
+	}
+}
+
 type MockApiClient struct {
 	cluster Cluster
 	err     error
@@ -802,6 +895,10 @@ type MockApiClient struct {
 
 func (m MockApiClient) ReadCluster(clusterID string) (*Cluster, error) {
 	return &m.cluster, m.err
+}
+
+func (m MockApiClient) DeleteCluster(clusterID string) error {
+	return m.err
 }
 
 func (m MockApiClient) ResizeCluster(clusterID string, cdcID string, newNodeSize string, nodePurpose *NodePurpose) error {
@@ -841,5 +938,21 @@ func (m MockResourceData) Get(key string) interface{} {
 		return change.after
 	} else {
 		return nil
+	}
+}
+
+// currently for the mock we just set the before as nil
+func (m MockResourceData) Set(key string, value interface{}) error {
+	m.changes[key] = MockChange {
+		before: nil,
+		after: value,
+	}
+	return nil
+}
+
+func (m MockResourceData) SetId(id string) {
+	m.changes["id"] = MockChange {
+		before: nil,
+		after: id,
 	}
 }

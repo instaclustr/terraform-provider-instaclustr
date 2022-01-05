@@ -14,6 +14,7 @@ import (
 type APIClientInterface interface {
 	ReadCluster(clusterID string) (*Cluster, error)
 	ResizeCluster(clusterID string, cdcID string, newNodeSize string, nodePurpose *NodePurpose) error
+	DeleteCluster(clusterID string) error
 }
 
 type APIClient struct {
