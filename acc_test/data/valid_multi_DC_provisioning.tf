@@ -35,7 +35,7 @@ resource "instaclustr_cluster" "valid" {
 
     bundles {
       bundle = "SPARK"
-      version = "apache-spark:2.3.2.ic1"
+      version = "apache-spark:2.3.2"
     }
   }
 
@@ -88,7 +88,7 @@ resource "instaclustr_cluster" "valid" {
     }
     bundles {
       bundle = "SPARK"
-      version = "apache-spark:2.3.2.ic1"
+      version = "apache-spark:2.3.2"
     }
   }
 }
