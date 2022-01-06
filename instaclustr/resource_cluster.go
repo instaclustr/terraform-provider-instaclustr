@@ -593,39 +593,39 @@ func resourceCluster() *schema.Resource {
 				},
 			},
 			"kafka_connect_credential": {
-				Type:	  schema.TypeList,
+				Type:     schema.TypeList,
 				Optional: true,
 				MaxItems: 1,
-				Elem:	  &schema.Resource {
-					Schema: map[string]*schema.Schema {
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
 						"aws_access_key": {
-							Type:     schema.TypeString,
-							Optional: true,
-							ForceNew: true,
+							Type:      schema.TypeString,
+							Optional:  true,
+							ForceNew:  true,
 							Sensitive: true,
 						},
 						"aws_secret_key": {
-							Type:     schema.TypeString,
-							Optional: true,
-							ForceNew: true,
+							Type:      schema.TypeString,
+							Optional:  true,
+							ForceNew:  true,
 							Sensitive: true,
 						},
 						"azure_storage_account_name": {
-							Type:     schema.TypeString,
-							Optional: true,
-							ForceNew: true,
+							Type:      schema.TypeString,
+							Optional:  true,
+							ForceNew:  true,
 							Sensitive: true,
 						},
 						"azure_storage_account_key": {
-							Type:     schema.TypeString,
-							Optional: true,
-							ForceNew: true,
+							Type:      schema.TypeString,
+							Optional:  true,
+							ForceNew:  true,
 							Sensitive: true,
 						},
 						"sasl_jaas_config": {
-							Type:     schema.TypeString,
-							Optional: true,
-							ForceNew: true,
+							Type:      schema.TypeString,
+							Optional:  true,
+							ForceNew:  true,
 							Sensitive: true,
 						},
 					},
@@ -641,7 +641,7 @@ func versionDiffSuppressFunc(k, old string, new string, d *schema.ResourceData) 
 	 * containing the same sem-ver. For example, all of these are equivalent:
 	 * 3.11.8
 	 * apache-cassandra-3.11.8
-	 * apache-cassandra-3.11.8.ic2
+	 * apache-cassandra-3.11.8.ic3
 	 */
 	oldSemVer := semanticVersioningPattern.FindString(old)
 	newSemVer := semanticVersioningPattern.FindString(new)
