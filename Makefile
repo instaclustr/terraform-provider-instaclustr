@@ -4,7 +4,9 @@ BIN_NAME=terraform-provider-instaclustr
 
 # for VERSION, don't add prefix "v", e.g., use "1.9.8" instead of "v1.9.8" as it could break circleCI stuff
 
+
 VERSION=1.15.1
+
 INSTALL_FOLDER=$(HOME)/.terraform.d/plugins/terraform.instaclustr.com/instaclustr/instaclustr/$(VERSION)/darwin_amd64
 
 
@@ -46,7 +48,32 @@ ifndef IC_PROV_VPC_ID
 	@echo "IC_PROV_VPC_ID for provisioning API must be set for acceptance tests"
 	@exit 1
 endif
+ifndef IC_AWS_ACCESS_KEY
+	@echo "IC_AWS_ACCESS_KEY must be set for acceptance tests (Kafka Connect custom connector bucket)"
+	@exit 1
+endif
+ifndef IC_AWS_SECRET_KEY
+	@echo "IC_AWS_SECRET_KEY must be set for acceptance test (Kafka Connect custom connector bucket)"
+	@exit 1
+endif
+ifndef IC_S3_BUCKET_NAME
+	@echo "IC_S3_BUCKET_NAME must be set for acceptance test (Kafka Connect custom connector bucket)"
+	@exit 1
+endif
+ifndef IC_AZURE_STORAGE_ACCOUNT_NAME
+	@echo "IC_AZURE_STORAGE_ACCOUNT_NAME must be set for acceptance test (Kafka Connect custom connector bucket)"
+	@exit 1
+endif
+ifndef IC_AZURE_STORAGE_ACCOUNT_KEY
+	@echo "IC_AZURE_STORAGE_ACCOUNT_KEY must be set for acceptance test (Kafka Connect custom connector bucket)"
+	@exit 1
+endif
+ifndef IC_AZURE_STORAGE_CONTAINER_NAME
+	@echo "IC_AZURE_STORAGE_CONTAINER_NAME must be set for acceptance test (Kafka Connect custom connector bucket)"
+	@exit 1
+endif
 	cd acc_test && TF_ACC=1 go test -v -timeout 150m -count=1
+
 
 
 install:
