@@ -24,7 +24,7 @@ resource "instaclustr_cluster" "valid" {
 
   bundle {
     bundle  = "APACHE_CASSANDRA"
-    version = "apache-cassandra-3.11.8"
+    version = "apache-cassandra-3.11.8.ic2"
     options = {
       auth_n_authz                      = false
       use_private_broadcast_rpc_address = false
