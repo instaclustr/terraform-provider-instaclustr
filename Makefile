@@ -72,7 +72,7 @@ ifndef IC_AZURE_STORAGE_CONTAINER_NAME
 	@echo "IC_AZURE_STORAGE_CONTAINER_NAME must be set for acceptance test (Kafka Connect custom connector bucket)"
 	@exit 1
 endif
-	cd acc_test && TF_ACC=1 go test -v -timeout 150m -count=1
+	cd acc_test && TF_ACC=1 go test -v -timeout 200m -count=1
 
 
 
