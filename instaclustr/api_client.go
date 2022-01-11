@@ -252,6 +252,21 @@ func (c *APIClient) ReadVpcPeering(cdcID string, vpcPeeringID string) (*VPCPeeri
 	return &vpcPeering, nil
 }
 
+func (c *APIClient) GCPReadVpcPeering(cdcID string, vpcPeeringID string) (*GCPVPCPeering, error) {
+	url := fmt.Sprintf("%s/provisioning/v1/vpc-peering/%s/%s", c.apiServerHostname, cdcID, vpcPeeringID)
+	resp, err := c.MakeRequest(url, "GET", nil)
+	if err != nil {
+		return nil, err
+	}
+	bodyText, err := ioutil.ReadAll(resp.Body)
+	if resp.StatusCode != 202 {
+		return nil, errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
+	}
+	var vpcPeering GCPVPCPeering
+	json.Unmarshal(bodyText, &vpcPeering)
+	return &vpcPeering, nil
+}
+
 func (c *APIClient) CreateEncryptionKey(data []byte) (string, error) {
 	url := fmt.Sprintf("%s/provisioning/v1/encryption-keys", c.apiServerHostname)
 	resp, err := c.MakeRequest(url, "POST", data)

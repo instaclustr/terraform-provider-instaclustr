@@ -23,7 +23,7 @@ resource "instaclustr_cluster" "valid" {
 
     bundles {
       bundle = "APACHE_CASSANDRA"
-      version = "apache-cassandra-3.11.8.ic2"
+      version = "apache-cassandra-3.11.8.ic3"
       options = {
         auth_n_authz = true
         use_private_broadcast_rpc_address = false
@@ -35,7 +35,7 @@ resource "instaclustr_cluster" "valid" {
 
     bundles {
       bundle = "SPARK"
-      version = "apache-spark:2.3.2.ic1"
+      version = "apache-spark:2.3.2.ic2"
     }
   }
 
@@ -53,7 +53,7 @@ resource "instaclustr_cluster" "valid" {
     }
     bundles {
       bundle = "APACHE_CASSANDRA"
-      version = "apache-cassandra-3.11.8.ic2"
+      version = "apache-cassandra-3.11.8.ic3"
       options = {
         auth_n_authz = true
         use_private_broadcast_rpc_address = false
@@ -77,7 +77,7 @@ resource "instaclustr_cluster" "valid" {
     }
     bundles {
       bundle = "APACHE_CASSANDRA"
-      version = "apache-cassandra-3.11.8.ic2"
+      version = "apache-cassandra-3.11.8.ic3"
       options = {
         auth_n_authz = true
         use_private_broadcast_rpc_address = false
@@ -88,7 +88,7 @@ resource "instaclustr_cluster" "valid" {
     }
     bundles {
       bundle = "SPARK"
-      version = "apache-spark:2.3.2.ic1"
+      version = "apache-spark:2.3.2.ic2"
     }
   }
 }

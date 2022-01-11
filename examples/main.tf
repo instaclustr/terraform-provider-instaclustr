@@ -14,8 +14,8 @@ terraform {
 provider "instaclustr" {
   username = "<Your instaclustr username here>"
   api_key = "<Your provisioning API key here>"
+  
 }
-
 resource "instaclustr_encryption_key" "add_ebs_key" {
   alias = "testkey"
   arn = "<Your KMS key ARN here>"
@@ -28,6 +28,7 @@ resource "instaclustr_cluster" "example" {
   data_centre = "US_WEST_2"
   sla_tier = "NON_PRODUCTION"
   cluster_network = "192.168.0.0/18"
+  wait_for_state="RUNNING"
   private_network_cluster = false
   cluster_provider = {
     name = "AWS_VPC",
@@ -43,6 +44,30 @@ resource "instaclustr_cluster" "example" {
   bundle {
     bundle = "APACHE_CASSANDRA"
     version = "3.11.8"
+    options = {
+      auth_n_authz = true
+    }
+  }
+}
+resource "instaclustr_cluster" "gcp_example" {
+  cluster_name = "testclustergcp"
+  node_size = "n1-standard-2"
+  data_centre = "us-east1"
+  sla_tier = "NON_PRODUCTION"
+  cluster_network = "192.168.0.0/18"
+  wait_for_state="RUNNING"
+  private_network_cluster = false
+  cluster_provider = {
+    name = "GCP"
+  }
+  rack_allocation = {
+    number_of_racks = 3
+    nodes_per_rack = 1
+  }
+
+  bundle {
+    bundle = "APACHE_CASSANDRA"
+    version = "apache-cassandra-3.11.8"
     options = {
       auth_n_authz = true
     }
@@ -106,6 +131,15 @@ resource "instaclustr_vpc_peering" "example_vpc_peering" {
   peer_vpc_id = "vpc-123456"
   peer_account_id = "1234567890"
   peer_subnets = toset(["10.0.0.0/20", "10.0.32.0/20"])
+}
+
+resource "instaclustr_vpc_peering_gcp" "example_vpc_peering" {
+
+  name="name"
+  peer_vpc_network_name = "network name"
+  peer_project_id = "projectId"
+  peer_subnets = toset(["10.10.0.0/16", "10.11.0.0/16"])
+  cluster_id = "${instaclustr_cluster.gcp_example.id}"
 }
 
 // Updating the kafka-schema-registry and the kafka-rest-proxy bundle user passwords at the cluster creation time

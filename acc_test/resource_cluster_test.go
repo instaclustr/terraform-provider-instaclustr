@@ -21,7 +21,7 @@ func AccClusterResourceTestSteps(t *testing.T, testAccProviders map[string]terra
 
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
 	updatedConfig := strings.Replace(oriConfig, "testcluster", "newcluster", 1)
-	newToOldVersionConfig := strings.Replace(updatedConfig, `version = "3.11.8"`, `version = "apache-cassandra-3.11.8.ic2"`, 1)
+	newToOldVersionConfig := strings.Replace(updatedConfig, `version = "3.11.8"`, `version = "apache-cassandra-3.11.8.ic3"`, 1)
 
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccProviders,
@@ -49,7 +49,7 @@ func AccClusterResourceTestSteps(t *testing.T, testAccProviders map[string]terra
 				PlanOnly: true,
 			},
 			{
-				Config: updatedConfig,
+				Config:  updatedConfig,
 				Destroy: true,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckResourceDeleted("valid", hostname, username, apiKey),
@@ -68,6 +68,36 @@ func AccClusterResourceTestSteps(t *testing.T, testAccProviders map[string]terra
 					testCheckResourceValid("valid"),
 				),
 				PlanOnly: true,
+			},
+		},
+	})
+}
+
+func AccGCPClusterResourceTestSteps(t *testing.T, testAccProviders map[string]terraform.ResourceProvider, validConfig []byte) {
+	username := os.Getenv("IC_USERNAME")
+	apiKey := os.Getenv("IC_API_KEY")
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+
+	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
+	updatedConfig := strings.Replace(oriConfig, "testcluster", "newcluster", 1)
+
+	resource.Test(t, resource.TestCase{
+		Providers:    testAccProviders,
+		CheckDestroy: testCheckResourceDeleted("gcp_valid", hostname, username, apiKey),
+		Steps: []resource.TestStep{
+			{
+				Config: oriConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid("gcp_valid"),
+					testCheckResourceCreated("gcp_valid", hostname, username, apiKey),
+				),
+			},
+			{
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid("gcp_valid"),
+					testCheckResourceCreated("gcp_valid", hostname, username, apiKey),
+				),
 			},
 		},
 	})

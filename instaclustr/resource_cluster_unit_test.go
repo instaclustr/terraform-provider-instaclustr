@@ -685,6 +685,39 @@ func TestCreateVpcPeeringRequest(t *testing.T) {
 	}
 }
 
+func TestGCPReadVpcPeeringRequest(t *testing.T) {
+	resourceSchema := map[string]*schema.Schema{
+		"name": {
+			Type: schema.TypeString,
+		},
+		"peer_vpc_network_name": {
+			Type: schema.TypeString,
+		},
+		"peer_project_id": {
+			Type: schema.TypeString,
+		},
+		"peer_subnets": {
+			Type: schema.TypeSet,
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
+			},
+		},
+	}
+
+	peerSubnets := schema.NewSet(schema.HashString, []interface{}{"10.20.0.0/16", "10.21.0.0/16"})
+	resourceDataMap := map[string]interface{}{
+		"name":                  "Kaka",
+		"peer_vpc_network_name": "my-vpc1",
+		"peer_project_id":       "instaclustr-dev",
+		"peer_subnets":          peerSubnets.List(),
+	}
+	resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, resourceDataMap)
+
+	if _, err := GCPcreateVpcPeeringRequest(resourceLocalData); err != nil {
+		t.Fatalf("Expected nil error but got %v", err)
+	}
+}
+
 func TestCreateVpcPeeringRequestLegacy(t *testing.T) {
 	resourceSchema := map[string]*schema.Schema{
 		"peer_vpc_id": {
@@ -759,27 +792,127 @@ func TestDeleteAttributesConflict(t *testing.T) {
 	checkAttributeValue("attributeC", "C")
 }
 
+func TestGCPVpcPeeringResourceReadHelperTest(t *testing.T) {
+	resourceSchema := map[string]*schema.Schema{
+		"peer_vpc_id": {
+			Type: schema.TypeString,
+		},
+		"peer_account_id": {
+			Type: schema.TypeString,
+		},
+		"peer_subnet": {
+			Type: schema.TypeString,
+		},
+		"peer_region": {
+			Type: schema.TypeString,
+		},
+	}
+
+	resourceDataMap := map[string]interface{}{
+		"peer_vpc_id":     "vpc-12345678",
+		"peer_account_id": "494111121110",
+		"peer_subnet":     "10.20.0.0/16",
+		"peer_region":     "",
+	}
+	resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, resourceDataMap)
+	p := GCPVPCPeering{
+		ID:                 "Test_ID",
+		ClusterDataCentre:  "123456789565",
+		PeerProjectID:      "ID_Name",
+		PeerVPCNetworkName: "instaclustr_Test",
+	}
+
+	if err := MapGCPVPCPeeringToResource(resourceLocalData, &p); err != nil {
+		t.Fatalf("Expected nil error but got %v", err)
+	}
+}
+
+func TestGCPVpcPeeringResourceUpdate(t *testing.T) {
+	resourceSchema := map[string]*schema.Schema{
+		"peer_vpc_id": {
+			Type: schema.TypeString,
+		},
+		"peer_account_id": {
+			Type: schema.TypeString,
+		},
+		"peer_subnet": {
+			Type: schema.TypeString,
+		},
+		"peer_region": {
+			Type: schema.TypeString,
+		},
+	}
+
+	resourceDataMap := map[string]interface{}{
+		"peer_vpc_id":     "vpc-12345678",
+		"peer_account_id": "494111121110",
+		"peer_subnet":     "10.20.0.0/16",
+		"peer_region":     "",
+	}
+	resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, resourceDataMap)
+
+	if err := resourceGCPVpcPeeringUpdate(resourceLocalData); err == nil {
+		t.Fatalf("Expected nil error but got %v", err)
+	}
+
+}
+
+func TestGCPVpcPeeringResourceHelperTest(t *testing.T) {
+	resourceSchema := map[string]*schema.Schema{
+		"peer_vpc_id": {
+			Type: schema.TypeString,
+		},
+		"peer_account_id": {
+			Type: schema.TypeString,
+		},
+		"peer_subnet": {
+			Type: schema.TypeString,
+		},
+		"peer_region": {
+			Type: schema.TypeString,
+		},
+	}
+
+	resourceDataMap := map[string]interface{}{
+		"peer_vpc_id":     "vpc-12345678",
+		"peer_account_id": "494111121110",
+		"peer_subnet":     "10.20.0.0/16",
+		"peer_region":     "",
+	}
+	resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, resourceDataMap)
+	p := GCPVPCPeering{
+		ID:                 "",
+		ClusterDataCentre:  "123456789565",
+		PeerProjectID:      "ID_Name",
+		PeerVPCNetworkName: "instaclustr_Test",
+	}
+
+	if err := MapGCPVPCPeeringToResource(resourceLocalData, &p); err != nil {
+		t.Fatalf("Expected nil error but got %v", err)
+	}
+}
+
 type VersionDiffState struct {
-	version string
+	version        string
 	diffSuppressed bool
 }
 
 func TestVersionDiffSuppression(t *testing.T) {
 	versions := map[string]VersionDiffState{
 		"apache-cassandra:3.11.8": {
-			version: "3.11.8",
+			version:        "3.11.8",
 			diffSuppressed: true,
 		},
 		"3.11.8": {
-			version: "apache-cassandra:3.11.8.ic2",
+			version:        "apache-cassandra:3.11.8.ic2",
 			diffSuppressed: true,
 		},
 		"apache-cassandra:3.11.8.ic2": {
-			version: "apache-cassandra:3.0.19",
+			version:        "apache-cassandra:3.0.19",
 			diffSuppressed: false,
 		},
 		"opendistro-for-elasticsearch:1.8.0": {
-			version: "apache-cassandra:3.0.19",
+			version:        "apache-cassandra:3.0.19",
 			diffSuppressed: false,
 		},
 	}
@@ -793,6 +926,7 @@ func TestVersionDiffSuppression(t *testing.T) {
 				planVersionState.version,
 			)
 		}
+
 	}
 }
 

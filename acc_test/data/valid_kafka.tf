@@ -34,11 +34,13 @@ resource "instaclustr_cluster" "valid" {
 
     bundle {
         bundle = "KAFKA_SCHEMA_REGISTRY"
+
         version = "5.0.4"
     }
     bundle {
         bundle = "KAFKA_REST_PROXY"
         version = "5.0.0"
+
     }
 
 }
