@@ -199,11 +199,11 @@ resource "instaclustr_cluster" "example-elasticsearch" {
 
   bundle {
     bundle = "ELASTICSEARCH"
-    version = "1.11.0"
+    version = "1.13.3"
     options = {
       client_encryption = true,
       dedicated_master_nodes = true,
-      master_node_size = "m5l-250-v2",
+      master_node_size = "SRH-DM-m5d.large",
       data_node_size = "m5l-250-v2",
       kibana_node_size = "m5l-250-v2",
       security_plugin = true
