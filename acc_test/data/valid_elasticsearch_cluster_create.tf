@@ -20,7 +20,7 @@ resource "instaclustr_cluster" "validElasticsearch" {
     }
     bundle {
         bundle = "ELASTICSEARCH"
-        version = "1.11.0"
+        version = "1.13.3"
         options = {
             dedicated_master_nodes = false,
             master_node_size = "t3.small-v2",
