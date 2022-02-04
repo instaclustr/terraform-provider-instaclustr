@@ -78,17 +78,6 @@ func AccMultiDcCluster_importBasicTestSteps(t *testing.T, validConfig []byte) {
 	})
 }
 
-func TestAccClusterImportMultiDc(t *testing.T) {
-	validConfig, _ := ioutil.ReadFile("data/valid_multi_DC_provisioning.tf")
-	AccMultiDcCluster_importBasicTestSteps(t, validConfig)
-
-	validConfig, _ = ioutil.ReadFile("data/valid_multi_DC_provisioning_2_DC_6_nodes.tf")
-	AccMultiDcCluster_importBasicTestSteps(t, validConfig)
-
-	validConfig, _ = ioutil.ReadFile("data/valid_multi_DC_provisioning_with_different_providers.tf")
-	AccMultiDcCluster_importBasicTestSteps(t, validConfig)
-}
-
 func TestAccClusterImportMultiDcDifferentNodeCounts(t *testing.T) {
 	validConfig, _ := ioutil.ReadFile("data/valid_multi_DC_provisioning.tf")
 	AccMultiDcCluster_importBasicTestSteps(t, validConfig)
