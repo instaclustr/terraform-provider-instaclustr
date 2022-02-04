@@ -46,10 +46,15 @@ func TestAccCluster_importBasic(t *testing.T) {
 	})
 }
 
-func AccMultiDcCluster_importBasicTestSteps(t *testing.T, testAccProviders map[string]terraform.ResourceProvider, validConfig []byte) {
+func AccMultiDcCluster_importBasicTestSteps(t *testing.T, validConfig []byte) {
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+
+	testAccProvider := instaclustr.Provider()
+	testAccProviders := map[string]terraform.ResourceProvider{
+		"instaclustr": testAccProvider,
+	}
 
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
 	resource.ParallelTest(t, resource.TestCase{
@@ -73,21 +78,30 @@ func AccMultiDcCluster_importBasicTestSteps(t *testing.T, testAccProviders map[s
 	})
 }
 
-func TestAccMultiDcCluster_importBasic(t *testing.T) {
-
-	testAccProvider := instaclustr.Provider()
-	testAccProviders := map[string]terraform.ResourceProvider{
-		"instaclustr": testAccProvider,
-	}
-
+func TestAccClusterImportMultiDc(t *testing.T) {
 	validConfig, _ := ioutil.ReadFile("data/valid_multi_DC_provisioning.tf")
-	AccMultiDcCluster_importBasicTestSteps(t, testAccProviders, validConfig)
+	AccMultiDcCluster_importBasicTestSteps(t, validConfig)
 
 	validConfig, _ = ioutil.ReadFile("data/valid_multi_DC_provisioning_2_DC_6_nodes.tf")
-	AccMultiDcCluster_importBasicTestSteps(t, testAccProviders, validConfig)
+	AccMultiDcCluster_importBasicTestSteps(t, validConfig)
 
 	validConfig, _ = ioutil.ReadFile("data/valid_multi_DC_provisioning_with_different_providers.tf")
-	AccMultiDcCluster_importBasicTestSteps(t, testAccProviders, validConfig)
+	AccMultiDcCluster_importBasicTestSteps(t, validConfig)
+}
+
+func TestAccClusterImportMultiDcDifferentNodeCounts(t *testing.T) {
+	validConfig, _ := ioutil.ReadFile("data/valid_multi_DC_provisioning.tf")
+	AccMultiDcCluster_importBasicTestSteps(t, validConfig)
+}
+
+func TestAccClusterImportMultiDcSameNodeCounts(t *testing.T) {
+	validConfig, _ := ioutil.ReadFile("data/valid_multi_DC_provisioning_2_DC_6_nodes.tf")
+	AccMultiDcCluster_importBasicTestSteps(t, validConfig)
+}
+
+func TestAccClusterImportMultiDcDifferentProviders(t *testing.T) {
+	validConfig, _ := ioutil.ReadFile("data/valid_multi_DC_provisioning_with_different_providers.tf")
+	AccMultiDcCluster_importBasicTestSteps(t, validConfig)
 }
 
 func TestAccKafkaCluster_importBasic(t *testing.T) {
