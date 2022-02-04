@@ -48,13 +48,6 @@ func AccClusterResourceTestSteps(t *testing.T, testAccProviders map[string]terra
 				),
 				PlanOnly: true,
 			},
-			{
-				Config:  updatedConfig,
-				Destroy: true,
-				Check: resource.ComposeTestCheckFunc(
-					testCheckResourceDeleted("valid", hostname, username, apiKey),
-				),
-			},
 		},
 	})
 }
