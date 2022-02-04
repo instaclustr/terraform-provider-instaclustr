@@ -332,51 +332,6 @@ func TestAccClusterCustomVPCInvalid(t *testing.T) {
 	})
 }
 
-func TestAccElasticsearchClusterResize(t *testing.T) {
-	testAccProviders := map[string]terraform.ResourceProvider{
-		"instaclustr": instaclustr.Provider(),
-	}
-	validConfig, _ := ioutil.ReadFile("data/valid_with_resizable_elasticsearch_cluster.tf")
-	username := os.Getenv("IC_USERNAME")
-	apiKey := os.Getenv("IC_API_KEY")
-	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
-	resourceName := "resizable_cluster"
-	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
-	validResizeConfig := strings.Replace(oriConfig, `kibana_node_size = "t3.small-v2",`, `kibana_node_size = "m5xl-400-v2",`, 1)
-	invalidResizeConfig := strings.Replace(oriConfig, `kibana_node_size = "t3.small-v2",`, `kibana_node_size = "t3.small",`, 1)
-
-	resource.ParallelTest(t, resource.TestCase{
-		Providers:    testAccProviders,
-		CheckDestroy: testCheckResourceDeleted(resourceName, hostname, username, apiKey),
-		Steps: []resource.TestStep{
-			{
-				Config: oriConfig,
-				Check: resource.ComposeTestCheckFunc(
-					testCheckResourceValid(resourceName),
-					testCheckResourceCreated(resourceName, hostname, username, apiKey),
-					checkClusterRunning(resourceName, hostname, username, apiKey),
-					testCheckContactIPCorrect(resourceName, hostname, username, apiKey, 3, 3),
-				),
-			},
-			{
-				PreConfig: func() {
-					fmt.Println("Sleep for 1 minutes to wait for Elasticsearch cluster to be ready for resize.")
-					time.Sleep(1 * time.Minute)
-				},
-				Config:      invalidResizeConfig,
-				ExpectError: regexp.MustCompile("t3.small"),
-			},
-			{
-				Config: validResizeConfig,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_cluster", "cluster_name", "tf-resizable-test"),
-				),
-				ExpectNonEmptyPlan: true,
-			},
-		},
-	})
-}
-
 func TestAccOpenSearchClusterResize(t *testing.T) {
 	testAccProviders := map[string]terraform.ResourceProvider{
 		"instaclustr": instaclustr.Provider(),
@@ -513,31 +468,6 @@ func TestValidPostgresqlClusterCreate(t *testing.T) {
 	})
 }
 
-func TestValidElasticsearchClusterCreate(t *testing.T) {
-	testAccProvider := instaclustr.Provider()
-	testAccProviders := map[string]terraform.ResourceProvider{
-		"instaclustr": testAccProvider,
-	}
-	validConfig, _ := ioutil.ReadFile("data/valid_elasticsearch_cluster_create.tf")
-	username := os.Getenv("IC_USERNAME")
-	apiKey := os.Getenv("IC_API_KEY")
-	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
-	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
-	resource.ParallelTest(t, resource.TestCase{
-		Providers:    testAccProviders,
-		CheckDestroy: testCheckResourceDeleted("validElasticsearch", hostname, username, apiKey),
-		Steps: []resource.TestStep{
-			{
-				Config: oriConfig,
-				Check: resource.ComposeTestCheckFunc(
-					testCheckResourceValid("validElasticsearch"),
-					testCheckResourceCreated("validElasticsearch", hostname, username, apiKey),
-				),
-			},
-		},
-	})
-}
-
 func TestValidOpenSearchClusterCreate(t *testing.T) {
 	testAccProvider := instaclustr.Provider()
 	testAccProviders := map[string]terraform.ResourceProvider{
@@ -558,26 +488,6 @@ func TestValidOpenSearchClusterCreate(t *testing.T) {
 					testCheckResourceValid("validOpenSearch"),
 					testCheckResourceCreated("validOpenSearch", hostname, username, apiKey),
 				),
-			},
-		},
-	})
-}
-
-func TestInvalidElasticsearchClusterCreate(t *testing.T) {
-	testAccProvider := instaclustr.Provider()
-	testAccProviders := map[string]terraform.ResourceProvider{
-		"instaclustr": testAccProvider,
-	}
-	invalidConfig, _ := ioutil.ReadFile("data/invalid_elasticsearch_cluster_create.tf")
-	username := os.Getenv("IC_USERNAME")
-	apiKey := os.Getenv("IC_API_KEY")
-	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
-	resource.ParallelTest(t, resource.TestCase{
-		Providers: testAccProviders,
-		Steps: []resource.TestStep{
-			{
-				Config:      fmt.Sprintf(string(invalidConfig), username, apiKey, hostname),
-				ExpectError: regexp.MustCompile("When 'dedicated_master_nodes' is not true , data_node_size can be either null or equal to master_node_size."),
 			},
 		},
 	})
