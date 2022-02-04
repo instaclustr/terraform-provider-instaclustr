@@ -55,20 +55,6 @@ func AccClusterResourceTestSteps(t *testing.T, testAccProviders map[string]terra
 					testCheckResourceDeleted("valid", hostname, username, apiKey),
 				),
 			},
-			{
-				Config: newToOldVersionConfig,
-				Check: resource.ComposeTestCheckFunc(
-					testCheckResourceValid("valid"),
-					testCheckResourceCreated("valid", hostname, username, apiKey),
-				),
-			},
-			{
-				Config: updatedConfig,
-				Check: resource.ComposeTestCheckFunc(
-					testCheckResourceValid("valid"),
-				),
-				PlanOnly: true,
-			},
 		},
 	})
 }
