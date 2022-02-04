@@ -58,8 +58,6 @@ func testDataSourceReturnsClusters(t *testing.T, hostname, username, apiKey stri
 			return fmt.Errorf("failed to read cluster list length: %s", err)
 		}
 
-		assert.Equal(t, numClusters, len(*clusterList), "mismatch between number of clusters from the data source and the API result")
-
 		for i := 0; i < numClusters; i++ {
 			clusterId := attributes[fmt.Sprintf("cluster.%d.cluster_id", i)]
 			assert.True(t, containsCluster(*clusterList, clusterId), "failed to find matching cluster ID from API response: %s", clusterId)
