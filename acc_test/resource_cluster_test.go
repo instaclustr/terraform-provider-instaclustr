@@ -21,7 +21,7 @@ func AccClusterResourceTestSteps(t *testing.T, testAccProviders map[string]terra
 
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
 	updatedConfig := strings.Replace(oriConfig, "testcluster", "newcluster", 1)
-	newToOldVersionConfig := strings.Replace(updatedConfig, `version = "3.11.8"`, `version = "apache-cassandra-3.11.8.ic3"`, 1)
+	newToOldVersionConfig := strings.Replace(updatedConfig, `version = "3.11.8"`, `version = "apache-cassandra-3.11.8.ic4"`, 1)
 
 	resource.ParallelTest(t, resource.TestCase{
 		Providers:    testAccProviders,
