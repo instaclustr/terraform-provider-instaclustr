@@ -38,7 +38,7 @@ func resourceFirewallRule() *schema.Resource {
 			},
 
 			"rules": {
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Required: true,
 				ForceNew: true,
 				Elem: &schema.Schema{
@@ -62,7 +62,7 @@ func resourceFirewallRuleCreate(d *schema.ResourceData, meta interface{}) error 
 
 	rules := make([]RuleType, 0)
 
-	for _, rule := range d.Get("rules").([]interface{}) {
+	for _, rule := range d.Get("rules").(*schema.Set).List() {
 		aRule := ""
 
 		for _, value := range rule.(map[string]interface{}) {
@@ -129,6 +129,7 @@ func resourceFirewallRuleRead(d *schema.ResourceData, meta interface{}) error {
 			}
 		}
 	}
+	log.Printf("[INFO] Finished Reading the status of cluster %s.", id)
 	return nil
 }
 
@@ -149,7 +150,7 @@ func resourceFirewallRuleDelete(d *schema.ResourceData, meta interface{}) error 
 
 	rules := make([]RuleType, 0)
 
-	for _, rule := range d.Get("rules").([]interface{}) {
+	for _, rule := range d.Get("rules").(*schema.Set).List() {
 		aRule := ""
 
 		for _, value := range rule.(map[string]interface{}) {
