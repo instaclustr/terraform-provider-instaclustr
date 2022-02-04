@@ -24,7 +24,8 @@ func TestAccEBSKey(t *testing.T) {
 	providerAccountName := os.Getenv("IC_PROV_ACC_NAME")
 	kmsArn := os.Getenv("KMS_ARN")
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname, kmsArn, providerAccountName)
-	resource.ParallelTest(t, resource.TestCase{
+	// Not running this test parallelly since we only have 1 test encryption key
+	resource.Test(t, resource.TestCase{
 		Providers:    testAccEBSKeyProviders,
 		CheckDestroy: testCheckAccEBSResourceDeleted("valid", hostname, username, apiKey),
 		Steps: []resource.TestStep{
