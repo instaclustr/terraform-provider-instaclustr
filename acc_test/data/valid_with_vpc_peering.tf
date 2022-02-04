@@ -71,7 +71,7 @@ resource "instaclustr_cluster" "gcp_example" {
 
   bundle {
     bundle = "APACHE_CASSANDRA"
-    version = "apache-cassandra-3.11.8.ic4"
+    version = "3.11.8"
     options = {
       auth_n_authz = true
     }
