@@ -641,7 +641,7 @@ func versionDiffSuppressFunc(k, old string, new string, d *schema.ResourceData) 
 	 * containing the same sem-ver. For example, all of these are equivalent:
 	 * 3.11.8
 	 * apache-cassandra-3.11.8
-	 * apache-cassandra-3.11.8.ic3
+	 * apache-cassandra-3.11.8.ic4
 	 */
 	oldSemVer := semanticVersioningPattern.FindString(old)
 	newSemVer := semanticVersioningPattern.FindString(new)

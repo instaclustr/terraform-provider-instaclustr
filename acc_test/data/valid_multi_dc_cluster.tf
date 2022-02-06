@@ -33,7 +33,7 @@ resource "instaclustr_cluster" "dc_test_cluster" {
         "lucene_enabled"                    = "false"
         "use_private_broadcast_rpc_address" = "false"
       }
-      version = "apache-cassandra-3.11.8.ic3"
+      version = "apache-cassandra-3.11.8.ic4"
     }
   }
 
@@ -59,7 +59,7 @@ resource "instaclustr_cluster" "dc_test_cluster" {
         "lucene_enabled"                    = "false"
         "use_private_broadcast_rpc_address" = "false"
       }
-      version = "apache-cassandra-3.11.8.ic3"
+      version = "apache-cassandra-3.11.8.ic4"
     }
   }
 }
