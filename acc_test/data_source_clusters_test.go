@@ -22,7 +22,7 @@ func TestClustersDataSource(t *testing.T) {
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		Providers: testAccProviders,
 		CheckDestroy: resource.ComposeTestCheckFunc(
 			testCheckResourceDeleted("valid.0", hostname, username, apiKey),
@@ -57,8 +57,6 @@ func testDataSourceReturnsClusters(t *testing.T, hostname, username, apiKey stri
 		if err != nil {
 			return fmt.Errorf("failed to read cluster list length: %s", err)
 		}
-
-		assert.Equal(t, numClusters, len(*clusterList), "mismatch between number of clusters from the data source and the API result")
 
 		for i := 0; i < numClusters; i++ {
 			clusterId := attributes[fmt.Sprintf("cluster.%d.cluster_id", i)]
