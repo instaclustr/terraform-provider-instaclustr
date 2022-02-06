@@ -227,7 +227,7 @@ resource "instaclustr_cluster" "example-opensearch" {
 
   bundle {
     bundle = "OPENSEARCH"
-    version = "1.0.0"
+    version = "1.2.4"
     options = {
       dedicated_master_nodes = true,
       master_node_size = "m5l-250-v2",

@@ -99,7 +99,7 @@ func TestKafkaResources(t *testing.T) {
 	kcConfig := fmt.Sprintf(createClusterConfig + string(kcConfigBytes), kcVersion, S3BucketName, awsAccessKey,
 		awsSecretKey, azureStorageAccountName, azureStorageAccountKey, kcVersion, azureStorageContainerName)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		Providers: testProviders,
 		Steps: []resource.TestStep{
 			{

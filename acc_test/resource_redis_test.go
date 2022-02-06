@@ -30,7 +30,7 @@ func TestRedisResource(t *testing.T) {
 	validResizeConfig := strings.Replace(oriConfig, `node_size = "t3.small-20-r"`, `node_size = "t3.medium-80-r"`, 1)
 	invalidResizeConfig := strings.Replace(oriConfig, `node_size = "t3.small-20-r"`, `node_size = "t3.small"`, 1)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckResourceDeleted(resourceName, hostname, username, apiKey),
 		Steps: []resource.TestStep{

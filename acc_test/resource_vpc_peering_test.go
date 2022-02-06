@@ -20,7 +20,7 @@ func TestAccVpcPeeringResource(t *testing.T) {
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 	config := fmt.Sprintf(string(tfFile), username, apiKey, hostname)
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		Providers:    testProviders,
 		CheckDestroy: checkVpcPeeringDeleted(hostname, username, apiKey),
 		Steps: []resource.TestStep{
@@ -93,7 +93,7 @@ func TestGCPAccVpcPeeringResource(t *testing.T) {
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 	config := fmt.Sprintf(string(tfFile), username, apiKey, hostname)
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		Providers:    testProviders,
 		CheckDestroy: checkGCPVpcPeeringDeleted(hostname, username, apiKey),
 		Steps: []resource.TestStep{
