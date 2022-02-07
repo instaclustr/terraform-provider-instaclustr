@@ -168,6 +168,21 @@ func (c *APIClient) CreateFirewallRule(data []byte, clusterID string) error {
 	return nil
 }
 
+func (c *APIClient) UpdateFirewallRule(data []byte, clusterID string) error {
+	url := fmt.Sprintf("%s/provisioning/v1/%s/firewallRules/", c.apiServerHostname, clusterID)
+	resp, err := c.MakeRequest(url, "PUT", data)
+	if err != nil {
+		return err
+	}
+	bodyText, err := ioutil.ReadAll(resp.Body)
+
+	if resp.StatusCode != 202 {
+		return errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
+	}
+
+	return nil
+}
+
 func (c *APIClient) ReadFirewallRules(clusterID string) (*[]FirewallRule, error) {
 	url := fmt.Sprintf("%s/provisioning/v1/%s/firewallRules/", c.apiServerHostname, clusterID)
 	resp, err := c.MakeRequest(url, "GET", nil)
