@@ -44,6 +44,8 @@ func (c *APIClient) MakeRequest(url string, method string, data []byte) (*http.R
 	}
 	req.SetBasicAuth(c.username, c.apiKey)
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Instaclustr-Source", "Terraform v1")
+
 	resp, err := c.client.Do(req)
 	if err != nil {
 		return nil, err
