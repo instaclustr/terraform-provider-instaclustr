@@ -176,9 +176,11 @@ func (c *APIClient) UpdateFirewallRule(data []byte, clusterID string) error {
 	if err != nil {
 		return err
 	}
-	bodyText, err := ioutil.ReadAll(resp.Body)
-
 	if resp.StatusCode != 202 {
+		bodyText, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return errors.New(fmt.Sprintf("Status code: %d, response unreadable: %v", resp.StatusCode, err))
+		}
 		return errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
 	}
 
