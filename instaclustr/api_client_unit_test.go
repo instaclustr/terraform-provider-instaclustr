@@ -162,6 +162,19 @@ func TestAPIClientUpdateSgFirewall(t *testing.T) {
 	}
 }
 
+func TestAPIClientUpdateSgFirewallWithError(t *testing.T) {
+	filename := "data/valid_sg_firewall.json"
+	jsonStr, err := ioutil.ReadFile(filename)
+	if err != nil {
+		t.Fatalf("Failed to load %s: %s", filename, err)
+	}
+	client := SetupMock(t, "should-be-uuid/firewallRules/", `{"error"; "something"}`, 500)
+	err2 := client.UpdateFirewallRule(jsonStr, "should-be-uuid")
+	if err2 == nil {
+		t.Fatalf("Error notthrown when it should have been")
+	}
+}
+
 func TestAPIClientReadSgFirewall(t *testing.T) {
 	filename := "data/valid_sg_firewall.json"
 	parse_file, err := ioutil.ReadFile(filename)
