@@ -1,4 +1,4 @@
-resource "instaclustr_vpc_peer" "myvpcpeer" {
+resource "instaclustr_aws_vpc_peer" "myvpcpeer" {
   cdc_id              = "b8129e68-2ee9-4d5e-a29b-74d233b7b4bb"
   peer_aws_account_id = "123456789123"
   peer_vpc_id         = "vpc-aaaa1234"
