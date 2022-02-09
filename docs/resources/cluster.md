@@ -68,7 +68,7 @@ ELASTICSEARCH|1.13.3
 KAFKA_CONNECT|2.3.1, 2.4.1, 2.5.1, 2.6.1|
 REDIS|6.0.9|
 APACHE_ZOOKEEPER|3.5.8|
-POSTGRESQL|13.4|
+POSTGRESQL|14.1|
 
 `bundle.options`
 
@@ -102,6 +102,7 @@ Property | Description | For Bundles | Default
 `zookeeper_node_size`|If `dedicated_zookeeper` is true, then it is the node size for the dedicated Zookeeper nodes. Have a look [here](https://www.instaclustr.com/support/api-integrations/api-reference/provisioning-api/#section-create-cluster) (Kafka bundle options table) for node size options. |Kafka
 `zookeeper_node_count`|Indicates how many nodes are allocated to be Zookeeper nodes. For KAFKA bundle, if `dedicated_zookeeper` is false, then it indicates how many Kafka nodes also have ZooKeeper services in them. |Kafka, ZooKeeper
 `postgresql_node_count`|The number of nodes in a generated PostgreSQL cluster.|Postgresql|Required (Integers)
+`replication_mode` | The default replication behaviour for PostgreSQL cluster. See [Replication Mode](https://www.instaclustr.com/support/documentation/postgresql/options/replication-mode/) documentation for more details. Allowed values are `SYNCHRONOUS` and `ASYNCHRONOUS`. |Postgresql| `SYNCHRONOUS`
 
 ### Kafka Connect Credential
 
