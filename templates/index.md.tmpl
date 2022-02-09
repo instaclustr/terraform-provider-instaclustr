@@ -2,7 +2,7 @@
 layout: ""
 page_title: "Provider: Instaclustr"
 description: |-
-A Terraform provider for managing Instaclustr Platform resources.
+  A Terraform provider for managing Instaclustr Platform resources.
 ---
 
 # Instaclustr Provider
