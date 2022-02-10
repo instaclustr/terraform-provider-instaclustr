@@ -932,8 +932,8 @@ func TestVersionDiffSuppression(t *testing.T) {
 
 func TestWaitForClusterDependenciesCleanedAndDoDelete(t *testing.T) {
 	mockCluster := Cluster{
-		ID:           "should-be-uuid",
-		BundleType:   "KAFKA",
+		ID:         "should-be-uuid",
+		BundleType: "KAFKA",
 	}
 	mockData := MockResourceData{
 		changes: map[string]MockChange{},
@@ -941,7 +941,7 @@ func TestWaitForClusterDependenciesCleanedAndDoDelete(t *testing.T) {
 
 	mockClient409 := MockApiClient{
 		cluster: mockCluster,
-		err: errors.New("Status code: 409"),
+		err:     errors.New("Status code: 409"),
 	}
 	err := clusterDeleteRetry(mockClient409, mockData, "should-be-uuid")
 	if !err.Retryable {
@@ -950,7 +950,7 @@ func TestWaitForClusterDependenciesCleanedAndDoDelete(t *testing.T) {
 
 	mockClient404 := MockApiClient{
 		cluster: mockCluster,
-		err: errors.New("Status code: 404"),
+		err:     errors.New("Status code: 404"),
 	}
 	err = clusterDeleteRetry(mockClient404, mockData, "should-be-uuid")
 	if err.Retryable {
@@ -959,7 +959,7 @@ func TestWaitForClusterDependenciesCleanedAndDoDelete(t *testing.T) {
 
 	mockClientSuccess := MockApiClient{
 		cluster: mockCluster,
-		err: nil,
+		err:     nil,
 	}
 	err = clusterDeleteRetry(mockClientSuccess, mockData, "should-be-uuid")
 	if err != nil {
@@ -976,7 +976,7 @@ func checkKcCredentialExists(options BundleOptions, keysExist bool) bool {
 func TestGetKafkaConnectCredential(t *testing.T) {
 	// it's fine for clusters with no such property
 	mockBundleOptions := []interface{}{map[string]interface{}{
-		"options" : map[string]interface{}{"nonsense" : "nonsense"},
+		"options": map[string]interface{}{"nonsense": "nonsense"},
 	}}
 	mockOptionsChange := MockChange{
 		before: nil,
@@ -997,11 +997,11 @@ func TestGetKafkaConnectCredential(t *testing.T) {
 
 	// but if they exists, they are mapped to the right JSON property
 	mockKcCredential := []interface{}{map[string]interface{}{
-		"aws_access_key" : "A",
-		"aws_secret_key" : "B",
-		"azure_storage_account_name" : "C",
-		"azure_storage_account_key" : "D",
-		"sasl_jaas_config" : "E",
+		"aws_access_key":             "A",
+		"aws_secret_key":             "B",
+		"azure_storage_account_name": "C",
+		"azure_storage_account_key":  "D",
+		"sasl_jaas_config":           "E",
 	}}
 	mockKcCredentialChange := MockChange{
 		before: nil,
@@ -1009,7 +1009,7 @@ func TestGetKafkaConnectCredential(t *testing.T) {
 	}
 	mockDataWithKcCredential := MockResourceData{
 		changes: map[string]MockChange{
-			"bundle": mockOptionsChange,
+			"bundle":                   mockOptionsChange,
 			"kafka_connect_credential": mockKcCredentialChange,
 		},
 	}
@@ -1077,16 +1077,16 @@ func (m MockResourceData) Get(key string) interface{} {
 
 // currently for the mock we just set the before as nil
 func (m MockResourceData) Set(key string, value interface{}) error {
-	m.changes[key] = MockChange {
+	m.changes[key] = MockChange{
 		before: nil,
-		after: value,
+		after:  value,
 	}
 	return nil
 }
 
 func (m MockResourceData) SetId(id string) {
-	m.changes["id"] = MockChange {
+	m.changes["id"] = MockChange{
 		before: nil,
-		after: id,
+		after:  id,
 	}
 }

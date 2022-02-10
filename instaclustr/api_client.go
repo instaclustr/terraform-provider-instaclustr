@@ -44,6 +44,8 @@ func (c *APIClient) MakeRequest(url string, method string, data []byte) (*http.R
 	}
 	req.SetBasicAuth(c.username, c.apiKey)
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Instaclustr-Source", "Terraform v1")
+
 	resp, err := c.client.Do(req)
 	if err != nil {
 		return nil, err
@@ -162,6 +164,23 @@ func (c *APIClient) CreateFirewallRule(data []byte, clusterID string) error {
 	}
 
 	if resp.StatusCode != 202 {
+		return errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
+	}
+
+	return nil
+}
+
+func (c *APIClient) UpdateFirewallRule(data []byte, clusterID string) error {
+	url := fmt.Sprintf("%s/provisioning/v1/%s/firewallRules/", c.apiServerHostname, clusterID)
+	resp, err := c.MakeRequest(url, "PUT", data)
+	if err != nil {
+		return err
+	}
+	if resp.StatusCode != 202 {
+		bodyText, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return errors.New(fmt.Sprintf("Status code: %d, response unreadable: %v", resp.StatusCode, err))
+		}
 		return errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
 	}
 
