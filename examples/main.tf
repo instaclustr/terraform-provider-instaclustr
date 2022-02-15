@@ -340,10 +340,11 @@ resource "instaclustr_cluster" "example-postgresql" {
 
   bundle {
     bundle = "POSTGRESQL"
-    version = "13.4"
+    version = "14.1"
     options = {
       postgresql_node_count = 1,
-      client_encryption = true
+      client_encryption = true,
+      replication_mode = "SYNCHRONOUS"
     }
   }
 }

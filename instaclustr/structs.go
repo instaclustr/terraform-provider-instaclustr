@@ -59,6 +59,7 @@ type BundleOptions struct {
 	ZookeeperNodeSize             string `json:"zookeeperNodeSize,omitempty" mapstructure:"zookeeper_node_size,omitempty"`
 	ZookeeperNodeCount            int    `json:"zookeeperNodeCount,omitempty" mapstructure:"zookeeper_node_count,omitempty"`
 	PostgresqlNodeCount           int    `json:"postgresqlNodeCount,omitempty" mapstructure:"postgresql_node_count,omitempty"`
+	PostgresqlReplicationMode     string `json:"replicationMode,omitempty" mapstructure:"replication_mode,omitempty"`
 }
 
 type ClusterProvider struct {

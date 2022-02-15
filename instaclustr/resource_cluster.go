@@ -371,7 +371,7 @@ func resourceCluster() *schema.Resource {
 							DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 								// Cover up for the API that has optional arguments that get given default values
 								// and returns the defaults in subsequent calls
-								return old == "false" && new == ""
+								return new == ""
 							},
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -557,6 +557,11 @@ func resourceCluster() *schema.Resource {
 									},
 									"postgresql_node_count": {
 										Type:     schema.TypeInt,
+										Optional: true,
+										ForceNew: true,
+									},
+									"replication_mode": {
+										Type:     schema.TypeString,
 										Optional: true,
 										ForceNew: true,
 									},
