@@ -565,6 +565,11 @@ func resourceCluster() *schema.Resource {
 										Optional: true,
 										ForceNew: true,
 									},
+									"synchronous_mode_strict": {
+										Type:     schema.TypeBool,
+										Optional: true,
+										ForceNew: true,
+									},
 								},
 							},
 						},
