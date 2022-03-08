@@ -345,7 +345,7 @@ resource "instaclustr_cluster" "example-postgresql" {
       postgresql_node_count = 1,
       client_encryption = true,
       replication_mode = "SYNCHRONOUS",
-      synchronous_mode_strict = true
+      synchronous_mode_strict = false
     }
   }
 }
