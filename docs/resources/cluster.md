@@ -103,7 +103,7 @@ Property | Description | For Bundles | Default
 `zookeeper_node_count`|Indicates how many nodes are allocated to be Zookeeper nodes. For KAFKA bundle, if `dedicated_zookeeper` is false, then it indicates how many Kafka nodes also have ZooKeeper services in them. |Kafka, ZooKeeper
 `postgresql_node_count`|The number of nodes in a generated PostgreSQL cluster.|Postgresql|Required (Integers)
 `replication_mode` | The default replication behaviour for PostgreSQL cluster. See [Replication Mode](https://www.instaclustr.com/support/documentation/postgresql/options/replication-mode/) documentation for more details. Allowed values are `SYNCHRONOUS` and `ASYNCHRONOUS`. |Postgresql| `SYNCHRONOUS`
-`synchronous_mode_strict` | Whether writes should always require replication to at least one standby. See [Replication Mode](https://www.instaclustr.com/support/documentation/postgresql/options/synchronous-mode-strict/) documentation for more details. Allowed values are true or false. |Postgresql| false
+`synchronous_mode_strict` | Whether writes should always require replication to at least one standby. See [Synchronous Mode Strict](https://www.instaclustr.com/support/documentation/postgresql/options/synchronous-mode-strict/) documentation for more details. Allowed values are true or false. |Postgresql| false
 
 ### Kafka Connect Credential
 
