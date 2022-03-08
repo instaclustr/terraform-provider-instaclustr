@@ -217,7 +217,7 @@ func TestKafkaUserResource_importBasic(t *testing.T) {
 
 	kafkaNodeSize := "KFK-DEV-t4g.medium-80"
 
-	kafkaVersion := "2.7.1"
+	kafkaVersion := "2.8.1"
 
 	zookeeperNodeSize := "KDZ-DEV-t4g.small-30"
 
