@@ -22,7 +22,7 @@ resource "instaclustr_cluster" "dc_test_cluster" {
   }
   bundle {
     bundle = "APACHE_CASSANDRA"
-    version = "3.11.8.4"
+    version = "3.11.8"
     options = {
       auth_n_authz = true
       use_private_broadcast_rpc_address = false
