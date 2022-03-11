@@ -565,6 +565,11 @@ func resourceCluster() *schema.Resource {
 										Optional: true,
 										ForceNew: true,
 									},
+									"pool_mode": { // PGBouncer
+										Type:     schema.TypeString,
+										Optional: true,
+										ForceNew: true,
+									},
 								},
 							},
 						},
