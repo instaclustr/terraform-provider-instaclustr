@@ -6,7 +6,10 @@ resource "instaclustr_cassandra_cluster_v2" "test_cluster" {
   pci_compliance_mode     = false
   private_network_cluster = false
   sla_tier                = "PRODUCTION"
-  spark_version           = "3.0.1"
+
+  spark {
+    version = "3.0.1"
+  }
 
   data_centre {
     name                               = "MyTestDataCentre"
