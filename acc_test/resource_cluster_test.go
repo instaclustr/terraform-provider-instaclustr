@@ -447,6 +447,51 @@ func TestValidPostgresqlClusterCreate(t *testing.T) {
 	})
 }
 
+func TestValidPostgresqlWithPgBouncerClusterCreate(t *testing.T) {
+	testAccProvider := instaclustr.Provider()
+	testAccProviders := map[string]terraform.ResourceProvider{
+		"instaclustr": testAccProvider,
+	}
+	validConfig, _ := ioutil.ReadFile("data/valid_postgresql_cluster_with_pgbouncer_create.tf")
+	username := os.Getenv("IC_USERNAME")
+	apiKey := os.Getenv("IC_API_KEY")
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
+	resource.ParallelTest(t, resource.TestCase{
+		Providers:    testAccProviders,
+		CheckDestroy: testCheckResourceDeleted("validPostgresqlWithPgBouncer", hostname, username, apiKey),
+		Steps: []resource.TestStep{
+			{
+				Config: oriConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid("validPostgresqlWithPgBouncer"),
+					testCheckResourceCreated("validPostgresqlWithPgBouncer", hostname, username, apiKey),
+				),
+			},
+		},
+	})
+}
+
+func TestInvalidPostgresqlClusterCreate(t *testing.T) {
+	testAccProvider := instaclustr.Provider()
+	testAccProviders := map[string]terraform.ResourceProvider{
+		"instaclustr": testAccProvider,
+	}
+	invalidConfig, _ := ioutil.ReadFile("data/invalid_postgresql_cluster_create.tf")
+	username := os.Getenv("IC_USERNAME")
+	apiKey := os.Getenv("IC_API_KEY")
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+	resource.ParallelTest(t, resource.TestCase{
+		Providers: testAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config:      fmt.Sprintf(string(invalidConfig), username, apiKey, hostname),
+				ExpectError: regexp.MustCompile("'pool_mode' is required"), //TODO: Update when the actual error message is known
+			},
+		},
+	})
+}
+
 func TestValidOpenSearchClusterCreate(t *testing.T) {
 	testAccProvider := instaclustr.Provider()
 	testAccProviders := map[string]terraform.ResourceProvider{
