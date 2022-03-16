@@ -23,14 +23,14 @@ description: |-
 
 - **cassandra_version** (String) Version of Cassandra to run on the cluster.
 - **data_centre** (Block List) List of datacentre settings. (see [below for nested schema](#nestedblock--data_centre))
-- **default_user_password** (String) Password of the default user created for the Cassandra Cluster.
+- **default_user_password** (String, Sensitive) Password of the default user created for the Cassandra Cluster.
 - **lucene_enabled** (Boolean) Adds Apache Lucene to the Cassandra cluster.
 - **name** (String) Name of the cluster.
 - **password_and_user_auth** (Boolean) Enables Password Authentication and User Authorization.
 - **pci_compliance_mode** (Boolean) Creates a PCI compliant cluster, see [PCI Compliance](https://www.instaclustr.com/support/documentation/useful-information/pci-compliance/).
 - **private_network_cluster** (Boolean) Creates the cluster with private network only, see [Private Network Clusters](https://www.instaclustr.com/support/documentation/useful-information/private-network-clusters/).
 - **sla_tier** (String) SLA Tier of the cluster. Non-production clusters may receive lower priority support and reduced SLAs. Production tier is not available when using Developer class nodes. You can find more information [here](https://www.instaclustr.com/support/documentation/useful-information/sla-tier/).
-- **spark_version** (String) Adds the specified version of Apache Spark to the Cassandra Cluster.
+- **spark** (Block List, Max: 1) (see [below for nested schema](#nestedblock--spark))
 - **status** (String) Status of the cluster.
 - **two_factor_delete** (Block List, Max: 1) (see [below for nested schema](#nestedblock--two_factor_delete))
 
@@ -105,6 +105,14 @@ Optional:
 - **key** (String) Key of the tag to be added to the Data Centre.
 - **value** (String) Value of the tag to be added to the Data Centre.
 
+
+
+<a id="nestedblock--spark"></a>
+### Nested Schema for `spark`
+
+Optional:
+
+- **version** (String) Adds the specified version of Apache Spark to the Cassandra Cluster.
 
 
 <a id="nestedblock--two_factor_delete"></a>

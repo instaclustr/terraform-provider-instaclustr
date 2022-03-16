@@ -21,7 +21,10 @@ resource "instaclustr_cassandra_cluster_v2" "test_cluster" {
   pci_compliance_mode     = false
   private_network_cluster = false
   sla_tier                = "PRODUCTION"
-  spark_version           = "3.0.1"
+
+  spark {
+    version = "3.0.1"
+  }
 
   data_centre {
     name                               = "MyTestDataCentre"
@@ -58,9 +61,9 @@ resource "instaclustr_cassandra_cluster_v2" "test_cluster" {
 
 ### Optional
 
-- **default_user_password** (String) Password of the default user created for the Cassandra Cluster.
+- **default_user_password** (String, Sensitive) Password of the default user created for the Cassandra Cluster.
 - **id** (String) The ID of this resource.
-- **spark_version** (String) Adds the specified version of Apache Spark to the Cassandra Cluster.
+- **spark** (Block List, Max: 1) (see [below for nested schema](#nestedblock--spark))
 - **status** (String) Status of the cluster.
 - **timeouts** (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 - **two_factor_delete** (Block List, Max: 1) (see [below for nested schema](#nestedblock--two_factor_delete))
@@ -139,6 +142,14 @@ Required:
 - **key** (String) Key of the tag to be added to the Data Centre.
 - **value** (String) Value of the tag to be added to the Data Centre.
 
+
+
+<a id="nestedblock--spark"></a>
+### Nested Schema for `spark`
+
+Required:
+
+- **version** (String) Adds the specified version of Apache Spark to the Cassandra Cluster.
 
 
 <a id="nestedblock--timeouts"></a>
