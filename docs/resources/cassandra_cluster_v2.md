@@ -57,11 +57,11 @@ resource "instaclustr_cassandra_cluster_v2" "test_cluster" {
 - **password_and_user_auth** (Boolean) Enables Password Authentication and User Authorization.
 - **pci_compliance_mode** (Boolean) Creates a PCI compliant cluster, see [PCI Compliance](https://www.instaclustr.com/support/documentation/useful-information/pci-compliance/).
 - **private_network_cluster** (Boolean) Creates the cluster with private network only, see [Private Network Clusters](https://www.instaclustr.com/support/documentation/useful-information/private-network-clusters/).
-- **sla_tier** (String) SLA Tier of the cluster. Non-production clusters may receive lower priority support and reduced SLAs. Production tier is not available when using Developer class nodes. You can find more information [here](https://www.instaclustr.com/support/documentation/useful-information/sla-tier/).
+- **sla_tier** (String) SLA Tier of the cluster. Non-production clusters may receive lower priority support and reduced SLAs. Production tier is not available when using Developer class nodes. See [SLA Tier](https://www.instaclustr.com/support/documentation/useful-information/sla-tier/) for more information.
 
 ### Optional
 
-- **default_user_password** (String, Sensitive) Password of the default user created for the Cassandra Cluster.
+- **default_user_password** (String, Sensitive) Password of the default user created for the Cassandra cluster.
 - **id** (String) The ID of this resource.
 - **spark** (Block List, Max: 1) (see [below for nested schema](#nestedblock--spark))
 - **status** (String) Status of the cluster.
@@ -149,7 +149,7 @@ Required:
 
 Required:
 
-- **version** (String) Adds the specified version of Apache Spark to the Cassandra Cluster.
+- **version** (String) Adds the specified version of Apache Spark to the Cassandra cluster.
 
 
 <a id="nestedblock--timeouts"></a>
