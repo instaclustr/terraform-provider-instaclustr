@@ -56,7 +56,7 @@ Optional:
 - **region** (String) Region of the Data Centre.
 - **replication_factor** (Number) Number of racks to use when allocating nodes.
 - **status** (String) Status of the Data Centre.
-- **tags** (Block List) List of tags to apply to the Data Centre. Tags are metadata labels which  allow you to identify, categorize and filter clusters. This can be useful for grouping together clusters into applications, environments, or any category that you require. (see [below for nested schema](#nestedblock--data_centre--tags))
+- **tag** (Block List) List of tags to apply to the Data Centre. Tags are metadata labels which  allow you to identify, categorize and filter clusters. This can be useful for grouping together clusters into applications, environments, or any category that you require. (see [below for nested schema](#nestedblock--data_centre--tag))
 
 <a id="nestedblock--data_centre--aws_settings"></a>
 ### Nested Schema for `data_centre.aws_settings`
@@ -97,8 +97,8 @@ Optional:
 - **status** (String) Provisioning status of the node.
 
 
-<a id="nestedblock--data_centre--tags"></a>
-### Nested Schema for `data_centre.tags`
+<a id="nestedblock--data_centre--tag"></a>
+### Nested Schema for `data_centre.tag`
 
 Optional:
 
