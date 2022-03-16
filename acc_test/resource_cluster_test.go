@@ -472,12 +472,12 @@ func TestValidPostgresqlWithPgBouncerClusterCreate(t *testing.T) {
 	})
 }
 
-func TestInvalidPostgresqlClusterCreate(t *testing.T) {
+func TestPostgresqlWithInvalidPgBouncerConfigClusterCreate(t *testing.T) {
 	testAccProvider := instaclustr.Provider()
 	testAccProviders := map[string]terraform.ResourceProvider{
 		"instaclustr": testAccProvider,
 	}
-	invalidConfig, _ := ioutil.ReadFile("data/invalid_postgresql_cluster_create.tf")
+	invalidConfig, _ := ioutil.ReadFile("data/invalid_postgresql_pgbouncer_cluster_create.tf")
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
