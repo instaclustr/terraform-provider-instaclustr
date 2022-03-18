@@ -363,3 +363,173 @@ resource "instaclustr_kafka_acl" "example-acl" {
 data "instaclustr_kafka_acl_list" "example-acl-list" {
   cluster_id = "${instaclustr_cluster.example.id}"
 }
+
+
+// Cadence requires a dependent Cassandra cluster
+resource "instaclustr_cluster" "example-cadence-cassandra" {
+    cluster_name = "testcluster-cadence-cassandra"
+    node_size = "t3.small-v2"
+    data_centre = "US_WEST_2"
+    sla_tier = "NON_PRODUCTION"
+    cluster_network = "192.168.0.0/18"
+    private_network_cluster = false
+    pci_compliant_cluster = false
+    cluster_provider = {
+        name = "AWS_VPC"
+    }
+    rack_allocation = {
+        number_of_racks = 3
+        nodes_per_rack = 1
+    }
+    bundle {
+        bundle = "APACHE_CASSANDRA"
+        version = "3.11.8"
+        options = {
+          auth_n_authz = true
+        }
+    }
+
+    wait_for_state = "RUNNING"
+}
+
+resource "instaclustr_cluster" "example-cadence" {
+    cluster_name = "testcluster-cadence"
+    node_size = "CAD-DEV-t3.small-5"
+    data_centre = "US_WEST_2"
+    sla_tier = "NON_PRODUCTION"
+    cluster_network = "192.168.0.0/18"
+    private_network_cluster = false
+    pci_compliant_cluster = false
+    cluster_provider = {
+        name = "AWS_VPC"
+    }
+    rack_allocation = {
+        number_of_racks = 3
+        nodes_per_rack = 1
+    }
+    bundle {
+        bundle = "CADENCE"
+        version = "0.22.4"
+        options = {
+            advanced_visibility = false
+            target_cassandra_cdc_id = "${instaclustr_cluster.example-cadence-cassandra.cdc_id}"
+            target_cassandra_vpc_type = "SEPARATE_VPC"
+        }
+    }
+}
+
+
+// Cadence with Advanced Visibility requires a dependent Cassandra, Kafka, and Opensearch clusters
+resource "instaclustr_cluster" "example-cadenceav-cassandra" {
+  cluster_name = "testcluster-cadenceav-cassandra"
+  node_size = "t3.small-v2"
+  data_centre = "US_WEST_2"
+  sla_tier = "NON_PRODUCTION"
+  cluster_network = "192.168.0.0/18"
+  private_network_cluster = false
+  pci_compliant_cluster = false
+  cluster_provider = {
+    name = "AWS_VPC"
+  }
+  rack_allocation = {
+    number_of_racks = 3
+    nodes_per_rack = 1
+  }
+  bundle {
+    bundle = "APACHE_CASSANDRA"
+    version = "3.11.8"
+    options = {
+      auth_n_authz = true
+    }
+  }
+
+    wait_for_state = "RUNNING"
+}
+
+resource "instaclustr_cluster" "example-cadenceav-opensearch" {
+  cluster_name = "testcluster-cadenceav-opensearch"
+  data_centre = "US_WEST_2"
+  sla_tier = "NON_PRODUCTION"
+  cluster_network = "192.168.0.0/18"
+  private_network_cluster = false
+  cluster_provider = {
+    name = "AWS_VPC"
+  }
+  rack_allocation = {
+    number_of_racks = 3
+    nodes_per_rack = 1
+  }
+
+  bundle {
+    bundle = "OPENSEARCH"
+    version = "1.2.4" 
+    options = {
+      dedicated_master_nodes = true  
+      master_node_size = "SRH-DM-t3.small-v2"
+      opensearch_dashboards_node_size = "t3.small-v2"
+      data_node_size = "t3.small-v2"
+    }
+  }  
+
+  wait_for_state = "RUNNING"
+}
+
+resource "instaclustr_cluster" "example-cadenceav-kafka" {
+  cluster_name = "testcluster-cadenceav-kafka"
+  node_size = "KFK-DEV-t4g.small-5"
+  data_centre = "US_WEST_2"
+  sla_tier = "NON_PRODUCTION"
+  cluster_network = "192.168.0.0/18"
+  private_network_cluster = false
+  pci_compliant_cluster = false
+  cluster_provider = {
+    name = "AWS_VPC"
+  }
+  rack_allocation = {
+    number_of_racks = 3
+    nodes_per_rack = 1
+  }
+
+  bundle {
+    bundle = "KAFKA"
+    version = "3.0.0"
+    options = {
+      client_encryption = false
+      number_partitions = 3
+      auto_create_topics = true
+      delete_topics = true
+    }
+  }
+
+  wait_for_state = "RUNNING"
+}
+
+resource "instaclustr_cluster" "example-cadenceav" {
+  cluster_name = "testcluster-cadenceav"
+  node_size = "CAD-DEV-t3.small-5"
+  data_centre = "US_WEST_2"
+  sla_tier = "NON_PRODUCTION"
+  cluster_network = "192.168.0.0/18"
+  private_network_cluster = false
+  pci_compliant_cluster = false
+  cluster_provider = {
+    name = "AWS_VPC"
+  }
+  rack_allocation = {
+    number_of_racks = 3
+    nodes_per_rack = 1
+  }
+  bundle {
+    bundle = "CADENCE"
+    version = "0.22.4"
+    options = {
+      advanced_visibility = true
+      target_cassandra_cdc_id = "${instaclustr_cluster.example-cadenceav-cassandra.cdc_id}"
+      target_cassandra_vpc_type = "SEPARATE_VPC"
+      target_opensearch_cdc_id = "${instaclustr_cluster.example-cadenceav-opensearch.cdc_id}"
+      target_opensearch_vpc_type = "SEPARATE_VPC"
+      target_kafka_cdc_id = "${instaclustr_cluster.example-cadenceav-kafka.cdc_id}"
+      target_kafka_vpc_type = "SEPARATE_VPC"
+    }
+  }
+}
