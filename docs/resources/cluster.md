@@ -69,6 +69,7 @@ KAFKA_CONNECT|2.3.1, 2.4.1, 2.5.1, 2.6.1|
 REDIS|6.0.9|
 APACHE_ZOOKEEPER|3.5.8|
 POSTGRESQL|14.1|
+CADENCE|0.22.4|
 
 `bundle.options`
 
@@ -103,6 +104,13 @@ Property | Description | For Bundles | Default
 `zookeeper_node_count`|Indicates how many nodes are allocated to be Zookeeper nodes. For KAFKA bundle, if `dedicated_zookeeper` is false, then it indicates how many Kafka nodes also have ZooKeeper services in them. |Kafka, ZooKeeper
 `postgresql_node_count`|The number of nodes in a generated PostgreSQL cluster.|Postgresql|Required (Integers)
 `replication_mode` | The default replication behaviour for PostgreSQL cluster. See [Replication Mode](https://www.instaclustr.com/support/documentation/postgresql/options/replication-mode/) documentation for more details. Allowed values are `SYNCHRONOUS` and `ASYNCHRONOUS`. |Postgresql| `SYNCHRONOUS`
+`advanced_visibility`|Accepts true/false. Enables Advanced Visibility features for Cadence.|Cadence|false
+`target_cassandra_cdc_id`|GUID of the Instaclustr managed Cassandra Data Centre Id you wish to connect to. Must be in the same Instaclustr account.|Cadence|Required
+`target_cassandra_vpc_type`|Available options: `SEPARATE_VPC`, `CASSANDRA_CLUSTER_VPC`, `VPC_PEERING`|Cadence|Required
+`target_opensearch_cdc_id`|GUID of the Instaclustr managed Opensearch Cluster Id you wish to connect to. Must be in the same Instaclustr account.|Cadence|Required if Advanced Visibility enabled.
+`target_opensearch_vpc_type`|Available options: `SEPARATE_VPC`, `VPC_PEERING`|Cadence|Required if Advanced Visibility enabled.
+`target_kafka_cdc_id`|GUID of the Instaclustr managed Kafka Cluster Id you wish to connect to. Must be in the same Instaclustr account.|Cadence|Required if Advanced Visibility enabled.
+`target_kafka_vpc_type`|Available options: `SEPARATE_VPC`, `VPC_PEERING`|Cadence|Required if Advanced Visibility enabled.
 
 ### Kafka Connect Credential
 

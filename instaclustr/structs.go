@@ -60,6 +60,13 @@ type BundleOptions struct {
 	ZookeeperNodeCount            int    `json:"zookeeperNodeCount,omitempty" mapstructure:"zookeeper_node_count,omitempty"`
 	PostgresqlNodeCount           int    `json:"postgresqlNodeCount,omitempty" mapstructure:"postgresql_node_count,omitempty"`
 	PostgresqlReplicationMode     string `json:"replicationMode,omitempty" mapstructure:"replication_mode,omitempty"`
+	CadenceAdvancedVisibility     *bool  `json:"useAdvancedVisibility,omitempty" mapstructure:"advanced_visibility,omitempty"`
+	CadenceTargetCassandraCDCID   string `json:"targetCassandraCdcId,omitempty" mapstructure:"target_cassandra_cdc_id,omitempty"`
+	CadenceTargetCassandraVPCType string `json:"targetCassandraVpcType,omitempty" mapstructure:"target_cassandra_vpc_type,omitempty"`
+	CadenceTargetOpensearchCDCID     string `json:"targetOpensearchCdcId,omitempty" mapstructure:"target_opensearch_cdc_id,omitempty"`
+	CadenceTargetOpensearchVPCType   string `json:"targetOpensearchVpcType,omitempty" mapstructure:"target_opensearch_vpc_type,omitempty"`
+	CadenceTargetKafkaCDCID       string `json:"targetKafkaCdcId,omitempty" mapstructure:"target_kafka_cdc_id,omitempty"`
+	CadenceTargetKafkaVPCType     string `json:"targetKafkaVpcType,omitempty" mapstructure:"target_kafka_vpc_type,omitempty"`
 }
 
 type ClusterProvider struct {
@@ -110,6 +117,7 @@ type Cluster struct {
 	ID                         string                   `json:"id"`
 	ClusterName                string                   `json:"clusterName"`
 	ClusterStatus              string                   `json:"clusterStatus"`
+	CdcId                      string                   `json:"cdcId"`
 	BundleType                 string                   `json:"bundleType"`
 	BundleVersion              string                   `json:"bundleVersion"`
 	AddonBundles               []map[string]interface{} `json:"addonBundles"`
