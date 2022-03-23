@@ -184,7 +184,6 @@ type CreateVPCPeeringRequest struct {
 }
 
 type CreateGCPVPCPeeringRequest struct {
-	Name               string        `json:"name"`
 	PeerProjectID      string        `json:"peerProjectId"`
 	PeerVPCNetworkName string        `json:"peerVpcNetworkName"`
 	PeerSubnets        []interface{} `json:"peerSubnets"`
@@ -205,7 +204,6 @@ type VPCPeering struct {
 
 type GCPVPCPeering struct {
 	ID                 string `json:"id"`
-	Name               string `json:"name"`
 	ClusterDataCentre  string `json:"clusterDataCentre"`
 	VpcID              string `json:"vpcNetworkName"`
 	PeerProjectID      string `json:"projectId"`
