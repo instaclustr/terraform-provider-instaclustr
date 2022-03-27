@@ -105,11 +105,11 @@ Property | Description | For Bundles | Default
 `postgresql_node_count`|The number of nodes in a generated PostgreSQL cluster.|Postgresql|Required (Integers)
 `replication_mode` | The default replication behaviour for PostgreSQL cluster. See [Replication Mode](https://www.instaclustr.com/support/documentation/postgresql/options/replication-mode/) documentation for more details. Allowed values are `SYNCHRONOUS` and `ASYNCHRONOUS`. |Postgresql|Required
 `advanced_visibility`|Accepts true/false. Enables Advanced Visibility features for Cadence.|Cadence|false
-`target_cassandra_cdc_id`|GUID of the Instaclustr managed Cassandra Data Centre Id you wish to connect to. Must be in the same Instaclustr account.|Cadence|Required
+`target_cassandra_data_centre_id`|UUID of the Instaclustr managed Cassandra Cluster Data Centre Id you wish to connect to. Must be in the same Instaclustr account.|Cadence|Required
 `target_cassandra_vpc_type`|Available options: `SEPARATE_VPC`, `CASSANDRA_CLUSTER_VPC`, `VPC_PEERING`|Cadence|Required
-`target_opensearch_cdc_id`|GUID of the Instaclustr managed Opensearch Cluster Id you wish to connect to. Must be in the same Instaclustr account.|Cadence|Required if Advanced Visibility enabled.
+`target_opensearch_data_centre_id`|UUID of the Instaclustr managed Opensearch Cluster Data Centre Id you wish to connect to. Must be in the same Instaclustr account.|Cadence|Required if Advanced Visibility enabled.
 `target_opensearch_vpc_type`|Available options: `SEPARATE_VPC`, `VPC_PEERING`|Cadence|Required if Advanced Visibility enabled.
-`target_kafka_cdc_id`|GUID of the Instaclustr managed Kafka Cluster Id you wish to connect to. Must be in the same Instaclustr account.|Cadence|Required if Advanced Visibility enabled.
+`target_kafka_data_centre_id`|UUID of the Instaclustr managed Kafka Cluster Data Centre Id you wish to connect to. Must be in the same Instaclustr account.|Cadence|Required if Advanced Visibility enabled.
 `target_kafka_vpc_type`|Available options: `SEPARATE_VPC`, `VPC_PEERING`|Cadence|Required if Advanced Visibility enabled.
 
 ### Kafka Connect Credential

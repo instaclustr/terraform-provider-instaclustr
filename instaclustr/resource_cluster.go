@@ -575,7 +575,7 @@ func resourceCluster() *schema.Resource {
 										Optional: true,
 										ForceNew: true,
 									},
-									"target_cassandra_cdc_id": {
+									"target_cassandra_data_centre_id": {
 										Type:     schema.TypeString,
 										Optional: true,
 										ForceNew: true,
@@ -585,7 +585,7 @@ func resourceCluster() *schema.Resource {
 										Optional: true,
 										ForceNew: true,
 									},
-									"target_opensearch_cdc_id": {
+									"target_opensearch_data_centre_id": {
 										Type:     schema.TypeString,
 										Optional: true,
 										ForceNew: true,
@@ -595,7 +595,7 @@ func resourceCluster() *schema.Resource {
 										Optional: true,
 										ForceNew: true,
 									},
-									"target_kafka_cdc_id": {
+									"target_kafka_data_centre_id": {
 										Type:     schema.TypeString,
 										Optional: true,
 										ForceNew: true,
@@ -1348,7 +1348,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	d.SetId(cluster.ID)
 	d.Set("cluster_id", cluster.ID)
 	d.Set("cluster_name", cluster.ClusterName)
-	d.Set("cdc_id", cluster.CdcId)
+	d.Set("default_data_centre_id", cluster.CdcId)
 
 	if isClusterSingleDataCentre(*cluster) {
 		bundles, err := getBundlesFromCluster(cluster)

@@ -411,7 +411,7 @@ resource "instaclustr_cluster" "example-cadence" {
         version = "0.22.4"
         options = {
             advanced_visibility = false
-            target_cassandra_cdc_id = "${instaclustr_cluster.example-cadence-cassandra.cdc_id}"
+            target_cassandra_data_centre_id = "${instaclustr_cluster.example-cadence-cassandra.default_data_centre_id}"
             target_cassandra_vpc_type = "SEPARATE_VPC"
         }
     }
@@ -523,11 +523,11 @@ resource "instaclustr_cluster" "example-cadenceav" {
     version = "0.22.4"
     options = {
       advanced_visibility = true
-      target_cassandra_cdc_id = "${instaclustr_cluster.example-cadenceav-cassandra.cdc_id}"
+      target_cassandra_data_centre_id = "${instaclustr_cluster.example-cadenceav-cassandra.default_data_centre_id}"
       target_cassandra_vpc_type = "SEPARATE_VPC"
-      target_opensearch_cdc_id = "${instaclustr_cluster.example-cadenceav-opensearch.cdc_id}"
+      target_opensearch_data_centre_id = "${instaclustr_cluster.example-cadenceav-opensearch.default_data_centre_id}"
       target_opensearch_vpc_type = "SEPARATE_VPC"
-      target_kafka_cdc_id = "${instaclustr_cluster.example-cadenceav-kafka.cdc_id}"
+      target_kafka_data_centre_id = "${instaclustr_cluster.example-cadenceav-kafka.default_data_centre_id}"
       target_kafka_vpc_type = "SEPARATE_VPC"
     }
   }
