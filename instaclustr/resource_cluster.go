@@ -61,7 +61,7 @@ func resourceCluster() *schema.Resource {
 				ConflictsWith: []string{"data_centres"},
 			},
 
-			"cdc_id": {
+			"default_data_centre_id": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
