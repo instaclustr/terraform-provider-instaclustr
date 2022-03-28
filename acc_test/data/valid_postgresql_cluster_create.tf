@@ -15,7 +15,7 @@ resource "instaclustr_cluster" "validPostgresql" {
   }
   rack_allocation = {
     nodes_per_rack = 1
-    number_of_racks = 1
+    number_of_racks = 2
   }
 
   bundle {
