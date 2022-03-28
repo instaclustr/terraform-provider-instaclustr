@@ -22,7 +22,7 @@ resource "instaclustr_cluster" "validPostgresql" {
     bundle = "POSTGRESQL"
     version = "14.1"
     options = {
-      postgresql_node_count = 1,
+      postgresql_node_count = 2,
       client_encryption = false,
       replication_mode = "SYNCHRONOUS",
       synchronous_mode_strict = true

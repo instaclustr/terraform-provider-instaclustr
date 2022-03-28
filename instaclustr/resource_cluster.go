@@ -557,17 +557,17 @@ func resourceCluster() *schema.Resource {
 									},
 									"postgresql_node_count": {
 										Type:     schema.TypeInt,
-										Optional: true,
+										Optional: false,
 										ForceNew: true,
 									},
 									"replication_mode": {
 										Type:     schema.TypeString,
-										Optional: true,
+										Optional: false,
 										ForceNew: true,
 									},
 									"synchronous_mode_strict": {
 										Type:     schema.TypeBool,
-										Optional: true,
+										Optional: false,
 										ForceNew: true,
 									},
 								},
