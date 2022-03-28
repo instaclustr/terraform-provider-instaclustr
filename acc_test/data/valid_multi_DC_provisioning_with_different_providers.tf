@@ -43,7 +43,7 @@ resource "instaclustr_cluster" "valid" {
       nodes_per_rack  = 1
     }
     provider = {
-      name = "AZURE"
+      name = "AZURE_AZ"
     }
     bundles {
       bundle = "APACHE_CASSANDRA"
