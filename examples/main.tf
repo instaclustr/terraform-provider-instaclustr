@@ -6,7 +6,7 @@ terraform {
       source = "instaclustr/instaclustr"
       //Change the source as per below to work with a local development copy on terraform version >=13
       //source = "terraform.instaclustr.com/instaclustr/instaclustr"
-      version = ">= 1.0.0"
+      version = ">= 1.0.0, < 2.0.0"
     }
   }
 }
