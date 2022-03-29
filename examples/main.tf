@@ -399,6 +399,7 @@ resource "instaclustr_cluster" "example-cadence" {
     cluster_network = "10.2.0.0/16"
     private_network_cluster = false
     pci_compliant_cluster = false
+    needs_load_balancer = true
     cluster_provider = {
         name = "AWS_VPC"
     }
@@ -511,6 +512,7 @@ resource "instaclustr_cluster" "example-cadenceav" {
   cluster_network = "10.4.0.0/16"
   private_network_cluster = false
   pci_compliant_cluster = false
+  needs_load_balancer = true
   cluster_provider = {
     name = "AWS_VPC"
   }
