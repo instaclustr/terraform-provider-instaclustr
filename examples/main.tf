@@ -370,7 +370,7 @@ resource "instaclustr_cluster" "example-cadence-cassandra" {
     node_size = "t3.small-v2"
     data_centre = "US_WEST_2"
     sla_tier = "NON_PRODUCTION"
-    cluster_network = "192.168.0.0/18"
+    cluster_network = "10.1.0.0/16"
     private_network_cluster = false
     pci_compliant_cluster = false
     cluster_provider = {
@@ -396,7 +396,7 @@ resource "instaclustr_cluster" "example-cadence" {
     node_size = "CAD-DEV-t3.small-5"
     data_centre = "US_WEST_2"
     sla_tier = "NON_PRODUCTION"
-    cluster_network = "192.168.0.0/18"
+    cluster_network = "10.2.0.0/16"
     private_network_cluster = false
     pci_compliant_cluster = false
     cluster_provider = {
@@ -412,7 +412,7 @@ resource "instaclustr_cluster" "example-cadence" {
         options = {
             advanced_visibility = false
             target_cassandra_data_centre_id = "${instaclustr_cluster.example-cadence-cassandra.default_data_centre_id}"
-            target_cassandra_vpc_type = "SEPARATE_VPC"
+            target_cassandra_vpc_type = "TARGET_VPC"
         }
     }
 }
@@ -424,7 +424,7 @@ resource "instaclustr_cluster" "example-cadenceav-cassandra" {
   node_size = "t3.small-v2"
   data_centre = "US_WEST_2"
   sla_tier = "NON_PRODUCTION"
-  cluster_network = "192.168.0.0/18"
+  cluster_network = "10.1.0.0/16"
   private_network_cluster = false
   pci_compliant_cluster = false
   cluster_provider = {
@@ -449,7 +449,7 @@ resource "instaclustr_cluster" "example-cadenceav-opensearch" {
   cluster_name = "testcluster-cadenceav-opensearch"
   data_centre = "US_WEST_2"
   sla_tier = "NON_PRODUCTION"
-  cluster_network = "192.168.0.0/18"
+  cluster_network = "10.2.0.0/16"
   private_network_cluster = false
   cluster_provider = {
     name = "AWS_VPC"
@@ -478,7 +478,7 @@ resource "instaclustr_cluster" "example-cadenceav-kafka" {
   node_size = "KFK-DEV-t4g.small-5"
   data_centre = "US_WEST_2"
   sla_tier = "NON_PRODUCTION"
-  cluster_network = "192.168.0.0/18"
+  cluster_network = "10.3.0.0/16"
   private_network_cluster = false
   pci_compliant_cluster = false
   cluster_provider = {
@@ -508,7 +508,7 @@ resource "instaclustr_cluster" "example-cadenceav" {
   node_size = "CAD-DEV-t3.small-5"
   data_centre = "US_WEST_2"
   sla_tier = "NON_PRODUCTION"
-  cluster_network = "192.168.0.0/18"
+  cluster_network = "10.4.0.0/16"
   private_network_cluster = false
   pci_compliant_cluster = false
   cluster_provider = {
@@ -524,11 +524,11 @@ resource "instaclustr_cluster" "example-cadenceav" {
     options = {
       advanced_visibility = true
       target_cassandra_data_centre_id = "${instaclustr_cluster.example-cadenceav-cassandra.default_data_centre_id}"
-      target_cassandra_vpc_type = "SEPARATE_VPC"
+      target_cassandra_vpc_type = "TARGET_VPC"
       target_opensearch_data_centre_id = "${instaclustr_cluster.example-cadenceav-opensearch.default_data_centre_id}"
-      target_opensearch_vpc_type = "SEPARATE_VPC"
+      target_opensearch_vpc_type = "VPC_PEERED"
       target_kafka_data_centre_id = "${instaclustr_cluster.example-cadenceav-kafka.default_data_centre_id}"
-      target_kafka_vpc_type = "SEPARATE_VPC"
+      target_kafka_vpc_type = "VPC_PEERED"
     }
   }
 }

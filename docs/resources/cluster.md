@@ -27,6 +27,8 @@ Property | Description | Default
 `kafka_schema_registry_user_password`|The password of kafka schema registry bundle user, if it is a Kafka cluster with schema-registry addon. This field is updatable and requires `wait_for_state` to be `RUNNING`.|Optional
 `wait_for_state`|The expected state of the cluster before completing the resource creation. Skipping this field will asynchronously create the cluster.|Optional (valid states are RUNNING and PROVISIONED)
 `kafka_connect_credential`|Sensitive fields pertaining Kafka Connect custom connector bucket credential and sensitive Kafka worker property|Optional. See more details below.
+`cluster_id`|Returns the Cluster ID as a UUID|READ ONLY
+`default_data_centre_id`|Returned the default Data Centre ID as a UUID|READ ONLY
 
 ### cluster_provider
 
