@@ -27,6 +27,9 @@ Property | Description | Default
 `kafka_schema_registry_user_password`|The password of kafka schema registry bundle user, if it is a Kafka cluster with schema-registry addon. This field is updatable and requires `wait_for_state` to be `RUNNING`.|Optional
 `wait_for_state`|The expected state of the cluster before completing the resource creation. Skipping this field will asynchronously create the cluster.|Optional (valid states are RUNNING and PROVISIONED)
 `kafka_connect_credential`|Sensitive fields pertaining Kafka Connect custom connector bucket credential and sensitive Kafka worker property|Optional. See more details below.
+`needs_load_balancer`|Accepts true/false. Creates a load balancer in front of the cluster.|Optional (only used for Cadence and recommended to be set to true with Cadence clusters)
+`cluster_id`|Returns the Cluster ID as a UUID|READ ONLY
+`default_data_centre_id`|Returned the default Data Centre ID as a UUID|READ ONLY
 
 ### cluster_provider
 
@@ -69,6 +72,7 @@ KAFKA_CONNECT|2.3.1, 2.4.1, 2.5.1, 2.6.1|
 REDIS|6.0.9|
 APACHE_ZOOKEEPER|3.5.8|
 POSTGRESQL|14.1|
+CADENCE|0.22.4|
 
 `bundle.options`
 
@@ -104,6 +108,13 @@ Property | Description | For Bundles | Default
 `postgresql_node_count`|The number of nodes in a generated PostgreSQL cluster.|Postgresql|Required (Integers)
 `replication_mode` | The default replication behaviour for PostgreSQL cluster. See [Replication Mode](https://www.instaclustr.com/support/documentation/postgresql/options/replication-mode/) documentation for more details. Allowed values are `SYNCHRONOUS` and `ASYNCHRONOUS`. |Postgresql| Required
 `synchronous_mode_strict` | Whether writes should always require replication to at least one standby. See [Synchronous Mode Strict](https://www.instaclustr.com/support/documentation/postgresql/options/synchronous-mode-strict/) documentation for more details. Allowed values are true or false. |Postgresql| Required
+`advanced_visibility`|Accepts true/false. Enables Advanced Visibility features for Cadence.|Cadence|false
+`target_cassandra_data_centre_id`|UUID of the Instaclustr managed Cassandra Cluster Data Centre Id you wish to connect to. Must be in the same Instaclustr account.|Cadence|Required
+`target_cassandra_vpc_type`|Available options: `SEPARATE_VPC`, `CASSANDRA_CLUSTER_VPC`, `VPC_PEERING`|Cadence|Required
+`target_opensearch_data_centre_id`|UUID of the Instaclustr managed Opensearch Cluster Data Centre Id you wish to connect to. Must be in the same Instaclustr account.|Cadence|Required if Advanced Visibility enabled.
+`target_opensearch_vpc_type`|Available options: `SEPARATE_VPC`, `VPC_PEERING`|Cadence|Required if Advanced Visibility enabled.
+`target_kafka_data_centre_id`|UUID of the Instaclustr managed Kafka Cluster Data Centre Id you wish to connect to. Must be in the same Instaclustr account.|Cadence|Required if Advanced Visibility enabled.
+`target_kafka_vpc_type`|Available options: `SEPARATE_VPC`, `VPC_PEERING`|Cadence|Required if Advanced Visibility enabled.
 
 ### Kafka Connect Credential
 

@@ -61,6 +61,13 @@ type BundleOptions struct {
 	PostgresqlNodeCount           		int    `json:"postgresqlNodeCount,omitempty" mapstructure:"postgresql_node_count,omitempty"`
 	PostgresqlReplicationMode     		string `json:"replicationMode,omitempty" mapstructure:"replication_mode,omitempty"`
 	PostgresqlSynchronousModeStrict     *bool `json:"synchronousModeStrict,omitempty" mapstructure:"synchronous_mode_strict,omitempty"`
+	CadenceAdvancedVisibility           *bool  `json:"useAdvancedVisibility,omitempty" mapstructure:"advanced_visibility,omitempty"`
+	CadenceTargetCassandraDataCentreID  string `json:"targetCassandraCdcId,omitempty" mapstructure:"target_cassandra_data_centre_id,omitempty"`
+	CadenceTargetCassandraVPCType       string `json:"targetCassandraVpcType,omitempty" mapstructure:"target_cassandra_vpc_type,omitempty"`
+	CadenceTargetOpensearchDataCentreID string `json:"targetOpenSearchCdcId,omitempty" mapstructure:"target_opensearch_data_centre_id,omitempty"`
+	CadenceTargetOpensearchVPCType      string `json:"targetOpenSearchVpcType,omitempty" mapstructure:"target_opensearch_vpc_type,omitempty"`
+	CadenceTargetKafkaDataCentreID      string `json:"targetKafkaCdcId,omitempty" mapstructure:"target_kafka_data_centre_id,omitempty"`
+	CadenceTargetKafkaVPCType           string `json:"targetKafkaVpcType,omitempty" mapstructure:"target_kafka_vpc_type,omitempty"`
 }
 
 type ClusterProvider struct {
@@ -89,6 +96,7 @@ type CreateRequest struct {
 	ClusterNetwork        string                    `json:"clusterNetwork,omitempty"`
 	PrivateNetworkCluster string                    `json:"privateNetworkCluster,omitempty"`
 	PCICompliantCluster   string                    `json:"pciCompliantCluster,omitempty"`
+	NeedsLoadBalancer     string                    `json:"needsLoadBalancer,omitempty"`
 	RackAllocation        *RackAllocation           `json:"rackAllocation,omitempty"`
 }
 
@@ -111,6 +119,7 @@ type Cluster struct {
 	ID                         string                   `json:"id"`
 	ClusterName                string                   `json:"clusterName"`
 	ClusterStatus              string                   `json:"clusterStatus"`
+	CdcId                      string                   `json:"cdcId"`
 	BundleType                 string                   `json:"bundleType"`
 	BundleVersion              string                   `json:"bundleVersion"`
 	AddonBundles               []map[string]interface{} `json:"addonBundles"`
@@ -123,6 +132,7 @@ type Cluster struct {
 	DataCentre                 string                   `json:"dataCentre"`
 	DataCentres                []DataCentre             `json:"dataCentres"`
 	Provider                   []ClusterProvider        `json:"clusterProvider"`
+	NeedsLoadBalancer          bool                     `json:"needsLoadBalancer,omitempty"`
 }
 
 type ClusterListItem struct {
