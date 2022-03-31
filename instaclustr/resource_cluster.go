@@ -561,6 +561,16 @@ func resourceCluster() *schema.Resource {
 										Optional: true,
 										ForceNew: true,
 									},
+									"security_plugin": {
+										Type:     schema.TypeBool,
+										Optional: true,
+										ForceNew: true,
+									},
+									"index_management_plugin": {
+										Type:     schema.TypeBool,
+										Optional: true,
+										ForceNew: true,
+									},
 									"postgresql_node_count": {
 										Type:     schema.TypeInt,
 										Optional: false,
