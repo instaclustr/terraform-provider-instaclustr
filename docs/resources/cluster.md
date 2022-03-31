@@ -27,6 +27,7 @@ Property | Description | Default
 `kafka_schema_registry_user_password`|The password of kafka schema registry bundle user, if it is a Kafka cluster with schema-registry addon. This field is updatable and requires `wait_for_state` to be `RUNNING`.|Optional
 `wait_for_state`|The expected state of the cluster before completing the resource creation. Skipping this field will asynchronously create the cluster.|Optional (valid states are RUNNING and PROVISIONED)
 `kafka_connect_credential`|Sensitive fields pertaining Kafka Connect custom connector bucket credential and sensitive Kafka worker property|Optional. See more details below.
+`oidc_provider`|The ID of an OIDC provider to be used for Elasticsearch Kibana or OpenSearch Dashboards. OIDC providers must be set in Console Cluster Resources to be available for use.|Optional
 
 ### cluster_provider
 
@@ -82,6 +83,7 @@ Property | Description | For Bundles | Default
 `kibana_node_size`|Desired master node size. See [here](https://developer.instaclustr.com/#operation/extendedProvisionRequestHandler) for more details. |Elasticsearch|
 `opensearch_dashboards_node_size`|Desired OpenSearch Dashboards node size. See [here](https://developer.instaclustr.com/#operation/extendedProvisionRequestHandler) for more details. |OpenSearch|
 `security_plugin`|Accepts true/false. Enables Security Plugin. This option gives an extra layer of security to the cluster. This will automatically enable internode encryption. Enforced to be true for all OpenSearch clusters. |Elasticsearch, OpenSearch|false
+`index_management_plugin`|Accepts true/false. Enables Index Management Plugin which allows automating index management activities. |Elasticsearch, OpenSearch|false
 `use_private_broadcast_rpc_address`|Accepts true/false. Enables broadcast of private IPs for auto-discovery.|Cassandra|false
 `lucene_enabled`|Accepts true/false. Enabled Cassandra Lucene Index Plugin.|Cassandra|false
 `continuous_backup_enabled`|Accepts true/false. Enables commitlog backups and increases the frequency of the default snapshot backups.|Cassandra|false
