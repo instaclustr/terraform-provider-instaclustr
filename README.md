@@ -311,7 +311,7 @@ Firstly thanks!  We value your time and will do our best to review the PR as soo
       required_providers {
         instaclustr = {
           source = "terraform.instaclustr.com/instaclustr/instaclustr"
-          version = ">= 1.0.0"
+          version = ">= 1.0.0, < 2.0.0"
         }
       }
     }
