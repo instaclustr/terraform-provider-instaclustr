@@ -110,7 +110,7 @@ Property | Description | For Bundles | Default
 `synchronous_mode_strict` | Whether writes should always require replication to at least one standby. See [Synchronous Mode Strict](https://www.instaclustr.com/support/documentation/postgresql/options/synchronous-mode-strict/) documentation for more details. Allowed values are true or false. |Postgresql| Required
 `advanced_visibility`|Accepts true/false. Enables Advanced Visibility features for Cadence.|Cadence|false
 `target_cassandra_data_centre_id`|UUID of the Instaclustr managed Cassandra Cluster Data Centre Id you wish to connect to. Must be in the same Instaclustr account.|Cadence|Required
-`target_cassandra_vpc_type`|Available options: `SEPARATE_VPC`, `CASSANDRA_CLUSTER_VPC`, `VPC_PEERING`|Cadence|Required
+`target_cassandra_vpc_type`|Available options: `SEPARATE_VPC`, `TARGET_VPC`, `VPC_PEERING`|Cadence|Required
 `target_opensearch_data_centre_id`|UUID of the Instaclustr managed Opensearch Cluster Data Centre Id you wish to connect to. Must be in the same Instaclustr account.|Cadence|Required if Advanced Visibility enabled.
 `target_opensearch_vpc_type`|Available options: `SEPARATE_VPC`, `VPC_PEERING`|Cadence|Required if Advanced Visibility enabled.
 `target_kafka_data_centre_id`|UUID of the Instaclustr managed Kafka Cluster Data Centre Id you wish to connect to. Must be in the same Instaclustr account.|Cadence|Required if Advanced Visibility enabled.

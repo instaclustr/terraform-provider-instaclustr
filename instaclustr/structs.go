@@ -132,7 +132,7 @@ type Cluster struct {
 	DataCentre                 string                   `json:"dataCentre"`
 	DataCentres                []DataCentre             `json:"dataCentres"`
 	Provider                   []ClusterProvider        `json:"clusterProvider"`
-	NeedsLoadBalancer          bool                     `json:"needsLoadBalancer,omitempty"`
+	NeedsLoadBalancer          string                   `json:"needsLoadBalancer,omitempty"`
 }
 
 type ClusterListItem struct {
