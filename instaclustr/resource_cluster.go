@@ -258,7 +258,6 @@ func resourceCluster() *schema.Resource {
 			"needs_load_balancer": {
 				Type:     schema.TypeBool,
 				Optional: true,
-				Default:  false,
 				ForceNew: true,
 			},
 
