@@ -22,6 +22,7 @@ description: |-
 ### Optional
 
 - **cassandra_version** (String) Version of Cassandra to run on the cluster.
+- **current_cluster_operation_status** (String) Indicates if the cluster is currently performing any restructuring operation such as being created or resized
 - **data_centre** (Block List) List of datacentre settings. (see [below for nested schema](#nestedblock--data_centre))
 - **default_user_password** (String, Sensitive) Password of the default user created for the Cassandra cluster.
 - **lucene_enabled** (Boolean) Adds Apache Lucene to the Cassandra cluster.
@@ -30,9 +31,9 @@ description: |-
 - **pci_compliance_mode** (Boolean) Creates a PCI compliant cluster, see [PCI Compliance](https://www.instaclustr.com/support/documentation/useful-information/pci-compliance/).
 - **private_network_cluster** (Boolean) Creates the cluster with private network only, see [Private Network Clusters](https://www.instaclustr.com/support/documentation/useful-information/private-network-clusters/).
 - **sla_tier** (String) SLA Tier of the cluster. Non-production clusters may receive lower priority support and reduced SLAs. Production tier is not available when using Developer class nodes. See [SLA Tier](https://www.instaclustr.com/support/documentation/useful-information/sla-tier/) for more information.
-- **spark** (Block List, Max: 1) (see [below for nested schema](#nestedblock--spark))
+- **spark** (Block List) Adds the specified version of Apache Spark to the Cassandra cluster. (see [below for nested schema](#nestedblock--spark))
 - **status** (String) Status of the cluster.
-- **two_factor_delete** (Block List, Max: 1) (see [below for nested schema](#nestedblock--two_factor_delete))
+- **two_factor_delete** (Block List) (see [below for nested schema](#nestedblock--two_factor_delete))
 
 <a id="nestedblock--data_centre"></a>
 ### Nested Schema for `data_centre`
