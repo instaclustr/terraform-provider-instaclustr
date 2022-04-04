@@ -20,7 +20,7 @@ resource "instaclustr_cluster" "invalidOpenSearch" {
   }
   bundle {
     bundle  = "OPENSEARCH"
-    version = "1.2.4.ic1"
+    version = "1.2.4"
     options = {
       dedicated_master_nodes          = false,
       master_node_size                = "m5l-250-v2",
