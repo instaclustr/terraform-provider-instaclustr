@@ -61,12 +61,13 @@ resource "instaclustr_cassandra_cluster_v2" "test_cluster" {
 
 ### Optional
 
+- **current_cluster_operation_status** (String) Indicates if the cluster is currently performing any restructuring operation such as being created or resized
 - **default_user_password** (String, Sensitive) Password of the default user created for the Cassandra cluster.
 - **id** (String) The ID of this resource.
-- **spark** (Block List, Max: 1) (see [below for nested schema](#nestedblock--spark))
+- **spark** (Block List) Adds the specified version of Apache Spark to the Cassandra cluster. (see [below for nested schema](#nestedblock--spark))
 - **status** (String) Status of the cluster.
 - **timeouts** (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
-- **two_factor_delete** (Block List, Max: 1) (see [below for nested schema](#nestedblock--two_factor_delete))
+- **two_factor_delete** (Block List) (see [below for nested schema](#nestedblock--two_factor_delete))
 
 <a id="nestedblock--data_centre"></a>
 ### Nested Schema for `data_centre`
@@ -159,6 +160,7 @@ Optional:
 
 - **create** (String)
 - **default** (String)
+- **update** (String)
 
 
 <a id="nestedblock--two_factor_delete"></a>
