@@ -255,12 +255,6 @@ func resourceCluster() *schema.Resource {
 				ForceNew: true,
 			},
 
-			"needs_load_balancer": {
-				Type:     schema.TypeBool,
-				Optional: true,
-				ForceNew: true,
-			},
-
 			"public_contact_point": {
 				Type:     schema.TypeSet,
 				Computed: true,
@@ -790,7 +784,6 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		NodeSize:              size,
 		PrivateNetworkCluster: fmt.Sprintf("%v", d.Get("private_network_cluster")),
 		PCICompliantCluster:   fmt.Sprintf("%v", d.Get("pci_compliant_cluster")),
-		NeedsLoadBalancer:     fmt.Sprintf("%v", d.Get("needs_load_balancer")),
 	}
 
 	dataCentre := d.Get("data_centre").(string)
@@ -1448,7 +1441,6 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("sla_tier", strings.ToUpper(cluster.SlaTier))
 	d.Set("private_network_cluster", cluster.DataCentres[0].PrivateIPOnly)
 	d.Set("pci_compliant_cluster", cluster.PciCompliance == "ENABLED")
-	d.Set("needs_load_balancer", cluster.NeedsLoadBalancer)
 
 	azList := make([]string, 0)
 	publicContactPointList := make([]string, 0)

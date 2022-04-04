@@ -96,7 +96,6 @@ type CreateRequest struct {
 	ClusterNetwork        string                    `json:"clusterNetwork,omitempty"`
 	PrivateNetworkCluster string                    `json:"privateNetworkCluster,omitempty"`
 	PCICompliantCluster   string                    `json:"pciCompliantCluster,omitempty"`
-	NeedsLoadBalancer     string                    `json:"needsLoadBalancer,omitempty"`
 	RackAllocation        *RackAllocation           `json:"rackAllocation,omitempty"`
 }
 
@@ -132,7 +131,6 @@ type Cluster struct {
 	DataCentre                 string                   `json:"dataCentre"`
 	DataCentres                []DataCentre             `json:"dataCentres"`
 	Provider                   []ClusterProvider        `json:"clusterProvider"`
-	NeedsLoadBalancer          string                   `json:"needsLoadBalancer,omitempty"`
 }
 
 type ClusterListItem struct {
