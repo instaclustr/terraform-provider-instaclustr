@@ -22,11 +22,12 @@ resource "instaclustr_cluster" "validElasticsearch" {
         bundle = "ELASTICSEARCH"
         version = "1.13.3"
         options = {
-            dedicated_master_nodes = false,
-            master_node_size = "t3.small-v2",
-            data_node_size = "t3.small-v2",
-            security_plugin=false,
-            client_encryption=false
+            dedicated_master_nodes  = false,
+            master_node_size        = "t3.small-v2",
+            data_node_size          = "t3.small-v2",
+            security_plugin         = false,
+            index_management_plugin = true,
+            client_encryption       = false
         }
     }
 }

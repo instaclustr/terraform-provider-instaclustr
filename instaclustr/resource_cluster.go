@@ -329,6 +329,12 @@ func resourceCluster() *schema.Resource {
 				},
 			},
 
+			"oidc_provider": {
+				Type:     schema.TypeString,
+				Optional: true,
+				ForceNew: true,
+			},
+
 			"bundles": {
 				Type:          schema.TypeSet,
 				Optional:      true,
@@ -555,6 +561,16 @@ func resourceCluster() *schema.Resource {
 										Optional: true,
 										ForceNew: true,
 									},
+									"security_plugin": {
+										Type:     schema.TypeBool,
+										Optional: true,
+										ForceNew: true,
+									},
+									"index_management_plugin": {
+										Type:     schema.TypeBool,
+										Optional: true,
+										ForceNew: true,
+									},
 									"postgresql_node_count": {
 										Type:     schema.TypeInt,
 										Optional: false,
@@ -744,6 +760,7 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		NodeSize:              size,
 		PrivateNetworkCluster: fmt.Sprintf("%v", d.Get("private_network_cluster")),
 		PCICompliantCluster:   fmt.Sprintf("%v", d.Get("pci_compliant_cluster")),
+		OidcProvider:          fmt.Sprintf("%v", d.Get("oidc_provider")),
 	}
 
 	dataCentre := d.Get("data_centre").(string)
@@ -1400,6 +1417,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("sla_tier", strings.ToUpper(cluster.SlaTier))
 	d.Set("private_network_cluster", cluster.DataCentres[0].PrivateIPOnly)
 	d.Set("pci_compliant_cluster", cluster.PciCompliance == "ENABLED")
+	d.Set("oidc_provider", cluster.OidcProvider)
 
 	azList := make([]string, 0)
 	publicContactPointList := make([]string, 0)

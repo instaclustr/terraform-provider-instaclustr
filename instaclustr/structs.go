@@ -29,6 +29,7 @@ type BundleOptions struct {
 	OpenSearchDashboardsNodeSize 		string `json:"openSearchDashboardsNodeSize,omitempty" mapstructure:"opensearch_dashboards_node_size,omitempty"`
 	DataNodeSize                  		string `json:"dataNodeSize,omitempty" mapstructure:"data_node_size,omitempty"`
 	SecurityPlugin                		*bool  `json:"securityPlugin,omitempty" mapstructure:"security_plugin,omitempty"`
+	IndexManagementPlugin               *bool  `json:"indexManagementPlugin,omitempty" mapstructure:"index_management_plugin,omitempty"`
 	UsePrivateBroadcastRpcAddress 		*bool  `json:"usePrivateBroadcastRPCAddress,omitempty" mapstructure:"use_private_broadcast_rpc_address,omitempty"`
 	LuceneEnabled                 		*bool  `json:"luceneEnabled,omitempty" mapstructure:"lucene_enabled,omitempty"`
 	ContinuousBackupEnabled       		*bool  `json:"continuousBackupEnabled,omitempty" mapstructure:"continuous_backup_enabled,omitempty"`
@@ -90,6 +91,7 @@ type CreateRequest struct {
 	PrivateNetworkCluster string                    `json:"privateNetworkCluster,omitempty"`
 	PCICompliantCluster   string                    `json:"pciCompliantCluster,omitempty"`
 	RackAllocation        *RackAllocation           `json:"rackAllocation,omitempty"`
+	OidcProvider          string                    `json:"oidcProvider,omitempty"`
 }
 
 type DataCentreCreateRequest struct {
@@ -123,6 +125,7 @@ type Cluster struct {
 	DataCentre                 string                   `json:"dataCentre"`
 	DataCentres                []DataCentre             `json:"dataCentres"`
 	Provider                   []ClusterProvider        `json:"clusterProvider"`
+	OidcProvider               string                   `json:"oidcId"`
 }
 
 type ClusterListItem struct {
