@@ -44,7 +44,6 @@ func TestRedisResource(t *testing.T) {
 					testCheckResourceValid(resourceName),
 					testCheckResourceCreated(resourceName, hostname, username, apiKey),
 					checkClusterRunning(resourceName, hostname, username, apiKey),
-					testCheckContactIPCorrect(resourceName, hostname, username, apiKey, 5, 5),
 				),
 			},
 			{
