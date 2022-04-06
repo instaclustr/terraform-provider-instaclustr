@@ -290,6 +290,7 @@ KAFKA_CONNECT|2.7.1, 2.8.1, 3.0.0|
 REDIS|6.0.9|
 APACHE_ZOOKEEPER|3.5.8|
 POSTGRESQL|13.4|
+CADENCE|0.22.4|
 
 ### Migrating from 0.0.1 &rarr; 1.0.0+
 A schema change has been made from 0.0.1 which no longer supports the `bundles` argument and uses `bundle` blocks instead. This change can cause `terraform apply` to fail with a message that `bundles` has been removed and/or updating isn't supported. To resolve this -<br>
@@ -310,7 +311,7 @@ Firstly thanks!  We value your time and will do our best to review the PR as soo
       required_providers {
         instaclustr = {
           source = "terraform.instaclustr.com/instaclustr/instaclustr"
-          version = ">= 1.0.0"
+          version = ">= 1.0.0, < 2.0.0"
         }
       }
     }
