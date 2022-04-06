@@ -486,7 +486,7 @@ func TestPostgresqlWithInvalidPgBouncerConfigClusterCreate(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config:      fmt.Sprintf(string(invalidConfig), username, apiKey, hostname),
-				ExpectError: regexp.MustCompile("'pool_mode' is required"), //TODO: Update when the actual error message is known
+				ExpectError: regexp.MustCompile("Invalid poolMode"),
 			},
 		},
 	})

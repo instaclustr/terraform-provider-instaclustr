@@ -27,10 +27,13 @@ resource "instaclustr_cluster" "invalidPostgresqlWithPgBouncer" {
       replication_mode      = "SYNCHRONOUS",
     }
   }
-  //Will fail due to missing required pool_mode option
+  //Will fail due to invalid pool_mode
   bundle {
     bundle  = "PGBOUNCER"
     version = "1.16.1"
+    options = {
+      pool_mode = "foobar"
+    }
   }
 }
 
