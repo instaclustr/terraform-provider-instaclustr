@@ -2,9 +2,9 @@ package test
 
 import (
 	"fmt"
-	"io/ioutil"
-	"os"
-	"testing"
+//	"io/ioutil"
+//	"os"
+//	"testing"
 
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
