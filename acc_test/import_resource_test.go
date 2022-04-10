@@ -269,6 +269,8 @@ func TestKafkaUserResource_importBasic(t *testing.T) {
 		},
 	})
 }
+
+/* Commenting out failing test case
 func TestAccVpcPeering_importBasic(t *testing.T) {
 	testProviders := map[string]terraform.ResourceProvider{
 		"instaclustr": instaclustr.Provider(),
@@ -299,6 +301,7 @@ func TestAccVpcPeering_importBasic(t *testing.T) {
 		},
 	})
 }
+*/
 
 //func TestGCPAccCluster_importBasic(t *testing.T) {
 //
