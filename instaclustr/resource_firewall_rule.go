@@ -13,6 +13,7 @@ func resourceFirewallRule() *schema.Resource {
 	return &schema.Resource{
 		Create: resourceFirewallRuleCreate,
 		Read:   resourceFirewallRuleRead,
+		Update: resourceFirewallRuleUpdate,
 		Delete: resourceFirewallRuleDelete,
 
 		Importer: &schema.ResourceImporter{
@@ -38,9 +39,8 @@ func resourceFirewallRule() *schema.Resource {
 			},
 
 			"rules": {
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Required: true,
-				ForceNew: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeMap,
 					Elem: schema.TypeString,
@@ -50,19 +50,13 @@ func resourceFirewallRule() *schema.Resource {
 	}
 }
 
-func resourceFirewallRuleCreate(d *schema.ResourceData, meta interface{}) error {
-	log.Printf("[INFO] Creating firewall rule.")
-	client := meta.(*Config).Client
-
-	ruleTarget, ruleTargetError := getRuleTarget(d)
-
-	if ruleTargetError != nil {
-		return fmt.Errorf("[Error] Error creating firewall rule: %s", ruleTargetError)
-	}
-
+func makeFirewallRuleJson(d *schema.ResourceData) ([]byte, error) {
 	rules := make([]RuleType, 0)
 
-	for _, rule := range d.Get("rules").([]interface{}) {
+	for _, rule := range d.Get("rules").(*schema.Set).List() {
+		if len(rule.(map[string]interface{})) == 0 {
+			continue
+		}
 		aRule := ""
 
 		for _, value := range rule.(map[string]interface{}) {
@@ -78,15 +72,26 @@ func resourceFirewallRuleCreate(d *schema.ResourceData, meta interface{}) error 
 		Rules:           rules,
 	}
 
-	var jsonStr []byte
-	jsonStr, err := json.Marshal(rule)
+	return json.Marshal(rule)
+}
+
+func resourceFirewallRuleCreate(d *schema.ResourceData, meta interface{}) error {
+	log.Printf("[INFO] Creating firewall rule.")
+	client := meta.(*Config).Client
+	ruleTarget, ruleTargetError := getRuleTarget(d)
+
+	if ruleTargetError != nil {
+		return fmt.Errorf("[Error] Error creating firewall rule: %s", ruleTargetError)
+	}
+
+	jsonStr, err := makeFirewallRuleJson(d)
 	if err != nil {
 		return fmt.Errorf("[Error] Error creating firewall rule: %s", err)
 	}
 
 	err = client.CreateFirewallRule(jsonStr, d.Get("cluster_id").(string))
 	if err != nil {
-		return fmt.Errorf("[Error] Error creating firewall fule: %s", err)
+		return fmt.Errorf("[Error] Error creating firewall rule: %s", err)
 	}
 	log.Printf("[INFO] Firewall rule %s has been created.", d.Get("cluster_id").(string))
 	d.SetId(ruleTarget)
@@ -129,6 +134,25 @@ func resourceFirewallRuleRead(d *schema.ResourceData, meta interface{}) error {
 			}
 		}
 	}
+	log.Printf("[INFO] Finished Reading the status of cluster %s.", id)
+	return nil
+}
+
+func resourceFirewallRuleUpdate(d *schema.ResourceData, meta interface{}) error {
+	log.Printf("[INFO] Updating firewall rule in %s.", d.Get("cluster_id").(string))
+	client := meta.(*Config).Client
+
+	jsonStr, err := makeFirewallRuleJson(d)
+	if err != nil {
+		return fmt.Errorf("[Error] Error updating firewall rule: %s", err)
+	}
+
+	err = client.UpdateFirewallRule(jsonStr, d.Get("cluster_id").(string))
+	if err != nil {
+		return fmt.Errorf("[Error] Error updating firewall rule: %s", err)
+	}
+	log.Printf("[INFO] Firewall rule for %s has been updated.", d.Get("cluster_id").(string))
+
 	return nil
 }
 
@@ -149,7 +173,7 @@ func resourceFirewallRuleDelete(d *schema.ResourceData, meta interface{}) error 
 
 	rules := make([]RuleType, 0)
 
-	for _, rule := range d.Get("rules").([]interface{}) {
+	for _, rule := range d.Get("rules").(*schema.Set).List() {
 		aRule := ""
 
 		for _, value := range rule.(map[string]interface{}) {

@@ -22,7 +22,7 @@ resource "instaclustr_cluster" "valid" {
 
     bundle {
         bundle = "APACHE_CASSANDRA"
-        version = "apache-cassandra-3.11.8.ic2"
+        version = "3.11.8"
         options = {
             auth_n_authz = true
             use_private_broadcast_rpc_address = false
@@ -31,4 +31,28 @@ resource "instaclustr_cluster" "valid" {
             continuous_backup_enabled = true
         }
     }
+}
+
+resource "instaclustr_cluster" "gcp_valid" {
+  cluster_name = "testclustergcp"
+  node_size = "n1-standard-2"
+  data_centre = "us-east1"
+  sla_tier = "NON_PRODUCTION"
+  cluster_network = "192.168.0.0/18"
+  private_network_cluster = false
+  cluster_provider = {
+    name = "GCP"
+  }
+  rack_allocation = {
+    number_of_racks = 3
+    nodes_per_rack = 1
+  }
+
+  bundle {
+    bundle = "APACHE_CASSANDRA"
+    version = "3.11.8"
+    options = {
+      auth_n_authz = true
+    }
+  }
 }

@@ -1,11 +1,13 @@
 package instaclustr
 
 import (
+	"errors"
 	"fmt"
-	"github.com/hashicorp/terraform/helper/schema"
 	"reflect"
 	"strings"
 	"testing"
+
+	"github.com/hashicorp/terraform/helper/schema"
 )
 
 func TestCreateBundleUserUpdateRequest(t *testing.T) {
@@ -683,6 +685,35 @@ func TestCreateVpcPeeringRequest(t *testing.T) {
 	}
 }
 
+func TestGCPReadVpcPeeringRequest(t *testing.T) {
+	resourceSchema := map[string]*schema.Schema{
+		"peer_vpc_network_name": {
+			Type: schema.TypeString,
+		},
+		"peer_project_id": {
+			Type: schema.TypeString,
+		},
+		"peer_subnets": {
+			Type: schema.TypeSet,
+			Elem: &schema.Schema{
+				Type: schema.TypeString,
+			},
+		},
+	}
+
+	peerSubnets := schema.NewSet(schema.HashString, []interface{}{"10.20.0.0/16", "10.21.0.0/16"})
+	resourceDataMap := map[string]interface{}{
+		"peer_vpc_network_name": "my-vpc1",
+		"peer_project_id":       "instaclustr-dev",
+		"peer_subnets":          peerSubnets.List(),
+	}
+	resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, resourceDataMap)
+
+	if _, err := GCPcreateVpcPeeringRequest(resourceLocalData); err != nil {
+		t.Fatalf("Expected nil error but got %v", err)
+	}
+}
+
 func TestCreateVpcPeeringRequestLegacy(t *testing.T) {
 	resourceSchema := map[string]*schema.Schema{
 		"peer_vpc_id": {
@@ -757,6 +788,236 @@ func TestDeleteAttributesConflict(t *testing.T) {
 	checkAttributeValue("attributeC", "C")
 }
 
+func TestGCPVpcPeeringResourceReadHelperTest(t *testing.T) {
+	resourceSchema := map[string]*schema.Schema{
+		"peer_vpc_id": {
+			Type: schema.TypeString,
+		},
+		"peer_account_id": {
+			Type: schema.TypeString,
+		},
+		"peer_subnet": {
+			Type: schema.TypeString,
+		},
+		"peer_region": {
+			Type: schema.TypeString,
+		},
+	}
+
+	resourceDataMap := map[string]interface{}{
+		"peer_vpc_id":     "vpc-12345678",
+		"peer_account_id": "494111121110",
+		"peer_subnet":     "10.20.0.0/16",
+		"peer_region":     "",
+	}
+	resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, resourceDataMap)
+	p := GCPVPCPeering{
+		ID:                 "Test_ID",
+		ClusterDataCentre:  "123456789565",
+		PeerProjectID:      "ID_Name",
+		PeerVPCNetworkName: "instaclustr_Test",
+	}
+
+	if err := MapGCPVPCPeeringToResource(resourceLocalData, &p); err != nil {
+		t.Fatalf("Expected nil error but got %v", err)
+	}
+}
+
+func TestGCPVpcPeeringResourceUpdate(t *testing.T) {
+	resourceSchema := map[string]*schema.Schema{
+		"peer_vpc_id": {
+			Type: schema.TypeString,
+		},
+		"peer_account_id": {
+			Type: schema.TypeString,
+		},
+		"peer_subnet": {
+			Type: schema.TypeString,
+		},
+		"peer_region": {
+			Type: schema.TypeString,
+		},
+	}
+
+	resourceDataMap := map[string]interface{}{
+		"peer_vpc_id":     "vpc-12345678",
+		"peer_account_id": "494111121110",
+		"peer_subnet":     "10.20.0.0/16",
+		"peer_region":     "",
+	}
+	resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, resourceDataMap)
+
+	if err := resourceGCPVpcPeeringUpdate(resourceLocalData); err == nil {
+		t.Fatalf("Expected nil error but got %v", err)
+	}
+
+}
+
+func TestGCPVpcPeeringResourceHelperTest(t *testing.T) {
+	resourceSchema := map[string]*schema.Schema{
+		"peer_vpc_id": {
+			Type: schema.TypeString,
+		},
+		"peer_account_id": {
+			Type: schema.TypeString,
+		},
+		"peer_subnet": {
+			Type: schema.TypeString,
+		},
+		"peer_region": {
+			Type: schema.TypeString,
+		},
+	}
+
+	resourceDataMap := map[string]interface{}{
+		"peer_vpc_id":     "vpc-12345678",
+		"peer_account_id": "494111121110",
+		"peer_subnet":     "10.20.0.0/16",
+		"peer_region":     "",
+	}
+	resourceLocalData := schema.TestResourceDataRaw(t, resourceSchema, resourceDataMap)
+	p := GCPVPCPeering{
+		ID:                 "",
+		ClusterDataCentre:  "123456789565",
+		PeerProjectID:      "ID_Name",
+		PeerVPCNetworkName: "instaclustr_Test",
+	}
+
+	if err := MapGCPVPCPeeringToResource(resourceLocalData, &p); err != nil {
+		t.Fatalf("Expected nil error but got %v", err)
+	}
+}
+
+type VersionDiffState struct {
+	version        string
+	diffSuppressed bool
+}
+
+func TestVersionDiffSuppression(t *testing.T) {
+	versions := map[string]VersionDiffState{
+		"apache-cassandra:3.11.8": {
+			version:        "3.11.8",
+			diffSuppressed: true,
+		},
+		"3.11.8": {
+			version:        "apache-cassandra:3.11.8.ic2",
+			diffSuppressed: true,
+		},
+		"apache-cassandra:3.11.8.ic2": {
+			version:        "apache-cassandra:3.0.19",
+			diffSuppressed: false,
+		},
+		"opendistro-for-elasticsearch:1.8.0": {
+			version:        "apache-cassandra:3.0.19",
+			diffSuppressed: false,
+		},
+	}
+	for stateVersion, planVersionState := range versions {
+		if versionDiffSuppressFunc("", stateVersion, planVersionState.version, &schema.ResourceData{}) != planVersionState.diffSuppressed {
+			t.Fatalf(
+				"Diff suppression was %v and expected %v for: %s -> %s",
+				!planVersionState.diffSuppressed,
+				planVersionState.diffSuppressed,
+				stateVersion,
+				planVersionState.version,
+			)
+		}
+
+	}
+}
+
+func TestWaitForClusterDependenciesCleanedAndDoDelete(t *testing.T) {
+	mockCluster := Cluster{
+		ID:         "should-be-uuid",
+		BundleType: "KAFKA",
+	}
+	mockData := MockResourceData{
+		changes: map[string]MockChange{},
+	}
+
+	mockClient409 := MockApiClient{
+		cluster: mockCluster,
+		err:     errors.New("Status code: 409"),
+	}
+	err := clusterDeleteRetry(mockClient409, mockData, "should-be-uuid")
+	if !err.Retryable {
+		t.Fatalf("Expected error to be retryable but got non-retryable instead")
+	}
+
+	mockClient404 := MockApiClient{
+		cluster: mockCluster,
+		err:     errors.New("Status code: 404"),
+	}
+	err = clusterDeleteRetry(mockClient404, mockData, "should-be-uuid")
+	if err.Retryable {
+		t.Fatalf("Expected error to be non-retryable but got retryable instead")
+	}
+
+	mockClientSuccess := MockApiClient{
+		cluster: mockCluster,
+		err:     nil,
+	}
+	err = clusterDeleteRetry(mockClientSuccess, mockData, "should-be-uuid")
+	if err != nil {
+		t.Fatalf("Expect nil err but got %v", err)
+	}
+}
+
+func checkKcCredentialExists(options BundleOptions, keysExist bool) bool {
+	return ((options.SaslJaasConfig != "") == keysExist) || ((options.AWSAccessKeyId != "") == keysExist) ||
+		((options.AWSSecretKey != "") == keysExist) || ((options.AzureStorageAccountKey != "") == keysExist) ||
+		((options.AzureStorageAccountName != "") == keysExist)
+}
+
+func TestGetKafkaConnectCredential(t *testing.T) {
+	// it's fine for clusters with no such property
+	mockBundleOptions := []interface{}{map[string]interface{}{
+		"options": map[string]interface{}{"nonsense": "nonsense"},
+	}}
+	mockOptionsChange := MockChange{
+		before: nil,
+		after:  mockBundleOptions,
+	}
+	mockDataNoCredential := MockResourceData{
+		changes: map[string]MockChange{
+			"bundle": mockOptionsChange,
+		},
+	}
+	bundles, err := getBundles(mockDataNoCredential)
+	if err != nil {
+		t.Fatalf("Config without kafka_connect_credential should throw no error")
+	}
+	if checkKcCredentialExists(*bundles[0].Options, true) {
+		t.Fatalf("Config without kafka_connect_credential should not set the Kafka Connect credential in the bundle options")
+	}
+
+	// but if they exists, they are mapped to the right JSON property
+	mockKcCredential := []interface{}{map[string]interface{}{
+		"aws_access_key":             "A",
+		"aws_secret_key":             "B",
+		"azure_storage_account_name": "C",
+		"azure_storage_account_key":  "D",
+		"sasl_jaas_config":           "E",
+	}}
+	mockKcCredentialChange := MockChange{
+		before: nil,
+		after:  mockKcCredential,
+	}
+	mockDataWithKcCredential := MockResourceData{
+		changes: map[string]MockChange{
+			"bundle":                   mockOptionsChange,
+			"kafka_connect_credential": mockKcCredentialChange,
+		},
+	}
+	bundles, err = getBundles(mockDataWithKcCredential)
+	if err != nil {
+		t.Fatalf("Config with kafka_connect_credential should throw no error")
+	}
+	if checkKcCredentialExists(*bundles[0].Options, false) {
+		t.Fatalf("Config with kafka_connect_credential should the Kafka Connect credential in the bundle options")
+	}
+}
+
 type MockApiClient struct {
 	cluster Cluster
 	err     error
@@ -764,6 +1025,10 @@ type MockApiClient struct {
 
 func (m MockApiClient) ReadCluster(clusterID string) (*Cluster, error) {
 	return &m.cluster, m.err
+}
+
+func (m MockApiClient) DeleteCluster(clusterID string) error {
+	return m.err
 }
 
 func (m MockApiClient) ResizeCluster(clusterID string, cdcID string, newNodeSize string, nodePurpose *NodePurpose) error {
@@ -803,5 +1068,21 @@ func (m MockResourceData) Get(key string) interface{} {
 		return change.after
 	} else {
 		return nil
+	}
+}
+
+// currently for the mock we just set the before as nil
+func (m MockResourceData) Set(key string, value interface{}) error {
+	m.changes[key] = MockChange{
+		before: nil,
+		after:  value,
+	}
+	return nil
+}
+
+func (m MockResourceData) SetId(id string) {
+	m.changes["id"] = MockChange{
+		before: nil,
+		after:  id,
 	}
 }

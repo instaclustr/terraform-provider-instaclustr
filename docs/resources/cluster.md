@@ -26,7 +26,7 @@ Property | Description | Default
 `kafka_rest_proxy_user_password`|The password of kafka rest proxy bundle user, if it is a Kafka cluster with rest-proxy addon. This field is updatable and requires `wait_for_state` to be `RUNNING`.|Optional
 `kafka_schema_registry_user_password`|The password of kafka schema registry bundle user, if it is a Kafka cluster with schema-registry addon. This field is updatable and requires `wait_for_state` to be `RUNNING`.|Optional
 `wait_for_state`|The expected state of the cluster before completing the resource creation. Skipping this field will asynchronously create the cluster.|Optional (valid states are RUNNING and PROVISIONED)
-
+`kafka_connect_credential`|Sensitive fields pertaining Kafka Connect custom connector bucket credential and sensitive Kafka worker property|Optional. See more details below.
 
 ### cluster_provider
 
@@ -63,12 +63,12 @@ SPARK|2.1.3, 2.3.2|APACHE_CASSANDRA
 KAFKA|2.1.1, 2.3.1, 2.4.1, 2.5.1, 2.6.1|
 KAFKA_REST_PROXY|5.0.0|KAFKA
 KAFKA_SCHEMA_REGISTRY|5.0.0|KAFKA
-OPENSEARCH|opensearch:1.0.0
-ELASTICSEARCH|opendistro-for-elasticsearch:1.8.0, opendistro-for-elasticsearch:1.11.0.ic1
+OPENSEARCH|1.2.4
+ELASTICSEARCH|1.13.3
 KAFKA_CONNECT|2.3.1, 2.4.1, 2.5.1, 2.6.1|
 REDIS|6.0.9|
 APACHE_ZOOKEEPER|3.5.8|
-POSTGRESQL|13.4|
+POSTGRESQL|14.1|
 
 `bundle.options`
 
@@ -91,9 +91,9 @@ Property | Description | For Bundles | Default
 `password_authentication`|Accepts true/false. Require clients to provide credentials — a username & API Key — to connect to the Spark Jobserver.|Spark|false
 `target_kafka_cluster_id`|GUID of the Instaclustr managed Kafka Cluster Id you wish to connect to. Must be in the same Instaclustr account.|Kafka Connect|Required
 `vpc_type`|Available options: `KAFKA_VPC`, `VPC_PEERED`, `SEPARATE_VPC`. Only required if targeting an Instaclustr managed cluster.|Kafka Connect|`SEPARATE_VPC`
-`aws_access_key`, `aws_secret_key`, `s3_bucket_name`|Access information for the S3 bucket where you will store your custom connectors. (if using AWS)|Kafka Connect
-`azure_storage_account_name`, `azure_storage_account_key`, `azure_storage_container_name`|Access information for the Azure Storage container where you will store your custom connectors.|Kafka Connect
-`ssl_enabled_protocols`, `ssl_truststore_password`, `ssl_protocol`, `security_protocol`, `sasl_mechanism`, `sasl_jaas_config`, `bootstrap_servers`|Connection information for your Kafka Cluster. These options are analogous to the similarly named options that you would place in your Kafka Connect worker.properties file. Only required if connecting to a Non-Instaclustr managed Kafka Cluster|Kafka Connect
+`aws_access_key` (deprecated, see `kafka_connect_credential` below), `aws_secret_key` (deprecated, see `kafka_connect_credential` below), `s3_bucket_name`|Access information for the S3 bucket where you will store your custom connectors. (if using AWS)|Kafka Connect
+`azure_storage_account_name` (deprecated, see `kafka_connect_credential` below), `azure_storage_account_key` (deprecated, see `kafka_connect_credential` below), `azure_storage_container_name`|Access information for the Azure Storage container where you will store your custom connectors.|Kafka Connect
+`ssl_enabled_protocols`, `ssl_truststore_password`, `ssl_protocol`, `security_protocol`, `sasl_mechanism`, `sasl_jaas_config` (deprecated, see `kafka_connect_credential` below), `bootstrap_servers`|Connection information for your Kafka Cluster. These options are analogous to the similarly named options that you would place in your Kafka Connect worker.properties file. Only required if connecting to a Non-Instaclustr managed Kafka Cluster|Kafka Connect
 `truststore`|Base64 encoded version of the TLS trust store (in JKS format) used to connect to your Kafka Cluster. Only required if connecting to a Non-Instaclustr managed Kafka Cluster with TLS enabled|Kafka Connect
 `master_nodes`|The number of Master nodes in a generated Redis Cluster.|Redis|Required (Integers)
 `replica_nodes`|The number of Replica nodes in a generated Redis Cluster.|Redis|Required (Integers)
@@ -102,6 +102,24 @@ Property | Description | For Bundles | Default
 `zookeeper_node_size`|If `dedicated_zookeeper` is true, then it is the node size for the dedicated Zookeeper nodes. Have a look [here](https://www.instaclustr.com/support/api-integrations/api-reference/provisioning-api/#section-create-cluster) (Kafka bundle options table) for node size options. |Kafka
 `zookeeper_node_count`|Indicates how many nodes are allocated to be Zookeeper nodes. For KAFKA bundle, if `dedicated_zookeeper` is false, then it indicates how many Kafka nodes also have ZooKeeper services in them. |Kafka, ZooKeeper
 `postgresql_node_count`|The number of nodes in a generated PostgreSQL cluster.|Postgresql|Required (Integers)
+`replication_mode` | The default replication behaviour for PostgreSQL cluster. See [Replication Mode](https://www.instaclustr.com/support/documentation/postgresql/options/replication-mode/) documentation for more details. Allowed values are `SYNCHRONOUS` and `ASYNCHRONOUS`. |Postgresql| Required
+`synchronous_mode_strict` | Whether writes should always require replication to at least one standby. See [Synchronous Mode Strict](https://www.instaclustr.com/support/documentation/postgresql/options/synchronous-mode-strict/) documentation for more details. Allowed values are true or false. |Postgresql| Required
+
+### Kafka Connect Credential
+
+If this property is set, then it will override the properties specified in the `bundle.options` with the same name.
+This property is the preferred way to provide Kafka Connect credential because the fields are marked as sensitive data,
+whereas the deprecated fields in the `bundle.options` with the same name will not mark the information as sensitive.
+
+`kafka_connect_credential`
+
+Property | Description 
+---------|-------------
+`aws_access_key`| AWS Access Key id that can access your specified S3 bucket for Kafka Connect custom connector
+`aws_secret_key`| AWS Secret Key associated with the Access Key id that can access your specified S3 bucket for Kafka Connect custom connector
+`azure_storage_account_name`| AZURE storage account name to access your AZURE bucket for Kafka Connect custom connector
+`azure_storage_account_key`| AZURE storage account key to access your AZURE bucket for Kafka Connect custom connector
+`sasl_jaas_config`| `sasl.jaas.config` part of the worker.properties used to access non-Instaclustr Kafka cluster
 
 
 ### Elasticsearch and OpenSearch node sizes

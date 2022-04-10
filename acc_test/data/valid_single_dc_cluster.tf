@@ -12,6 +12,7 @@ resource "instaclustr_cluster" "dc_test_cluster" {
   cluster_network = "10.0.0.0/16"
   private_network_cluster = false
   pci_compliant_cluster = false
+  data_centre_custom_name = "AWS_VPC_US_EAST_1_name"
   cluster_provider = {
     name = "AWS_VPC"
   }
@@ -21,7 +22,7 @@ resource "instaclustr_cluster" "dc_test_cluster" {
   }
   bundle {
     bundle = "APACHE_CASSANDRA"
-    version = "apache-cassandra-3.11.8.ic2"
+    version = "apache-cassandra-3.11.8.ic5"
     options = {
       auth_n_authz = true
       use_private_broadcast_rpc_address = false

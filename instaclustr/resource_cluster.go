@@ -22,6 +22,7 @@ var (
 		"RUNNING":     true,
 		"PROVISIONED": true,
 	}
+	semanticVersioningPattern, _ = regexp.Compile("[0-9]+(\\.[0-9]+){1,2}")
 )
 
 func resourceCluster() *schema.Resource {
@@ -64,6 +65,14 @@ func resourceCluster() *schema.Resource {
 				Optional:      true,
 				ConflictsWith: []string{"data_centres"},
 				ForceNew:      true,
+			},
+
+			"data_centre_custom_name": {
+				Type:             schema.TypeString,
+				Optional:         true,
+				ConflictsWith:    []string{"data_centres"},
+				ForceNew:         true,
+				DiffSuppressFunc: dcCustomNameDiffSuppressFunc,
 			},
 
 			"data_centres": {
@@ -163,9 +172,10 @@ func resourceCluster() *schema.Resource {
 										}, false),
 									},
 									"version": {
-										Type:     schema.TypeString,
-										Required: true,
-										ForceNew: true,
+										Type:             schema.TypeString,
+										Required:         true,
+										ForceNew:         true,
+										DiffSuppressFunc: versionDiffSuppressFunc,
 									},
 									"options": {
 										Type:     schema.TypeMap,
@@ -343,9 +353,10 @@ func resourceCluster() *schema.Resource {
 							ForceNew: true,
 						},
 						"version": {
-							Type:     schema.TypeString,
-							Required: true,
-							ForceNew: true,
+							Type:             schema.TypeString,
+							Required:         true,
+							ForceNew:         true,
+							DiffSuppressFunc: versionDiffSuppressFunc,
 						},
 						"options": {
 							// This type is not correct. TypeMaps cannot have complex structures defined in the same way that TypeLists and TypeSets can
@@ -359,7 +370,7 @@ func resourceCluster() *schema.Resource {
 							DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 								// Cover up for the API that has optional arguments that get given default values
 								// and returns the defaults in subsequent calls
-								return old == "false" && new == ""
+								return new == ""
 							},
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -545,7 +556,17 @@ func resourceCluster() *schema.Resource {
 									},
 									"postgresql_node_count": {
 										Type:     schema.TypeInt,
-										Optional: true,
+										Optional: false,
+										ForceNew: true,
+									},
+									"replication_mode": {
+										Type:     schema.TypeString,
+										Optional: false,
+										ForceNew: true,
+									},
+									"synchronous_mode_strict": {
+										Type:     schema.TypeBool,
+										Optional: false,
 										ForceNew: true,
 									},
 								},
@@ -580,9 +601,67 @@ func resourceCluster() *schema.Resource {
 					return
 				},
 			},
+			"kafka_connect_credential": {
+				Type:     schema.TypeList,
+				Optional: true,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"aws_access_key": {
+							Type:      schema.TypeString,
+							Optional:  true,
+							ForceNew:  true,
+							Sensitive: true,
+						},
+						"aws_secret_key": {
+							Type:      schema.TypeString,
+							Optional:  true,
+							ForceNew:  true,
+							Sensitive: true,
+						},
+						"azure_storage_account_name": {
+							Type:      schema.TypeString,
+							Optional:  true,
+							ForceNew:  true,
+							Sensitive: true,
+						},
+						"azure_storage_account_key": {
+							Type:      schema.TypeString,
+							Optional:  true,
+							ForceNew:  true,
+							Sensitive: true,
+						},
+						"sasl_jaas_config": {
+							Type:      schema.TypeString,
+							Optional:  true,
+							ForceNew:  true,
+							Sensitive: true,
+						},
+					},
+				},
+			},
 		},
 	}
 }
+
+func versionDiffSuppressFunc(k, old string, new string, d *schema.ResourceData) bool {
+	/*
+	 * Ensures that diffs are not shown for versions of different formats
+	 * containing the same sem-ver. For example, all of these are equivalent:
+	 * 3.11.8
+	 * apache-cassandra-3.11.8
+	 * apache-cassandra-3.11.8.ic4
+	 */
+	oldSemVer := semanticVersioningPattern.FindString(old)
+	newSemVer := semanticVersioningPattern.FindString(new)
+	return oldSemVer == newSemVer
+}
+
+//dcCustomNameDiffSuppressFunc is used to suppress the diff if a custom DC name is not provided in the resource
+func dcCustomNameDiffSuppressFunc(k, old, new string, d *schema.ResourceData) bool {
+	return new == ""
+}
+
 func resourceClusterCustomizeDiff(diff *schema.ResourceDiff, i interface{}) error {
 
 	if _, isBundle := diff.GetOk("bundle"); isBundle {
@@ -684,6 +763,7 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		clusterNetwork := d.Get("cluster_network").(string)
 		createData.DataCentre = dataCentre
 		createData.ClusterNetwork = clusterNetwork
+		createData.DataCentreCustomName = d.Get("data_centre_custom_name").(string)
 	} else {
 		createData.DataCentres = dataCentres
 	}
@@ -922,6 +1002,8 @@ type resourceDataInterface interface {
 	GetChange(key string) (interface{}, interface{})
 	GetOk(key string) (interface{}, bool)
 	Get(key string) interface{}
+	Set(key string, value interface{}) error
+	SetId(value string)
 }
 
 func doClusterResize(client APIClientInterface, clusterID string, d resourceDataInterface, bundles []Bundle) error {
@@ -1231,6 +1313,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		if err != nil {
 			return err
 		}
+
 		if err := d.Set("bundle", bundles); err != nil {
 			return fmt.Errorf("[Error] Error reading cluster: %s", err)
 		}
@@ -1285,6 +1368,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		}
 		d.Set("data_centre", cluster.DataCentres[0].Name)
 		d.Set("cluster_network", cluster.DataCentres[0].CdcNetwork)
+		d.Set("data_centre_custom_name", cluster.DataCentres[0].CdcName)
 
 		if err := deleteAttributesConflict(resourceCluster().Schema, d, "data_centre"); err != nil {
 			return err
@@ -1504,10 +1588,22 @@ func resourceClusterDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*Config).Client
 	id := d.Get("cluster_id").(string)
 	log.Printf("[INFO] Deleting cluster %s.", id)
+
+	return resource.Retry(d.Timeout(schema.TimeoutDelete), func() *resource.RetryError {
+		return clusterDeleteRetry(client, d, id)
+	})
+}
+
+func clusterDeleteRetry(client APIClientInterface, d resourceDataInterface, id string) *resource.RetryError {
+	fmt.Printf("waiting for the dependencies of cluster %s to be cleaned\n", id)
+	// try to delete until successful or the error is not about dependency
 	err := client.DeleteCluster(id)
-	if err != nil {
-		return fmt.Errorf("[Error] Error deleting cluster: %s", err)
+	if err != nil && strings.HasPrefix(err.Error(), "Status code: 409") {
+		return resource.RetryableError(fmt.Errorf("[Error] Dependencies still exist for cluster %s", id))
+	} else if err != nil { // any other error we break
+		return resource.NonRetryableError(fmt.Errorf("[Error] Error deleting cluster: %s", err))
 	}
+
 	d.SetId("")
 	d.Set("cluster_id", "")
 	log.Printf("[INFO] Cluster %s has been marked for deletion.", id)
@@ -1520,7 +1616,7 @@ func resourceClusterStateImport(d *schema.ResourceData, meta interface{}) ([]*sc
 	return []*schema.ResourceData{d}, nil
 }
 
-func getBundles(d *schema.ResourceData) ([]Bundle, error) {
+func getBundles(d resourceDataInterface) ([]Bundle, error) {
 	bundles := make([]Bundle, 0)
 	for _, inBundle := range d.Get("bundle").([]interface{}) {
 		var bundle Bundle
@@ -1533,6 +1629,19 @@ func getBundles(d *schema.ResourceData) ([]Bundle, error) {
 			return nil, err
 		}
 		bundles = append(bundles, bundle)
+	}
+
+	// hacky for Kafka Connect because we need the credential to be of Sensitive nature. In this case, we assume there's only one bundle which is KC.
+	// In any case, it's fine to attach these properties to non-KC bundle as they will just get ignored.
+	// In the case of KC can have other bundles (e.g., add ons) we also need to find the correct bundle index
+	kcCredentialState, kcCredentialExists := d.GetOk("kafka_connect_credential")
+	if kcCredentialExists {
+		kcCredential := kcCredentialState.([]interface{})[0].(map[string]interface{})
+		bundles[0].Options.AWSAccessKeyId = kcCredential["aws_access_key"].(string)
+		bundles[0].Options.AWSSecretKey = kcCredential["aws_secret_key"].(string)
+		bundles[0].Options.AzureStorageAccountName = kcCredential["azure_storage_account_name"].(string)
+		bundles[0].Options.AzureStorageAccountKey = kcCredential["azure_storage_account_key"].(string)
+		bundles[0].Options.SaslJaasConfig = kcCredential["sasl_jaas_config"].(string)
 	}
 
 	return bundles, nil

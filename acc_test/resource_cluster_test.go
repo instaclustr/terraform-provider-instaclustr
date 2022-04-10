@@ -21,8 +21,9 @@ func AccClusterResourceTestSteps(t *testing.T, testAccProviders map[string]terra
 
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
 	updatedConfig := strings.Replace(oriConfig, "testcluster", "newcluster", 1)
+	newToOldVersionConfig := strings.Replace(updatedConfig, `version = "3.11.8"`, `version = "apache-cassandra-3.11.8.ic4"`, 1)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckResourceDeleted("valid", hostname, username, apiKey),
 		Steps: []resource.TestStep{
@@ -38,6 +39,43 @@ func AccClusterResourceTestSteps(t *testing.T, testAccProviders map[string]terra
 				Check: resource.ComposeTestCheckFunc(
 					testCheckResourceValid("valid"),
 					testCheckResourceCreated("valid", hostname, username, apiKey),
+				),
+			},
+			{
+				Config: newToOldVersionConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid("valid"),
+				),
+				PlanOnly: true,
+			},
+		},
+	})
+}
+
+func AccGCPClusterResourceTestSteps(t *testing.T, testAccProviders map[string]terraform.ResourceProvider, validConfig []byte) {
+	username := os.Getenv("IC_USERNAME")
+	apiKey := os.Getenv("IC_API_KEY")
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+
+	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
+	updatedConfig := strings.Replace(oriConfig, "testcluster", "newcluster", 1)
+
+	resource.ParallelTest(t, resource.TestCase{
+		Providers:    testAccProviders,
+		CheckDestroy: testCheckResourceDeleted("gcp_valid", hostname, username, apiKey),
+		Steps: []resource.TestStep{
+			{
+				Config: oriConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid("gcp_valid"),
+					testCheckResourceCreated("gcp_valid", hostname, username, apiKey),
+				),
+			},
+			{
+				Config: updatedConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid("gcp_valid"),
+					testCheckResourceCreated("gcp_valid", hostname, username, apiKey),
 				),
 			},
 		},
@@ -81,7 +119,7 @@ func TestKafkaConnectClusterCreateInstaclustrAWS(t *testing.T) {
 	S3BucketName := os.Getenv("IC_S3_BUCKET_NAME")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 	oriKCConfig := fmt.Sprintf(string(validKCConfig), username, apiKey, hostname, kafkaClusterId, awsAccessKey, awsSecretKey, S3BucketName)
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckResourceDeleted("validKC", hostname, username, apiKey),
 		Steps: []resource.TestStep{
@@ -122,7 +160,7 @@ func TestKafkaConnectClusterCreateNonInstaclustrAZURE(t *testing.T) {
 	oriKCConfig := fmt.Sprintf(string(validKCConfig), username, apiKey, hostname, azureStorageAccountName,
 		azureStorageAccountKey, azureStorageContainerName, sslEnabledProtocols, sslTruststorePassword,
 		sslProtocol, securityProtocol, saslMechanism, saslJaasConfig, bootstrapServers, truststore)
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckResourceDeleted("validKC", hostname, username, apiKey),
 		Steps: []resource.TestStep{
@@ -150,7 +188,7 @@ func TestAccClusterResize(t *testing.T) {
 	validResizeConfig := strings.Replace(oriConfig, "t3.medium-v2", "m5l-250-v2", 1)
 	invalidDownsizeConfig := strings.Replace(oriConfig, "t3.medium-v2", "t3.small-v2", 1)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckResourceDeleted(resourceName, hostname, username, apiKey),
 		Steps: []resource.TestStep{
@@ -160,6 +198,7 @@ func TestAccClusterResize(t *testing.T) {
 					testCheckResourceValid(resourceName),
 					testCheckResourceCreated(resourceName, hostname, username, apiKey),
 					checkClusterRunning(resourceName, hostname, username, apiKey),
+					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_cluster", "data_centre_custom_name", "AWS_VPC_US_EAST_1_name"),
 					testCheckContactIPCorrect(resourceName, hostname, username, apiKey, 3, 3),
 				),
 			},
@@ -192,7 +231,7 @@ func TestAccClusterInvalid(t *testing.T) {
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
@@ -212,7 +251,7 @@ func TestAccClusterInvalidBundleOptionCombo(t *testing.T) {
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
@@ -235,7 +274,7 @@ func TestAccClusterCustomVPC(t *testing.T) {
 	providerAccountName := os.Getenv("IC_PROV_ACC_NAME")
 	providerVpcId := os.Getenv("IC_PROV_VPC_ID")
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname, providerAccountName, providerVpcId)
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckResourceDeleted("vpc_cluster", hostname, username, apiKey),
 		Steps: []resource.TestStep{
@@ -260,57 +299,12 @@ func TestAccClusterCustomVPCInvalid(t *testing.T) {
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 	providerAccountName := os.Getenv("IC_PROV_ACC_NAME")
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
 				Config:      fmt.Sprintf(string(validConfig), username, hostname, apiKey, providerAccountName),
 				ExpectError: regexp.MustCompile("Error creating cluster"),
-			},
-		},
-	})
-}
-
-func TestAccElasticsearchClusterResize(t *testing.T) {
-	testAccProviders := map[string]terraform.ResourceProvider{
-		"instaclustr": instaclustr.Provider(),
-	}
-	validConfig, _ := ioutil.ReadFile("data/valid_with_resizable_elasticsearch_cluster.tf")
-	username := os.Getenv("IC_USERNAME")
-	apiKey := os.Getenv("IC_API_KEY")
-	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
-	resourceName := "resizable_cluster"
-	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
-	validResizeConfig := strings.Replace(oriConfig, `kibana_node_size = "t3.small-v2",`, `kibana_node_size = "m5xl-400-v2",`, 1)
-	invalidResizeConfig := strings.Replace(oriConfig, `kibana_node_size = "t3.small-v2",`, `kibana_node_size = "t3.small",`, 1)
-
-	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		CheckDestroy: testCheckResourceDeleted(resourceName, hostname, username, apiKey),
-		Steps: []resource.TestStep{
-			{
-				Config: oriConfig,
-				Check: resource.ComposeTestCheckFunc(
-					testCheckResourceValid(resourceName),
-					testCheckResourceCreated(resourceName, hostname, username, apiKey),
-					checkClusterRunning(resourceName, hostname, username, apiKey),
-					testCheckContactIPCorrect(resourceName, hostname, username, apiKey, 3, 3),
-				),
-			},
-			{
-				PreConfig: func() {
-					fmt.Println("Sleep for 1 minutes to wait for Elasticsearch cluster to be ready for resize.")
-					time.Sleep(1 * time.Minute)
-				},
-				Config:      invalidResizeConfig,
-				ExpectError: regexp.MustCompile("t3.small"),
-			},
-			{
-				Config: validResizeConfig,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_cluster", "cluster_name", "tf-resizable-test"),
-				),
-				ExpectNonEmptyPlan: true,
 			},
 		},
 	})
@@ -329,7 +323,7 @@ func TestAccOpenSearchClusterResize(t *testing.T) {
 	validResizeConfig := strings.Replace(oriConfig, `opensearch_dashboards_node_size = "t3.small-v2",`, `opensearch_dashboards_node_size = "m5xl-400-v2",`, 1)
 	invalidResizeConfig := strings.Replace(oriConfig, `opensearch_dashboards_node_size = "t3.small-v2",`, `opensearch_dashboards_node_size = "t3.small",`, 1)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckResourceDeleted(resourceName, hostname, username, apiKey),
 		Steps: []resource.TestStep{
@@ -437,7 +431,7 @@ func TestValidPostgresqlClusterCreate(t *testing.T) {
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckResourceDeleted("validPostgresql", hostname, username, apiKey),
 		Steps: []resource.TestStep{
@@ -446,31 +440,6 @@ func TestValidPostgresqlClusterCreate(t *testing.T) {
 				Check: resource.ComposeTestCheckFunc(
 					testCheckResourceValid("validPostgresql"),
 					testCheckResourceCreated("validPostgresql", hostname, username, apiKey),
-				),
-			},
-		},
-	})
-}
-
-func TestValidElasticsearchClusterCreate(t *testing.T) {
-	testAccProvider := instaclustr.Provider()
-	testAccProviders := map[string]terraform.ResourceProvider{
-		"instaclustr": testAccProvider,
-	}
-	validConfig, _ := ioutil.ReadFile("data/valid_elasticsearch_cluster_create.tf")
-	username := os.Getenv("IC_USERNAME")
-	apiKey := os.Getenv("IC_API_KEY")
-	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
-	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
-	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		CheckDestroy: testCheckResourceDeleted("validElasticsearch", hostname, username, apiKey),
-		Steps: []resource.TestStep{
-			{
-				Config: oriConfig,
-				Check: resource.ComposeTestCheckFunc(
-					testCheckResourceValid("validElasticsearch"),
-					testCheckResourceCreated("validElasticsearch", hostname, username, apiKey),
 				),
 			},
 		},
@@ -487,7 +456,7 @@ func TestValidOpenSearchClusterCreate(t *testing.T) {
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckResourceDeleted("validOpenSearch", hostname, username, apiKey),
 		Steps: []resource.TestStep{
@@ -502,26 +471,6 @@ func TestValidOpenSearchClusterCreate(t *testing.T) {
 	})
 }
 
-func TestInvalidElasticsearchClusterCreate(t *testing.T) {
-	testAccProvider := instaclustr.Provider()
-	testAccProviders := map[string]terraform.ResourceProvider{
-		"instaclustr": testAccProvider,
-	}
-	invalidConfig, _ := ioutil.ReadFile("data/invalid_elasticsearch_cluster_create.tf")
-	username := os.Getenv("IC_USERNAME")
-	apiKey := os.Getenv("IC_API_KEY")
-	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
-	resource.Test(t, resource.TestCase{
-		Providers: testAccProviders,
-		Steps: []resource.TestStep{
-			{
-				Config:      fmt.Sprintf(string(invalidConfig), username, apiKey, hostname),
-				ExpectError: regexp.MustCompile("When 'dedicated_master_nodes' is not true , data_node_size can be either null or equal to master_node_size."),
-			},
-		},
-	})
-}
-
 func TestInvalidOpenSearchClusterCreate(t *testing.T) {
 	testAccProvider := instaclustr.Provider()
 	testAccProviders := map[string]terraform.ResourceProvider{
@@ -531,7 +480,7 @@ func TestInvalidOpenSearchClusterCreate(t *testing.T) {
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		Providers: testAccProviders,
 		Steps: []resource.TestStep{
 			{
@@ -552,7 +501,7 @@ func TestValidApacheZookeeperClusterCreate(t *testing.T) {
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckResourceDeleted("validApacheZookeeper", hostname, username, apiKey),
 		Steps: []resource.TestStep{
@@ -577,7 +526,7 @@ func TestAccClusterCredentials(t *testing.T) {
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckResourceDeleted("valid_with_password_and_client_encryption", hostname, username, apiKey),
 		Steps: []resource.TestStep{
@@ -610,7 +559,7 @@ func TestCheckSingleDCRefreshToMultiDC(t *testing.T) {
 	attributesConflictWithDataCentres := []string{"data_centre",
 		"node_size", "rack_allocation", "network", "cluster_provider", "bundle"}
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckResourceDeleted("dc_test_cluster", hostname, username, apiKey),
 		Steps: []resource.TestStep{
@@ -618,6 +567,7 @@ func TestCheckSingleDCRefreshToMultiDC(t *testing.T) {
 				Config:             singleDCConfig,
 				ExpectNonEmptyPlan: true,
 				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("instaclustr_cluster.dc_test_cluster", "data_centre_custom_name", "AWS_VPC_US_EAST_1_name"),
 					addDCtoCluster("dc_test_cluster", hostname, username, apiKey, "data/valid_add_dc.json"),
 				),
 			},

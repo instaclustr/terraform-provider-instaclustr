@@ -14,8 +14,8 @@ terraform {
 provider "instaclustr" {
   username = "<Your instaclustr username here>"
   api_key = "<Your provisioning API key here>"
+  
 }
-
 resource "instaclustr_encryption_key" "add_ebs_key" {
   alias = "testkey"
   arn = "<Your KMS key ARN here>"
@@ -28,6 +28,7 @@ resource "instaclustr_cluster" "example" {
   data_centre = "US_WEST_2"
   sla_tier = "NON_PRODUCTION"
   cluster_network = "192.168.0.0/18"
+  wait_for_state="RUNNING"
   private_network_cluster = false
   cluster_provider = {
     name = "AWS_VPC",
@@ -42,7 +43,31 @@ resource "instaclustr_cluster" "example" {
 
   bundle {
     bundle = "APACHE_CASSANDRA"
-    version = "apache-cassandra-3.11.8.ic2"
+    version = "3.11.8"
+    options = {
+      auth_n_authz = true
+    }
+  }
+}
+resource "instaclustr_cluster" "gcp_example" {
+  cluster_name = "testclustergcp"
+  node_size = "n1-standard-2"
+  data_centre = "us-east1"
+  sla_tier = "NON_PRODUCTION"
+  cluster_network = "192.168.0.0/18"
+  wait_for_state="RUNNING"
+  private_network_cluster = false
+  cluster_provider = {
+    name = "GCP"
+  }
+  rack_allocation = {
+    number_of_racks = 3
+    nodes_per_rack = 1
+  }
+
+  bundle {
+    bundle = "APACHE_CASSANDRA"
+    version = "apache-cassandra-3.11.8"
     options = {
       auth_n_authz = true
     }
@@ -52,6 +77,11 @@ resource "instaclustr_cluster" "example" {
 data "instaclustr_cluster_credentials" "example_credentials" {
   cluster_id = "${instaclustr_cluster.example.id}"
 }
+
+data "instaclustr_clusters" "clusters" {
+  depends_on = ["instaclustr_cluster.example"]
+}
+
 
 resource "instaclustr_cluster" "custom_vpc_example" {
   cluster_name = "testcluster"
@@ -72,7 +102,7 @@ resource "instaclustr_cluster" "custom_vpc_example" {
 
   bundle {
     bundle = "APACHE_CASSANDRA"
-    version = "apache-cassandra-3.11.8.ic2"
+    version = "3.11.8"
   }
 }
 
@@ -103,6 +133,14 @@ resource "instaclustr_vpc_peering" "example_vpc_peering" {
   peer_subnets = toset(["10.0.0.0/20", "10.0.32.0/20"])
 }
 
+resource "instaclustr_vpc_peering_gcp" "example_vpc_peering" {
+
+  peer_vpc_network_name = "network name"
+  peer_project_id = "projectId"
+  peer_subnets = toset(["10.10.0.0/16", "10.11.0.0/16"])
+  cluster_id = "${instaclustr_cluster.gcp_example.id}"
+}
+
 // Updating the kafka-schema-registry and the kafka-rest-proxy bundle user passwords at the cluster creation time
 resource "instaclustr_cluster" "example_kafka" {
   cluster_name = "test_kafka"
@@ -120,7 +158,7 @@ resource "instaclustr_cluster" "example_kafka" {
 
   bundle {
     bundle = "KAFKA"
-    version = "apache-kafka:2.5.1"
+    version = "2.5.1"
     options = {
       auth_n_authz = true
       dedicated_zookeeper = true
@@ -131,12 +169,12 @@ resource "instaclustr_cluster" "example_kafka" {
 
   bundle {
     bundle = "KAFKA_REST_PROXY"
-    version = "kafka-rest-proxy:5.0.0"
+    version = "5.0.0"
   }
 
   bundle {
     bundle = "KAFKA_SCHEMA_REGISTRY"
-    version = "kafka-schema-registry:5.0.0"
+    version = "5.0.0"
   }
   kafka_rest_proxy_user_password = "RestProxyTest123test!" // new password for rest proxy bundle user
   kafka_schema_registry_user_password = "SchemaRegistryTest123test!" // new password for schema registry bundle user
@@ -160,11 +198,11 @@ resource "instaclustr_cluster" "example-elasticsearch" {
 
   bundle {
     bundle = "ELASTICSEARCH"
-    version = "opendistro-for-elasticsearch:1.11.0.ic1"
+    version = "1.13.3"
     options = {
       client_encryption = true,
       dedicated_master_nodes = true,
-      master_node_size = "m5l-250-v2",
+      master_node_size = "SRH-DM-m5d.large",
       data_node_size = "m5l-250-v2",
       kibana_node_size = "m5l-250-v2",
       security_plugin = true
@@ -188,7 +226,7 @@ resource "instaclustr_cluster" "example-opensearch" {
 
   bundle {
     bundle = "OPENSEARCH"
-    version = "opensearch:1.0.0"
+    version = "1.2.4"
     options = {
       dedicated_master_nodes = true,
       master_node_size = "m5l-250-v2",
@@ -216,7 +254,7 @@ resource "instaclustr_cluster" "validKC" {
 
   bundle {
     bundle = "KAFKA_CONNECT"
-    version = "apache-kafka-connect:2.3.1"
+    version = "2.3.1"
     options = {
       target_kafka_cluster_id = "${instaclustr_cluster.example_kafka.id}"
       vpc_id = "SEPARATE_VPC"
@@ -259,7 +297,7 @@ resource "instaclustr_cluster" "private_cluster_example" {
   }
   bundle {
     bundle = "APACHE_CASSANDRA"
-    version = "apache-cassandra-3.11.8.ic2"
+    version = "3.11.8"
   }
 }
 
@@ -296,15 +334,17 @@ resource "instaclustr_cluster" "example-postgresql" {
   }
   rack_allocation = {
     nodes_per_rack = 1
-    number_of_racks = 1
+    number_of_racks = 2
   }
 
   bundle {
     bundle = "POSTGRESQL"
-    version = "postgresql:13.4"
+    version = "14.1"
     options = {
-      postgresql_node_count = 1,
-      client_encryption = true
+      postgresql_node_count = 2,
+      client_encryption = true,
+      replication_mode = "SYNCHRONOUS",
+      synchronous_mode_strict = true
     }
   }
 }

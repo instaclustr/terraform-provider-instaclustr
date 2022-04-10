@@ -2,15 +2,16 @@ package test
 
 import (
 	"fmt"
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
-	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 	"io/ioutil"
 	"os"
 	"regexp"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/hashicorp/terraform/helper/resource"
+	"github.com/hashicorp/terraform/terraform"
+	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 )
 
 func TestAccCluster_importBasic(t *testing.T) {
@@ -24,7 +25,7 @@ func TestAccCluster_importBasic(t *testing.T) {
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckResourceDeleted("valid", hostname, username, apiKey),
 		Steps: []resource.TestStep{
@@ -45,48 +46,51 @@ func TestAccCluster_importBasic(t *testing.T) {
 	})
 }
 
-func AccMultiDcCluster_importBasicTestSteps(t *testing.T, testAccProviders map[string]terraform.ResourceProvider, validConfig []byte) {
+func AccMultiDcCluster_importBasicTestSteps(t *testing.T, validConfig []byte) {
 	username := os.Getenv("IC_USERNAME")
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
-
-	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
-	resource.Test(t, resource.TestCase{
-		Providers:    testAccProviders,
-		CheckDestroy: testCheckResourceDeleted("valid", hostname, username, apiKey),
-		Steps: []resource.TestStep{
-			{
-				Config: oriConfig,
-				Check: resource.ComposeTestCheckFunc(
-					testCheckResourceValid("valid"),
-					testCheckResourceCreated("valid", hostname, username, apiKey),
-				),
-			},
-			{
-				Config:            oriConfig,
-				ResourceName:      "instaclustr_cluster.valid",
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
-		},
-	})
-}
-
-func TestAccMultiDcCluster_importBasic(t *testing.T) {
 
 	testAccProvider := instaclustr.Provider()
 	testAccProviders := map[string]terraform.ResourceProvider{
 		"instaclustr": testAccProvider,
 	}
 
+	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
+	resource.ParallelTest(t, resource.TestCase{
+		Providers:    testAccProviders,
+		CheckDestroy: testCheckResourceDeleted("valid", hostname, username, apiKey),
+		Steps: []resource.TestStep{
+			{
+				Config: oriConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid("valid"),
+					testCheckResourceCreated("valid", hostname, username, apiKey),
+				),
+			},
+			{
+				Config:            oriConfig,
+				ResourceName:      "instaclustr_cluster.valid",
+				ImportState:       true,
+				ImportStateVerify: true,
+			},
+		},
+	})
+}
+
+func TestAccClusterImportMultiDcDifferentNodeCounts(t *testing.T) {
 	validConfig, _ := ioutil.ReadFile("data/valid_multi_DC_provisioning.tf")
-	AccMultiDcCluster_importBasicTestSteps(t, testAccProviders, validConfig)
+	AccMultiDcCluster_importBasicTestSteps(t, validConfig)
+}
 
-	validConfig, _ = ioutil.ReadFile("data/valid_multi_DC_provisioning_2_DC_6_nodes.tf")
-	AccMultiDcCluster_importBasicTestSteps(t, testAccProviders, validConfig)
+func TestAccClusterImportMultiDcSameNodeCounts(t *testing.T) {
+	validConfig, _ := ioutil.ReadFile("data/valid_multi_DC_provisioning_2_DC_6_nodes.tf")
+	AccMultiDcCluster_importBasicTestSteps(t, validConfig)
+}
 
-	validConfig, _ = ioutil.ReadFile("data/valid_multi_DC_provisioning_with_different_providers.tf")
-	AccMultiDcCluster_importBasicTestSteps(t, testAccProviders, validConfig)
+func TestAccClusterImportMultiDcDifferentProviders(t *testing.T) {
+	validConfig, _ := ioutil.ReadFile("data/valid_multi_DC_provisioning_with_different_providers.tf")
+	AccMultiDcCluster_importBasicTestSteps(t, validConfig)
 }
 
 func TestAccKafkaCluster_importBasic(t *testing.T) {
@@ -100,10 +104,10 @@ func TestAccKafkaCluster_importBasic(t *testing.T) {
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 
 	kafkaNodeSize := "KFK-PRD-r6g.large-250"
-	kafkaVersion := "apache-kafka:2.7.1.ic1"
+	kafkaVersion := "2.7.1"
 
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname, kafkaNodeSize, kafkaVersion)
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		Providers:    testAccProviders,
 		CheckDestroy: testCheckResourceDeleted("valid", hostname, username, apiKey),
 		Steps: []resource.TestStep{
@@ -136,6 +140,7 @@ func TestAccEncryptionKey_importBasic(t *testing.T) {
 	providerAccountName := os.Getenv("IC_PROV_ACC_NAME")
 	kmsArn := os.Getenv("KMS_ARN")
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname, kmsArn, providerAccountName)
+	// Not running this test parallelly since we only have 1 test encryption key
 	resource.Test(t, resource.TestCase{
 		Providers:    testAccEBSKeyProviders,
 		CheckDestroy: testCheckAccEBSResourceDeleted("valid", hostname, username, apiKey),
@@ -167,7 +172,7 @@ func TestAccFirewallRule_importBasic(t *testing.T) {
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 	config := fmt.Sprintf(string(tfFile), username, apiKey, hostname)
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		Providers:    testProviders,
 		CheckDestroy: checkFirewallRuleDeleted(hostname, username, apiKey),
 		Steps: []resource.TestStep{
@@ -211,15 +216,17 @@ func TestKafkaUserResource_importBasic(t *testing.T) {
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 
 	kafkaNodeSize := "KFK-DEV-t4g.medium-80"
-	kafkaVersion := "apache-kafka:2.7.1.ic1"
+
+	kafkaVersion := "2.8.1"
+
 	zookeeperNodeSize := "KDZ-DEV-t4g.small-30"
- 
+
 	createClusterConfig := fmt.Sprintf(string(configBytes1), username, apiKey, hostname, kafkaNodeSize, kafkaVersion, zookeeperNodeSize)
 	validResizeConfig := strings.Replace(createClusterConfig, `KFK-DEV-t4g.medium-80`, `KFK-PRD-r6g.xlarge-800`, 1)
 	invalidResizeConfig := strings.Replace(createClusterConfig, `KFK-DEV-t4g.medium-80`, `KFK-DEV-t4g.small-30`, 1)
 	resourceName := "kafka_cluster"
 
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		Providers: testProviders,
 		Steps: []resource.TestStep{
 			{
@@ -262,7 +269,6 @@ func TestKafkaUserResource_importBasic(t *testing.T) {
 		},
 	})
 }
-
 func TestAccVpcPeering_importBasic(t *testing.T) {
 	testProviders := map[string]terraform.ResourceProvider{
 		"instaclustr": instaclustr.Provider(),
@@ -272,7 +278,7 @@ func TestAccVpcPeering_importBasic(t *testing.T) {
 	apiKey := os.Getenv("IC_API_KEY")
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 	config := fmt.Sprintf(string(tfFile), username, apiKey, hostname)
-	resource.Test(t, resource.TestCase{
+	resource.ParallelTest(t, resource.TestCase{
 		Providers:    testProviders,
 		CheckDestroy: checkVpcPeeringDeleted(hostname, username, apiKey),
 		Steps: []resource.TestStep{
@@ -293,6 +299,69 @@ func TestAccVpcPeering_importBasic(t *testing.T) {
 		},
 	})
 }
+
+//func TestGCPAccCluster_importBasic(t *testing.T) {
+//
+//	testAccProvider := instaclustr.Provider()
+//	testAccProviders := map[string]terraform.ResourceProvider{
+//		"instaclustr": testAccProvider,
+//	}
+//	validConfig, _ := ioutil.ReadFile("data/valid.tf")
+//	username := os.Getenv("IC_USERNAME")
+//	apiKey := os.Getenv("IC_API_KEY")
+//	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+//	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
+//	resource.ParallelTest(t, resource.TestCase{
+//		Providers:    testAccProviders,
+//		CheckDestroy: testCheckResourceDeleted("gcp_valid", hostname, username, apiKey),
+//		Steps: []resource.TestStep{
+//			{
+//				Config: oriConfig,
+//				Check: resource.ComposeTestCheckFunc(
+//					testCheckResourceValid("gcp_valid"),
+//					testCheckResourceCreated("gcp_valid", hostname, username, apiKey),
+//				),
+//			},
+//			{
+//				Config:            oriConfig,
+//				ResourceName:      "instaclustr_cluster.gcp_valid",
+//				ImportState:       true,
+//				ImportStateVerify: true,
+//			},
+//		},
+//	})
+//}
+//func TestGCPAccVpcPeering_importBasic(t *testing.T) {
+//	testProviders := map[string]terraform.ResourceProvider{
+//		"instaclustr": instaclustr.Provider(),
+//	}
+//	tfFile, _ := ioutil.ReadFile("data/valid_with_vpc_peering.tf")
+//	username := os.Getenv("IC_USERNAME")
+//	apiKey := os.Getenv("IC_API_KEY")
+//	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+//	config := fmt.Sprintf(string(tfFile), username, apiKey, hostname)
+//	resource.ParallelTest(t, resource.TestCase{
+//		Providers:    testProviders,
+//		CheckDestroy: checkGCPVpcPeeringDeleted(hostname, username, apiKey),
+//		Steps: []resource.TestStep{
+//			{
+//				Config: config,
+//				Check: resource.ComposeTestCheckFunc(
+//					checkGCPVpcPeeringState,
+//					checkGCPVpcPeeringCreated(hostname, username, apiKey),
+//				),
+//			},
+//			{
+//				Config:       config,
+//				ResourceName: "instaclustr_vpc_peering_gcp.gcp_example",
+//
+//				ImportState:       true,
+//				ImportStateIdFunc: testAccVpcPeeringImportStateIdFunc("instaclustr_vpc_peering_gcp.gcp_example"),
+//				ImportStateVerify: true,
+//			},
+//		},
+//	})
+//}
 
 func testAccVpcPeeringImportStateIdFunc(resourceName string) resource.ImportStateIdFunc {
 	return func(s *terraform.State) (string, error) {

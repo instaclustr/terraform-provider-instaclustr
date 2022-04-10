@@ -14,6 +14,7 @@ import (
 type APIClientInterface interface {
 	ReadCluster(clusterID string) (*Cluster, error)
 	ResizeCluster(clusterID string, cdcID string, newNodeSize string, nodePurpose *NodePurpose) error
+	DeleteCluster(clusterID string) error
 }
 
 type APIClient struct {
@@ -43,6 +44,8 @@ func (c *APIClient) MakeRequest(url string, method string, data []byte) (*http.R
 	}
 	req.SetBasicAuth(c.username, c.apiKey)
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Instaclustr-Source", "Terraform v1")
+
 	resp, err := c.client.Do(req)
 	if err != nil {
 		return nil, err
@@ -71,6 +74,28 @@ func (c *APIClient) CreateCluster(data []byte) (string, error) {
 		id = fmt.Sprintf("%v", value)
 	}
 	return id, nil
+}
+
+func (c *APIClient) ListClusters() (*[]ClusterListItem, error) {
+	url := fmt.Sprintf("%s/provisioning/v1", c.apiServerHostname)
+	resp, err := c.MakeRequest(url, "GET", nil)
+	if err != nil {
+		return nil, err
+	}
+	bodyText, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	if resp.StatusCode == 404 { // 404s are returned when no clusters are found
+		emptyResponse := make([]ClusterListItem, 0)
+		return &emptyResponse, nil
+	}
+	if resp.StatusCode != 200 {
+		return nil, errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
+	}
+	var clusters []ClusterListItem
+	json.Unmarshal(bodyText, &clusters)
+	return &clusters, nil
 }
 
 func (c *APIClient) ReadCluster(clusterID string) (*Cluster, error) {
@@ -139,6 +164,23 @@ func (c *APIClient) CreateFirewallRule(data []byte, clusterID string) error {
 	}
 
 	if resp.StatusCode != 202 {
+		return errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
+	}
+
+	return nil
+}
+
+func (c *APIClient) UpdateFirewallRule(data []byte, clusterID string) error {
+	url := fmt.Sprintf("%s/provisioning/v1/%s/firewallRules/", c.apiServerHostname, clusterID)
+	resp, err := c.MakeRequest(url, "PUT", data)
+	if err != nil {
+		return err
+	}
+	if resp.StatusCode != 202 {
+		bodyText, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return errors.New(fmt.Sprintf("Status code: %d, response unreadable: %v", resp.StatusCode, err))
+		}
 		return errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
 	}
 
@@ -225,6 +267,21 @@ func (c *APIClient) ReadVpcPeering(cdcID string, vpcPeeringID string) (*VPCPeeri
 		return nil, errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
 	}
 	var vpcPeering VPCPeering
+	json.Unmarshal(bodyText, &vpcPeering)
+	return &vpcPeering, nil
+}
+
+func (c *APIClient) GCPReadVpcPeering(cdcID string, vpcPeeringID string) (*GCPVPCPeering, error) {
+	url := fmt.Sprintf("%s/provisioning/v1/vpc-peering/%s/%s", c.apiServerHostname, cdcID, vpcPeeringID)
+	resp, err := c.MakeRequest(url, "GET", nil)
+	if err != nil {
+		return nil, err
+	}
+	bodyText, err := ioutil.ReadAll(resp.Body)
+	if resp.StatusCode != 202 {
+		return nil, errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
+	}
+	var vpcPeering GCPVPCPeering
 	json.Unmarshal(bodyText, &vpcPeering)
 	return &vpcPeering, nil
 }
