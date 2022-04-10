@@ -27,6 +27,9 @@ Property | Description | Default
 `kafka_schema_registry_user_password`|The password of kafka schema registry bundle user, if it is a Kafka cluster with schema-registry addon. This field is updatable and requires `wait_for_state` to be `RUNNING`.|Optional
 `wait_for_state`|The expected state of the cluster before completing the resource creation. Skipping this field will asynchronously create the cluster.|Optional (valid states are RUNNING and PROVISIONED)
 `kafka_connect_credential`|Sensitive fields pertaining Kafka Connect custom connector bucket credential and sensitive Kafka worker property|Optional. See more details below.
+`oidc_provider`|The ID of an OIDC provider to be used for Elasticsearch Kibana or OpenSearch Dashboards. OIDC providers must be set in Console Cluster Resources to be available for use.|Optional
+`cluster_id`|Returns the Cluster ID as a UUID|READ ONLY
+`default_data_centre_id`|Returned the default Data Centre ID as a UUID|READ ONLY
 
 ### cluster_provider
 
@@ -69,6 +72,7 @@ KAFKA_CONNECT|2.3.1, 2.4.1, 2.5.1, 2.6.1|
 REDIS|6.0.9|
 APACHE_ZOOKEEPER|3.5.8|
 POSTGRESQL|14.1|
+CADENCE|0.22.4|
 
 `bundle.options`
 
@@ -82,6 +86,7 @@ Property | Description | For Bundles | Default
 `kibana_node_size`|Desired master node size. See [here](https://developer.instaclustr.com/#operation/extendedProvisionRequestHandler) for more details. |Elasticsearch|
 `opensearch_dashboards_node_size`|Desired OpenSearch Dashboards node size. See [here](https://developer.instaclustr.com/#operation/extendedProvisionRequestHandler) for more details. |OpenSearch|
 `security_plugin`|Accepts true/false. Enables Security Plugin. This option gives an extra layer of security to the cluster. This will automatically enable internode encryption. Enforced to be true for all OpenSearch clusters. |Elasticsearch, OpenSearch|false
+`index_management_plugin`|Accepts true/false. Enables Index Management Plugin which allows automating index management activities. |Elasticsearch, OpenSearch|false
 `use_private_broadcast_rpc_address`|Accepts true/false. Enables broadcast of private IPs for auto-discovery.|Cassandra|false
 `lucene_enabled`|Accepts true/false. Enabled Cassandra Lucene Index Plugin.|Cassandra|false
 `continuous_backup_enabled`|Accepts true/false. Enables commitlog backups and increases the frequency of the default snapshot backups.|Cassandra|false
@@ -104,6 +109,13 @@ Property | Description | For Bundles | Default
 `postgresql_node_count`|The number of nodes in a generated PostgreSQL cluster.|Postgresql|Required (Integers)
 `replication_mode` | The default replication behaviour for PostgreSQL cluster. See [Replication Mode](https://www.instaclustr.com/support/documentation/postgresql/options/replication-mode/) documentation for more details. Allowed values are `SYNCHRONOUS` and `ASYNCHRONOUS`. |Postgresql| Required
 `synchronous_mode_strict` | Whether writes should always require replication to at least one standby. See [Synchronous Mode Strict](https://www.instaclustr.com/support/documentation/postgresql/options/synchronous-mode-strict/) documentation for more details. Allowed values are true or false. |Postgresql| Required
+`advanced_visibility`|Accepts true/false. Enables Advanced Visibility features for Cadence.|Cadence|false
+`target_cassandra_data_centre_id`|UUID of the Instaclustr managed Cassandra Cluster Data Centre Id you wish to connect to. Must be in the same Instaclustr account.|Cadence|Required
+`target_cassandra_vpc_type`|Available options: `SEPARATE_VPC`, `TARGET_VPC`, `VPC_PEERING`|Cadence|Required
+`target_opensearch_data_centre_id`|UUID of the Instaclustr managed Opensearch Cluster Data Centre Id you wish to connect to. Must be in the same Instaclustr account.|Cadence|Required if Advanced Visibility enabled.
+`target_opensearch_vpc_type`|Available options: `SEPARATE_VPC`, `VPC_PEERING`|Cadence|Required if Advanced Visibility enabled.
+`target_kafka_data_centre_id`|UUID of the Instaclustr managed Kafka Cluster Data Centre Id you wish to connect to. Must be in the same Instaclustr account.|Cadence|Required if Advanced Visibility enabled.
+`target_kafka_vpc_type`|Available options: `SEPARATE_VPC`, `VPC_PEERING`|Cadence|Required if Advanced Visibility enabled.
 
 ### Kafka Connect Credential
 

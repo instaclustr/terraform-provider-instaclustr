@@ -7,7 +7,7 @@ provider "instaclustr" {
 resource "instaclustr_cluster" "validRedis" {
   cluster_name  = "tf-redis-test"
   node_size = "t3.small-20-r"
-  data_centre = "US_EAST_1"
+  data_centre = "US_WEST_2"
   sla_tier = "NON_PRODUCTION"
   cluster_network = "192.168.0.0/18"
   private_network_cluster = false

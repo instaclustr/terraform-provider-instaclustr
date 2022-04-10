@@ -29,6 +29,7 @@ type BundleOptions struct {
 	OpenSearchDashboardsNodeSize 		string `json:"openSearchDashboardsNodeSize,omitempty" mapstructure:"opensearch_dashboards_node_size,omitempty"`
 	DataNodeSize                  		string `json:"dataNodeSize,omitempty" mapstructure:"data_node_size,omitempty"`
 	SecurityPlugin                		*bool  `json:"securityPlugin,omitempty" mapstructure:"security_plugin,omitempty"`
+	IndexManagementPlugin               *bool  `json:"indexManagementPlugin,omitempty" mapstructure:"index_management_plugin,omitempty"`
 	UsePrivateBroadcastRpcAddress 		*bool  `json:"usePrivateBroadcastRPCAddress,omitempty" mapstructure:"use_private_broadcast_rpc_address,omitempty"`
 	LuceneEnabled                 		*bool  `json:"luceneEnabled,omitempty" mapstructure:"lucene_enabled,omitempty"`
 	ContinuousBackupEnabled       		*bool  `json:"continuousBackupEnabled,omitempty" mapstructure:"continuous_backup_enabled,omitempty"`
@@ -61,6 +62,13 @@ type BundleOptions struct {
 	PostgresqlNodeCount           		int    `json:"postgresqlNodeCount,omitempty" mapstructure:"postgresql_node_count,omitempty"`
 	PostgresqlReplicationMode     		string `json:"replicationMode,omitempty" mapstructure:"replication_mode,omitempty"`
 	PostgresqlSynchronousModeStrict     *bool `json:"synchronousModeStrict,omitempty" mapstructure:"synchronous_mode_strict,omitempty"`
+	CadenceAdvancedVisibility           *bool  `json:"useAdvancedVisibility,omitempty" mapstructure:"advanced_visibility,omitempty"`
+	CadenceTargetCassandraDataCentreID  string `json:"targetCassandraCdcId,omitempty" mapstructure:"target_cassandra_data_centre_id,omitempty"`
+	CadenceTargetCassandraVPCType       string `json:"targetCassandraVpcType,omitempty" mapstructure:"target_cassandra_vpc_type,omitempty"`
+	CadenceTargetOpensearchDataCentreID string `json:"targetOpenSearchCdcId,omitempty" mapstructure:"target_opensearch_data_centre_id,omitempty"`
+	CadenceTargetOpensearchVPCType      string `json:"targetOpenSearchVpcType,omitempty" mapstructure:"target_opensearch_vpc_type,omitempty"`
+	CadenceTargetKafkaDataCentreID      string `json:"targetKafkaCdcId,omitempty" mapstructure:"target_kafka_data_centre_id,omitempty"`
+	CadenceTargetKafkaVPCType           string `json:"targetKafkaVpcType,omitempty" mapstructure:"target_kafka_vpc_type,omitempty"`
 }
 
 type ClusterProvider struct {
@@ -90,6 +98,7 @@ type CreateRequest struct {
 	PrivateNetworkCluster string                    `json:"privateNetworkCluster,omitempty"`
 	PCICompliantCluster   string                    `json:"pciCompliantCluster,omitempty"`
 	RackAllocation        *RackAllocation           `json:"rackAllocation,omitempty"`
+	OidcProvider          string                    `json:"oidcProvider,omitempty"`
 }
 
 type DataCentreCreateRequest struct {
@@ -111,6 +120,7 @@ type Cluster struct {
 	ID                         string                   `json:"id"`
 	ClusterName                string                   `json:"clusterName"`
 	ClusterStatus              string                   `json:"clusterStatus"`
+	CdcId                      string                   `json:"cdcId"`
 	BundleType                 string                   `json:"bundleType"`
 	BundleVersion              string                   `json:"bundleVersion"`
 	AddonBundles               []map[string]interface{} `json:"addonBundles"`
@@ -123,6 +133,7 @@ type Cluster struct {
 	DataCentre                 string                   `json:"dataCentre"`
 	DataCentres                []DataCentre             `json:"dataCentres"`
 	Provider                   []ClusterProvider        `json:"clusterProvider"`
+	OidcProvider               string                   `json:"oidcId"`
 }
 
 type ClusterListItem struct {
