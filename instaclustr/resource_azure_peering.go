@@ -10,7 +10,7 @@ import (
 
 func resourceAzureVpcPeering() *schema.Resource {
 	return &schema.Resource{
-		Create: azureresourceVpcPeeringCreate,
+		Create: azureResourceVpcPeeringCreate,
 		Read:   azureresourceVpcPeeringRead,
 		Update: resourceVpcPeeringUpdate,
 		Delete: resourceVpcPeeringDelete,
@@ -73,7 +73,7 @@ func resourceAzureVpcPeering() *schema.Resource {
 	}
 }
 
-func azureresourceVpcPeeringCreate(d *schema.ResourceData, meta interface{}) error {
+func azureResourceVpcPeeringCreate(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*Config).Client
 
 	cdcID, err := VpcPeeringCreate(d, meta)
@@ -81,7 +81,7 @@ func azureresourceVpcPeeringCreate(d *schema.ResourceData, meta interface{}) err
 		return fmt.Errorf("[Error] Error creating Azure VPC peering request object: %s", err)
 	}
 	var createData CreateAzureVPCPeeringRequest
-	createData, err = azurecreateVpcPeeringRequest(d)
+	createData, err = azureCreateVpcPeeringRequest(d)
 	if err != nil {
 		return fmt.Errorf("[Error] Error creating Azure VPC peering request: %s", err)
 	}
@@ -154,16 +154,12 @@ func resourceAzureVpcPeeringUpdate(d *schema.ResourceData) error {
 	return fmt.Errorf("[Error] The VPC peering connection doesn't support update")
 }
 
-func azurecreateVpcPeeringRequest(d *schema.ResourceData) (CreateAzureVPCPeeringRequest, error) {
+func azureCreateVpcPeeringRequest(d *schema.ResourceData) (CreateAzureVPCPeeringRequest, error) {
 	result := CreateAzureVPCPeeringRequest{
 		PeerVPCNetworkName: d.Get("peer_vpc_net").(string),
 		PeerSubscriptionId: d.Get("peer_subscription_id").(string),
 		PeerResourceGroup:  d.Get("peer_resource_group").(string),
-	}
-	if _, isSet := d.GetOk("peer_subnets"); isSet {
-		result.PeerSubnets = d.Get("peer_subnets").(*schema.Set).List()
-	} else {
-		return result, fmt.Errorf("[Error] Error creating Azure VPC peering request - Please check the subnets atleast one subnet must be specified")
+		PeerSubnets:        d.Get("peer_subnets").(*schema.Set).List(),
 	}
 	return result, nil
 }

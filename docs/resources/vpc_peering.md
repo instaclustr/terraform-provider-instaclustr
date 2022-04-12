@@ -28,7 +28,7 @@ Property | Description | Default
 
 #### Properties for Azure
 `cluster_id`|The ID of an existing Instaclustr managed cluster|Required
-`peer_subscription_id`|The Suscription ID of the VPC with which you are creating the VPC peering connection|Required
+`peer_subscription_id`|The Subscription ID of the VPC with which you are creating the VPC peering connection|Required
 `peer_resource_group`|The Resource Group name with which you are creating the VPC peering connection|Required
 `peer_vpc_net`|The name of the VPC with which you are creating the VPC peering connection|Required
 
