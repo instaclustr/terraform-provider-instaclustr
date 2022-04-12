@@ -233,7 +233,6 @@ type AzureVPCPeering struct {
 	PeerResourceGroup  string        `json:"peerResourceGroup"`
 	SubscriptionId     string        `json:"subscriptionId"`
 	VNet               string        `json:"vNet"`
-	PeerSubnet         string        `json:"peerSubnet"`
 	PeerSubnets        []interface{} `json:"peerSubnets"`
 	StatusCode         string        `json:"statusCode"`
 }
