@@ -26,6 +26,12 @@ Property | Description | Default
 `peer_project_id`|The project ID of the owner of the accepter VPC|Required
 `peer_subnets`|A set of one or more peer subnets (in IPv4 CIDR format) for the VPC|Required
 
+#### Properties for Azure
+`cluster_id`|The ID of an existing Instaclustr managed cluster|Required
+`peer_suscription_id`|The Suscription ID of the VPC with which you are creating the VPC peering connection|Required
+`peer_resource_group`|The Resource Groud name with which you are creating the VPC peering connection|Required
+`peer_vpc_net`|The name of the VPC with which you are creating the VPC peering connection|Required
+
 
 #### Example
 ```
@@ -65,6 +71,18 @@ resource "instaclustr_vpc_peering_gcp" "gcp_example" {
   peer_project_id = "project-id"
   peer_subnets = toset(["10.10.0.0/16", "10.11.0.0/16"])
   cluster_id = "${instaclustr_cluster.gcp_example.id}"
+}
+
+```
+#### AWS Example
+```
+resource "instaclustr_vpc_peering_azure" "example_vpc_peering" {
+  cluster_id = "c820f98f-06b9-491b-8504-58694ea7e57f"
+  peer_suscription_id="7a07f268-eb64-45df-b63e-b5595e713287"
+  peer_resource_group="instaclustrtest"
+  peer_vpc_net="nana"
+  peer_subnets = toset(["10.8.0.0/16", "10.11.0.0/16"])
+  
 }
 
 ```
