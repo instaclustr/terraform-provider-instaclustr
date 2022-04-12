@@ -30,7 +30,7 @@ resource "instaclustr_cluster" "invalidPostgresqlWithPgBouncer" {
   //Will fail due to invalid pool_mode
   bundle {
     bundle  = "PGBOUNCER"
-    version = "1.16.1"
+    version = "1.17.0"
     options = {
       pool_mode = "foobar"
     }

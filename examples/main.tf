@@ -350,9 +350,9 @@ resource "instaclustr_cluster" "example-postgresql" {
 
   bundle {
     bundle  = "PGBOUNCER"
-    version = "1.16.1"
+    version = "1.17.0"
     options = {
-      pool_mode = "transaction"
+      pool_mode = "TRANSACTION"
     }
   }
 }

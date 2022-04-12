@@ -290,7 +290,7 @@ Configuration documentation can be found at the [Instaclustr Terraform Registry]
 | REDIS                 | 6.0.9                                 |                  |
 | APACHE_ZOOKEEPER      | 3.5.8                                 |                  |
 | POSTGRESQL            | 13.5, 13.6, 14.1, 14.2                |                  |
-| PGBOUNCER             | 1.16.1                                | POSTGRESQL       |
+| PGBOUNCER             | 1.17.0                                | POSTGRESQL       |
 
 ### Migrating from 0.0.1 &rarr; 1.0.0+
 A schema change has been made from 0.0.1 which no longer supports the `bundles` argument and uses `bundle` blocks instead. This change can cause `terraform apply` to fail with a message that `bundles` has been removed and/or updating isn't supported. To resolve this -<br>

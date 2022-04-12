@@ -68,7 +68,7 @@ A resource for managing clusters on Instaclustr Managed Platform. A cluster cont
 | REDIS                 | 6.0.9                                 |
 | APACHE_ZOOKEEPER      | 3.5.8                                 |
 | POSTGRESQL            | 13.5, 13.6, 14.1, 14.2                |
-| PGBOUNCER             | 1.16.1                                | POSTGRESQL       |
+| PGBOUNCER             | 1.17.0                                | POSTGRESQL       |
 
 `bundle.options`
 
@@ -103,7 +103,7 @@ A resource for managing clusters on Instaclustr Managed Platform. A cluster cont
 | `zookeeper_node_count`                                                                                                                                                                                | Indicates how many nodes are allocated to be Zookeeper nodes. For KAFKA bundle, if `dedicated_zookeeper` is false, then it indicates how many Kafka nodes also have ZooKeeper services in them.                                                                                   | Kafka, ZooKeeper                                                                 |
 | `postgresql_node_count`                                                                                                                                                                               | The number of nodes in a generated PostgreSQL cluster.                                                                                                                                                                                                                            | Postgresql                                                                       | Required (Integers) |
 | `replication_mode`                                                                                                                                                                                    | The default replication behaviour for PostgreSQL cluster. See [Replication Mode](https://www.instaclustr.com/support/documentation/postgresql/options/replication-mode/) documentation for more details. Allowed values are `SYNCHRONOUS` and `ASYNCHRONOUS`.                     | Postgresql                                                                       | `SYNCHRONOUS`       |
-| `pool_mode`                                                                                                                                                                                           | The connection pooling mode to be used with the PgBouncer add-on. The available options are `transaction` and `session`. Refer to our [documentation](insertlink) for more detail.                                                                                                | PgBouncer                                                                        | Required            |
+| `pool_mode`                                                                                                                                                                                           | The connection pooling mode to be used with the PgBouncer add-on. The available options are `TRANSACTION` and `SESSION`. Refer to our [documentation](insertlink) for more detail.                                                                                                | PgBouncer                                                                        | Required            |
 
 ### Kafka Connect Credential
 
