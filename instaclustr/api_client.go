@@ -297,7 +297,10 @@ func (c *APIClient) AzureReadVpcPeering(cdcID string, vpcPeeringID string) (*Azu
 		return nil, errors.New(fmt.Sprintf("Status code: %d, message: %s", resp.StatusCode, bodyText))
 	}
 	var vpcPeering AzureVPCPeering
-	json.Unmarshal(bodyText, &vpcPeering)
+	err = json.Unmarshal(bodyText, &vpcPeering)
+	if err != nil {
+		return nil, err
+	}
 	return &vpcPeering, nil
 }
 
