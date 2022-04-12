@@ -142,10 +142,10 @@ resource "instaclustr_vpc_peering_gcp" "example_vpc_peering" {
 }
 
 resource "instaclustr_vpc_peering_azure" "example_vpc_peering" {
-  cluster_id = "c820f98f-06b9-491b-8504-58694ea7e57f"
-  peer_suscription_id="7a07f268-eb64-45df-b63e-b5595e713287"
+  cluster_id = "${instaclustr_cluster.example.id}"
+  peer_suscription_id="7a07f268-eb64-45df-b63e-b234455666"
   peer_resource_group="instaclustrtest"
-  peer_vpc_net="nana"
+  peer_vpc_net="VPC1"
   peer_subnets = toset(["10.8.0.0/16", "10.11.0.0/16"])
   
 }
