@@ -11,7 +11,7 @@ import (
 func resourceAzureVpcPeering() *schema.Resource {
 	return &schema.Resource{
 		Create: azureResourceVpcPeeringCreate,
-		Read:   azureresourceVpcPeeringRead,
+		Read:   azureResourceVpcPeeringRead,
 		Update: resourceVpcPeeringUpdate,
 		Delete: resourceVpcPeeringDelete,
 
@@ -65,7 +65,7 @@ func resourceAzureVpcPeering() *schema.Resource {
 				Required: true,
 			},
 
-			"v_net": {
+			"virtual_network_id": {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
@@ -111,7 +111,7 @@ func azureResourceVpcPeeringCreate(d *schema.ResourceData, meta interface{}) err
 	return nil
 }
 
-func azureresourceVpcPeeringRead(d *schema.ResourceData, meta interface{}) error {
+func azureResourceVpcPeeringRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*Config).Client
 	cluster, err := client.ReadCluster(d.Get("cluster_id").(string))
 	if err != nil {
@@ -143,7 +143,7 @@ func mapAzureVPCPeeringToResource(d *schema.ResourceData, vpcPeering *AzureVPCPe
 	d.Set("resource_group", vpcPeering.ResourceGroup)
 	d.Set("peer_vpc_net", vpcPeering.PeerVNet)
 	d.Set("subscription_id", vpcPeering.SubscriptionId)
-	d.Set("v_net", vpcPeering.VNet)
+	d.Set("virtual_network_id", vpcPeering.VirtualNetworkID)
 	d.Set("peer_subnets", vpcPeering.PeerSubnets)
 
 	log.Printf("[INFO] Fetched VPC peering %s info from the remote server.", vpcPeering.ID)

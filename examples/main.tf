@@ -134,7 +134,6 @@ resource "instaclustr_vpc_peering" "example_vpc_peering" {
 }
 
 resource "instaclustr_vpc_peering_gcp" "example_vpc_peering" {
-
   peer_vpc_network_name = "network name"
   peer_project_id = "projectId"
   peer_subnets = toset(["10.10.0.0/16", "10.11.0.0/16"])
@@ -147,7 +146,6 @@ resource "instaclustr_vpc_peering_azure" "example_vpc_peering" {
   peer_resource_group = "instaclustrtest"
   peer_vpc_net = "VPC1"
   peer_subnets = toset(["10.8.0.0/16", "10.11.0.0/16"])
-  
 }
 
 // Updating the kafka-schema-registry and the kafka-rest-proxy bundle user passwords at the cluster creation time
