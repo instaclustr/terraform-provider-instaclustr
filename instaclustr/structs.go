@@ -103,26 +103,27 @@ type DataCentreCreateRequest struct {
 }
 
 type AddonBundles struct {
-	Bundle  string `json:"bundle"`
-	Version string `json:"version"`
+	Bundle  string        `json:"bundle" mapstructure:"bundle"`
+	Version string        `json:"version" mapstructure:"version"`
+	Options BundleOptions `json:"options,omitempty" mapstructure:"options"`
 }
 
 type Cluster struct {
-	ID                         string                   `json:"id"`
-	ClusterName                string                   `json:"clusterName"`
-	ClusterStatus              string                   `json:"clusterStatus"`
-	BundleType                 string                   `json:"bundleType"`
-	BundleVersion              string                   `json:"bundleVersion"`
-	AddonBundles               []map[string]interface{} `json:"addonBundles"`
-	Username                   string                   `json:"username"`
-	InstaclustrUserPassword    string                   `json:"instaclustrUserPassword"`
-	SlaTier                    string                   `json:"slaTier"`
-	ClusterCertificateDownload string                   `json:"clusterCertificateDownload"`
-	PciCompliance              string                   `json:"pciCompliance"`
-	BundleOption               *BundleOptions           `json:"bundleOptions"`
-	DataCentre                 string                   `json:"dataCentre"`
-	DataCentres                []DataCentre             `json:"dataCentres"`
-	Provider                   []ClusterProvider        `json:"clusterProvider"`
+	ID                         string            `json:"id"`
+	ClusterName                string            `json:"clusterName"`
+	ClusterStatus              string            `json:"clusterStatus"`
+	BundleType                 string            `json:"bundleType"`
+	BundleVersion              string            `json:"bundleVersion"`
+	AddonBundles               []AddonBundles    `json:"addonBundles"`
+	Username                   string            `json:"username"`
+	InstaclustrUserPassword    string            `json:"instaclustrUserPassword"`
+	SlaTier                    string            `json:"slaTier"`
+	ClusterCertificateDownload string            `json:"clusterCertificateDownload"`
+	PciCompliance              string            `json:"pciCompliance"`
+	BundleOption               *BundleOptions    `json:"bundleOptions"`
+	DataCentre                 string            `json:"dataCentre"`
+	DataCentres                []DataCentre      `json:"dataCentres"`
+	Provider                   []ClusterProvider `json:"clusterProvider"`
 }
 
 type ClusterListItem struct {
