@@ -1022,6 +1022,96 @@ func TestGetKafkaConnectCredential(t *testing.T) {
 	}
 }
 
+func TestGetBundlesFromCluster(t *testing.T) {
+	mockCluster := Cluster{
+		ID:           "mock",
+		BundleType:   "POSTGRESQL",
+		BundleOption: &BundleOptions{},
+		DataCentres: []DataCentre{
+			{
+				ID: "test",
+			},
+		},
+		AddonBundles: []AddonBundles{
+			{
+				Bundle:  "PGBOUNCER",
+				Version: "1.17.0",
+				Options: BundleOptions{
+					PgBouncerPoolMode: "SESSION",
+				},
+			},
+		},
+	}
+	bundles, err := getBundlesFromCluster(&mockCluster)
+	if err != nil {
+		t.Fatalf("Expect nil err but got %v", err)
+	}
+	if len(bundles) != 2 {
+		t.Fatalf("Expected 2 bundles but got %v", len(bundles))
+	}
+	pgBundle := bundles[0]
+	if pgBundle["bundle"] != "POSTGRESQL" {
+		t.Fatalf("Expected main bundle to be POSTGRESQL but got %v", pgBundle["bundle]"])
+	}
+	pgbBundle := bundles[1]
+	if pgbBundle["bundle"] != "PGBOUNCER" || pgbBundle["version"] != "1.17.0" {
+		t.Fatalf("Expected addon bundle to be pgbouncer:1.17.0 but got %v", pgbBundle)
+	}
+	expectedOptions := map[string]interface{}{
+		"pool_mode": "SESSION",
+	}
+	if !reflect.DeepEqual(pgbBundle["options"], expectedOptions) {
+		t.Fatalf("Expected add-on options to be decoded correctly but got %v", pgbBundle["options"])
+	}
+}
+
+func TestGetDataCentresFromClusterAddon(t *testing.T) {
+	mockCluster := Cluster{
+		ID:           "mock",
+		BundleType:   "POSTGRESQL",
+		BundleOption: &BundleOptions{},
+		DataCentres: []DataCentre{
+			{
+				ID:      "dc1",
+				Bundles: []string{"PGBOUNCER"},
+				Nodes: []Node{
+					{ID: "node1", Rack: "us-east-1a"},
+				},
+			},
+			{
+				ID:      "dc2",
+				Bundles: []string{"PGBOUNCER"},
+				Nodes: []Node{
+					{ID: "node2", Rack: "us-east-1b"},
+				},
+			},
+		},
+		AddonBundles: []AddonBundles{
+			{
+				Bundle:  "PGBOUNCER",
+				Version: "1.17.0",
+				Options: BundleOptions{
+					PgBouncerPoolMode: "SESSION",
+				},
+			},
+		},
+	}
+	dc, err := getDataCentresFromCluster(&mockCluster)
+	if err != nil {
+		t.Fatalf("Expect nil err but got %v", err)
+	}
+	expectedAddonBundle := map[string]interface{}{
+		"bundle":  "PGBOUNCER",
+		"version": "1.17.0",
+		"options": map[string]interface{}{
+			"pool_mode": "SESSION",
+		},
+	}
+	if !reflect.DeepEqual(dc[1]["bundles"].([]map[string]interface{})[1], expectedAddonBundle) {
+		t.Fatalf("Expected add-on options to be decoded correctly but got %v", dc[1]["bundles"])
+	}
+}
+
 type MockApiClient struct {
 	cluster Cluster
 	err     error
