@@ -150,10 +150,6 @@ func mapAzureVPCPeeringToResource(d *schema.ResourceData, vpcPeering *AzureVPCPe
 	return nil
 }
 
-func resourceAzureVpcPeeringUpdate(d *schema.ResourceData) error {
-	return fmt.Errorf("[Error] The VPC peering connection doesn't support update")
-}
-
 func resourceAzureVpcPeeringDelete(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*Config).Client
 
