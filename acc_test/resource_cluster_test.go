@@ -467,6 +467,10 @@ func TestValidPostgresqlWithPgBouncerClusterCreate(t *testing.T) {
 					testCheckResourceValid("validPostgresqlWithPgBouncer"),
 					testCheckResourceCreated("validPostgresqlWithPgBouncer", hostname, username, apiKey),
 				),
+			}, //Re-apply the same plan, must return empty plan
+			{
+				Config:             oriConfig,
+				ExpectNonEmptyPlan: false,
 			},
 		},
 	})
