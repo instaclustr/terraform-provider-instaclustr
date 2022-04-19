@@ -13,7 +13,7 @@ func resourceAzureVpcPeering() *schema.Resource {
 		Create: azureResourceVpcPeeringCreate,
 		Read:   azureResourceVpcPeeringRead,
 		Update: resourceVpcPeeringUpdate,
-		Delete: resourceVpcPeeringDelete,
+		Delete: resourceAzureVpcPeeringDelete,
 
 		Importer: &schema.ResourceImporter{
 			State: resourceVpcPeeringStateImport,
@@ -118,7 +118,7 @@ func azureResourceVpcPeeringRead(d *schema.ResourceData, meta interface{}) error
 		return fmt.Errorf("[Error] Error retrieving cluster info: %s", err)
 	}
 	cdcID := cluster.DataCentres[0].ID
-	vpcPeeringID := d.Get("peer_subscription_id").(string)
+	vpcPeeringID := d.Id()
 
 	log.Printf("[INFO] Reading the status of VPC peering connection %s.", vpcPeeringID)
 	vpcPeering, err := client.AzureReadVpcPeering(cdcID, vpcPeeringID)
@@ -152,6 +152,28 @@ func mapAzureVPCPeeringToResource(d *schema.ResourceData, vpcPeering *AzureVPCPe
 
 func resourceAzureVpcPeeringUpdate(d *schema.ResourceData) error {
 	return fmt.Errorf("[Error] The VPC peering connection doesn't support update")
+}
+
+func resourceAzureVpcPeeringDelete(d *schema.ResourceData, meta interface{}) error {
+	client := meta.(*Config).Client
+
+	cluster, err := client.ReadCluster(d.Get("cluster_id").(string))
+	if err != nil {
+		return fmt.Errorf("[Error] Error retrieving cluster info: %s", err)
+	}
+	cdcID := cluster.DataCentres[0].ID
+	vpcPeeringID := d.Id()
+	log.Printf("[INFO] Deleting VPC peering connection %s.", vpcPeeringID)
+	err = client.DeleteVpcPeering(cdcID, vpcPeeringID)
+	if err != nil {
+		return fmt.Errorf("[Error] Error deleting VPC peering connection: %s", err)
+	}
+
+	d.SetId("")
+	d.Set("vpc_peering_id", "")
+	d.Set("cdc_id", "")
+	log.Printf("[INFO] VPC peering connection %s has been marked for deletion.", vpcPeeringID)
+	return nil
 }
 
 func azureCreateVpcPeeringRequest(d *schema.ResourceData) (CreateAzureVPCPeeringRequest, error) {
