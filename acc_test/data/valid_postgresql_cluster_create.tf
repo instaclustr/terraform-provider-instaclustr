@@ -15,16 +15,17 @@ resource "instaclustr_cluster" "validPostgresql" {
   }
   rack_allocation = {
     nodes_per_rack = 1
-    number_of_racks = 1
+    number_of_racks = 2
   }
 
   bundle {
     bundle = "POSTGRESQL"
     version = "14.1"
     options = {
-      postgresql_node_count = 1,
+      postgresql_node_count = 2,
       client_encryption = false,
       replication_mode = "SYNCHRONOUS",
+      synchronous_mode_strict = true
     }
   }
 }

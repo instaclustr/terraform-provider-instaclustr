@@ -56,7 +56,7 @@ resource "instaclustr_cluster" "validKCAzure" {
     private_network_cluster = false
     pci_compliant_cluster = false
     cluster_provider = {
-        name = "AZURE"
+        name = "AZURE_AZ"
     }
     rack_allocation = {
         number_of_racks = 3

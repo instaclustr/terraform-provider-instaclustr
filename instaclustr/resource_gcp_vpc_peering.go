@@ -21,11 +21,6 @@ func resourceGCPVpcPeering() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 
-			"name": {
-				Type:     schema.TypeString,
-				Required: true,
-			},
-
 			"vpc_peering_id": {
 				Type:     schema.TypeString,
 				Computed: true,
@@ -131,7 +126,6 @@ func MapGCPVPCPeeringToResource(d *schema.ResourceData, vpcPeering *GCPVPCPeerin
 	d.Set("vpc_peering_id", vpcPeering.ID)
 	d.Set("cdc_id", vpcPeering.ClusterDataCentre)
 	d.Set("peer_vpc_network_name", vpcPeering.PeerVPCNetworkName)
-	d.Set("name", vpcPeering.Name)
 	d.Set("peer_subnets", vpcPeering.PeerSubnets)
 	d.Set("peer_project_id", vpcPeering.PeerProjectID)
 
@@ -146,7 +140,6 @@ func resourceGCPVpcPeeringUpdate(d *schema.ResourceData) error {
 
 func GCPcreateVpcPeeringRequest(d *schema.ResourceData) (CreateGCPVPCPeeringRequest, error) {
 	result := CreateGCPVPCPeeringRequest{
-		Name:               d.Get("name").(string),
 		PeerVPCNetworkName: d.Get("peer_vpc_network_name").(string),
 		PeerProjectID:      d.Get("peer_project_id").(string),
 	}

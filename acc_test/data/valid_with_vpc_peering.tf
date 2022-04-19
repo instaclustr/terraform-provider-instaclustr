@@ -21,7 +21,7 @@ resource "instaclustr_cluster" "valid_with_vpc_peering" {
     }
     bundle {
         bundle = "APACHE_CASSANDRA"
-        version = "3.11.8"
+        version = "apache-cassandra-3.11.8.ic5"
         options = {
             auth_n_authz = false
             client_encryption = false
@@ -79,7 +79,6 @@ resource "instaclustr_cluster" "gcp_example" {
 }
 resource "instaclustr_vpc_peering_gcp" "gcp_example" {
   cluster_id = "${instaclustr_cluster.gcp_example.id}"
-  name="name"
   peer_vpc_network_name = "my-vpc1"
   peer_project_id = "instaclustr-dev"
   peer_subnets = toset(["10.10.0.0/16", "10.11.0.0/16"])

@@ -22,11 +22,12 @@ resource "instaclustr_cluster" "validOpenSearch" {
     bundle  = "OPENSEARCH"
     version = "1.2.4"
     options = {
-      dedicated_master_nodes = false,
-      master_node_size       = "t3.small-v2",
-      data_node_size         = "t3.small-v2",
-      security_plugin        = true,
-      client_encryption      = true
+      dedicated_master_nodes  = false,
+      master_node_size        = "t3.small-v2",
+      data_node_size          = "t3.small-v2",
+      security_plugin         = true,
+      index_management_plugin = true
+      client_encryption       = true
     }
   }
 }

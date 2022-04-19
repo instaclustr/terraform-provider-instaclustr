@@ -284,12 +284,13 @@ Configuration documentation can be found at the [Instaclustr Terraform Registry]
 | KAFKA                 | 2.7.1, 2.8.1, 3.0.0                   |                  |
 | KAFKA_REST_PROXY      | 5.0.0                                 | KAFKA            |
 | KAFKA_SCHEMA_REGISTRY | 5.0.0, 5.0.4                          | KAFKA            |
-| OPENSEARCH            | 1.0.0                                 |                  |
+| OPENSEARCH            | 1.2.4                                 |                  |
 | ELASTICSEARCH         | 1.13.3                                |                  |
 | KAFKA_CONNECT         | 2.7.1, 2.8.1, 3.0.0                   |                  |
 | REDIS                 | 6.0.9                                 |                  |
 | APACHE_ZOOKEEPER      | 3.5.8                                 |                  |
-| POSTGRESQL            | 13.5, 13.6, 14.1, 14.2                |                  |
+| POSTGRESQL            | 13.4                                  |                  |
+| CADENCE               | 0.22.4                                |                  |
 | PGBOUNCER             | 1.17.0                                | POSTGRESQL       |
 
 ### Migrating from 0.0.1 &rarr; 1.0.0+
@@ -311,7 +312,7 @@ Firstly thanks!  We value your time and will do our best to review the PR as soo
       required_providers {
         instaclustr = {
           source = "terraform.instaclustr.com/instaclustr/instaclustr"
-          version = ">= 1.0.0"
+          version = ">= 1.0.0, < 2.0.0"
         }
       }
     }

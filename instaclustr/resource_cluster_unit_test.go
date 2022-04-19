@@ -687,9 +687,6 @@ func TestCreateVpcPeeringRequest(t *testing.T) {
 
 func TestGCPReadVpcPeeringRequest(t *testing.T) {
 	resourceSchema := map[string]*schema.Schema{
-		"name": {
-			Type: schema.TypeString,
-		},
 		"peer_vpc_network_name": {
 			Type: schema.TypeString,
 		},
@@ -706,7 +703,6 @@ func TestGCPReadVpcPeeringRequest(t *testing.T) {
 
 	peerSubnets := schema.NewSet(schema.HashString, []interface{}{"10.20.0.0/16", "10.21.0.0/16"})
 	resourceDataMap := map[string]interface{}{
-		"name":                  "Kaka",
 		"peer_vpc_network_name": "my-vpc1",
 		"peer_project_id":       "instaclustr-dev",
 		"peer_subnets":          peerSubnets.List(),

@@ -61,7 +61,6 @@ resource "instaclustr_vpc_peering" "example_vpc_peering" {
 #### GCP Example
 ```
 resource "instaclustr_vpc_peering_gcp" "gcp_example" {
-  name="name"
   peer_vpc_network_name = "my-vpc1"
   peer_project_id = "project-id"
   peer_subnets = toset(["10.10.0.0/16", "10.11.0.0/16"])
