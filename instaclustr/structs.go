@@ -195,6 +195,13 @@ type CreateGCPVPCPeeringRequest struct {
 	PeerSubnets        []interface{} `json:"peerSubnets"`
 }
 
+type CreateAzureVPCPeeringRequest struct {
+	PeerResourceGroup  string        `json:"peerResourceGroup"`
+	PeerSubscriptionId string        `json:"peerSubscriptionId"`
+	PeerVPCNetworkName string        `json:"peerVNetNetworkName"`
+	PeerSubnets        []interface{} `json:"peerSubnets"`
+}
+
 type VPCPeering struct {
 	ID                 string        `json:"id"`
 	AWSVpcConnectionID string        `json:"aws_vpc_connection_id"`
@@ -217,6 +224,19 @@ type GCPVPCPeering struct {
 
 	PeerSubnets []interface{} `json:"peerSubnets"`
 	StatusCode  string        `json:"statusCode"`
+}
+
+type AzureVPCPeering struct {
+	ID                 string        `json:"id"`
+	PeerSubscriptionId string        `json:"peerSubscriptionId"`
+	ClusterDataCentre  string        `json:"clusterDataCentre"`
+	ResourceGroup      string        `json:"resourceGroup"`
+	PeerVNet           string        `json:"peerVNet"`
+	PeerResourceGroup  string        `json:"peerResourceGroup"`
+	SubscriptionId     string        `json:"subscriptionId"`
+	VirtualNetworkID   string        `json:"vNet"`
+	PeerSubnets        []interface{} `json:"peerSubnets"`
+	StatusCode         string        `json:"statusCode"`
 }
 
 type ResizeClusterRequest struct {
