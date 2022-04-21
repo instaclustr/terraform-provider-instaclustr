@@ -23,14 +23,15 @@ func Provider() *schema.Provider {
 		},
 
 		ResourcesMap: map[string]*schema.Resource{
-			"instaclustr_cluster":         resourceCluster(),
-			"instaclustr_encryption_key":  resourceEncryptionKey(),
-			"instaclustr_firewall_rule":   resourceFirewallRule(),
-			"instaclustr_vpc_peering":     resourceVpcPeering(),
-			"instaclustr_vpc_peering_gcp": resourceGCPVpcPeering(),
-			"instaclustr_kafka_user":      resourceKafkaUser(),
-			"instaclustr_kafka_topic":     resourceKafkaTopic(),
-			"instaclustr_kafka_acl":       resourceKafkaAcl(),
+			"instaclustr_cluster":           resourceCluster(),
+			"instaclustr_encryption_key":    resourceEncryptionKey(),
+			"instaclustr_firewall_rule":     resourceFirewallRule(),
+			"instaclustr_vpc_peering":       resourceVpcPeering(),
+			"instaclustr_vpc_peering_gcp":   resourceGCPVpcPeering(),
+			"instaclustr_vpc_peering_azure": resourceAzureVpcPeering(),
+			"instaclustr_kafka_user":        resourceKafkaUser(),
+			"instaclustr_kafka_topic":       resourceKafkaTopic(),
+			"instaclustr_kafka_acl":         resourceKafkaAcl(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
 			"instaclustr_clusters":            dataSourceClustersList(),

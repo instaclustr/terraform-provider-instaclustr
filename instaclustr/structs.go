@@ -21,47 +21,54 @@ type OmitEmptyBool struct {
 }
 
 type BundleOptions struct {
-	AuthnAuthz                    		*bool  `json:"authnAuthz,omitempty" mapstructure:"auth_n_authz,omitempty"`
-	ClientEncryption              		*bool  `json:"clientEncryption,omitempty" mapstructure:"client_encryption,omitempty"`
-	DedicatedMasterNodes          		*bool  `json:"dedicatedMasterNodes,omitempty" mapstructure:"dedicated_master_nodes,omitempty"`
-	MasterNodeSize                		string `json:"masterNodeSize,omitempty" mapstructure:"master_node_size,omitempty"`
-	KibanaNodeSize                		string `json:"kibanaNodeSize,omitempty" mapstructure:"kibana_node_size,omitempty"`
-	OpenSearchDashboardsNodeSize 		string `json:"openSearchDashboardsNodeSize,omitempty" mapstructure:"opensearch_dashboards_node_size,omitempty"`
-	DataNodeSize                  		string `json:"dataNodeSize,omitempty" mapstructure:"data_node_size,omitempty"`
-	SecurityPlugin                		*bool  `json:"securityPlugin,omitempty" mapstructure:"security_plugin,omitempty"`
+	AuthnAuthz                          *bool  `json:"authnAuthz,omitempty" mapstructure:"auth_n_authz,omitempty"`
+	ClientEncryption                    *bool  `json:"clientEncryption,omitempty" mapstructure:"client_encryption,omitempty"`
+	DedicatedMasterNodes                *bool  `json:"dedicatedMasterNodes,omitempty" mapstructure:"dedicated_master_nodes,omitempty"`
+	MasterNodeSize                      string `json:"masterNodeSize,omitempty" mapstructure:"master_node_size,omitempty"`
+	KibanaNodeSize                      string `json:"kibanaNodeSize,omitempty" mapstructure:"kibana_node_size,omitempty"`
+	OpenSearchDashboardsNodeSize        string `json:"openSearchDashboardsNodeSize,omitempty" mapstructure:"opensearch_dashboards_node_size,omitempty"`
+	DataNodeSize                        string `json:"dataNodeSize,omitempty" mapstructure:"data_node_size,omitempty"`
+	SecurityPlugin                      *bool  `json:"securityPlugin,omitempty" mapstructure:"security_plugin,omitempty"`
 	IndexManagementPlugin               *bool  `json:"indexManagementPlugin,omitempty" mapstructure:"index_management_plugin,omitempty"`
-	UsePrivateBroadcastRpcAddress 		*bool  `json:"usePrivateBroadcastRPCAddress,omitempty" mapstructure:"use_private_broadcast_rpc_address,omitempty"`
-	LuceneEnabled                 		*bool  `json:"luceneEnabled,omitempty" mapstructure:"lucene_enabled,omitempty"`
-	ContinuousBackupEnabled       		*bool  `json:"continuousBackupEnabled,omitempty" mapstructure:"continuous_backup_enabled,omitempty"`
-	NumberPartitions              		int    `json:"numberPartitions,omitempty" mapstructure:"number_partitions,omitempty"`
-	AutoCreateTopics              		*bool  `json:"autoCreateTopics,omitempty" mapstructure:"auto_create_topics,omitempty"`
-	DeleteTopics                  		*bool  `json:"deleteTopics,omitempty" mapstructure:"delete_topics,omitempty"`
-	PasswordAuthentication        		*bool  `json:"passwordAuthentication,omitempty" mapstructure:"password_authentication,omitempty"`
-	TargetKafkaClusterId          		string `json:"targetKafkaClusterId,omitempty" mapstructure:"target_kafka_cluster_id,omitempty"`
-	VPCType                       		string `json:"vpcType,omitempty" mapstructure:"vpc_type,omitempty"`
-	AWSAccessKeyId                		string `json:"aws.access.key.id,omitempty" mapstructure:"aws_access_key,omitempty"`
-	AWSSecretKey                  		string `json:"aws.secret.access.key,omitempty" mapstructure:"aws_secret_key,omitempty"`
-	S3BucketName                  		string `json:"s3.bucket.name,omitempty" mapstructure:"s3_bucket_name,omitempty"`
-	AzureStorageAccountName       		string `json:"azure.storage.account.name,omitempty" mapstructure:"azure_storage_account_name,omitempty"`
-	AzureStorageAccountKey        		string `json:"azure.storage.account.key,omitempty" mapstructure:"azure_storage_account_key,omitempty"`
-	AzureStorageContainerName     		string `json:"azure.storage.container.name,omitempty" mapstructure:"azure_storage_container_name,omitempty"`
-	SslEnabledProtocols           		string `json:"ssl.enabled.protocols,omitempty" mapstructure:"ssl_enabled_protocols,omitempty"`
-	SslTruststorePassword         		string `json:"ssl.truststore.password,omitempty" mapstructure:"ssl_truststore_password,omitempty"`
-	SslProtocol                   		string `json:"ssl.protocol,omitempty" mapstructure:"ssl_protocol,omitempty"`
-	SecurityProtocol              		string `json:"security.protocol,omitempty" mapstructure:"security_protocol,omitempty"`
-	SaslMechanism                 		string `json:"sasl.mechanism,omitempty" mapstructure:"sasl_mechanism,omitempty"`
-	SaslJaasConfig                		string `json:"sasl.jaas.config,omitempty" mapstructure:"sasl_jaas_config,omitempty"`
-	BootstrapServers              		string `json:"bootstrap.servers,omitempty" mapstructure:"bootstrap_servers,omitempty"`
-	Truststore                    		string `json:"truststore,omitempty" mapstructure:"truststore,omitempty"`
-	RedisMasterNodes              		int    `json:"masterNodes,omitempty" mapstructure:"master_nodes,omitempty"`
-	RedisReplicaNodes             		int    `json:"replicaNodes,omitempty" mapstructure:"replica_nodes,omitempty"`
-	RedisPasswordAuth             		*bool  `json:"passwordAuth,omitempty" mapstructure:"password_auth,omitempty"`
-	DedicatedZookeeper            		*bool  `json:"dedicatedZookeeper,omitempty" mapstructure:"dedicated_zookeeper,omitempty"`
-	ZookeeperNodeSize             		string `json:"zookeeperNodeSize,omitempty" mapstructure:"zookeeper_node_size,omitempty"`
-	ZookeeperNodeCount            		int    `json:"zookeeperNodeCount,omitempty" mapstructure:"zookeeper_node_count,omitempty"`
-	PostgresqlNodeCount           		int    `json:"postgresqlNodeCount,omitempty" mapstructure:"postgresql_node_count,omitempty"`
-	PostgresqlReplicationMode     		string `json:"replicationMode,omitempty" mapstructure:"replication_mode,omitempty"`
-	PostgresqlSynchronousModeStrict     *bool `json:"synchronousModeStrict,omitempty" mapstructure:"synchronous_mode_strict,omitempty"`
+	UsePrivateBroadcastRpcAddress       *bool  `json:"usePrivateBroadcastRPCAddress,omitempty" mapstructure:"use_private_broadcast_rpc_address,omitempty"`
+	LuceneEnabled                       *bool  `json:"luceneEnabled,omitempty" mapstructure:"lucene_enabled,omitempty"`
+	ContinuousBackupEnabled             *bool  `json:"continuousBackupEnabled,omitempty" mapstructure:"continuous_backup_enabled,omitempty"`
+	NumberPartitions                    int    `json:"numberPartitions,omitempty" mapstructure:"number_partitions,omitempty"`
+	AutoCreateTopics                    *bool  `json:"autoCreateTopics,omitempty" mapstructure:"auto_create_topics,omitempty"`
+	DeleteTopics                        *bool  `json:"deleteTopics,omitempty" mapstructure:"delete_topics,omitempty"`
+	PasswordAuthentication              *bool  `json:"passwordAuthentication,omitempty" mapstructure:"password_authentication,omitempty"`
+	TargetKafkaClusterId                string `json:"targetKafkaClusterId,omitempty" mapstructure:"target_kafka_cluster_id,omitempty"`
+	VPCType                             string `json:"vpcType,omitempty" mapstructure:"vpc_type,omitempty"`
+	AWSAccessKeyId                      string `json:"aws.access.key.id,omitempty" mapstructure:"aws_access_key,omitempty"`
+	AWSSecretKey                        string `json:"aws.secret.access.key,omitempty" mapstructure:"aws_secret_key,omitempty"`
+	S3BucketName                        string `json:"s3.bucket.name,omitempty" mapstructure:"s3_bucket_name,omitempty"`
+	AzureStorageAccountName             string `json:"azure.storage.account.name,omitempty" mapstructure:"azure_storage_account_name,omitempty"`
+	AzureStorageAccountKey              string `json:"azure.storage.account.key,omitempty" mapstructure:"azure_storage_account_key,omitempty"`
+	AzureStorageContainerName           string `json:"azure.storage.container.name,omitempty" mapstructure:"azure_storage_container_name,omitempty"`
+	SslEnabledProtocols                 string `json:"ssl.enabled.protocols,omitempty" mapstructure:"ssl_enabled_protocols,omitempty"`
+	SslTruststorePassword               string `json:"ssl.truststore.password,omitempty" mapstructure:"ssl_truststore_password,omitempty"`
+	SslProtocol                         string `json:"ssl.protocol,omitempty" mapstructure:"ssl_protocol,omitempty"`
+	SecurityProtocol                    string `json:"security.protocol,omitempty" mapstructure:"security_protocol,omitempty"`
+	SaslMechanism                       string `json:"sasl.mechanism,omitempty" mapstructure:"sasl_mechanism,omitempty"`
+	SaslJaasConfig                      string `json:"sasl.jaas.config,omitempty" mapstructure:"sasl_jaas_config,omitempty"`
+	BootstrapServers                    string `json:"bootstrap.servers,omitempty" mapstructure:"bootstrap_servers,omitempty"`
+	Truststore                          string `json:"truststore,omitempty" mapstructure:"truststore,omitempty"`
+	RedisMasterNodes                    int    `json:"masterNodes,omitempty" mapstructure:"master_nodes,omitempty"`
+	RedisReplicaNodes                   int    `json:"replicaNodes,omitempty" mapstructure:"replica_nodes,omitempty"`
+	RedisPasswordAuth                   *bool  `json:"passwordAuth,omitempty" mapstructure:"password_auth,omitempty"`
+	DedicatedZookeeper                  *bool  `json:"dedicatedZookeeper,omitempty" mapstructure:"dedicated_zookeeper,omitempty"`
+	ZookeeperNodeSize                   string `json:"zookeeperNodeSize,omitempty" mapstructure:"zookeeper_node_size,omitempty"`
+	ZookeeperNodeCount                  int    `json:"zookeeperNodeCount,omitempty" mapstructure:"zookeeper_node_count,omitempty"`
+	PostgresqlNodeCount                 int    `json:"postgresqlNodeCount,omitempty" mapstructure:"postgresql_node_count,omitempty"`
+	PostgresqlReplicationMode           string `json:"replicationMode,omitempty" mapstructure:"replication_mode,omitempty"`
+	PostgresqlSynchronousModeStrict     *bool  `json:"synchronousModeStrict,omitempty" mapstructure:"synchronous_mode_strict,omitempty"`
+	CadenceAdvancedVisibility           *bool  `json:"useAdvancedVisibility,omitempty" mapstructure:"advanced_visibility,omitempty"`
+	CadenceTargetCassandraDataCentreID  string `json:"targetCassandraCdcId,omitempty" mapstructure:"target_cassandra_data_centre_id,omitempty"`
+	CadenceTargetCassandraVPCType       string `json:"targetCassandraVpcType,omitempty" mapstructure:"target_cassandra_vpc_type,omitempty"`
+	CadenceTargetOpensearchDataCentreID string `json:"targetOpenSearchCdcId,omitempty" mapstructure:"target_opensearch_data_centre_id,omitempty"`
+	CadenceTargetOpensearchVPCType      string `json:"targetOpenSearchVpcType,omitempty" mapstructure:"target_opensearch_vpc_type,omitempty"`
+	CadenceTargetKafkaDataCentreID      string `json:"targetKafkaCdcId,omitempty" mapstructure:"target_kafka_data_centre_id,omitempty"`
+	CadenceTargetKafkaVPCType           string `json:"targetKafkaVpcType,omitempty" mapstructure:"target_kafka_vpc_type,omitempty"`
 }
 
 type ClusterProvider struct {
@@ -113,6 +120,7 @@ type Cluster struct {
 	ID                         string                   `json:"id"`
 	ClusterName                string                   `json:"clusterName"`
 	ClusterStatus              string                   `json:"clusterStatus"`
+	CdcId                      string                   `json:"cdcId"`
 	BundleType                 string                   `json:"bundleType"`
 	BundleVersion              string                   `json:"bundleVersion"`
 	AddonBundles               []map[string]interface{} `json:"addonBundles"`
@@ -185,6 +193,13 @@ type CreateGCPVPCPeeringRequest struct {
 	PeerSubnets        []interface{} `json:"peerSubnets"`
 }
 
+type CreateAzureVPCPeeringRequest struct {
+	PeerResourceGroup  string        `json:"peerResourceGroup"`
+	PeerSubscriptionId string        `json:"peerSubscriptionId"`
+	PeerVPCNetworkName string        `json:"peerVNetNetworkName"`
+	PeerSubnets        []interface{} `json:"peerSubnets"`
+}
+
 type VPCPeering struct {
 	ID                 string        `json:"id"`
 	AWSVpcConnectionID string        `json:"aws_vpc_connection_id"`
@@ -207,6 +222,19 @@ type GCPVPCPeering struct {
 
 	PeerSubnets []interface{} `json:"peerSubnets"`
 	StatusCode  string        `json:"statusCode"`
+}
+
+type AzureVPCPeering struct {
+	ID                 string        `json:"id"`
+	PeerSubscriptionId string        `json:"peerSubscriptionId"`
+	ClusterDataCentre  string        `json:"clusterDataCentre"`
+	ResourceGroup      string        `json:"resourceGroup"`
+	PeerVNet           string        `json:"peerVNet"`
+	PeerResourceGroup  string        `json:"peerResourceGroup"`
+	SubscriptionId     string        `json:"subscriptionId"`
+	VirtualNetworkID   string        `json:"vNet"`
+	PeerSubnets        []interface{} `json:"peerSubnets"`
+	StatusCode         string        `json:"statusCode"`
 }
 
 type ResizeClusterRequest struct {

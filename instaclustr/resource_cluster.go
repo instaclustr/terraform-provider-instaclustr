@@ -61,6 +61,11 @@ func resourceCluster() *schema.Resource {
 				ConflictsWith: []string{"data_centres"},
 			},
 
+			"default_data_centre_id": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+
 			"data_centre": {
 				Type:          schema.TypeString,
 				Optional:      true,
@@ -377,7 +382,7 @@ func resourceCluster() *schema.Resource {
 							DiffSuppressFunc: func(k, old, new string, d *schema.ResourceData) bool {
 								// Cover up for the API that has optional arguments that get given default values
 								// and returns the defaults in subsequent calls
-								return new == ""
+								return old == "false" && new == ""
 							},
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -584,6 +589,41 @@ func resourceCluster() *schema.Resource {
 									"synchronous_mode_strict": {
 										Type:     schema.TypeBool,
 										Optional: false,
+										ForceNew: true,
+									},
+									"advanced_visibility": {
+										Type:     schema.TypeBool,
+										Optional: true,
+										ForceNew: true,
+									},
+									"target_cassandra_data_centre_id": {
+										Type:     schema.TypeString,
+										Optional: true,
+										ForceNew: true,
+									},
+									"target_cassandra_vpc_type": {
+										Type:     schema.TypeString,
+										Optional: true,
+										ForceNew: true,
+									},
+									"target_opensearch_data_centre_id": {
+										Type:     schema.TypeString,
+										Optional: true,
+										ForceNew: true,
+									},
+									"target_opensearch_vpc_type": {
+										Type:     schema.TypeString,
+										Optional: true,
+										ForceNew: true,
+									},
+									"target_kafka_data_centre_id": {
+										Type:     schema.TypeString,
+										Optional: true,
+										ForceNew: true,
+									},
+									"target_kafka_vpc_type": {
+										Type:     schema.TypeString,
+										Optional: true,
 										ForceNew: true,
 									},
 								},
@@ -1330,6 +1370,7 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	d.SetId(cluster.ID)
 	d.Set("cluster_id", cluster.ID)
 	d.Set("cluster_name", cluster.ClusterName)
+	d.Set("default_data_centre_id", cluster.CdcId)
 
 	if isClusterSingleDataCentre(*cluster) {
 		bundles, err := getBundlesFromCluster(cluster)

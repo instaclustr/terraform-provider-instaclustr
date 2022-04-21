@@ -6,7 +6,7 @@ terraform {
       source = "instaclustr/instaclustr"
       //Change the source as per below to work with a local development copy on terraform version >=13
       //source = "terraform.instaclustr.com/instaclustr/instaclustr"
-      version = ">= 1.0.0"
+      version = ">= 1.0.0, < 2.0.0"
     }
   }
 }
@@ -134,11 +134,18 @@ resource "instaclustr_vpc_peering" "example_vpc_peering" {
 }
 
 resource "instaclustr_vpc_peering_gcp" "example_vpc_peering" {
-
   peer_vpc_network_name = "network name"
   peer_project_id = "projectId"
   peer_subnets = toset(["10.10.0.0/16", "10.11.0.0/16"])
   cluster_id = "${instaclustr_cluster.gcp_example.id}"
+}
+
+resource "instaclustr_vpc_peering_azure" "example_vpc_peering" {
+  cluster_id = "${instaclustr_cluster.example.id}"
+  peer_subscription_id = "7a07f268-eb64-45df-b63e-b234455666"
+  peer_resource_group = "instaclustrtest"
+  peer_vpc_net = "VPC1"
+  peer_subnets = toset(["10.8.0.0/16", "10.11.0.0/16"])
 }
 
 // Updating the kafka-schema-registry and the kafka-rest-proxy bundle user passwords at the cluster creation time
@@ -396,4 +403,174 @@ resource "instaclustr_kafka_acl" "example-acl" {
 
 data "instaclustr_kafka_acl_list" "example-acl-list" {
   cluster_id = "${instaclustr_cluster.example.id}"
+}
+
+
+// Cadence requires a dependent Cassandra cluster
+resource "instaclustr_cluster" "example-cadence-cassandra" {
+  cluster_name = "testcluster-cadence-cassandra"
+  node_size = "t3.small-v2"
+  data_centre = "US_WEST_2"
+  sla_tier = "NON_PRODUCTION"
+  cluster_network = "10.1.0.0/16"
+  private_network_cluster = false
+  pci_compliant_cluster = false
+  cluster_provider = {
+    name = "AWS_VPC"
+  }
+  rack_allocation = {
+    number_of_racks = 3
+    nodes_per_rack = 1
+  }
+  bundle {
+    bundle = "APACHE_CASSANDRA"
+    version = "3.11.8"
+    options = {
+      auth_n_authz = true
+    }
+  }
+
+  wait_for_state = "RUNNING"
+}
+
+resource "instaclustr_cluster" "example-cadence" {
+  cluster_name = "testcluster-cadence"
+  node_size = "CAD-DEV-t3.small-5"
+  data_centre = "US_WEST_2"
+  sla_tier = "NON_PRODUCTION"
+  cluster_network = "10.2.0.0/16"
+  private_network_cluster = false
+  pci_compliant_cluster = false
+  cluster_provider = {
+    name = "AWS_VPC"
+  }
+  rack_allocation = {
+    number_of_racks = 3
+    nodes_per_rack = 1
+  }
+  bundle {
+    bundle = "CADENCE"
+    version = "0.22.4"
+    options = {
+      advanced_visibility = false
+      target_cassandra_data_centre_id = "${instaclustr_cluster.example-cadence-cassandra.default_data_centre_id}"
+      target_cassandra_vpc_type = "TARGET_VPC"
+    }
+  }
+}
+
+
+// Cadence with Advanced Visibility requires a dependent Cassandra, Kafka, and Opensearch clusters
+resource "instaclustr_cluster" "example-cadenceav-cassandra" {
+  cluster_name = "testcluster-cadenceav-cassandra"
+  node_size = "t3.small-v2"
+  data_centre = "US_WEST_2"
+  sla_tier = "NON_PRODUCTION"
+  cluster_network = "10.1.0.0/16"
+  private_network_cluster = false
+  pci_compliant_cluster = false
+  cluster_provider = {
+    name = "AWS_VPC"
+  }
+  rack_allocation = {
+    number_of_racks = 3
+    nodes_per_rack = 1
+  }
+  bundle {
+    bundle = "APACHE_CASSANDRA"
+    version = "3.11.8"
+    options = {
+      auth_n_authz = true
+    }
+  }
+
+    wait_for_state = "RUNNING"
+}
+
+resource "instaclustr_cluster" "example-cadenceav-opensearch" {
+  cluster_name = "testcluster-cadenceav-opensearch"
+  data_centre = "US_WEST_2"
+  sla_tier = "NON_PRODUCTION"
+  cluster_network = "10.2.0.0/16"
+  private_network_cluster = false
+  cluster_provider = {
+    name = "AWS_VPC"
+  }
+  rack_allocation = {
+    number_of_racks = 3
+    nodes_per_rack = 1
+  }
+
+  bundle {
+    bundle = "OPENSEARCH"
+    version = "1.2.4" 
+    options = {
+      dedicated_master_nodes = true  
+      master_node_size = "SRH-DM-t3.small-v2"
+      opensearch_dashboards_node_size = "t3.small-v2"
+      data_node_size = "t3.small-v2"
+    }
+  }  
+
+  wait_for_state = "RUNNING"
+}
+
+resource "instaclustr_cluster" "example-cadenceav-kafka" {
+  cluster_name = "testcluster-cadenceav-kafka"
+  node_size = "KFK-DEV-t4g.small-5"
+  data_centre = "US_WEST_2"
+  sla_tier = "NON_PRODUCTION"
+  cluster_network = "10.3.0.0/16"
+  private_network_cluster = false
+  pci_compliant_cluster = false
+  cluster_provider = {
+    name = "AWS_VPC"
+  }
+  rack_allocation = {
+    number_of_racks = 3
+    nodes_per_rack = 1
+  }
+
+  bundle {
+    bundle = "KAFKA"
+    version = "3.0.0"
+    options = {
+      client_encryption = false
+      number_partitions = 3
+      auto_create_topics = true
+      delete_topics = true
+    }
+  }
+
+  wait_for_state = "RUNNING"
+}
+
+resource "instaclustr_cluster" "example-cadenceav" {
+  cluster_name = "testcluster-cadenceav"
+  node_size = "CAD-DEV-t3.small-5"
+  data_centre = "US_WEST_2"
+  sla_tier = "NON_PRODUCTION"
+  cluster_network = "10.4.0.0/16"
+  private_network_cluster = false
+  pci_compliant_cluster = false
+  cluster_provider = {
+    name = "AWS_VPC"
+  }
+  rack_allocation = {
+    number_of_racks = 3
+    nodes_per_rack = 1
+  }
+  bundle {
+    bundle = "CADENCE"
+    version = "0.22.4"
+    options = {
+      advanced_visibility = true
+      target_cassandra_data_centre_id = "${instaclustr_cluster.example-cadenceav-cassandra.default_data_centre_id}"
+      target_cassandra_vpc_type = "TARGET_VPC"
+      target_opensearch_data_centre_id = "${instaclustr_cluster.example-cadenceav-opensearch.default_data_centre_id}"
+      target_opensearch_vpc_type = "VPC_PEERED"
+      target_kafka_data_centre_id = "${instaclustr_cluster.example-cadenceav-kafka.default_data_centre_id}"
+      target_kafka_vpc_type = "VPC_PEERED"
+    }
+  }
 }
