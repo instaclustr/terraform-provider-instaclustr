@@ -165,7 +165,7 @@ resource "instaclustr_cluster" "example_kafka" {
 
   bundle {
     bundle = "KAFKA"
-    version = "2.5.1"
+    version = "3.0.0"
     options = {
       auth_n_authz = true
       dedicated_zookeeper = true
@@ -187,6 +187,40 @@ resource "instaclustr_cluster" "example_kafka" {
   kafka_schema_registry_user_password = "SchemaRegistryTest123test!" // new password for schema registry bundle user
 
   wait_for_state = "RUNNING" // the required state of the cluster before doing the bundle user password updates
+}
+
+// Use Kafka with Karapace Schema Registry
+resource "instaclustr_cluster" "example_kafka_with_karapace_schema_registry" {
+  cluster_name = "test_kafka_with_karapace"
+  node_size = "KFK-PRD-r6g.large-250"
+  data_centre = "US_WEST_2"
+  sla_tier = "NON_PRODUCTION"
+  cluster_network = "192.168.0.0/18"
+  wait_for_state = "RUNNING"
+  cluster_provider = {
+    name = "AWS_VPC"
+  }
+  rack_allocation = {
+    number_of_racks = 3
+    nodes_per_rack = 1
+  }
+
+  bundle {
+    bundle = "KAFKA"
+    version = "3.0.0"
+    options = {
+      auto_create_topics = true
+      client_encryption = false
+      dedicated_zookeeper = false
+      delete_topics = true
+      number_partitions = 3
+    }
+  }
+
+  bundle {
+    bundle = "KARAPACE_SCHEMA_REGISTRY"
+    version = "2.1.2"
+  }
 }
 
 resource "instaclustr_cluster" "example-elasticsearch" {
@@ -261,7 +295,7 @@ resource "instaclustr_cluster" "validKC" {
 
   bundle {
     bundle = "KAFKA_CONNECT"
-    version = "2.3.1"
+    version = "3.0.0"
     options = {
       target_kafka_cluster_id = "${instaclustr_cluster.example_kafka.id}"
       vpc_id = "SEPARATE_VPC"
