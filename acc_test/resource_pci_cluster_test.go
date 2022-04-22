@@ -2,16 +2,14 @@ package test
 
 import (
 	"fmt"
+	"github.com/hashicorp/terraform/helper/resource"
+	"github.com/hashicorp/terraform/terraform"
+	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 	"io/ioutil"
 	"os"
 	"regexp"
 	"strings"
 	"testing"
-	"time"
-
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
-	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 )
 
 func TestAccPCICluster(t *testing.T) {
@@ -42,51 +40,6 @@ func TestAccPCICluster(t *testing.T) {
 					testCheckResourceValid("valid"),
 					testCheckResourceCreated("valid", hostname, username, apiKey),
 				),
-			},
-		},
-	})
-}
-
-func TestAccPCIClusterResize(t *testing.T) {
-	testAccProviders := map[string]terraform.ResourceProvider{
-		"instaclustr": instaclustr.Provider(),
-	}
-	validConfig, _ := ioutil.ReadFile("data/valid_with_resizable_pci_cluster.tf")
-	username := os.Getenv("IC_USERNAME")
-	apiKey := os.Getenv("IC_API_KEY")
-	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
-	originalConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
-	validResizeConfig := strings.Replace(originalConfig, "m5xl-400-v2", "m5xl-800-v2", 1)
-	invalidResizeConfig := strings.Replace(originalConfig, "m5xl-400-v2", "m5l-250-v2", 1)
-
-	resource.ParallelTest(t, resource.TestCase{
-		Providers:    testAccProviders,
-		CheckDestroy: testCheckPCIResourceDeleted("resizable_pci_cluster", hostname, username, apiKey),
-		Steps: []resource.TestStep{
-			{
-				Config: originalConfig,
-				Check: resource.ComposeTestCheckFunc(
-					testCheckPCIResourceValid("resizable_pci_cluster"),
-					testCheckPCIResourceCreated("resizable_pci_cluster", hostname, username, apiKey),
-					checkClusterRunning("resizable_pci_cluster", hostname, username, apiKey),
-					testCheckContactIPCorrect("resizable_pci_cluster", hostname, username, apiKey, 2, 0),
-				),
-			},
-			{
-				PreConfig: func() {
-					fmt.Println("Sleep for 15 minutes to wait for Cassandra cluster to be ready for resize.")
-					time.Sleep(15 * time.Minute)
-				},
-				Config: validResizeConfig,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_pci_cluster", "cluster_name", "tf-resizable-test"),
-					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_pci_cluster", "node_size", "m5xl-800-v2"),
-					testCheckClusterResize("resizable_pci_cluster", hostname, username, apiKey, "m5xl-800-v2"),
-				),
-			},
-			{
-				Config:      invalidResizeConfig,
-				ExpectError: regexp.MustCompile("Error resizing cluster"),
 			},
 		},
 	})
