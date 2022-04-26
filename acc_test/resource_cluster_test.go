@@ -205,7 +205,7 @@ func TestAccClusterResize(t *testing.T) {
 			{
 				PreConfig: func() {
 					fmt.Println("Sleep for 15 minutes to wait for Cassandra cluster to be ready for resize.")
-					time.Sleep(15 * time.Minute)
+					time.Sleep(16 * time.Minute)
 				},
 				Config: validResizeConfig,
 				Check: resource.ComposeTestCheckFunc(
