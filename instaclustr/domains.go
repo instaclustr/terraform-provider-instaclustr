@@ -14,6 +14,7 @@ const (
 	KAFKA_BROKER                              = "KAFKA_BROKER"
 	KAFKA_DEDICATED_ZOOKEEPER                 = "KAFKA_DEDICATED_ZOOKEEPER"
 	REDIS                                     = "REDIS"
+	CASSANDRA                                 = "CASSANDRA"
 )
 
 func (p NodePurpose) String() string {
