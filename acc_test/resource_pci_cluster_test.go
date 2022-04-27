@@ -2,15 +2,14 @@ package test
 
 import (
 	"fmt"
+	"github.com/hashicorp/terraform/helper/resource"
+	"github.com/hashicorp/terraform/terraform"
+	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 	"io/ioutil"
 	"os"
 	"regexp"
 	"strings"
 	"testing"
-
-	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
-	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 )
 
 func TestAccPCICluster(t *testing.T) {
@@ -41,52 +40,6 @@ func TestAccPCICluster(t *testing.T) {
 					testCheckResourceValid("valid"),
 					testCheckResourceCreated("valid", hostname, username, apiKey),
 				),
-			},
-		},
-	})
-}
-
-func TestAccPCIClusterResize(t *testing.T) {
-	testAccProviders := map[string]terraform.ResourceProvider{
-		"instaclustr": instaclustr.Provider(),
-	}
-	validConfig, _ := ioutil.ReadFile("data/valid_with_resizable_pci_cluster.tf")
-	username := os.Getenv("IC_USERNAME")
-	apiKey := os.Getenv("IC_API_KEY")
-	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
-	originalConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
-	validResizeConfig := strings.Replace(originalConfig, "resizeable-small(r5-l)-v2", "resizeable-small(r5-xl)-v2", 1)
-	invalidResizeClassConfig := strings.Replace(originalConfig, "resizeable-small(r5-l)-v2", "resizeable-large(r5-xl)-v2", 1)
-	invalidResizeConfig := strings.Replace(originalConfig, "resizeable-small(r5-l)-v2", "t3.medium", 1)
-
-	resource.ParallelTest(t, resource.TestCase{
-		Providers:    testAccProviders,
-		CheckDestroy: testCheckPCIResourceDeleted("resizable_pci_cluster", hostname, username, apiKey),
-		Steps: []resource.TestStep{
-			{
-				Config: originalConfig,
-				Check: resource.ComposeTestCheckFunc(
-					testCheckPCIResourceValid("resizable_pci_cluster"),
-					testCheckPCIResourceCreated("resizable_pci_cluster", hostname, username, apiKey),
-					checkClusterRunning("resizable_pci_cluster", hostname, username, apiKey),
-					testCheckContactIPCorrect("resizable_pci_cluster", hostname, username, apiKey, 2, 0),
-				),
-			},
-			{
-				Config: validResizeConfig,
-				Check: resource.ComposeTestCheckFunc(
-					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_pci_cluster", "cluster_name", "tf-resizable-test"),
-					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_pci_cluster", "node_size", "resizeable-small(r5-xl)-v2"),
-					testCheckClusterResize("resizable_pci_cluster", hostname, username, apiKey, "resizeable-small(r5-xl)-v2"),
-				),
-			},
-			{
-				Config:      invalidResizeClassConfig,
-				ExpectError: regexp.MustCompile("Cannot resize nodes"),
-			},
-			{
-				Config:      invalidResizeConfig,
-				ExpectError: regexp.MustCompile("Cannot resize nodes"),
 			},
 		},
 	})

@@ -6,7 +6,7 @@ provider "instaclustr" {
 
 resource "instaclustr_cluster" "resizable_cluster" {
     cluster_name = "tf-resizable-test"
-    node_size = "resizeable-small(r5-l)-v2"
+    node_size = "t3.medium-v2"
     data_centre = "US_EAST_1"
     data_centre_custom_name = "AWS_VPC_US_EAST_1_name"
     sla_tier = "NON_PRODUCTION"

@@ -1081,7 +1081,7 @@ func doClusterResize(client APIClientInterface, clusterID string, d resourceData
 	switch cluster.BundleType {
 	case "APACHE_CASSANDRA":
 		if hasCassandraSizeChanges(d) {
-			return doLegacyCassandraClusterResize(client, cluster, d)
+			return doCassandraClusterResize(client, cluster, d)
 		} else {
 			return nil
 		}
@@ -1318,19 +1318,14 @@ func doKafkaClusterResize(client APIClientInterface, cluster *Cluster, d resourc
 	return nil
 }
 
-func doLegacyCassandraClusterResize(client APIClientInterface, cluster *Cluster, d resourceDataInterface) error {
-	before, after := d.GetChange("node_size")
-	regex := regexp.MustCompile(`resizeable-(small|large)`)
-	oldNodeClass := regex.FindString(before.(string))
-	newNodeClass := regex.FindString(after.(string))
+func doCassandraClusterResize(client APIClientInterface, cluster *Cluster, d resourceDataInterface) error {
+	_, after := d.GetChange("node_size")
 
-	isNotResizable := oldNodeClass == ""
-	isNotSameSizeClass := newNodeClass != oldNodeClass
-	if isNotResizable || isNotSameSizeClass {
-		return fmt.Errorf("[Error] Cannot resize nodes from %s to %s", before, after)
-	}
+	var nodePurpose *NodePurpose
+	var np NodePurpose = CASSANDRA
+	nodePurpose = &np
 
-	err := client.ResizeCluster(cluster.ID, cluster.DataCentres[0].ID, after.(string), nil)
+	err := client.ResizeCluster(cluster.ID, cluster.DataCentres[0].ID, after.(string), nodePurpose)
 	if err != nil {
 		return fmt.Errorf("[Error] Error resizing cluster %s with error %s", cluster.ID, err)
 	}

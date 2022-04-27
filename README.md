@@ -277,21 +277,22 @@ Configuration documentation can be found at the [Instaclustr Terraform Registry]
 
 ## Bundles and Versions
 
-| Bundle                | Versions                              | Compatible With  |
-|-----------------------|---------------------------------------|------------------|
-| APACHE_CASSANDRA      | 2.2.18, 3.0.19, 3.11.8, 4.0 (preview) |                  |
-| SPARK                 | 2.1.3, 2.3.2                          | APACHE_CASSANDRA |
-| KAFKA                 | 2.7.1, 2.8.1, 3.0.0                   |                  |
-| KAFKA_REST_PROXY      | 5.0.0                                 | KAFKA            |
-| KAFKA_SCHEMA_REGISTRY | 5.0.0, 5.0.4                          | KAFKA            |
-| OPENSEARCH            | 1.2.4                                 |                  |
-| ELASTICSEARCH         | 1.13.3                                |                  |
-| KAFKA_CONNECT         | 2.7.1, 2.8.1, 3.0.0                   |                  |
-| REDIS                 | 6.0.9                                 |                  |
-| APACHE_ZOOKEEPER      | 3.5.8                                 |                  |
-| POSTGRESQL            | 13.4                                  |                  |
-| CADENCE               | 0.22.4                                |                  |
-| PGBOUNCER             | 1.17.0                                | POSTGRESQL       |
+| Bundle                   | Versions                              | Compatible With                                                                    |
+|--------------------------|---------------------------------------|------------------------------------------------------------------------------------|
+| APACHE_CASSANDRA         | 2.2.18, 3.0.19, 3.11.8, 4.0 (preview) |                                                                                    |
+| SPARK                    | 2.1.3, 2.3.2                          | APACHE_CASSANDRA                                                                   |
+| KAFKA                    | 2.7.1, 2.8.1, 3.0.0                   |                                                                                    |
+| KAFKA_REST_PROXY         | 5.0.0                                 | KAFKA                                                                              |
+| KAFKA_SCHEMA_REGISTRY    | 5.0.0, 5.0.4                          | KAFKA                                                                              |
+| KARAPACE_SCHEMA_REGISTRY | 2.1.2                                 | KAFKA <br/> **Not compatible with:** <br/> KAFKA_REST_PROXY, KAFKA_SCHEMA_REGISTRY |
+| OPENSEARCH               | 1.2.4                                 |                                                                                    |
+| ELASTICSEARCH            | 1.13.3                                |                                                                                    |
+| KAFKA_CONNECT            | 2.7.1, 2.8.1, 3.0.0                   |                                                                                    |
+| REDIS                    | 6.0.9                                 |                                                                                    |
+| APACHE_ZOOKEEPER         | 3.5.8                                 |                                                                                    |
+| POSTGRESQL               | 13.4                                  |                                                                                    |
+| PGBOUNCER                | 1.17.0                                | POSTGRESQL                                                                         |
+| CADENCE                  | 0.22.4                                |                                                                                    |
 
 ### Migrating from 0.0.1 &rarr; 1.0.0+
 A schema change has been made from 0.0.1 which no longer supports the `bundles` argument and uses `bundle` blocks instead. This change can cause `terraform apply` to fail with a message that `bundles` has been removed and/or updating isn't supported. To resolve this -<br>
