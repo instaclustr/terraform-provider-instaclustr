@@ -62,6 +62,7 @@ type BundleOptions struct {
 	PostgresqlNodeCount                 int    `json:"postgresqlNodeCount,omitempty" mapstructure:"postgresql_node_count,omitempty"`
 	PostgresqlReplicationMode           string `json:"replicationMode,omitempty" mapstructure:"replication_mode,omitempty"`
 	PostgresqlSynchronousModeStrict     *bool  `json:"synchronousModeStrict,omitempty" mapstructure:"synchronous_mode_strict,omitempty"`
+	PgBouncerPoolMode                   string `json:"poolMode,omitempty" mapstructure:"pool_mode,omitempty"`
 	CadenceAdvancedVisibility           *bool  `json:"useAdvancedVisibility,omitempty" mapstructure:"advanced_visibility,omitempty"`
 	CadenceTargetCassandraDataCentreID  string `json:"targetCassandraCdcId,omitempty" mapstructure:"target_cassandra_data_centre_id,omitempty"`
 	CadenceTargetCassandraVPCType       string `json:"targetCassandraVpcType,omitempty" mapstructure:"target_cassandra_vpc_type,omitempty"`
@@ -112,28 +113,29 @@ type DataCentreCreateRequest struct {
 }
 
 type AddonBundles struct {
-	Bundle  string `json:"bundle"`
-	Version string `json:"version"`
+	Bundle  string        `json:"bundle" mapstructure:"bundle"`
+	Version string        `json:"version" mapstructure:"version"`
+	Options BundleOptions `json:"options,omitempty" mapstructure:"options"`
 }
 
 type Cluster struct {
-	ID                         string                   `json:"id"`
-	ClusterName                string                   `json:"clusterName"`
-	ClusterStatus              string                   `json:"clusterStatus"`
-	CdcId                      string                   `json:"cdcId"`
-	BundleType                 string                   `json:"bundleType"`
-	BundleVersion              string                   `json:"bundleVersion"`
-	AddonBundles               []map[string]interface{} `json:"addonBundles"`
-	Username                   string                   `json:"username"`
-	InstaclustrUserPassword    string                   `json:"instaclustrUserPassword"`
-	SlaTier                    string                   `json:"slaTier"`
-	ClusterCertificateDownload string                   `json:"clusterCertificateDownload"`
-	PciCompliance              string                   `json:"pciCompliance"`
-	BundleOption               *BundleOptions           `json:"bundleOptions"`
-	DataCentre                 string                   `json:"dataCentre"`
-	DataCentres                []DataCentre             `json:"dataCentres"`
-	Provider                   []ClusterProvider        `json:"clusterProvider"`
-	OidcProvider               string                   `json:"oidcId"`
+	ID                         string            `json:"id"`
+	ClusterName                string            `json:"clusterName"`
+	ClusterStatus              string            `json:"clusterStatus"`
+	CdcId                      string            `json:"cdcId"`
+	BundleType                 string            `json:"bundleType"`
+	BundleVersion              string            `json:"bundleVersion"`
+	AddonBundles               []AddonBundles    `json:"addonBundles"`
+	Username                   string            `json:"username"`
+	InstaclustrUserPassword    string            `json:"instaclustrUserPassword"`
+	SlaTier                    string            `json:"slaTier"`
+	ClusterCertificateDownload string            `json:"clusterCertificateDownload"`
+	PciCompliance              string            `json:"pciCompliance"`
+	BundleOption               *BundleOptions    `json:"bundleOptions"`
+	DataCentre                 string            `json:"dataCentre"`
+	DataCentres                []DataCentre      `json:"dataCentres"`
+	Provider                   []ClusterProvider `json:"clusterProvider"`
+	OidcProvider               string            `json:"oidcId"`
 }
 
 type ClusterListItem struct {

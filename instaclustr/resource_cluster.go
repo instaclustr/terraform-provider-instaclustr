@@ -626,6 +626,11 @@ func resourceCluster() *schema.Resource {
 										Optional: true,
 										ForceNew: true,
 									},
+									"pool_mode": { // PGBouncer
+										Type:     schema.TypeString,
+										Optional: true,
+										ForceNew: true,
+									},
 								},
 							},
 						},
@@ -1542,9 +1547,12 @@ func getBundlesFromCluster(cluster *Cluster) ([]map[string]interface{}, error) {
 
 	addonBundles := make([]map[string]interface{}, 0)
 	for _, addOnBundle := range cluster.AddonBundles {
-		if addOnBundle != nil {
-			addonBundles = append(addonBundles, addOnBundle)
+		decodedAddonBundle := make(map[string]interface{}, 0)
+		err := mapstructure.Decode(addOnBundle, &decodedAddonBundle)
+		if err != nil {
+			return nil, err
 		}
+		addonBundles = append(addonBundles, decodedAddonBundle)
 	}
 
 	if addonBundles == nil {
@@ -1597,8 +1605,13 @@ func getDataCentresFromCluster(cluster *Cluster) ([]map[string]interface{}, erro
 		if dataCentre.Bundles != nil && len(dataCentre.Bundles) != 0 {
 			for _, thisDataCentreBundle := range dataCentre.Bundles {
 				for _, addOnBundle := range cluster.AddonBundles {
-					if addOnBundle != nil && addOnBundle["bundle"].(string) == thisDataCentreBundle {
-						thisDataCentreBundles = append(thisDataCentreBundles, addOnBundle)
+					if addOnBundle.Bundle == thisDataCentreBundle {
+						decodedAddonBundle := make(map[string]interface{}, 0)
+						err := mapstructure.Decode(addOnBundle, &decodedAddonBundle)
+						if err != nil {
+							return nil, err
+						}
+						thisDataCentreBundles = append(thisDataCentreBundles, decodedAddonBundle)
 					}
 				}
 			}

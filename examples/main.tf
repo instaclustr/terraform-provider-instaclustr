@@ -388,6 +388,14 @@ resource "instaclustr_cluster" "example-postgresql" {
       synchronous_mode_strict = true
     }
   }
+
+  bundle {
+    bundle  = "PGBOUNCER"
+    version = "1.17.0"
+    options = {
+      pool_mode = "TRANSACTION"
+    }
+  }
 }
 
 resource "instaclustr_kafka_acl" "example-acl" {

@@ -277,21 +277,22 @@ Configuration documentation can be found at the [Instaclustr Terraform Registry]
 
 ## Bundles and Versions
 
-Bundle | Versions | Compatible With
----------|-------------|---------------
-APACHE_CASSANDRA|2.2.18, 3.0.19, 3.11.8, 4.0 (preview)|
-SPARK|2.1.3, 2.3.2|APACHE_CASSANDRA
-KAFKA|2.7.1, 2.8.1, 3.0.0|
-KAFKA_REST_PROXY|5.0.0|KAFKA
-KAFKA_SCHEMA_REGISTRY|5.0.0, 5.0.4|KAFKA
-KARAPACE_SCHEMA_REGISTRY|2.1.2|KAFKA <br/> **Not compatible with:** <br/> KAFKA_REST_PROXY, KAFKA_SCHEMA_REGISTRY
-OPENSEARCH|1.2.4
-ELASTICSEARCH|1.13.3
-KAFKA_CONNECT|2.7.1, 2.8.1, 3.0.0|
-REDIS|6.0.9|
-APACHE_ZOOKEEPER|3.5.8|
-POSTGRESQL|13.4|
-CADENCE|0.22.4|
+| Bundle                   | Versions                              | Compatible With                                                                    |
+|--------------------------|---------------------------------------|------------------------------------------------------------------------------------|
+| APACHE_CASSANDRA         | 2.2.18, 3.0.19, 3.11.8, 4.0 (preview) |                                                                                    |
+| SPARK                    | 2.1.3, 2.3.2                          | APACHE_CASSANDRA                                                                   |
+| KAFKA                    | 2.7.1, 2.8.1, 3.0.0                   |                                                                                    |
+| KAFKA_REST_PROXY         | 5.0.0                                 | KAFKA                                                                              |
+| KAFKA_SCHEMA_REGISTRY    | 5.0.0, 5.0.4                          | KAFKA                                                                              |
+| KARAPACE_SCHEMA_REGISTRY | 2.1.2                                 | KAFKA <br/> **Not compatible with:** <br/> KAFKA_REST_PROXY, KAFKA_SCHEMA_REGISTRY |
+| OPENSEARCH               | 1.2.4                                 |                                                                                    |
+| ELASTICSEARCH            | 1.13.3                                |                                                                                    |
+| KAFKA_CONNECT            | 2.7.1, 2.8.1, 3.0.0                   |                                                                                    |
+| REDIS                    | 6.0.9                                 |                                                                                    |
+| APACHE_ZOOKEEPER         | 3.5.8                                 |                                                                                    |
+| POSTGRESQL               | 13.5, 13.6, 14.1, 14.2                |                                                                                    |
+| PGBOUNCER                | 1.17.0                                | POSTGRESQL                                                                         |
+| CADENCE                  | 0.22.4                                |                                                                                    |
 
 ### Migrating from 0.0.1 &rarr; 1.0.0+
 A schema change has been made from 0.0.1 which no longer supports the `bundles` argument and uses `bundle` blocks instead. This change can cause `terraform apply` to fail with a message that `bundles` has been removed and/or updating isn't supported. To resolve this -<br>
@@ -331,20 +332,20 @@ Unit tests are within `instaclustr` folder with `_unit_test` suffix, and used to
 Acceptance tests are within `acc_test` folder, and used to run end-to-end testing. We recommend using CircleCI to run your acceptance tests, however you can run them locally. Acceptance tests require end to end interaction with the Instaclustr platform and will create real (paid) infrastructure. If you wish to perform local testing you must set the variables below and run: ```make testacc``` 
 
 
-Variable | Command | Description
----------|-------------|--------
-TF_ACC|`$ export TF_ACC=1`|Enables online acceptance tests.
-IC_USERNAME|`$ export IC_USERNAME=<your instaclustr username>`|Authorizes Provisioning API
-IC_API_KEY|`$ export IC_API_KEY=<your provisioning API key>`|Authorizes Provisioning API
-KMS_ARN|`$ export KMS_ARN=<your KMS ARN>`|For EBS encryption of nodes. <b><i>Note:</i></b> You cannot use an ARN previously added to your account as an encryption key.
-IC_PROV_ACC_NAME|`$ export IC_PROV_ACC_NAME="<your provider name>"`|Your "Run In Your Own Account" account name.
-IC_PROV_VPC_ID|`$ export IC_PROV_VPC_ID="<your AWS VPC ID>"`|For provisioning into a custom VPC.
-IC_AWS_ACCESS_KEY|`$ export IC_PROV_VPC_ID="<access key for the AWS S3 bucket>"`|For Kafka Connect connection information. See bundle options.
-IC_AWS_SECRET_KEY|`$ export IC_PROV_VPC_ID="<secret key for the AWS S3 bucket>"`|For Kafka Connect connection information. See bundle options.
-IC_S3_BUCKET_NAME|`$ export IC_PROV_VPC_ID="<AWS S3 bucket name>"`|For Kafka Connect connection information. See bundle options.
-IC_AZURE_STORAGE_ACCOUNT_NAME|`$ export IC_PROV_VPC_ID="<account name for the AZURE container storage>"`|For Kafka Connect connection information. See bundle options.
-IC_AZURE_STORAGE_ACCOUNT_KEY|`$ export IC_PROV_VPC_ID="<account key for the AZURE container storage>"`|For Kafka Connect connection information. See bundle options.
-IC_AZURE_STORAGE_CONTAINER_NAME|`$ export IC_PROV_VPC_ID="<the name of the AZURE container storage>"`|For Kafka Connect connection information. See bundle options.
+| Variable                        | Command                                                                    | Description                                                                                                                   |
+|---------------------------------|----------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
+| TF_ACC                          | `$ export TF_ACC=1`                                                        | Enables online acceptance tests.                                                                                              |
+| IC_USERNAME                     | `$ export IC_USERNAME=<your instaclustr username>`                         | Authorizes Provisioning API                                                                                                   |
+| IC_API_KEY                      | `$ export IC_API_KEY=<your provisioning API key>`                          | Authorizes Provisioning API                                                                                                   |
+| KMS_ARN                         | `$ export KMS_ARN=<your KMS ARN>`                                          | For EBS encryption of nodes. <b><i>Note:</i></b> You cannot use an ARN previously added to your account as an encryption key. |
+| IC_PROV_ACC_NAME                | `$ export IC_PROV_ACC_NAME="<your provider name>"`                         | Your "Run In Your Own Account" account name.                                                                                  |
+| IC_PROV_VPC_ID                  | `$ export IC_PROV_VPC_ID="<your AWS VPC ID>"`                              | For provisioning into a custom VPC.                                                                                           |
+| IC_AWS_ACCESS_KEY               | `$ export IC_PROV_VPC_ID="<access key for the AWS S3 bucket>"`             | For Kafka Connect connection information. See bundle options.                                                                 |
+| IC_AWS_SECRET_KEY               | `$ export IC_PROV_VPC_ID="<secret key for the AWS S3 bucket>"`             | For Kafka Connect connection information. See bundle options.                                                                 |
+| IC_S3_BUCKET_NAME               | `$ export IC_PROV_VPC_ID="<AWS S3 bucket name>"`                           | For Kafka Connect connection information. See bundle options.                                                                 |
+| IC_AZURE_STORAGE_ACCOUNT_NAME   | `$ export IC_PROV_VPC_ID="<account name for the AZURE container storage>"` | For Kafka Connect connection information. See bundle options.                                                                 |
+| IC_AZURE_STORAGE_ACCOUNT_KEY    | `$ export IC_PROV_VPC_ID="<account key for the AZURE container storage>"`  | For Kafka Connect connection information. See bundle options.                                                                 |
+| IC_AZURE_STORAGE_CONTAINER_NAME | `$ export IC_PROV_VPC_ID="<the name of the AZURE container storage>"`      | For Kafka Connect connection information. See bundle options.                                                                 |
 
 #### Running Specific Tests
 To run a specific test, use the `testtarget` makefile goal.
