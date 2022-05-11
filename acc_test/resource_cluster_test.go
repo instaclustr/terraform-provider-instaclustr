@@ -185,7 +185,7 @@ func TestAccClusterResize(t *testing.T) {
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 	resourceName := "resizable_cluster"
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
-	validResizeConfig := strings.Replace(oriConfig, "t3.medium-v2", "^[A-Z]{3}-[A-Z]{3}-m6g.large-120", 1)
+	validResizeConfig := strings.Replace(oriConfig, "t3.medium-v2", "CAS-DEV-t4g.small-30", 1)
 	invalidDownsizeConfig := strings.Replace(oriConfig, "t3.medium-v2", "t3.small-v2", 1)
 
 	resource.ParallelTest(t, resource.TestCase{
@@ -210,8 +210,8 @@ func TestAccClusterResize(t *testing.T) {
 				Config: validResizeConfig,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_cluster", "cluster_name", "tf-resizable-test"),
-					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_cluster", "node_size", "^[A-Z]{3}-[A-Z]{3}-m6g.large-120"),
-					testCheckClusterResize("resizable_cluster", hostname, username, apiKey, "^[A-Z]{3}-[A-Z]{3}-m6g.large-120"),
+					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_cluster", "node_size", "CAS-DEV-t4g.small-30"),
+					testCheckClusterResize("resizable_cluster", hostname, username, apiKey, "CAS-DEV-t4g.small-30"),
 				),
 			},
 			{
