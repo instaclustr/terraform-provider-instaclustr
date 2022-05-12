@@ -23,7 +23,8 @@ resource "instaclustr_cluster" "resizable_cluster" {
     version = "1.3.1"
     options = {
       dedicated_master_nodes          = false,
-      master_node_size                = "t3.small-v2",
+      master_node_size                = "SRH-DM-t3.small-v2",
+      data_node_size                  = "t3.small-v2",
       opensearch_dashboards_node_size = "t3.small-v2",
       security_plugin                 = true,
       client_encryption               = true
