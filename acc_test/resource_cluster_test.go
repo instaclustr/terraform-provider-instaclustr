@@ -320,7 +320,7 @@ func TestAccOpenSearchClusterResize(t *testing.T) {
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 	resourceName := "resizable_cluster"
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
-	validResizeConfig := strings.Replace(oriConfig, `opensearch_dashboards_node_size = "t3.small-v2"`, `opensearch_dashboards_node_size = "SRH-DEV-t4g.small-5",`, 1)
+	validResizeConfig := strings.Replace(oriConfig, `opensearch_dashboards_node_size = "t3.small-v2"`, `opensearch_dashboards_node_size = "SRH-DEV-t4g.small-30",`, 1)
 	invalidResizeConfig := strings.Replace(oriConfig, `opensearch_dashboards_node_size = "t3.small-v2",`, `opensearch_dashboards_node_size = "t3.small",`, 1)
 
 	resource.ParallelTest(t, resource.TestCase{
