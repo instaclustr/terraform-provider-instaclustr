@@ -19,9 +19,9 @@ Property | Description | Default
 
 #### rules
 
-Property | Description | Default
----------|-------------|--------
-`type`|Accepts CASSANDRA, SPARK, SPARK_JOBSERVER, APACHE_ZOOKEEPER, KAFKA, KAFKA_CONNECT, ELASTICSEARCH, REDIS|Required
+Property | Description                                                                                                                                        | Default
+---------|----------------------------------------------------------------------------------------------------------------------------------------------------|--------
+`type`| Accepts CASSANDRA, SPARK, SPARK_JOBSERVER, APACHE_ZOOKEEPER, KAFKA, KAFKA_CONNECT, ELASTICSEARCH, REDIS (ELASTICSEARCH is for legacy support only) |Required
 
 #### Example
 ```

@@ -6,7 +6,7 @@ provider "instaclustr" {
 
 resource "instaclustr_cluster" "resizable_cluster" {
     cluster_name = "tf-resizable-test"
-    node_size = "t3.medium-v2"
+    node_size = "CAS-DEV-t4g.small-5"
     data_centre = "US_EAST_1"
     data_centre_custom_name = "AWS_VPC_US_EAST_1_name"
     sla_tier = "NON_PRODUCTION"
@@ -22,7 +22,7 @@ resource "instaclustr_cluster" "resizable_cluster" {
     }
     bundle {
         bundle = "APACHE_CASSANDRA"
-        version = "3.11.8"
+        version = "4.0.1"
         options = {
             auth_n_authz = false
             client_encryption = false

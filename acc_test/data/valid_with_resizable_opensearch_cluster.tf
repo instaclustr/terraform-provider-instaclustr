@@ -20,11 +20,11 @@ resource "instaclustr_cluster" "resizable_cluster" {
   }
   bundle {
     bundle  = "OPENSEARCH"
-    version = "1.2.4"
+    version = "1.3.1"
     options = {
       dedicated_master_nodes          = false,
-      master_node_size                = "t3.small-v2",
-      opensearch_dashboards_node_size = "t3.small-v2",
+      master_node_size                = "SRH-DEV-t4g.small-5",
+      opensearch_dashboards_node_size = "SRH-DEV-t4g.small-5",
       security_plugin                 = true,
       client_encryption               = true
     }
