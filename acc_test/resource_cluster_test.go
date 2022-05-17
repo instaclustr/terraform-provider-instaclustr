@@ -21,7 +21,7 @@ func AccClusterResourceTestSteps(t *testing.T, testAccProviders map[string]terra
 
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
 	updatedConfig := strings.Replace(oriConfig, "testcluster", "newcluster", 1)
-	newToOldVersionConfig := strings.Replace(updatedConfig, `version = "3.11.8"`, `version = "apache-cassandra-3.11.8.ic4"`, 1)
+	newToOldVersionConfig := strings.Replace(updatedConfig, `version = "4.0.1"`, `version = "apache-cassandra-4.0.1.ic4"`, 1)
 
 	resource.ParallelTest(t, resource.TestCase{
 		Providers:    testAccProviders,
@@ -185,8 +185,8 @@ func TestAccClusterResize(t *testing.T) {
 	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
 	resourceName := "resizable_cluster"
 	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
-	validResizeConfig := strings.Replace(oriConfig, "t3.medium-v2", "CAS-DEV-t4g.small-30", 1)
-	invalidDownsizeConfig := strings.Replace(oriConfig, "t3.medium-v2", "t3.small-v2", 1)
+	validResizeConfig := strings.Replace(oriConfig, "CAS-DEV-t4g.small-5", "CAS-DEV-t4g.medium-30", 1)
+	invalidDownsizeConfig := strings.Replace(oriConfig, "CAS-DEV-t4g.small-5", "CAS-DEV-t4g.small-5", 1)
 
 	resource.ParallelTest(t, resource.TestCase{
 		Providers:    testAccProviders,
@@ -204,14 +204,14 @@ func TestAccClusterResize(t *testing.T) {
 			},
 			{
 				PreConfig: func() {
-					fmt.Println("Sleep for 15 minutes to wait for Cassandra cluster to be ready for resize.")
-					time.Sleep(16 * time.Minute)
+					fmt.Println("Sleep for 3 minutes to wait for Cassandra cluster to be ready for resize.")
+					time.Sleep(3 * time.Minute)
 				},
 				Config: validResizeConfig,
 				Check: resource.ComposeTestCheckFunc(
 					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_cluster", "cluster_name", "tf-resizable-test"),
-					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_cluster", "node_size", "CAS-DEV-t4g.small-30"),
-					testCheckClusterResize("resizable_cluster", hostname, username, apiKey, "CAS-DEV-t4g.small-30"),
+					resource.TestCheckResourceAttr("instaclustr_cluster.resizable_cluster", "node_size", "CAS-DEV-t4g.medium-30"),
+					testCheckClusterResize("resizable_cluster", hostname, username, apiKey, "CAS-DEV-t4g.medium-30"),
 				),
 			},
 			{
