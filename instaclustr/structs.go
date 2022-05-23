@@ -105,7 +105,7 @@ type CreateRequest struct {
 }
 
 type PrivateLinkConfig struct {
-	IamPrincipalARNs *[]string `json:"iamPrincipalARNs,omitempty" mapstructure:"iam_principal_arns,omitempty"`
+	IAMPrincipalARNs *[]string `json:"iamPrincipalARNs,omitempty" mapstructure:"iam_principal_arns,omitempty"`
 }
 
 type DataCentreCreateRequest struct {
