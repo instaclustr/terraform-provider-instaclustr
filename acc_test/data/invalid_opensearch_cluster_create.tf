@@ -20,12 +20,12 @@ resource "instaclustr_cluster" "invalidOpenSearch" {
   }
   bundle {
     bundle  = "OPENSEARCH"
-    version = "1.2.4"
+    version = "1.3.1"
     options = {
       dedicated_master_nodes          = false,
-      master_node_size                = "m5l-250-v2",
-      opensearch_dashboards_node_size = "m5l-400-v2",
-      data_node_size                  = "t3.small-v2",
+      master_node_size                = "SRH-DM-m5d.large",
+      opensearch_dashboards_node_size = "SRH-PRD-m6g.large-400",
+      data_node_size                  = "SRH-DEV-t4g.small-5",
       security_plugin                 = true,
       client_encryption               = true
     }

@@ -24,7 +24,7 @@ resource "instaclustr_encryption_key" "add_ebs_key" {
 
 resource "instaclustr_cluster" "example" {
   cluster_name = "testcluster"
-  node_size = "t3.small"
+  node_size = "SRH-DEV-t4g.small-5"
   data_centre = "US_WEST_2"
   sla_tier = "NON_PRODUCTION"
   cluster_network = "192.168.0.0/18"
@@ -267,12 +267,12 @@ resource "instaclustr_cluster" "example-opensearch" {
 
   bundle {
     bundle = "OPENSEARCH"
-    version = "1.2.4"
+    version = "1.3.1"
     options = {
       dedicated_master_nodes = true,
-      master_node_size = "m5l-250-v2",
-      data_node_size = "m5l-250-v2",
-      opensearch_dashboards_node_size = "m5l-250-v2",
+      master_node_size = "SRH-DEV-t4g.small-5",
+      data_node_size = "SRH-DEV-t4g.small-5",
+      opensearch_dashboards_node_size = "SRH-DEV-t4g.small-5",
     }
   }
 }

@@ -74,7 +74,7 @@ A resource for managing clusters on Instaclustr Managed Platform. A cluster cont
 | KAFKA_SCHEMA_REGISTRY    | 5.0.0, 5.0.4                          | KAFKA                                                                              |
 | KARAPACE_SCHEMA_REGISTRY | 2.1.2                                 | KAFKA <br/> **Not compatible with:** <br/> KAFKA_REST_PROXY, KAFKA_SCHEMA_REGISTRY |
 | OPENSEARCH               | 1.2.4                                 |                                                                                    |
-| ELASTICSEARCH            | 1.13.3                                |                                                                                    |
+| ELASTICSEARCH (For Legacy Support Only)           | 1.13.3                                |                                                                                    |
 | KAFKA_CONNECT            | 2.7.1, 2.8.1, 3.0.0                   |                                                                                    |
 | REDIS                    | 6.0.9                                 |                                                                                    |
 | APACHE_ZOOKEEPER         | 3.5.8                                 |                                                                                    |
@@ -142,7 +142,7 @@ whereas the deprecated fields in the `bundle.options` with the same name will no
 | `azure_storage_account_key`  | AZURE storage account key to access your AZURE bucket for Kafka Connect custom connector                                     |
 | `sasl_jaas_config`           | `sasl.jaas.config` part of the worker.properties used to access non-Instaclustr Kafka cluster                                |
 
-### Elasticsearch and OpenSearch node sizes
+### Elasticsearch (For Legacy Support Only) and OpenSearch node sizes
 
 Elasticsearch and OpenSearch clusters have a slightly different node size definition compared to other bundles. You don't need to specify the `node_size` cluster level field, but you may specify node sizes using the following field in `bundle.options`.
 
@@ -158,7 +158,7 @@ When dedicated master nodes are not enabled, the cluster will be provisioned wit
 
 #### kibana_node_size
 
-`kibana_node_size` is for Open Distro for Elasticsearch clusters only. It represents the node size for the additional Kibana node. If it is not set, then a Kibana node will not be provisioned.
+`kibana_node_size` is for Open Distro for Elasticsearch clusters (For Legacy Support Only) only. It represents the node size for the additional Kibana node. If it is not set, then a Kibana node will not be provisioned. 
 
 #### opensearch_dashboards_node_size
 
