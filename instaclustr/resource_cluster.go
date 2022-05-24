@@ -839,9 +839,6 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		if err != nil {
 			return fmt.Errorf("[Error] Error decoding the privateLink config to PrivateLinkConfig: %w", err)
 		}
-	}
-
-	if privateLinkConfig.IAMPrincipalARNs != nil {
 		createData.PrivateLink = &privateLinkConfig
 	}
 
