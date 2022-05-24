@@ -565,6 +565,32 @@ func TestValidApacheZookeeperClusterCreate(t *testing.T) {
 	})
 }
 
+func TestValidPrivateLinkKafkaClusterCreate(t *testing.T) {
+	testAccProvider := instaclustr.Provider()
+	testAccProviders := map[string]terraform.ResourceProvider{
+		"instaclustr": testAccProvider,
+	}
+	validConfig, _ := ioutil.ReadFile("data/valid_pivatelink_kafka_cluster_create.tf")
+	username := os.Getenv("IC_USERNAME")
+	apiKey := os.Getenv("IC_API_KEY")
+	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname)
+	resource.ParallelTest(t, resource.TestCase{
+		Providers:    testAccProviders,
+		CheckDestroy: testCheckResourceDeleted("validPrivateLinkKafka", hostname, username, apiKey),
+		Steps: []resource.TestStep{
+			{
+				Config: oriConfig,
+				Check: resource.ComposeTestCheckFunc(
+					testCheckResourceValid("validPrivateLinkKafka"),
+					testCheckResourceCreated("validPrivateLinkKafka", hostname, username, apiKey),
+					checkClusterRunning("validPrivateLinkKafka", hostname, username, apiKey),
+				),
+			},
+		},
+	})
+}
+
 func TestAccClusterCredentials(t *testing.T) {
 	testAccProviders := map[string]terraform.ResourceProvider{
 		"instaclustr": instaclustr.Provider(),

@@ -29,6 +29,7 @@ A resource for managing clusters on Instaclustr Managed Platform. A cluster cont
 | `oidc_provider`                       | The ID of an OIDC provider to be used for Elasticsearch Kibana or OpenSearch Dashboards. OIDC providers must be set in Console Cluster Resources to be available for use.                                                                                             | Optional                                                   |
 | `cluster_id`                          | Returns the Cluster ID as a UUID                                                                                                                                                                                                                                      | READ ONLY                                                  |
 | `default_data_centre_id`              | Returned the default Data Centre ID as a UUID                                                                                                                                                                                                                         | READ ONLY                                                  |
+| `private_link`                        | Creates a PrivateLink cluster, see [here](https://www.instaclustr.com/support/documentation/useful-information/privatelink/) for more details. PrivateLink can only be supported on AWS_VPC for Kafka currently. See below for its properties.                                                      | Optional, but Required for creating a PrivateLink cluster. 
 
 ### cluster_provider
 
@@ -47,6 +48,12 @@ A resource for managing clusters on Instaclustr Managed Platform. A cluster cont
 |-------------------|----------------------------------------------------------------|----------|
 | `number_of_racks` | Number of racks to use when allocating nodes. Max allowed is 5 | Required |
 | `nodes_per_rack`  | Number of nodes per rack. Max allowed is 10                    | Required |
+
+`private_link`
+
+| Property             | Description                                                    | Default  |
+|----------------------|----------------------------------------------------------------|----------|
+| `iam_principal_arns` | List of IAM Principal ARNs to add to the endpoint service      | Required |
 
 `bundle`
 
