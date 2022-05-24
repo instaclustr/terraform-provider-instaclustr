@@ -833,7 +833,7 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	var privateLinkConfig PrivateLinkConfig
-	if len(d.Get("private_link").([]interface{})) > 0 {
+	if len(d.Get("private_link").([]interface{})) > 0 && d.Get("private_link").([]interface{})[0] != nil {
 		privateLink := d.Get("private_link").([]interface{})[0].(map[string]interface{})
 		err := mapstructure.Decode(privateLink, &privateLinkConfig)
 		if err != nil {
