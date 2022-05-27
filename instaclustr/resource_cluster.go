@@ -340,6 +340,24 @@ func resourceCluster() *schema.Resource {
 				ForceNew: true,
 			},
 
+			"private_link": {
+				Type:     schema.TypeList,
+				Optional: true,
+				MaxItems: 1,
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"iam_principal_arns": {
+							Type: schema.TypeList,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+							Optional: true,
+							ForceNew: true,
+						},
+					},
+				},
+			},
+
 			"bundles": {
 				Type:          schema.TypeSet,
 				Optional:      true,
@@ -636,6 +654,11 @@ func resourceCluster() *schema.Resource {
 										Optional: true,
 										ForceNew: true,
 									},
+									"advertised_host_name": {
+										Type:     schema.TypeString,
+										Optional: true,
+										ForceNew: true,
+									},
 								},
 							},
 						},
@@ -802,6 +825,7 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 	if err != nil {
 		return err
 	}
+
 	var createData = CreateRequest{
 		ClusterName:           d.Get("cluster_name").(string),
 		Bundles:               bundles,
@@ -811,6 +835,16 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		PrivateNetworkCluster: fmt.Sprintf("%v", d.Get("private_network_cluster")),
 		PCICompliantCluster:   fmt.Sprintf("%v", d.Get("pci_compliant_cluster")),
 		OidcProvider:          fmt.Sprintf("%v", d.Get("oidc_provider")),
+	}
+
+	var privateLinkConfig PrivateLinkConfig
+	if len(d.Get("private_link").([]interface{})) > 0 && d.Get("private_link").([]interface{})[0] != nil {
+		privateLink := d.Get("private_link").([]interface{})[0].(map[string]interface{})
+		err := mapstructure.Decode(privateLink, &privateLinkConfig)
+		if err != nil {
+			return fmt.Errorf("[Error] Error decoding the privateLink config to PrivateLinkConfig: %w", err)
+		}
+		createData.PrivateLink = &privateLinkConfig
 	}
 
 	dataCentre := d.Get("data_centre").(string)
@@ -1476,6 +1510,17 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		d.Set("data_centre", cluster.DataCentres[0].Name)
 		d.Set("cluster_network", cluster.DataCentres[0].CdcNetwork)
 		d.Set("data_centre_custom_name", cluster.DataCentres[0].CdcName)
+
+		privateLink := make(map[string]interface{}, 0)
+		privateLinkConfigList := make([]map[string]interface{}, 0)
+		err = mapstructure.Decode(cluster.DataCentres[0].PrivateLink, &privateLink)
+		if err != nil {
+			return fmt.Errorf("[Error] Error decoding the privateLink config to a map: %w", err)
+		}
+		if len(privateLink) > 0 && privateLink["iam_principal_arns"] != nil {
+			privateLinkConfigList = append(privateLinkConfigList, privateLink)
+		}
+		d.Set("private_link", privateLinkConfigList)
 
 		if err := deleteAttributesConflict(resourceCluster().Schema, d, "data_centre"); err != nil {
 			return err
