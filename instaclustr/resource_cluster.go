@@ -1091,15 +1091,7 @@ func hasKafkaSizeChanges(bundleIndex int, d resourceDataInterface) bool {
 		len(getNewSizeOrEmpty(d, "node_size")) > 0
 }
 
-func hasCassandraSizeChanges(d resourceDataInterface) bool {
-	return len(getNewSizeOrEmpty(d, "node_size")) > 0
-}
-
-func hasRedisSizeChanges(d resourceDataInterface) bool {
-	return len(getNewSizeOrEmpty(d, "node_size")) > 0
-}
-
-func hasCadenceSizeChanges(d resourceDataInterface) bool {
+func hasSimpleNodeSizeChanges(d resourceDataInterface) bool {
 	return len(getNewSizeOrEmpty(d, "node_size")) > 0
 }
 
@@ -1123,7 +1115,7 @@ func doClusterResize(client APIClientInterface, clusterID string, d resourceData
 	}
 	switch cluster.BundleType {
 	case "APACHE_CASSANDRA":
-		if hasCassandraSizeChanges(d) {
+		if hasSimpleNodeSizeChanges(d) {
 			return doCassandraClusterResize(client, cluster, d)
 		} else {
 			return nil
@@ -1147,13 +1139,13 @@ func doClusterResize(client APIClientInterface, clusterID string, d resourceData
 			return nil
 		}
 	case "REDIS":
-		if hasRedisSizeChanges(d) {
+		if hasSimpleNodeSizeChanges(d) {
 			return doRedisClusterResize(client, cluster, d, bundleIndex)
 		} else {
 			return nil
 		}
 	case "CADENCE":
-		if hasCadenceSizeChanges(d) {
+		if hasSimpleNodeSizeChanges(d) {
 			return doCadenceClusterResize(client, cluster, d, bundleIndex)
 		} else {
 			return nil
