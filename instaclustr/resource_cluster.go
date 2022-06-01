@@ -615,10 +615,10 @@ func resourceCluster() *schema.Resource {
 										ForceNew: true,
 									},
 									"use_cadence_web_auth": {
-                                        Type:     schema.TypeBool,
-                                        Optional: true,
-                                        ForceNew: true,
-                                    },
+										Type:     schema.TypeBool,
+										Optional: true,
+										ForceNew: true,
+									},
 									"target_cassandra_data_centre_id": {
 										Type:     schema.TypeString,
 										Optional: true,
