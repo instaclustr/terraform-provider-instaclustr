@@ -491,9 +491,9 @@ func TestHasKafkaSizeChanges(t *testing.T) {
 	}
 }
 
-func TestHasCassandraSizeChanges(t *testing.T) {
+func TestHasSimpleNodeSizeChanges(t *testing.T) {
 	data := schema.ResourceData{}
-	if hasChange := hasCassandraSizeChanges(&data); hasChange {
+	if hasChange := hasSimpleNodeSizeChanges(&data); hasChange {
 		t.Fatalf("Expect false but got %v", hasChange)
 	}
 }
