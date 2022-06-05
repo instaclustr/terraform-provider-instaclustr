@@ -51,7 +51,7 @@ resource "instaclustr_cassandra_cluster_v2" "test_cluster" {
 ### Required
 
 - **cassandra_version** (String) Version of Cassandra to run on the cluster.
-- **data_centre** (Block List, Min: 1) List of datacentre settings. (see [below for nested schema](#nestedblock--data_centre))
+- **data_centre** (Block List, Min: 1) List of data centre settings. (see [below for nested schema](#nestedblock--data_centre))
 - **lucene_enabled** (Boolean) Adds Apache Lucene to the Cassandra cluster.
 - **name** (String) Name of the cluster.
 - **password_and_user_auth** (Boolean) Enables Password Authentication and User Authorization.
@@ -77,7 +77,7 @@ Required:
 - **client_to_cluster_encryption** (Boolean) Enables Client ⇄ Node Encryption.
 - **cloud_provider** (String) Name of the cloud provider service in which the Data Centre will be provisioned.
 - **continuous_backup** (Boolean) Enables commitlog backups and increases the frequency of the default snapshot backups.
-- **name** (String) A logical name for the data centre within a Cassandra cluster. These names must be unique in the cluster.
+- **name** (String) A logical name for the data centre within a cluster. These names must be unique in the cluster.
 - **network** (String) The private network address block for the Data Centre specified using CIDR address notation. The network must have a prefix length between `/12` and `/22` and must be part of a private address space.
 - **node_size** (String) Size of the nodes provisioned in the Data Centre.
 - **number_of_nodes** (Number) Total number of nodes in the Data Centre. Must be a multiple of `replicationFactor`.
@@ -92,7 +92,7 @@ Optional:
 - **gcp_settings** (Block List) GCP specific settings for the Data Centre. Cannot be provided with `awsSettings` and `azureSettings`. (see [below for nested schema](#nestedblock--data_centre--gcp_settings))
 - **id** (String) ID of the Cluster Data Centre.
 - **nodes** (Block List) (see [below for nested schema](#nestedblock--data_centre--nodes))
-- **provider_account_name** (String) For customers running in their own account. Your provider account can be found on the Create Cluster page on the Instaclsutr Console, or the "Provider Account" property on any existing cluster. For customers provisioning on Instaclustr's cloud provider accounts, this property may be omitted.
+- **provider_account_name** (String) For customers running in their own account. Your provider account can be found on the Create Cluster page on the Instaclustr Console, or the "Provider Account" property on any existing cluster. For customers provisioning on Instaclustr's cloud provider accounts, this property may be omitted.
 - **status** (String) Status of the Data Centre.
 - **tag** (Block List) List of tags to apply to the Data Centre. Tags are metadata labels which  allow you to identify, categorize and filter clusters. This can be useful for grouping together clusters into applications, environments, or any category that you require. (see [below for nested schema](#nestedblock--data_centre--tag))
 
