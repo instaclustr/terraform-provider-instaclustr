@@ -380,7 +380,7 @@ resource "instaclustr_cluster" "example-postgresql" {
 
   bundle {
     bundle = "POSTGRESQL"
-    version = "14.1"
+    version = "14.3"
     options = {
       postgresql_node_count = 2,
       client_encryption = true,
@@ -463,6 +463,7 @@ resource "instaclustr_cluster" "example-cadence" {
       advanced_visibility = false
       target_cassandra_data_centre_id = "${instaclustr_cluster.example-cadence-cassandra.default_data_centre_id}"
       target_cassandra_vpc_type = "TARGET_VPC"
+      use_cadence_web_auth = false
     }
   }
 }

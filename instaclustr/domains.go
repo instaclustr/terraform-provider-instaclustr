@@ -15,6 +15,7 @@ const (
 	KAFKA_DEDICATED_ZOOKEEPER                 = "KAFKA_DEDICATED_ZOOKEEPER"
 	REDIS                                     = "REDIS"
 	CASSANDRA                                 = "CASSANDRA"
+	CADENCE                                   = "CADENCE"
 )
 
 func (p NodePurpose) String() string {

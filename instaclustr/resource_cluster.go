@@ -614,6 +614,11 @@ func resourceCluster() *schema.Resource {
 										Optional: true,
 										ForceNew: true,
 									},
+									"use_cadence_web_auth": {
+										Type:     schema.TypeBool,
+										Optional: true,
+										ForceNew: true,
+									},
 									"target_cassandra_data_centre_id": {
 										Type:     schema.TypeString,
 										Optional: true,
@@ -1086,11 +1091,7 @@ func hasKafkaSizeChanges(bundleIndex int, d resourceDataInterface) bool {
 		len(getNewSizeOrEmpty(d, "node_size")) > 0
 }
 
-func hasCassandraSizeChanges(d resourceDataInterface) bool {
-	return len(getNewSizeOrEmpty(d, "node_size")) > 0
-}
-
-func hasRedisSizeChanges(d resourceDataInterface) bool {
+func hasSimpleNodeSizeChanges(d resourceDataInterface) bool {
 	return len(getNewSizeOrEmpty(d, "node_size")) > 0
 }
 
@@ -1114,7 +1115,7 @@ func doClusterResize(client APIClientInterface, clusterID string, d resourceData
 	}
 	switch cluster.BundleType {
 	case "APACHE_CASSANDRA":
-		if hasCassandraSizeChanges(d) {
+		if hasSimpleNodeSizeChanges(d) {
 			return doCassandraClusterResize(client, cluster, d)
 		} else {
 			return nil
@@ -1138,11 +1139,18 @@ func doClusterResize(client APIClientInterface, clusterID string, d resourceData
 			return nil
 		}
 	case "REDIS":
-		if hasRedisSizeChanges(d) {
+		if hasSimpleNodeSizeChanges(d) {
 			return doRedisClusterResize(client, cluster, d, bundleIndex)
 		} else {
 			return nil
 		}
+	case "CADENCE":
+		if hasSimpleNodeSizeChanges(d) {
+			return doCadenceClusterResize(client, cluster, d, bundleIndex)
+		} else {
+			return nil
+		}
+
 	default:
 		return fmt.Errorf("CDC resize does not support: %s", cluster.BundleType)
 	}
@@ -1386,6 +1394,33 @@ func doRedisClusterResize(client APIClientInterface, cluster *Cluster, d resourc
 	nodePurpose = &purpose
 
 	log.Printf("[INFO] Resizing Redis cluster. nodePurpose: %s, newSize: %s", nodePurpose, nodeSize)
+	err = client.ResizeCluster(cluster.ID, cluster.DataCentres[0].ID, nodeSize, nodePurpose)
+	if err != nil {
+		return fmt.Errorf("[Error] Error resizing cluster %s with error %s", cluster.ID, err)
+	}
+	return nil
+}
+
+func getChangedCadenceSizeAndPurpose(nodeSize string) (string, NodePurpose, error) {
+	if len(nodeSize) > 0 {
+		return nodeSize, CADENCE, nil
+	}
+	return "", "", fmt.Errorf("[ERROR] Please change node size before resize")
+}
+
+func doCadenceClusterResize(client APIClientInterface, cluster *Cluster, d resourceDataInterface, bundleIndex int) error {
+	var nodePurpose *NodePurpose
+	var nodeSize string
+	nodeNewSize := getNewSizeOrEmpty(d, "node_size")
+
+	newSize, purpose, err := getChangedCadenceSizeAndPurpose(nodeNewSize)
+	if err != nil {
+		return err
+	}
+	nodeSize = newSize
+	nodePurpose = &purpose
+
+	log.Printf("[INFO] Resizing Cadence cluster. nodePurpose: %s, newSize: %s", nodePurpose, nodeSize)
 	err = client.ResizeCluster(cluster.ID, cluster.DataCentres[0].ID, nodeSize, nodePurpose)
 	if err != nil {
 		return fmt.Errorf("[Error] Error resizing cluster %s with error %s", cluster.ID, err)
