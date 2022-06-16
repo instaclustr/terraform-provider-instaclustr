@@ -352,7 +352,7 @@ func resourceCluster() *schema.Resource {
 								Type: schema.TypeString,
 							},
 							Optional: true,
-							ForceNew: true,
+							ForceNew: false,
 						},
 					},
 				},
@@ -837,14 +837,22 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		OidcProvider:          fmt.Sprintf("%v", d.Get("oidc_provider")),
 	}
 
-	var privateLinkConfig PrivateLinkConfig
+	/*var privateLinkConfig PrivateLinkConfig
 	if len(d.Get("private_link").([]interface{})) > 0 && d.Get("private_link").([]interface{})[0] != nil {
 		privateLink := d.Get("private_link").([]interface{})[0].(map[string]interface{})
 		err := mapstructure.Decode(privateLink, &privateLinkConfig)
 		if err != nil {
 			return fmt.Errorf("[Error] Error decoding the privateLink config to PrivateLinkConfig: %w", err)
 		}
-		createData.PrivateLink = &privateLinkConfig
+
+	}*/
+
+	if len(d.Get("private_link").([]interface{})) > 0 && d.Get("private_link").([]interface{})[0] != nil {
+		privateLinkConfig, err := makePrivateLinkConfig(d)
+		if err != nil {
+			return err
+		}
+		createData.PrivateLink = privateLinkConfig
 	}
 
 	dataCentre := d.Get("data_centre").(string)
@@ -1010,10 +1018,55 @@ func resourceClusterUpdate(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("[Error] Error updating the bundle user passwords, because it should be a KAFKA cluster in order to update the schema-registry or rest-proxy users")
 	}
 
+	if d.HasChange("private_link") {
+		err := updateIAMPrincipals(d, client)
+		if err != nil {
+			return err
+		}
+	}
+	d.SetPartial("private_link")
 	d.SetPartial("node_size")
 	d.SetPartial("kafka_schema_registry_user_password")
 	d.SetPartial("kafka_rest_proxy_user_password")
 	return nil
+}
+
+func updateIAMPrincipals(d *schema.ResourceData, client *APIClient) error {
+	clusterID := d.Get("cluster_id").(string)
+	cluster, err := client.ReadCluster(clusterID)
+	clusterDataCentreId := cluster.DataCentres[0].ID
+
+	log.Printf("[INFO] Updating AWS Endpoint Service IAM Pricipals in %s.", clusterDataCentreId)
+
+	privateLinkConfig, err := makePrivateLinkConfig(d)
+	if err != nil {
+		return err
+	}
+
+	jsonStr, err := json.Marshal(privateLinkConfig)
+
+	if err != nil {
+		return fmt.Errorf("[Error] Error marshalling privateLinkConfig to JSON: %s", err)
+	}
+
+	err = client.UpdateEndpointServicePrincipals(clusterDataCentreId, jsonStr)
+	if err != nil {
+		return err
+	}
+
+	log.Printf("Successfully updated aws endpoint principal in %s", clusterID)
+	return nil
+}
+
+func makePrivateLinkConfig(d *schema.ResourceData) (*PrivateLinkConfig, error) {
+	var privateLinkConfig PrivateLinkConfig
+	privateLink := d.Get("private_link").([]interface{})[0].(map[string]interface{})
+	err := mapstructure.Decode(privateLink, &privateLinkConfig)
+	if err != nil {
+		return nil, fmt.Errorf("[Error] Error decoding the privateLink config to PrivateLinkConfig: %w", err)
+	}
+	return &privateLinkConfig, nil
+
 }
 
 func createBundleUserUpdateRequest(bundleUsername string, bundleUserPassword string) []byte {
