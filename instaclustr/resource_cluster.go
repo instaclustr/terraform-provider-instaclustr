@@ -1056,7 +1056,6 @@ func makePrivateLinkConfig(d *schema.ResourceData) (*PrivateLinkConfig, error) {
 		return nil, fmt.Errorf("[Error] Error decoding the privateLink config to PrivateLinkConfig: %w", err)
 	}
 	return &privateLinkConfig, nil
-
 }
 
 func createBundleUserUpdateRequest(bundleUsername string, bundleUserPassword string) []byte {
