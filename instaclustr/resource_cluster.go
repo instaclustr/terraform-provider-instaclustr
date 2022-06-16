@@ -837,16 +837,6 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		OidcProvider:          fmt.Sprintf("%v", d.Get("oidc_provider")),
 	}
 
-	/*var privateLinkConfig PrivateLinkConfig
-	if len(d.Get("private_link").([]interface{})) > 0 && d.Get("private_link").([]interface{})[0] != nil {
-		privateLink := d.Get("private_link").([]interface{})[0].(map[string]interface{})
-		err := mapstructure.Decode(privateLink, &privateLinkConfig)
-		if err != nil {
-			return fmt.Errorf("[Error] Error decoding the privateLink config to PrivateLinkConfig: %w", err)
-		}
-
-	}*/
-
 	if len(d.Get("private_link").([]interface{})) > 0 && d.Get("private_link").([]interface{})[0] != nil {
 		privateLinkConfig, err := makePrivateLinkConfig(d)
 		if err != nil {
