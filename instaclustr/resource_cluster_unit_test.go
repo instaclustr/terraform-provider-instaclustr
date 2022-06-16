@@ -491,9 +491,9 @@ func TestHasKafkaSizeChanges(t *testing.T) {
 	}
 }
 
-func TestHasCassandraSizeChanges(t *testing.T) {
+func TestHasSimpleNodeSizeChanges(t *testing.T) {
 	data := schema.ResourceData{}
-	if hasChange := hasCassandraSizeChanges(&data); hasChange {
+	if hasChange := hasSimpleNodeSizeChanges(&data); hasChange {
 		t.Fatalf("Expect false but got %v", hasChange)
 	}
 }
@@ -501,11 +501,11 @@ func TestHasCassandraSizeChanges(t *testing.T) {
 func TestDoClusterResizeDefault(t *testing.T) {
 	err := doClusterResize(MockApiClient{
 		cluster: Cluster{
-			ID:         "CADENCE",
-			BundleType: "CADENCE",
+			ID:         "POSTGRESQL",
+			BundleType: "POSTGRESQL",
 		},
 	}, "mock", MockResourceData{}, []Bundle{
-		{Bundle: "CADENCE"},
+		{Bundle: "POSTGRESQL"},
 	})
 	if err == nil || !strings.Contains(err.Error(), "CDC resize does not support:") {
 		t.Fatalf("Expect err with  'CDC resize does not support:' but got %v", err)
@@ -640,6 +640,34 @@ func TestDoClusterResizeRedis(t *testing.T) {
 	}
 	bundles := []Bundle{
 		{Bundle: "REDIS"},
+	}
+	err := doClusterResize(client, "mock", data, bundles)
+	if err != nil {
+		t.Fatalf("Expect nil err but got %v", err)
+	}
+	delete(data.changes, "node_size")
+	err = doClusterResize(client, "mock", data, bundles)
+	if err != nil {
+		t.Fatalf("Expect nil err but got %v", err)
+	}
+}
+
+func TestDoClusterResizeCadence(t *testing.T) {
+	client := MockApiClient{
+		cluster: Cluster{
+			ID:           "mock",
+			BundleType:   "CADENCE",
+			BundleOption: &BundleOptions{},
+			DataCentres: []DataCentre{
+				{ID: "test"},
+			},
+		},
+	}
+	data := MockResourceData{
+		changes: map[string]MockChange{"node_size": {before: "CAD-DEV-t3.small-5", after: "CAD-DEV-t3.medium-30"}},
+	}
+	bundles := []Bundle{
+		{Bundle: "CADENCE"},
 	}
 	err := doClusterResize(client, "mock", data, bundles)
 	if err != nil {

@@ -64,6 +64,7 @@ type BundleOptions struct {
 	PostgresqlSynchronousModeStrict     *bool  `json:"synchronousModeStrict,omitempty" mapstructure:"synchronous_mode_strict,omitempty"`
 	PgBouncerPoolMode                   string `json:"poolMode,omitempty" mapstructure:"pool_mode,omitempty"`
 	CadenceAdvancedVisibility           *bool  `json:"useAdvancedVisibility,omitempty" mapstructure:"advanced_visibility,omitempty"`
+	CadenceUseWebAuth                   *bool  `json:"useCadenceWebAuth,omitempty" mapstructure:"use_cadence_web_auth,omitempty"`
 	CadenceTargetCassandraDataCentreID  string `json:"targetCassandraCdcId,omitempty" mapstructure:"target_cassandra_data_centre_id,omitempty"`
 	CadenceTargetCassandraVPCType       string `json:"targetCassandraVpcType,omitempty" mapstructure:"target_cassandra_vpc_type,omitempty"`
 	CadenceTargetOpensearchDataCentreID string `json:"targetOpenSearchCdcId,omitempty" mapstructure:"target_opensearch_data_centre_id,omitempty"`
