@@ -230,3 +230,19 @@ func TestAPIClientCreateInvalidFirewall(t *testing.T) {
 		t.Fatalf("Firewall creation expected error but got null: %s", err2)
 	}
 }
+
+func TestUpdateEndpointServicePrincipals(t *testing.T) {
+	fileName := "data/valid_iam_principals.json"
+	jsonStr, err := ioutil.ReadFile(fileName)
+
+	if err != nil {
+		t.Fatalf("Failed to load %s: %s", fileName, err)
+	}
+
+	client := SetupMock(t, "aws-endpoint-service/test-cluster-uuid/principals", string(jsonStr), 200)
+	err2 := client.UpdateEndpointServicePrincipals("test-cluster-uuid", jsonStr)
+
+	if err2 != nil {
+		t.Fatalf("Failed to Update endpoint service IAM principals: %s", err2)
+	}
+}
