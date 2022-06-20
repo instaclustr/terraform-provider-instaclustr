@@ -1008,13 +1008,13 @@ func resourceClusterUpdate(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("[Error] Error updating the bundle user passwords, because it should be a KAFKA cluster in order to update the schema-registry or rest-proxy users")
 	}
 
-	if d.HasChange("private_link") {
+	if len(d.Get("private_link").([]interface{})) > 0 && d.Get("private_link").([]interface{})[0] != nil && d.HasChange("private_link") {
 		err := updateIAMPrincipals(d, client)
 		if err != nil {
 			return err
 		}
+		d.SetPartial("private_link")
 	}
-	d.SetPartial("private_link")
 	d.SetPartial("node_size")
 	d.SetPartial("kafka_schema_registry_user_password")
 	d.SetPartial("kafka_rest_proxy_user_password")
