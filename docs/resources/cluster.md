@@ -53,7 +53,7 @@ A resource for managing clusters on Instaclustr Managed Platform. A cluster cont
 
 | Property             | Description                                                    | Default  |
 |----------------------|----------------------------------------------------------------|----------|
-| `iam_principal_arns` | List of IAM Principal ARNs to add to the endpoint service. This field is updatable      | Required |
+| `iam_principal_arns` | List of IAM Principal ARNs to add to the endpoint service. This field is updatable      | Optional |
 
 `bundle`
 
