@@ -23,7 +23,7 @@ resource "instaclustr_cluster" "vpc_cluster" {
 
     bundle {
         bundle = "APACHE_CASSANDRA"
-        version = "3.11.8"
+        version = "4.0.1"
         options = {
             auth_n_authz = false
             client_encryption = false
