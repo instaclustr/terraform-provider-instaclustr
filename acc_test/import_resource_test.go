@@ -254,8 +254,8 @@ func TestKafkaUserResource_importBasic(t *testing.T) {
 			},
 			{
 				PreConfig: func() {
-					fmt.Println("Sleep for 8 minutes to wait for Kafka cluster to be ready for resize.")
-					time.Sleep(8 * time.Minute)
+					fmt.Println("Sleep for 10 minutes to wait for Kafka cluster to be ready for resize.")
+					time.Sleep(10 * time.Minute)
 				},
 				Config:      invalidResizeConfig,
 				ExpectError: regexp.MustCompile("There are no suitable replacement modes for cluster data centre"),

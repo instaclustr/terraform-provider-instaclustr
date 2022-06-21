@@ -338,8 +338,8 @@ func TestAccOpenSearchClusterResize(t *testing.T) {
 			},
 			{
 				PreConfig: func() {
-					fmt.Println("Sleep for 1 minutes to wait for OpenSearch cluster to be ready for resize.")
-					time.Sleep(1 * time.Minute)
+					fmt.Println("Sleep for 3 minutes to wait for OpenSearch cluster to be ready for resize.")
+					time.Sleep(3 * time.Minute)
 				},
 				Config:      invalidResizeConfig,
 				ExpectError: regexp.MustCompile("SRH-DEV-t4g.small"),

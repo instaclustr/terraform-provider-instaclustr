@@ -48,8 +48,8 @@ func TestRedisResource(t *testing.T) {
 			},
 			{
 				PreConfig: func() {
-					fmt.Println("Sleep for 5 minutes to wait for Redis cluster to be ready for resize.")
-					time.Sleep(5 * time.Minute)
+					fmt.Println("Sleep for 7 minutes to wait for Redis cluster to be ready for resize.")
+					time.Sleep(7 * time.Minute)
 				},
 				Config:      invalidResizeConfig,
 				ExpectError: regexp.MustCompile("t3.small"),
