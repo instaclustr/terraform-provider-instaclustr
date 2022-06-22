@@ -837,7 +837,7 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		OidcProvider:          fmt.Sprintf("%v", d.Get("oidc_provider")),
 	}
 
-	if len(d.Get("private_link").([]interface{})) > 0 && d.Get("private_link").([]interface{})[0] != nil {
+	if len(d.Get("private_link").([]interface{})) > 0 {
 		privateLinkConfig, err := makePrivateLinkConfig(d)
 		if err != nil {
 			return err
@@ -1008,7 +1008,7 @@ func resourceClusterUpdate(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("[Error] Error updating the bundle user passwords, because it should be a KAFKA cluster in order to update the schema-registry or rest-proxy users")
 	}
 
-	if len(d.Get("private_link").([]interface{})) > 0 && d.Get("private_link").([]interface{})[0] != nil && d.HasChange("private_link") {
+	if len(d.Get("private_link").([]interface{})) > 0 && d.HasChange("private_link") {
 		err := updateIAMPrincipals(d, client)
 		if err != nil {
 			return err
@@ -1050,12 +1050,17 @@ func updateIAMPrincipals(d *schema.ResourceData, client *APIClient) error {
 
 func makePrivateLinkConfig(d *schema.ResourceData) (*PrivateLinkConfig, error) {
 	var privateLinkConfig PrivateLinkConfig
-	privateLink := d.Get("private_link").([]interface{})[0].(map[string]interface{})
-	err := mapstructure.Decode(privateLink, &privateLinkConfig)
-	if err != nil {
-		return nil, fmt.Errorf("[Error] Error decoding the privateLink config to PrivateLinkConfig: %w", err)
+	if d.Get("private_link").([]interface{})[0] != nil {
+		privateLink := d.Get("private_link").([]interface{})[0].(map[string]interface{})
+		err := mapstructure.Decode(privateLink, &privateLinkConfig)
+		if err != nil {
+			return nil, fmt.Errorf("[Error] Error decoding the privateLink config to PrivateLinkConfig: %w", err)
+		}
+		return &privateLinkConfig, nil
+	} else {
+		return &privateLinkConfig, nil
 	}
-	return &privateLinkConfig, nil
+
 }
 
 func createBundleUserUpdateRequest(bundleUsername string, bundleUserPassword string) []byte {
