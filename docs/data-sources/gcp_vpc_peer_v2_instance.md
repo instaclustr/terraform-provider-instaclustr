@@ -6,7 +6,7 @@ description: |-
   
 ---
 
-# instaclustr_v2_instance (Data Source)
+# instaclustr_gcp_vpc_peer_v2_instance (Data Source)
 
 
 
