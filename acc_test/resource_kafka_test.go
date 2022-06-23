@@ -1,18 +1,18 @@
 package test
 
 import (
-	"encoding/json"
+	//"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"os"
-	"regexp"
-	"strconv"
-
-	"testing"
-
+	//"io/ioutil"
+	//"os"
+	//"regexp"
+	//"strconv"
+	//
+	//"testing"
+	//
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
-	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
+	//"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 )
 
 //// we put the Kafka Connect cluster test here so that the Kafka cluster can be reused amongst bunch of other Kafka related tests
@@ -228,332 +228,332 @@ func testCheckResourceValidKafka(resourceName string) resource.TestCheckFunc {
 	}
 }
 
-func checkKafkaUserCreated(hostname, username, apiKey string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		userResources := [2]string{
-			"instaclustr_kafka_user.kafka_user_charlie",
-			"instaclustr_kafka_user.kafka_user_charlie_scram-sha-512",
-		}
-
-	OUTER:
-		for _, resourceName := range userResources {
-			resourceState := s.Modules[0].Resources[resourceName]
-
-			client := new(instaclustr.APIClient)
-			client.InitClient(hostname, username, apiKey)
-			kafka_username := resourceState.Primary.Attributes["username"]
-			clusterId := resourceState.Primary.Attributes["cluster_id"]
-
-			usernameList, err := client.ReadKafkaUserList(clusterId)
-			if err != nil {
-				return fmt.Errorf("Failed to read Kafka user list from %s: %s", clusterId, err)
-			}
-			for _, str := range usernameList {
-				if kafka_username == str {
-					continue OUTER
-				}
-			}
-			return fmt.Errorf("User %s is not found within the username list of %s", username, clusterId)
-		}
-		return nil
-	}
-}
-
-func checkKafkaUserUpdated(newPassword string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		userResources := [2]string{
-			"instaclustr_kafka_user.kafka_user_charlie",
-			"instaclustr_kafka_user.kafka_user_charlie_scram-sha-512",
-		}
-
-		for _, resourceName := range userResources {
-			resourceState := s.Modules[0].Resources[resourceName]
-			if resourceState == nil {
-				return fmt.Errorf("%s resource not found in state.", resourceName)
-			}
-
-			instanceState := resourceState.Primary
-			if instanceState == nil {
-				return fmt.Errorf("resource has no primary instance")
-			}
-
-			if instanceState.Attributes["password"] != newPassword {
-				return fmt.Errorf("The new password in the terraform state is not as expected after update: %s != %s", instanceState.Attributes["password"], newPassword)
-			}
-		}
-		return nil
-	}
-}
-
-func checkKafkaUserDeleted(kafka_username, hostname, username, apiKey string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		// the resource for the kafka user has been deleted, therefore we need to get the cluster id from the cluster resource
-		resourceState := s.Modules[0].Resources["instaclustr_cluster.kafka_cluster"]
-		clusterId := resourceState.Primary.Attributes["cluster_id"]
-
-		client := new(instaclustr.APIClient)
-		client.InitClient(hostname, username, apiKey)
-
-		usernameList, err := client.ReadKafkaUserList(clusterId)
-		if err != nil {
-			return fmt.Errorf("Failed to read Kafka user list from %s: %s", clusterId, err)
-		}
-		for _, str := range usernameList {
-			if kafka_username == str {
-				return fmt.Errorf("Kafka user %s still exists in %s", kafka_username, clusterId)
-			}
-		}
-		return nil
-	}
-}
-
-func checkKafkaUserListCreated(hostname, username, apiKey string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		resourceState := s.Modules[0].Resources["data.instaclustr_kafka_user_list.kafka_user_list"]
-
-		client := new(instaclustr.APIClient)
-		client.InitClient(hostname, username, apiKey)
-		clusterId := resourceState.Primary.Attributes["cluster_id"]
-
-		usernameList, err := client.ReadKafkaUserList(clusterId)
-		if err != nil {
-			return fmt.Errorf("Failed to read Kafka user list from %s: %s", clusterId, err)
-		}
-
-		resourceListLen, _ := strconv.Atoi(resourceState.Primary.Attributes["username_list.#"])
-		if resourceListLen != len(usernameList) {
-			return fmt.Errorf("List of Kafka users of the Kafka cluster and resource are different (Length %d != %d). ", resourceListLen, len(usernameList))
-		}
-
-		for index, kafka_username := range usernameList {
-			resourceUser := resourceState.Primary.Attributes[fmt.Sprintf("username_list.%d", index)]
-			if resourceUser != kafka_username {
-				return fmt.Errorf("List of Kafka users of the Kafka cluster and resource are different (Index %d: %s != %s). ", index, resourceUser, kafka_username)
-			}
-		}
-
-		return nil
-	}
-}
-
-// Checks for Kafka Topic
-func checkKafkaTopicCreated(hostname, username, apiKey string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		topicResources := [2]string{
-			"instaclustr_kafka_topic.kafka_topic_test",
-			"instaclustr_kafka_topic.kafka_topic_test2",
-		}
-
-	OUTER:
-		for _, resourceName := range topicResources {
-			resourceState := s.Modules[0].Resources[resourceName]
-
-			client := new(instaclustr.APIClient)
-			client.InitClient(hostname, username, apiKey)
-			kafka_topic_name := resourceState.Primary.Attributes["topic"]
-			clusterId := resourceState.Primary.Attributes["cluster_id"]
-
-			topicList, err := client.ReadKafkaTopicList(clusterId)
-			if err != nil {
-				return fmt.Errorf("Failed to read Kafka topic list from %s: %s", clusterId, err)
-			}
-			for _, str := range topicList.Topics {
-				if kafka_topic_name == str {
-					continue OUTER
-				}
-			}
-			return fmt.Errorf("Topic %s is not found within the topic list of %s", kafka_topic_name, clusterId)
-		}
-		return nil
-	}
-}
-
-func checkKafkaTopicListCreated(hostname, username, apiKey string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		resourceState := s.Modules[0].Resources["data.instaclustr_kafka_topic_list.kafka_topic_list"]
-
-		client := new(instaclustr.APIClient)
-		client.InitClient(hostname, username, apiKey)
-		clusterId := resourceState.Primary.Attributes["cluster_id"]
-
-		kafkaTopics, err := client.ReadKafkaTopicList(clusterId)
-		if err != nil {
-			return fmt.Errorf("Failed to read Kafka topic list from %s: %s", clusterId, err)
-		}
-		topicList := kafkaTopics.Topics
-
-		resourceListLen, _ := strconv.Atoi(resourceState.Primary.Attributes["topics.#"])
-		if resourceListLen != len(topicList) {
-			return fmt.Errorf("List of Kafka topics of the Kafka cluster and resource are different (Length %d != %d). ", resourceListLen, len(topicList))
-		}
-
-		for index, kafka_topic := range topicList {
-			resourceTopic := resourceState.Primary.Attributes[fmt.Sprintf("topics.%d", index)]
-			if resourceTopic != kafka_topic {
-				return fmt.Errorf("List of Kafka topics of the Kafka cluster and resource are different (Index %d: %s != %s). ", index, resourceTopic, kafka_topic)
-			}
-		}
-
-		return nil
-	}
-}
-
-func checkKafkaTopicUpdated(hostname, username, apiKey string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		client := new(instaclustr.APIClient)
-		client.InitClient(hostname, username, apiKey)
-		resourceName := "instaclustr_kafka_topic.kafka_topic_test2"
-
-		resourceState := s.Modules[0].Resources[resourceName]
-		if resourceState == nil {
-			return fmt.Errorf("%s resource not found in state.", resourceName)
-		}
-		clusterId := resourceState.Primary.Attributes["cluster_id"]
-		instanceState := resourceState.Primary
-		if instanceState == nil {
-			return fmt.Errorf("resource has no primary instance")
-		}
-		kafka_topic_name := instanceState.Attributes["topic"]
-		kafkaTopicConfig, err := client.ReadKafkaTopicConfig(clusterId, kafka_topic_name)
-		if err != nil {
-			return fmt.Errorf("Failed to read Kafka topic %s's config: %s", kafka_topic_name, err)
-		}
-
-		if kafkaTopicConfig.Config.MinInsyncReplicas != 2 || kafkaTopicConfig.Config.MessageFormatVersion != "2.3-IV1" ||
-			*kafkaTopicConfig.Config.UncleanLeaderElectionEnable != true {
-			return fmt.Errorf("The topic %s's configs in the cluster are not updated as expected.", kafka_topic_name)
-		}
-
-		if instanceState.Attributes["config.0.min_insync_replicas"] != "2" || instanceState.Attributes["config.0.message_format_version"] != "2.3-IV1" ||
-			instanceState.Attributes["config.0.unclean_leader_election_enable"] != "true" {
-			return fmt.Errorf("The topic %s's configs in the terraform state are not updated as expected.", kafka_topic_name)
-		}
-		return nil
-	}
-}
-
-func checkKafkaTopicDeleted(kafka_topic_name, hostname, username, apiKey string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		// the resource for the kafka topic has been deleted, therefore we need to get the cluster id from the cluster resource
-		resourceState := s.Modules[0].Resources["instaclustr_cluster.kafka_cluster"]
-		clusterId := resourceState.Primary.Attributes["cluster_id"]
-
-		client := new(instaclustr.APIClient)
-		client.InitClient(hostname, username, apiKey)
-
-		topicList, err := client.ReadKafkaTopicList(clusterId)
-		if err != nil {
-			return fmt.Errorf("Failed to read Kafka topic list from %s: %s", clusterId, err)
-		}
-		for _, str := range topicList.Topics {
-			if kafka_topic_name == str {
-				return fmt.Errorf("Kafka topic %s still exists in %s", kafka_topic_name, clusterId)
-			}
-		}
-		return nil
-	}
-}
-
-// Checks for Kafka ACL
-func checkKafkaAclCreated(hostname string, username string, apiKey string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		resourceState := s.Modules[0].Resources["instaclustr_kafka_acl.test_acl"]
-
-		client := new(instaclustr.APIClient)
-		client.InitClient(hostname, username, apiKey)
-
-		principal := resourceState.Primary.Attributes["principal"]
-		clusterId := resourceState.Primary.Attributes["cluster_id"]
-		host := resourceState.Primary.Attributes["host"]
-		resourceType := resourceState.Primary.Attributes["resource_type"]
-		resourceName := resourceState.Primary.Attributes["resource_name"]
-		operation := resourceState.Primary.Attributes["operation"]
-		permissionType := resourceState.Primary.Attributes["permission_type"]
-		patternType := resourceState.Primary.Attributes["pattern_type"]
-
-		data := instaclustr.KafkaAcl {
-			Principal:	principal,
-			Host:		host,
-			ResourceType: 	resourceType,
-			ResourceName:	resourceName,
-			Operation: 	operation,
-			PermissionType: permissionType,
-			PatternType: 	patternType,
-		}
-
-		var jsonStr []byte
-		jsonStr, err := json.Marshal(data)
-		if err != nil {
-			return fmt.Errorf("[Error] Error creating kafka ACL read request: %s", err)
-		}
-
-		acls, err := client.ReadKafkaAcls(clusterId, jsonStr)
-		if err != nil {
-			return fmt.Errorf("Failed to read Kafka ACL list from %s: %s", clusterId, err)
-		}
-
-		if len(acls) == 0 {
-			return fmt.Errorf("The ACL is not found in the cluster %s", clusterId)
-		}
-
-		return nil
-	}
-}
-
-func checkKafkaAclDeleted(acl instaclustr.KafkaAcl, hostname string, username string, apiKey string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		// the resource for the kafka user has been deleted, therefore we need to get the cluster id from the cluster resource
-		resourceState := s.Modules[0].Resources["instaclustr_cluster.kafka_cluster"]
-		clusterId := resourceState.Primary.Attributes["cluster_id"]
-
-		client := new(instaclustr.APIClient)
-		client.InitClient(hostname, username, apiKey)
-
-		var jsonStr []byte
-		jsonStr, err := json.Marshal(acl)
-		acls, err := client.ReadKafkaAcls(clusterId, jsonStr)
-		if err != nil {
-			return fmt.Errorf("Failed to read Kafka ACL list from %s: %s", clusterId, err)
-		}
-	
-		if len(acls) > 0 {
-			return fmt.Errorf("Kafka ACL still exists in %s", clusterId)
-		}
-		return nil
-	}
-}
-
-func checkKafkaAclListCreated(hostname, username, apiKey string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		resourceState := s.Modules[0].Resources["data.instaclustr_kafka_acl_list.test_acl_list"]
-
-		client := new(instaclustr.APIClient)
-		client.InitClient(hostname, username, apiKey)
-		clusterId := resourceState.Primary.Attributes["cluster_id"]
-
-		data := instaclustr.KafkaAcl {
-			ResourceType: 	"ANY",
-			Operation: 	"ANY",
-			PermissionType: "ANY",
-			PatternType: 	"ANY",
-		}
-
-		var jsonStr []byte
-		jsonStr, err := json.Marshal(data)
-		if err != nil {
-			return fmt.Errorf("[Error] Error creating kafka ACL read request: %s", err)
-		}
-
-		aclList, err := client.ReadKafkaAcls(clusterId, jsonStr)
-		if err != nil {
-			return fmt.Errorf("Failed to read Kafka ACL list from %s: %s", clusterId, err)
-		}
-
-		resourceListLen, _ := strconv.Atoi(resourceState.Primary.Attributes["acls.#"])
-		if resourceListLen != len(aclList) {
-			return fmt.Errorf("List of Kafka Acls of the Kafka cluster and resource are different (Length %d != %d).", resourceListLen, len(aclList))
-		}
-
-		return nil
-	}
-}
+//func checkKafkaUserCreated(hostname, username, apiKey string) resource.TestCheckFunc {
+//	return func(s *terraform.State) error {
+//		userResources := [2]string{
+//			"instaclustr_kafka_user.kafka_user_charlie",
+//			"instaclustr_kafka_user.kafka_user_charlie_scram-sha-512",
+//		}
+//
+//	OUTER:
+//		for _, resourceName := range userResources {
+//			resourceState := s.Modules[0].Resources[resourceName]
+//
+//			client := new(instaclustr.APIClient)
+//			client.InitClient(hostname, username, apiKey)
+//			kafka_username := resourceState.Primary.Attributes["username"]
+//			clusterId := resourceState.Primary.Attributes["cluster_id"]
+//
+//			usernameList, err := client.ReadKafkaUserList(clusterId)
+//			if err != nil {
+//				return fmt.Errorf("Failed to read Kafka user list from %s: %s", clusterId, err)
+//			}
+//			for _, str := range usernameList {
+//				if kafka_username == str {
+//					continue OUTER
+//				}
+//			}
+//			return fmt.Errorf("User %s is not found within the username list of %s", username, clusterId)
+//		}
+//		return nil
+//	}
+//}
+//
+//func checkKafkaUserUpdated(newPassword string) resource.TestCheckFunc {
+//	return func(s *terraform.State) error {
+//		userResources := [2]string{
+//			"instaclustr_kafka_user.kafka_user_charlie",
+//			"instaclustr_kafka_user.kafka_user_charlie_scram-sha-512",
+//		}
+//
+//		for _, resourceName := range userResources {
+//			resourceState := s.Modules[0].Resources[resourceName]
+//			if resourceState == nil {
+//				return fmt.Errorf("%s resource not found in state.", resourceName)
+//			}
+//
+//			instanceState := resourceState.Primary
+//			if instanceState == nil {
+//				return fmt.Errorf("resource has no primary instance")
+//			}
+//
+//			if instanceState.Attributes["password"] != newPassword {
+//				return fmt.Errorf("The new password in the terraform state is not as expected after update: %s != %s", instanceState.Attributes["password"], newPassword)
+//			}
+//		}
+//		return nil
+//	}
+//}
+//
+//func checkKafkaUserDeleted(kafka_username, hostname, username, apiKey string) resource.TestCheckFunc {
+//	return func(s *terraform.State) error {
+//		// the resource for the kafka user has been deleted, therefore we need to get the cluster id from the cluster resource
+//		resourceState := s.Modules[0].Resources["instaclustr_cluster.kafka_cluster"]
+//		clusterId := resourceState.Primary.Attributes["cluster_id"]
+//
+//		client := new(instaclustr.APIClient)
+//		client.InitClient(hostname, username, apiKey)
+//
+//		usernameList, err := client.ReadKafkaUserList(clusterId)
+//		if err != nil {
+//			return fmt.Errorf("Failed to read Kafka user list from %s: %s", clusterId, err)
+//		}
+//		for _, str := range usernameList {
+//			if kafka_username == str {
+//				return fmt.Errorf("Kafka user %s still exists in %s", kafka_username, clusterId)
+//			}
+//		}
+//		return nil
+//	}
+//}
+//
+//func checkKafkaUserListCreated(hostname, username, apiKey string) resource.TestCheckFunc {
+//	return func(s *terraform.State) error {
+//		resourceState := s.Modules[0].Resources["data.instaclustr_kafka_user_list.kafka_user_list"]
+//
+//		client := new(instaclustr.APIClient)
+//		client.InitClient(hostname, username, apiKey)
+//		clusterId := resourceState.Primary.Attributes["cluster_id"]
+//
+//		usernameList, err := client.ReadKafkaUserList(clusterId)
+//		if err != nil {
+//			return fmt.Errorf("Failed to read Kafka user list from %s: %s", clusterId, err)
+//		}
+//
+//		resourceListLen, _ := strconv.Atoi(resourceState.Primary.Attributes["username_list.#"])
+//		if resourceListLen != len(usernameList) {
+//			return fmt.Errorf("List of Kafka users of the Kafka cluster and resource are different (Length %d != %d). ", resourceListLen, len(usernameList))
+//		}
+//
+//		for index, kafka_username := range usernameList {
+//			resourceUser := resourceState.Primary.Attributes[fmt.Sprintf("username_list.%d", index)]
+//			if resourceUser != kafka_username {
+//				return fmt.Errorf("List of Kafka users of the Kafka cluster and resource are different (Index %d: %s != %s). ", index, resourceUser, kafka_username)
+//			}
+//		}
+//
+//		return nil
+//	}
+//}
+//
+//// Checks for Kafka Topic
+//func checkKafkaTopicCreated(hostname, username, apiKey string) resource.TestCheckFunc {
+//	return func(s *terraform.State) error {
+//		topicResources := [2]string{
+//			"instaclustr_kafka_topic.kafka_topic_test",
+//			"instaclustr_kafka_topic.kafka_topic_test2",
+//		}
+//
+//	OUTER:
+//		for _, resourceName := range topicResources {
+//			resourceState := s.Modules[0].Resources[resourceName]
+//
+//			client := new(instaclustr.APIClient)
+//			client.InitClient(hostname, username, apiKey)
+//			kafka_topic_name := resourceState.Primary.Attributes["topic"]
+//			clusterId := resourceState.Primary.Attributes["cluster_id"]
+//
+//			topicList, err := client.ReadKafkaTopicList(clusterId)
+//			if err != nil {
+//				return fmt.Errorf("Failed to read Kafka topic list from %s: %s", clusterId, err)
+//			}
+//			for _, str := range topicList.Topics {
+//				if kafka_topic_name == str {
+//					continue OUTER
+//				}
+//			}
+//			return fmt.Errorf("Topic %s is not found within the topic list of %s", kafka_topic_name, clusterId)
+//		}
+//		return nil
+//	}
+//}
+//
+//func checkKafkaTopicListCreated(hostname, username, apiKey string) resource.TestCheckFunc {
+//	return func(s *terraform.State) error {
+//		resourceState := s.Modules[0].Resources["data.instaclustr_kafka_topic_list.kafka_topic_list"]
+//
+//		client := new(instaclustr.APIClient)
+//		client.InitClient(hostname, username, apiKey)
+//		clusterId := resourceState.Primary.Attributes["cluster_id"]
+//
+//		kafkaTopics, err := client.ReadKafkaTopicList(clusterId)
+//		if err != nil {
+//			return fmt.Errorf("Failed to read Kafka topic list from %s: %s", clusterId, err)
+//		}
+//		topicList := kafkaTopics.Topics
+//
+//		resourceListLen, _ := strconv.Atoi(resourceState.Primary.Attributes["topics.#"])
+//		if resourceListLen != len(topicList) {
+//			return fmt.Errorf("List of Kafka topics of the Kafka cluster and resource are different (Length %d != %d). ", resourceListLen, len(topicList))
+//		}
+//
+//		for index, kafka_topic := range topicList {
+//			resourceTopic := resourceState.Primary.Attributes[fmt.Sprintf("topics.%d", index)]
+//			if resourceTopic != kafka_topic {
+//				return fmt.Errorf("List of Kafka topics of the Kafka cluster and resource are different (Index %d: %s != %s). ", index, resourceTopic, kafka_topic)
+//			}
+//		}
+//
+//		return nil
+//	}
+//}
+//
+//func checkKafkaTopicUpdated(hostname, username, apiKey string) resource.TestCheckFunc {
+//	return func(s *terraform.State) error {
+//		client := new(instaclustr.APIClient)
+//		client.InitClient(hostname, username, apiKey)
+//		resourceName := "instaclustr_kafka_topic.kafka_topic_test2"
+//
+//		resourceState := s.Modules[0].Resources[resourceName]
+//		if resourceState == nil {
+//			return fmt.Errorf("%s resource not found in state.", resourceName)
+//		}
+//		clusterId := resourceState.Primary.Attributes["cluster_id"]
+//		instanceState := resourceState.Primary
+//		if instanceState == nil {
+//			return fmt.Errorf("resource has no primary instance")
+//		}
+//		kafka_topic_name := instanceState.Attributes["topic"]
+//		kafkaTopicConfig, err := client.ReadKafkaTopicConfig(clusterId, kafka_topic_name)
+//		if err != nil {
+//			return fmt.Errorf("Failed to read Kafka topic %s's config: %s", kafka_topic_name, err)
+//		}
+//
+//		if kafkaTopicConfig.Config.MinInsyncReplicas != 2 || kafkaTopicConfig.Config.MessageFormatVersion != "2.3-IV1" ||
+//			*kafkaTopicConfig.Config.UncleanLeaderElectionEnable != true {
+//			return fmt.Errorf("The topic %s's configs in the cluster are not updated as expected.", kafka_topic_name)
+//		}
+//
+//		if instanceState.Attributes["config.0.min_insync_replicas"] != "2" || instanceState.Attributes["config.0.message_format_version"] != "2.3-IV1" ||
+//			instanceState.Attributes["config.0.unclean_leader_election_enable"] != "true" {
+//			return fmt.Errorf("The topic %s's configs in the terraform state are not updated as expected.", kafka_topic_name)
+//		}
+//		return nil
+//	}
+//}
+//
+//func checkKafkaTopicDeleted(kafka_topic_name, hostname, username, apiKey string) resource.TestCheckFunc {
+//	return func(s *terraform.State) error {
+//		// the resource for the kafka topic has been deleted, therefore we need to get the cluster id from the cluster resource
+//		resourceState := s.Modules[0].Resources["instaclustr_cluster.kafka_cluster"]
+//		clusterId := resourceState.Primary.Attributes["cluster_id"]
+//
+//		client := new(instaclustr.APIClient)
+//		client.InitClient(hostname, username, apiKey)
+//
+//		topicList, err := client.ReadKafkaTopicList(clusterId)
+//		if err != nil {
+//			return fmt.Errorf("Failed to read Kafka topic list from %s: %s", clusterId, err)
+//		}
+//		for _, str := range topicList.Topics {
+//			if kafka_topic_name == str {
+//				return fmt.Errorf("Kafka topic %s still exists in %s", kafka_topic_name, clusterId)
+//			}
+//		}
+//		return nil
+//	}
+//}
+//
+//// Checks for Kafka ACL
+//func checkKafkaAclCreated(hostname string, username string, apiKey string) resource.TestCheckFunc {
+//	return func(s *terraform.State) error {
+//		resourceState := s.Modules[0].Resources["instaclustr_kafka_acl.test_acl"]
+//
+//		client := new(instaclustr.APIClient)
+//		client.InitClient(hostname, username, apiKey)
+//
+//		principal := resourceState.Primary.Attributes["principal"]
+//		clusterId := resourceState.Primary.Attributes["cluster_id"]
+//		host := resourceState.Primary.Attributes["host"]
+//		resourceType := resourceState.Primary.Attributes["resource_type"]
+//		resourceName := resourceState.Primary.Attributes["resource_name"]
+//		operation := resourceState.Primary.Attributes["operation"]
+//		permissionType := resourceState.Primary.Attributes["permission_type"]
+//		patternType := resourceState.Primary.Attributes["pattern_type"]
+//
+//		data := instaclustr.KafkaAcl {
+//			Principal:	principal,
+//			Host:		host,
+//			ResourceType: 	resourceType,
+//			ResourceName:	resourceName,
+//			Operation: 	operation,
+//			PermissionType: permissionType,
+//			PatternType: 	patternType,
+//		}
+//
+//		var jsonStr []byte
+//		jsonStr, err := json.Marshal(data)
+//		if err != nil {
+//			return fmt.Errorf("[Error] Error creating kafka ACL read request: %s", err)
+//		}
+//
+//		acls, err := client.ReadKafkaAcls(clusterId, jsonStr)
+//		if err != nil {
+//			return fmt.Errorf("Failed to read Kafka ACL list from %s: %s", clusterId, err)
+//		}
+//
+//		if len(acls) == 0 {
+//			return fmt.Errorf("The ACL is not found in the cluster %s", clusterId)
+//		}
+//
+//		return nil
+//	}
+//}
+//
+//func checkKafkaAclDeleted(acl instaclustr.KafkaAcl, hostname string, username string, apiKey string) resource.TestCheckFunc {
+//	return func(s *terraform.State) error {
+//		// the resource for the kafka user has been deleted, therefore we need to get the cluster id from the cluster resource
+//		resourceState := s.Modules[0].Resources["instaclustr_cluster.kafka_cluster"]
+//		clusterId := resourceState.Primary.Attributes["cluster_id"]
+//
+//		client := new(instaclustr.APIClient)
+//		client.InitClient(hostname, username, apiKey)
+//
+//		var jsonStr []byte
+//		jsonStr, err := json.Marshal(acl)
+//		acls, err := client.ReadKafkaAcls(clusterId, jsonStr)
+//		if err != nil {
+//			return fmt.Errorf("Failed to read Kafka ACL list from %s: %s", clusterId, err)
+//		}
+//
+//		if len(acls) > 0 {
+//			return fmt.Errorf("Kafka ACL still exists in %s", clusterId)
+//		}
+//		return nil
+//	}
+//}
+//
+//func checkKafkaAclListCreated(hostname, username, apiKey string) resource.TestCheckFunc {
+//	return func(s *terraform.State) error {
+//		resourceState := s.Modules[0].Resources["data.instaclustr_kafka_acl_list.test_acl_list"]
+//
+//		client := new(instaclustr.APIClient)
+//		client.InitClient(hostname, username, apiKey)
+//		clusterId := resourceState.Primary.Attributes["cluster_id"]
+//
+//		data := instaclustr.KafkaAcl {
+//			ResourceType: 	"ANY",
+//			Operation: 	"ANY",
+//			PermissionType: "ANY",
+//			PatternType: 	"ANY",
+//		}
+//
+//		var jsonStr []byte
+//		jsonStr, err := json.Marshal(data)
+//		if err != nil {
+//			return fmt.Errorf("[Error] Error creating kafka ACL read request: %s", err)
+//		}
+//
+//		aclList, err := client.ReadKafkaAcls(clusterId, jsonStr)
+//		if err != nil {
+//			return fmt.Errorf("Failed to read Kafka ACL list from %s: %s", clusterId, err)
+//		}
+//
+//		resourceListLen, _ := strconv.Atoi(resourceState.Primary.Attributes["acls.#"])
+//		if resourceListLen != len(aclList) {
+//			return fmt.Errorf("List of Kafka Acls of the Kafka cluster and resource are different (Length %d != %d).", resourceListLen, len(aclList))
+//		}
+//
+//		return nil
+//	}
+//}
