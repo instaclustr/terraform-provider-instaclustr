@@ -15,203 +15,203 @@ import (
 	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 )
 
-// we put the Kafka Connect cluster test here so that the Kafka cluster can be reused amongst bunch of other Kafka related tests
-func TestKafkaResources(t *testing.T) {
-	testProviders := map[string]terraform.ResourceProvider{
-		"instaclustr": instaclustr.Provider(),
-	}
-
-	username := os.Getenv("IC_USERNAME")
-	apiKey := os.Getenv("IC_API_KEY")
-	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
-
-	// config bytes for Kafka user
-	configBytes1, _ := ioutil.ReadFile("data/kafka_user_create_cluster.tf")
-	configBytes2, _ := ioutil.ReadFile("data/kafka_user_create_user.tf")
-	configBytes3, _ := ioutil.ReadFile("data/kafka_user_user_list.tf")
-	configBytes4, _ := ioutil.ReadFile("data/invalid_kafka_user_create.tf")
-	configBytes5, _ := ioutil.ReadFile("data/invalid_kafka_user_create_duplicate.tf")
-
-	// config bytes for Kafka Topic
-	configBytes6, _ := ioutil.ReadFile("data/kafka_topic_create_topic.tf")
-	configBytes7, _ := ioutil.ReadFile("data/kafka_topic_topic_list.tf")
-	configBytes8, _ := ioutil.ReadFile("data/invalid_kafka_topic_create_duplicate.tf")
-	configBytes9, _ := ioutil.ReadFile("data/kafka_topic_config_update.tf")
-
-	// config bytes for Kafka ACL
-	configBytesAcl1, _ := ioutil.ReadFile("data/kafka_acl_create_acl.tf")
-	configBytesAcl2, _ := ioutil.ReadFile("data/kafka_acl_create_acl_duplicate.tf")
-	configBytesAcl3, _ := ioutil.ReadFile("data/kafka_acl_list.tf")
-
-	// config bytes for Kafka Connect
-	kcConfigBytes, _ := ioutil.ReadFile("data/kafka_connect_create_cluster.tf")
-
-	kafkaUsername1 := "charlie1"
-	kafkaUsername2 := "charlie2"
-	kafkaUsername3 := "charlie3"
-	oldPassword := "charlie123!"
-	newPassword := "charlie123standard!"
-	kafkaNodeSize := "KFK-DEV-t4g.medium-80"
-	zookeeperNodeSize := "KDZ-DEV-t4g.small-30"
-	kafkaVersion := "3.0.0"
-	kcVersion := "3.0.0"
-	topic1 := "test1"
-	topic2 := "test2"
-	azureStorageAccountName := os.Getenv("IC_AZURE_STORAGE_ACCOUNT_NAME")
-	azureStorageAccountKey := os.Getenv("IC_AZURE_STORAGE_ACCOUNT_KEY")
-	azureStorageContainerName := os.Getenv("IC_AZURE_STORAGE_CONTAINER_NAME")
-	awsAccessKey := os.Getenv("IC_AWS_ACCESS_KEY")
-	awsSecretKey := os.Getenv("IC_AWS_SECRET_KEY")
-	S3BucketName := os.Getenv("IC_S3_BUCKET_NAME")
-
-	acl := instaclustr.KafkaAcl {
-		Principal:	"User:test",
-		Host:		"*",
-		ResourceType: 	"TOPIC",
-		ResourceName: 	"*",
-		Operation: 	"ALL",
-		PermissionType: "ALLOW",
-		PatternType: 	"LITERAL",
-	}
-
-	// Kafka user management tests
-	createClusterConfig := fmt.Sprintf(string(configBytes1), username, apiKey, hostname, kafkaNodeSize, kafkaVersion, zookeeperNodeSize)
-	createKafkaUserConfig := fmt.Sprintf(createClusterConfig + string(configBytes2), kafkaUsername1, oldPassword, kafkaUsername2, oldPassword)
-	createKafkaUserListConfig := fmt.Sprintf(createKafkaUserConfig + string(configBytes3))
-	updateKafkaUserConfig := fmt.Sprintf(createClusterConfig + string(configBytes2), kafkaUsername1, newPassword, kafkaUsername2, newPassword)
-	invalidKafkaUserCreateConfigDuplicate := fmt.Sprintf(updateKafkaUserConfig + string(configBytes5), kafkaUsername1, oldPassword)
-	invalidKafkaUserCreateConfig := fmt.Sprintf(createClusterConfig + string(configBytes4), kafkaUsername3, oldPassword)
-	
-	// Kafka topic management tests
-	createKafkaTopicConfig := fmt.Sprintf(createClusterConfig + string(configBytes6), topic1, topic2)
-	createKafkaTopicListConfig := fmt.Sprintf(createKafkaTopicConfig + string(configBytes7))
-	invalidKafkaTopicCreateConfigDuplicate := fmt.Sprintf(createKafkaTopicListConfig + string(configBytes8), topic1)
-	updateKafkaTopicConfig := fmt.Sprintf(createClusterConfig + string(configBytes9), topic1, topic2)
-
-	// Kafka ACL management tests
-	createKafkaAclConfig := fmt.Sprintf(createClusterConfig + string(configBytesAcl1), acl.Principal, acl.Host,
-		acl.ResourceType, acl.ResourceName, acl.Operation, acl.PermissionType, acl.PatternType)
-	invalidKafkaAclCreateConfigDuplicate := fmt.Sprintf(createKafkaAclConfig + string(configBytesAcl2), acl.Principal,
-		acl.Host, acl.ResourceType, acl.ResourceName, acl.Operation, acl.PermissionType, acl.PatternType)
-	createKafkaAclListConfig := fmt.Sprintf(createClusterConfig + string(configBytesAcl3))
-
-	// Kafka Connect tests
-	kcConfig := fmt.Sprintf(createClusterConfig + string(kcConfigBytes), kcVersion, S3BucketName, awsAccessKey,
-		awsSecretKey, azureStorageAccountName, azureStorageAccountKey, kcVersion, azureStorageContainerName)
-
-	resource.ParallelTest(t, resource.TestCase{
-		Providers: testProviders,
-		Steps: []resource.TestStep{
-			{
-				Config: createClusterConfig,
-				Check: resource.ComposeTestCheckFunc(
-					testCheckResourceValidKafka("instaclustr_cluster.kafka_cluster"),
-					checkClusterRunning("kafka_cluster", hostname, username, apiKey),
-					testCheckContactIPCorrect("kafka_cluster", hostname, username, apiKey, 3, 3),
-				),
-			},
-			{
-				Config: createKafkaUserConfig,
-				Check: resource.ComposeTestCheckFunc(
-					testCheckResourceValidKafka("instaclustr_kafka_user.kafka_user_charlie"),
-					checkClusterRunning("kafka_cluster", hostname, username, apiKey),
-					checkKafkaUserCreated(hostname, username, apiKey),
-				),
-			},
-			{
-				Config: createKafkaUserListConfig,
-				Check: resource.ComposeTestCheckFunc(
-					testCheckResourceValidKafka("data.instaclustr_kafka_user_list.kafka_user_list"),
-					checkKafkaUserListCreated(hostname, username, apiKey),
-				),
-			},
-			// Currently there is no easy way to check that the password for a Kafka user has been changed.
-			// So, we just have to trust that successful API query changed the kafka user password.
-			{
-				Config: updateKafkaUserConfig,
-				Check:  checkKafkaUserUpdated(newPassword),
-			},
-			{
-				Config:      invalidKafkaUserCreateConfigDuplicate,
-				ExpectError: regexp.MustCompile("A Kafka user with this username already exists on this cluster."),
-			},
-			// Can't rely on the resource destruction because we need the destruction to happen in order and checked,
-			// i.e., we need to destroy the kafka user resources first.
-			{
-				Config: createClusterConfig,
-				Check: resource.ComposeTestCheckFunc(checkKafkaUserDeleted(kafkaUsername1, hostname, username, apiKey),
-					checkKafkaUserDeleted(kafkaUsername2, hostname, username, apiKey),
-					checkKafkaUserDeleted(kafkaUsername3, hostname, username, apiKey)),
-			},
-			{
-				Config:      invalidKafkaUserCreateConfig,
-				ExpectError: regexp.MustCompile("invalid value for the 'sasl-scram-mechanism' option"),
-			},
-			// Kafka ACL test
-			{
-				Config: createKafkaAclConfig,
-				Check: resource.ComposeTestCheckFunc(
-					testCheckResourceValidKafka("instaclustr_kafka_acl.test_acl"),
-					checkKafkaAclCreated(hostname, username, apiKey),
-				),
-			},
-			{
-				Config: invalidKafkaAclCreateConfigDuplicate,
-				ExpectError: regexp.MustCompile(".*Error creating kafka ACL: the resource already exists, use terraform import instead."),
-			},
-			{
-				Config: createClusterConfig,
-				Check:  checkKafkaAclDeleted(acl, hostname, username, apiKey),
-			},
-			{
-				Config: createKafkaAclListConfig,
-				Check: resource.ComposeTestCheckFunc(
-					testCheckResourceValidKafka("data.instaclustr_kafka_acl_list.test_acl_list"),
-					checkKafkaAclListCreated(hostname, username, apiKey),
-				),
-			},
-			// Kafka Topic test
-			{
-				Config: createKafkaTopicConfig,
-				Check: resource.ComposeTestCheckFunc(
-					testCheckResourceValidKafka("instaclustr_kafka_topic.kafka_topic_test"),
-					checkClusterRunning("kafka_cluster", hostname, username, apiKey),
-					checkKafkaTopicCreated(hostname, username, apiKey),
-				),
-			},
-			{
-				Config: createKafkaTopicListConfig,
-				Check: resource.ComposeTestCheckFunc(
-					testCheckResourceValidKafka("data.instaclustr_kafka_topic_list.kafka_topic_list"),
-					checkKafkaTopicListCreated(hostname, username, apiKey),
-				),
-			},
-			{
-				Config:      invalidKafkaTopicCreateConfigDuplicate,
-				ExpectError: regexp.MustCompile("Topic 'test1' already exists.."),
-			},
-			{
-				Config: updateKafkaTopicConfig,
-				Check:  checkKafkaTopicUpdated(hostname, username, apiKey),
-			},
-			// Can't rely on the resource destruction because we need the destruction to happen in order and checked,
-			// i.e., we need to destroy the kafka topics resources first.
-			{
-				Config: createClusterConfig,
-				Check: resource.ComposeTestCheckFunc(checkKafkaTopicDeleted(topic1, hostname, username, apiKey),
-					checkKafkaTopicDeleted(topic2, hostname, username, apiKey)),
-			},
-			// Kafka Connect test
-			{
-				Config: kcConfig,
-				Check: resource.ComposeTestCheckFunc(
-					testCheckResourceValidKafka("instaclustr_cluster.validKCAws"),
-					testCheckResourceValidKafka("instaclustr_cluster.validKCAzure"),
-				),
-			},
-		},
-	})
-}
+//// we put the Kafka Connect cluster test here so that the Kafka cluster can be reused amongst bunch of other Kafka related tests
+//func TestKafkaResources(t *testing.T) {
+//	testProviders := map[string]terraform.ResourceProvider{
+//		"instaclustr": instaclustr.Provider(),
+//	}
+//
+//	username := os.Getenv("IC_USERNAME")
+//	apiKey := os.Getenv("IC_API_KEY")
+//	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+//
+//	// config bytes for Kafka user
+//	configBytes1, _ := ioutil.ReadFile("data/kafka_user_create_cluster.tf")
+//	configBytes2, _ := ioutil.ReadFile("data/kafka_user_create_user.tf")
+//	configBytes3, _ := ioutil.ReadFile("data/kafka_user_user_list.tf")
+//	configBytes4, _ := ioutil.ReadFile("data/invalid_kafka_user_create.tf")
+//	configBytes5, _ := ioutil.ReadFile("data/invalid_kafka_user_create_duplicate.tf")
+//
+//	// config bytes for Kafka Topic
+//	configBytes6, _ := ioutil.ReadFile("data/kafka_topic_create_topic.tf")
+//	configBytes7, _ := ioutil.ReadFile("data/kafka_topic_topic_list.tf")
+//	configBytes8, _ := ioutil.ReadFile("data/invalid_kafka_topic_create_duplicate.tf")
+//	configBytes9, _ := ioutil.ReadFile("data/kafka_topic_config_update.tf")
+//
+//	// config bytes for Kafka ACL
+//	configBytesAcl1, _ := ioutil.ReadFile("data/kafka_acl_create_acl.tf")
+//	configBytesAcl2, _ := ioutil.ReadFile("data/kafka_acl_create_acl_duplicate.tf")
+//	configBytesAcl3, _ := ioutil.ReadFile("data/kafka_acl_list.tf")
+//
+//	// config bytes for Kafka Connect
+//	kcConfigBytes, _ := ioutil.ReadFile("data/kafka_connect_create_cluster.tf")
+//
+//	kafkaUsername1 := "charlie1"
+//	kafkaUsername2 := "charlie2"
+//	kafkaUsername3 := "charlie3"
+//	oldPassword := "charlie123!"
+//	newPassword := "charlie123standard!"
+//	kafkaNodeSize := "KFK-DEV-t4g.medium-80"
+//	zookeeperNodeSize := "KDZ-DEV-t4g.small-30"
+//	kafkaVersion := "3.0.0"
+//	kcVersion := "3.0.0"
+//	topic1 := "test1"
+//	topic2 := "test2"
+//	azureStorageAccountName := os.Getenv("IC_AZURE_STORAGE_ACCOUNT_NAME")
+//	azureStorageAccountKey := os.Getenv("IC_AZURE_STORAGE_ACCOUNT_KEY")
+//	azureStorageContainerName := os.Getenv("IC_AZURE_STORAGE_CONTAINER_NAME")
+//	awsAccessKey := os.Getenv("IC_AWS_ACCESS_KEY")
+//	awsSecretKey := os.Getenv("IC_AWS_SECRET_KEY")
+//	S3BucketName := os.Getenv("IC_S3_BUCKET_NAME")
+//
+//	acl := instaclustr.KafkaAcl {
+//		Principal:	"User:test",
+//		Host:		"*",
+//		ResourceType: 	"TOPIC",
+//		ResourceName: 	"*",
+//		Operation: 	"ALL",
+//		PermissionType: "ALLOW",
+//		PatternType: 	"LITERAL",
+//	}
+//
+//	// Kafka user management tests
+//	createClusterConfig := fmt.Sprintf(string(configBytes1), username, apiKey, hostname, kafkaNodeSize, kafkaVersion, zookeeperNodeSize)
+//	createKafkaUserConfig := fmt.Sprintf(createClusterConfig + string(configBytes2), kafkaUsername1, oldPassword, kafkaUsername2, oldPassword)
+//	createKafkaUserListConfig := fmt.Sprintf(createKafkaUserConfig + string(configBytes3))
+//	updateKafkaUserConfig := fmt.Sprintf(createClusterConfig + string(configBytes2), kafkaUsername1, newPassword, kafkaUsername2, newPassword)
+//	invalidKafkaUserCreateConfigDuplicate := fmt.Sprintf(updateKafkaUserConfig + string(configBytes5), kafkaUsername1, oldPassword)
+//	invalidKafkaUserCreateConfig := fmt.Sprintf(createClusterConfig + string(configBytes4), kafkaUsername3, oldPassword)
+//
+//	// Kafka topic management tests
+//	createKafkaTopicConfig := fmt.Sprintf(createClusterConfig + string(configBytes6), topic1, topic2)
+//	createKafkaTopicListConfig := fmt.Sprintf(createKafkaTopicConfig + string(configBytes7))
+//	invalidKafkaTopicCreateConfigDuplicate := fmt.Sprintf(createKafkaTopicListConfig + string(configBytes8), topic1)
+//	updateKafkaTopicConfig := fmt.Sprintf(createClusterConfig + string(configBytes9), topic1, topic2)
+//
+//	// Kafka ACL management tests
+//	createKafkaAclConfig := fmt.Sprintf(createClusterConfig + string(configBytesAcl1), acl.Principal, acl.Host,
+//		acl.ResourceType, acl.ResourceName, acl.Operation, acl.PermissionType, acl.PatternType)
+//	invalidKafkaAclCreateConfigDuplicate := fmt.Sprintf(createKafkaAclConfig + string(configBytesAcl2), acl.Principal,
+//		acl.Host, acl.ResourceType, acl.ResourceName, acl.Operation, acl.PermissionType, acl.PatternType)
+//	createKafkaAclListConfig := fmt.Sprintf(createClusterConfig + string(configBytesAcl3))
+//
+//	// Kafka Connect tests
+//	kcConfig := fmt.Sprintf(createClusterConfig + string(kcConfigBytes), kcVersion, S3BucketName, awsAccessKey,
+//		awsSecretKey, azureStorageAccountName, azureStorageAccountKey, kcVersion, azureStorageContainerName)
+//
+//	resource.ParallelTest(t, resource.TestCase{
+//		Providers: testProviders,
+//		Steps: []resource.TestStep{
+//			{
+//				Config: createClusterConfig,
+//				Check: resource.ComposeTestCheckFunc(
+//					testCheckResourceValidKafka("instaclustr_cluster.kafka_cluster"),
+//					checkClusterRunning("kafka_cluster", hostname, username, apiKey),
+//					testCheckContactIPCorrect("kafka_cluster", hostname, username, apiKey, 3, 3),
+//				),
+//			},
+//			{
+//				Config: createKafkaUserConfig,
+//				Check: resource.ComposeTestCheckFunc(
+//					testCheckResourceValidKafka("instaclustr_kafka_user.kafka_user_charlie"),
+//					checkClusterRunning("kafka_cluster", hostname, username, apiKey),
+//					checkKafkaUserCreated(hostname, username, apiKey),
+//				),
+//			},
+//			{
+//				Config: createKafkaUserListConfig,
+//				Check: resource.ComposeTestCheckFunc(
+//					testCheckResourceValidKafka("data.instaclustr_kafka_user_list.kafka_user_list"),
+//					checkKafkaUserListCreated(hostname, username, apiKey),
+//				),
+//			},
+//			// Currently there is no easy way to check that the password for a Kafka user has been changed.
+//			// So, we just have to trust that successful API query changed the kafka user password.
+//			{
+//				Config: updateKafkaUserConfig,
+//				Check:  checkKafkaUserUpdated(newPassword),
+//			},
+//			{
+//				Config:      invalidKafkaUserCreateConfigDuplicate,
+//				ExpectError: regexp.MustCompile("A Kafka user with this username already exists on this cluster."),
+//			},
+//			// Can't rely on the resource destruction because we need the destruction to happen in order and checked,
+//			// i.e., we need to destroy the kafka user resources first.
+//			{
+//				Config: createClusterConfig,
+//				Check: resource.ComposeTestCheckFunc(checkKafkaUserDeleted(kafkaUsername1, hostname, username, apiKey),
+//					checkKafkaUserDeleted(kafkaUsername2, hostname, username, apiKey),
+//					checkKafkaUserDeleted(kafkaUsername3, hostname, username, apiKey)),
+//			},
+//			{
+//				Config:      invalidKafkaUserCreateConfig,
+//				ExpectError: regexp.MustCompile("invalid value for the 'sasl-scram-mechanism' option"),
+//			},
+//			// Kafka ACL test
+//			{
+//				Config: createKafkaAclConfig,
+//				Check: resource.ComposeTestCheckFunc(
+//					testCheckResourceValidKafka("instaclustr_kafka_acl.test_acl"),
+//					checkKafkaAclCreated(hostname, username, apiKey),
+//				),
+//			},
+//			{
+//				Config: invalidKafkaAclCreateConfigDuplicate,
+//				ExpectError: regexp.MustCompile(".*Error creating kafka ACL: the resource already exists, use terraform import instead."),
+//			},
+//			{
+//				Config: createClusterConfig,
+//				Check:  checkKafkaAclDeleted(acl, hostname, username, apiKey),
+//			},
+//			{
+//				Config: createKafkaAclListConfig,
+//				Check: resource.ComposeTestCheckFunc(
+//					testCheckResourceValidKafka("data.instaclustr_kafka_acl_list.test_acl_list"),
+//					checkKafkaAclListCreated(hostname, username, apiKey),
+//				),
+//			},
+//			// Kafka Topic test
+//			{
+//				Config: createKafkaTopicConfig,
+//				Check: resource.ComposeTestCheckFunc(
+//					testCheckResourceValidKafka("instaclustr_kafka_topic.kafka_topic_test"),
+//					checkClusterRunning("kafka_cluster", hostname, username, apiKey),
+//					checkKafkaTopicCreated(hostname, username, apiKey),
+//				),
+//			},
+//			{
+//				Config: createKafkaTopicListConfig,
+//				Check: resource.ComposeTestCheckFunc(
+//					testCheckResourceValidKafka("data.instaclustr_kafka_topic_list.kafka_topic_list"),
+//					checkKafkaTopicListCreated(hostname, username, apiKey),
+//				),
+//			},
+//			{
+//				Config:      invalidKafkaTopicCreateConfigDuplicate,
+//				ExpectError: regexp.MustCompile("Topic 'test1' already exists.."),
+//			},
+//			{
+//				Config: updateKafkaTopicConfig,
+//				Check:  checkKafkaTopicUpdated(hostname, username, apiKey),
+//			},
+//			// Can't rely on the resource destruction because we need the destruction to happen in order and checked,
+//			// i.e., we need to destroy the kafka topics resources first.
+//			{
+//				Config: createClusterConfig,
+//				Check: resource.ComposeTestCheckFunc(checkKafkaTopicDeleted(topic1, hostname, username, apiKey),
+//					checkKafkaTopicDeleted(topic2, hostname, username, apiKey)),
+//			},
+//			// Kafka Connect test
+//			{
+//				Config: kcConfig,
+//				Check: resource.ComposeTestCheckFunc(
+//					testCheckResourceValidKafka("instaclustr_cluster.validKCAws"),
+//					testCheckResourceValidKafka("instaclustr_cluster.validKCAzure"),
+//				),
+//			},
+//		},
+//	})
+//}
 
 func testCheckResourceValidKafka(resourceName string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
