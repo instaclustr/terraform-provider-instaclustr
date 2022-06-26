@@ -19,15 +19,19 @@ Property | Description | Default
 `peer_subnets`|A set of one or more peer subnets (in IPv4 CIDR format) for the VPC|Required
 `peer_region`| The Region code for the accepter VPC, if the accepter VPC is located in a Region other than the Region in which you make the request. | Not Required
 `aws_vpc_connection_id`| The ID of the VPC peering connection. | Computed
-
+  
 #### Properties for GCP
+Property | Description | Default
+---------|-------------|--------
 `cluster_id`|The ID of an existing Instaclustr managed cluster|Required
 `peer_vpc_network_name`|The ID of the VPC with which you are creating the VPC peering connection|Required
 `peer_project_id`|The project ID of the owner of the accepter VPC|Required
 `peer_subnets`|A set of one or more peer subnets (in IPv4 CIDR format) for the VPC|Required
 `virtual_network_id` |The resource group ID of the virtual network |Computed
-
+  
 #### Properties for Azure
+Property | Description | Default
+---------|-------------|--------
 `cluster_id`|The ID of an existing Instaclustr managed cluster|Required
 `peer_subscription_id`|The Subscription ID of the VPC with which you are creating the VPC peering connection|Required
 `peer_resource_group`|The Resource Group name with which you are creating the VPC peering connection|Required
@@ -54,7 +58,7 @@ Property | Description | Default
 `peer_subnet`|The peer subnet (in IPv4 CIDR format) for the VPC|Required
 `peer_region`| The Region code for the accepter VPC, if the accepter VPC is located in a Region other than the Region in which you make the request. | Not Required
 `aws_vpc_connection_id`| The ID of the VPC peering connection. | Computed
-
+  
 #### AWS Example
 ```
 resource "instaclustr_vpc_peering" "example_vpc_peering" {
