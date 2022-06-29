@@ -24,7 +24,7 @@ func main() {
 		finalProviderHost = swaggerHostOverride
 	}
 
-	providerOpenAPIURL := finalProviderHost + "/provisioning/v2/swagger-for-terraform.yaml"
+	providerOpenAPIURL := finalProviderHost + "/cluster-management/v2/swagger-for-terraform.yaml"
 
 	p := openapi.ProviderOpenAPI{ProviderName: ProviderName}
 	serviceProviderConfig := &openapi.ServiceConfigV1{
