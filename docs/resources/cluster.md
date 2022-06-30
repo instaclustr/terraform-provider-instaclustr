@@ -35,10 +35,10 @@ A resource for managing clusters on Instaclustr Managed Platform. A cluster cont
 
 | Property                    | Description                                                                                                                                                                                                                                                                       | Default  |
 |-----------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------|
-| `name`                      | The name of the Cluster Provider. Accepts AWS_VPC, AZURE, and GCP.                                                                                                                                                                                                                | Required |
+| `name`                      | The name of the Cluster Provider. Accepts AWS_VPC, AZURE_AZ, and GCP.                                                                                                                                                                                                                | Required |
 | `account_name`              | For customers running in their own account. Your provider account can be found on the ‘Account’ tab on the console, or the “Provider Account” property on any existing cluster.                                                                                                   | ""       |
 | `tags`                      | If specified, the value is a map from tag key to value. For restrictions, refer to the [AWS User Guide](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html#tag-restrictions). Tags are defined per cluster and will be applied to every instance in the cluster. | ""       |
-| `resource_group`            | AZURE only, if specified, the value is name for an Azure Resource Group which the resources will be provisioned into.                                                                                                                                                             | ""       |
+| `resource_group`            | Azure only, if specified, the value is name for an Azure Resource Group which the resources will be provisioned into.                                                                                                                                                             | ""       |
 | `disk_encryption_key`       | Specify an KMS encryption key to encrypt data on nodes. KMS encryption key must be set in Account settings before provisioning an encrypted cluster.                                                                                                                              | ""       |
 | `custom_virtual_network_id` | Specify a custom AWS VPC ID to use for customers provisioning in their own account. <b><i>Note:</i></b> Using this option requires that the cluster_network match the IPv4 CIDR block of the specified VPC ID.                                                                    | ""       |
 
@@ -139,8 +139,8 @@ whereas the deprecated fields in the `bundle.options` with the same name will no
 |------------------------------|------------------------------------------------------------------------------------------------------------------------------|
 | `aws_access_key`             | AWS Access Key id that can access your specified S3 bucket for Kafka Connect custom connector                                |
 | `aws_secret_key`             | AWS Secret Key associated with the Access Key id that can access your specified S3 bucket for Kafka Connect custom connector |
-| `azure_storage_account_name` | AZURE storage account name to access your AZURE bucket for Kafka Connect custom connector                                    |
-| `azure_storage_account_key`  | AZURE storage account key to access your AZURE bucket for Kafka Connect custom connector                                     |
+| `azure_storage_account_name` | Azure storage account name to access your Azure bucket for Kafka Connect custom connector                                    |
+| `azure_storage_account_key`  | Azure storage account key to access your Azure bucket for Kafka Connect custom connector                                     |
 | `sasl_jaas_config`           | `sasl.jaas.config` part of the worker.properties used to access non-Instaclustr Kafka cluster                                |
 
 ### Elasticsearch (For Legacy Support Only) and OpenSearch node sizes
