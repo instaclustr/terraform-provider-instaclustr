@@ -48,8 +48,8 @@ import (
 	newPassword := "charlie123standard!"
 	kafkaNodeSize := "KFK-DEV-t4g.medium-80"
 	zookeeperNodeSize := "KDZ-DEV-t4g.small-30"
-	kafkaVersion := "3.0.0"
-	kcVersion := "3.0.0"
+	kafkaVersion := "3.1.1"
+	kcVersion := "3.1.1"
 	topic1 := "test1"
 	topic2 := "test2"
 	azureStorageAccountName := os.Getenv("IC_AZURE_STORAGE_ACCOUNT_NAME")
