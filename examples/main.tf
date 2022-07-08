@@ -542,7 +542,7 @@ resource "instaclustr_cluster" "example-cadenceav-kafka" {
 
   bundle {
     bundle = "KAFKA"
-    version = "3.1.1"
+    version = "3.0.0"
     options = {
       client_encryption = false
       number_partitions = 3
