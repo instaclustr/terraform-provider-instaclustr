@@ -501,11 +501,11 @@ func TestHasSimpleNodeSizeChanges(t *testing.T) {
 func TestDoClusterResizeDefault(t *testing.T) {
 	err := doClusterResize(MockApiClient{
 		cluster: Cluster{
-			ID:         "POSTGRESQL",
-			BundleType: "POSTGRESQL",
+			ID:         "APACHE_ZOOKEEPER",
+			BundleType: "APACHE_ZOOKEEPER",
 		},
 	}, "mock", MockResourceData{}, []Bundle{
-		{Bundle: "POSTGRESQL"},
+		{Bundle: "APACHE_ZOOKEEPER"},
 	})
 	if err == nil || !strings.Contains(err.Error(), "CDC resize does not support:") {
 		t.Fatalf("Expect err with  'CDC resize does not support:' but got %v", err)
@@ -668,6 +668,34 @@ func TestDoClusterResizeCadence(t *testing.T) {
 	}
 	bundles := []Bundle{
 		{Bundle: "CADENCE"},
+	}
+	err := doClusterResize(client, "mock", data, bundles)
+	if err != nil {
+		t.Fatalf("Expect nil err but got %v", err)
+	}
+	delete(data.changes, "node_size")
+	err = doClusterResize(client, "mock", data, bundles)
+	if err != nil {
+		t.Fatalf("Expect nil err but got %v", err)
+	}
+}
+
+func TestDoClusterResizePostgresql(t *testing.T) {
+	client := MockApiClient{
+		cluster: Cluster{
+			ID:           "mock",
+			BundleType:   "POSTGRESQL",
+			BundleOption: &BundleOptions{},
+			DataCentres: []DataCentre{
+				{ID: "test"},
+			},
+		},
+	}
+	data := MockResourceData{
+		changes: map[string]MockChange{"node_size": {before: "PGS-DEV-t4g.small-5", after: "PGS-DEV-t4g.medium-30"}},
+	}
+	bundles := []Bundle{
+		{Bundle: "POSTGRESQL"},
 	}
 	err := doClusterResize(client, "mock", data, bundles)
 	if err != nil {

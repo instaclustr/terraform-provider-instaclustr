@@ -16,6 +16,7 @@ const (
 	REDIS                                     = "REDIS"
 	CASSANDRA                                 = "CASSANDRA"
 	CADENCE                                   = "CADENCE"
+	POSTGRESQL                                = "POSTGRESQL"
 )
 
 func (p NodePurpose) String() string {

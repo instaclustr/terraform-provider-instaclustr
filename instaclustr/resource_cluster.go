@@ -1197,7 +1197,12 @@ func doClusterResize(client APIClientInterface, clusterID string, d resourceData
 		} else {
 			return nil
 		}
-
+	case "POSTGRESQL":
+		if hasSimpleNodeSizeChanges(d) {
+			return doPostgresqlClusterResize(client, cluster, d)
+		} else {
+			return nil
+		}
 	default:
 		return fmt.Errorf("CDC resize does not support: %s", cluster.BundleType)
 	}
@@ -1469,6 +1474,20 @@ func doCadenceClusterResize(client APIClientInterface, cluster *Cluster, d resou
 
 	log.Printf("[INFO] Resizing Cadence cluster. nodePurpose: %s, newSize: %s", nodePurpose, nodeSize)
 	err = client.ResizeCluster(cluster.ID, cluster.DataCentres[0].ID, nodeSize, nodePurpose)
+	if err != nil {
+		return fmt.Errorf("[Error] Error resizing cluster %s with error %s", cluster.ID, err)
+	}
+	return nil
+}
+
+func doPostgresqlClusterResize(client APIClientInterface, cluster *Cluster, d resourceDataInterface) error {
+	var nodePurpose NodePurpose = POSTGRESQL
+	nodeNewSize := getNewSizeOrEmpty(d, "node_size")
+	if len(nodeNewSize) == 0 {
+		return fmt.Errorf("[ERROR] Please change node size before resize")
+	}
+	log.Printf("[INFO] Resizing PostgreSQL data centre. nodePurpose: %s, newSize: %s", nodePurpose, nodeNewSize)
+	var err = client.ResizeCluster(cluster.ID, cluster.DataCentres[0].ID, nodeNewSize, &nodePurpose)
 	if err != nil {
 		return fmt.Errorf("[Error] Error resizing cluster %s with error %s", cluster.ID, err)
 	}
