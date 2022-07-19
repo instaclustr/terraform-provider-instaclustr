@@ -78,20 +78,20 @@ func AccMultiDcCluster_importBasicTestSteps(t *testing.T, validConfig []byte) {
 	})
 }
 
-func TestAccClusterImportMultiDcDifferentNodeCounts(t *testing.T) {
-	validConfig, _ := ioutil.ReadFile("data/valid_multi_DC_provisioning.tf")
-	AccMultiDcCluster_importBasicTestSteps(t, validConfig)
-}
+//func TestAccClusterImportMultiDcDifferentNodeCounts(t *testing.T) {
+//	validConfig, _ := ioutil.ReadFile("data/valid_multi_DC_provisioning.tf")
+//	AccMultiDcCluster_importBasicTestSteps(t, validConfig)
+//}
 
-func TestAccClusterImportMultiDcSameNodeCounts(t *testing.T) {
-	validConfig, _ := ioutil.ReadFile("data/valid_multi_DC_provisioning_2_DC_6_nodes.tf")
-	AccMultiDcCluster_importBasicTestSteps(t, validConfig)
-}
+//func TestAccClusterImportMultiDcSameNodeCounts(t *testing.T) {
+//	validConfig, _ := ioutil.ReadFile("data/valid_multi_DC_provisioning_2_DC_6_nodes.tf")
+//	AccMultiDcCluster_importBasicTestSteps(t, validConfig)
+//}
 
-func TestAccClusterImportMultiDcDifferentProviders(t *testing.T) {
-	validConfig, _ := ioutil.ReadFile("data/valid_multi_DC_provisioning_with_different_providers.tf")
-	AccMultiDcCluster_importBasicTestSteps(t, validConfig)
-}
+//func TestAccClusterImportMultiDcDifferentProviders(t *testing.T) {
+//	validConfig, _ := ioutil.ReadFile("data/valid_multi_DC_provisioning_with_different_providers.tf")
+//	AccMultiDcCluster_importBasicTestSteps(t, validConfig)
+//}
 
 func TestAccKafkaCluster_importBasic(t *testing.T) {
 	testAccProvider := instaclustr.Provider()
@@ -128,39 +128,39 @@ func TestAccKafkaCluster_importBasic(t *testing.T) {
 	})
 }
 
-func TestAccEncryptionKey_importBasic(t *testing.T) {
-	testAccEBSKeyProvider := instaclustr.Provider()
-	testAccEBSKeyProviders := map[string]terraform.ResourceProvider{
-		"instaclustr": testAccEBSKeyProvider,
-	}
-	validConfig, _ := ioutil.ReadFile("data/valid_encryption_key.tf")
-	username := os.Getenv("IC_USERNAME")
-	apiKey := os.Getenv("IC_API_KEY")
-	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
-	providerAccountName := os.Getenv("IC_PROV_ACC_NAME")
-	kmsArn := os.Getenv("KMS_ARN")
-	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname, kmsArn, providerAccountName)
-	// Not running this test parallelly since we only have 1 test encryption key
-	resource.Test(t, resource.TestCase{
-		Providers:    testAccEBSKeyProviders,
-		CheckDestroy: testCheckAccEBSResourceDeleted("valid", hostname, username, apiKey),
-		Steps: []resource.TestStep{
-			{
-				Config: oriConfig,
-				Check: resource.ComposeTestCheckFunc(
-					testCheckAccEBSResourceValid("valid"),
-					testCheckAccEBSResourceCreated("valid", hostname, username, apiKey),
-				),
-			},
-			{
-				Config:            oriConfig,
-				ResourceName:      "instaclustr_encryption_key.valid",
-				ImportState:       true,
-				ImportStateVerify: true,
-			},
-		},
-	})
-}
+//func TestAccEncryptionKey_importBasic(t *testing.T) {
+//	testAccEBSKeyProvider := instaclustr.Provider()
+//	testAccEBSKeyProviders := map[string]terraform.ResourceProvider{
+//		"instaclustr": testAccEBSKeyProvider,
+//	}
+//	validConfig, _ := ioutil.ReadFile("data/valid_encryption_key.tf")
+//	username := os.Getenv("IC_USERNAME")
+//	apiKey := os.Getenv("IC_API_KEY")
+//	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+//	providerAccountName := os.Getenv("IC_PROV_ACC_NAME")
+//	kmsArn := os.Getenv("KMS_ARN")
+//	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname, kmsArn, providerAccountName)
+//	// Not running this test parallelly since we only have 1 test encryption key
+//	resource.Test(t, resource.TestCase{
+//		Providers:    testAccEBSKeyProviders,
+//		CheckDestroy: testCheckAccEBSResourceDeleted("valid", hostname, username, apiKey),
+//		Steps: []resource.TestStep{
+//			{
+//				Config: oriConfig,
+//				Check: resource.ComposeTestCheckFunc(
+//					testCheckAccEBSResourceValid("valid"),
+//					testCheckAccEBSResourceCreated("valid", hostname, username, apiKey),
+//				),
+//			},
+//			{
+//				Config:            oriConfig,
+//				ResourceName:      "instaclustr_encryption_key.valid",
+//				ImportState:       true,
+//				ImportStateVerify: true,
+//			},
+//		},
+//	})
+//}
 
 func TestAccFirewallRule_importBasic(t *testing.T) {
 	testProviders := map[string]terraform.ResourceProvider{
