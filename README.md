@@ -284,7 +284,8 @@ Configuration documentation can be found at the [Instaclustr Terraform Registry]
 | KAFKA                    | 2.7.1, 2.8.1, 3.0.0                   |                                                                                    |
 | KAFKA_REST_PROXY         | 5.0.0                                 | KAFKA                                                                              |
 | KAFKA_SCHEMA_REGISTRY    | 5.0.0, 5.0.4                          | KAFKA                                                                              |
-| KARAPACE_SCHEMA_REGISTRY | 2.1.2                                 | KAFKA <br/> **Not compatible with:** <br/> KAFKA_REST_PROXY, KAFKA_SCHEMA_REGISTRY |
+| KARAPACE_SCHEMA_REGISTRY | 3.2.0                                 | KAFKA <br/> **Not compatible with:** <br/> KAFKA_REST_PROXY, KAFKA_SCHEMA_REGISTRY |
+| KARAPACE_REST_PROXY      | 3.2.0                                 | KAFKA <br/> **Not compatible with:** <br/> KAFKA_REST_PROXY, KAFKA_SCHEMA_REGISTRY |
 | OPENSEARCH               | 1.2.4                                 |                                                                                    |
 | ELASTICSEARCH (For Legacy Support Only)           | 1.13.3                                |                                                                                    |
 | KAFKA_CONNECT            | 2.7.1, 2.8.1, 3.0.0                   |                                                                                    |

@@ -189,7 +189,7 @@ resource "instaclustr_cluster" "example_kafka" {
   wait_for_state = "RUNNING" // the required state of the cluster before doing the bundle user password updates
 }
 
-// Use Kafka with Karapace Schema Registry
+// Use Kafka with Karapace Schema Registry and Karapace Rest Proxy
 resource "instaclustr_cluster" "example_kafka_with_karapace_schema_registry" {
   cluster_name = "test_kafka_with_karapace"
   node_size = "KFK-PRD-r6g.large-250"
@@ -207,7 +207,7 @@ resource "instaclustr_cluster" "example_kafka_with_karapace_schema_registry" {
 
   bundle {
     bundle = "KAFKA"
-    version = "3.0.0"
+    version = "3.1.1"
     options = {
       auto_create_topics = true
       client_encryption = false
@@ -219,7 +219,15 @@ resource "instaclustr_cluster" "example_kafka_with_karapace_schema_registry" {
 
   bundle {
     bundle = "KARAPACE_SCHEMA_REGISTRY"
-    version = "2.1.2"
+    version = "3.2.0"
+  }
+
+  bundle {
+    bundle = "KARAPACE_REST_PROXY"
+    version = "3.2.0"
+    options = {
+      integrate_rest_proxy_with_schema_registry = true
+    }
   }
 }
 
