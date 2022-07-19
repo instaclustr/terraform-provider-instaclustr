@@ -1,13 +1,13 @@
 package test
 
 import (
-	//"encoding/json"
+	"encoding/json"
 	"fmt"
 	"strconv"
 
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
-	//"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
+	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 )
 
 
