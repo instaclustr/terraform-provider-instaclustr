@@ -390,3 +390,23 @@ func (c *APIClient) UpdateBundleUser(clusterID string, bundle string, data []byt
 	}
 	return nil
 }
+
+func (c *APIClient) UpdateEndpointServicePrincipals(clusterDataCentreID string, data []byte) error {
+	url := fmt.Sprintf("%s/provisioning/v1/aws-endpoint-service/%s/principals", c.apiServerHostname, clusterDataCentreID)
+
+	resp, err := c.MakeRequest(url, "PUT", data)
+	if err != nil {
+		return err
+	}
+
+	bodyText, err := ioutil.ReadAll(resp.Body)
+
+	if resp.StatusCode == 400 {
+		return errors.New(fmt.Sprintf("Bad request - Status code: %d, message: %s", resp.StatusCode, bodyText))
+	}
+
+	if resp.StatusCode != 200 {
+		return errors.New(fmt.Sprintf("Error updating endpoint service principals - Status code: %d, message: %s", resp.StatusCode, bodyText))
+	}
+	return nil
+}

@@ -126,13 +126,13 @@ AZURE:
 ```
 resource "instaclustr_cluster" "azure_example" {
   cluster_name = "testcluster"
-  node_size = "Standard_DS2_v2-256"
+  node_size = "Standard_DS2_v2-256-an"
   data_centre = "CENTRAL_US"
   sla_tier = "NON_PRODUCTION"
   cluster_network = "192.168.0.0/18"
   private_network_cluster = false
   cluster_provider = {
-    name = "AZURE"
+    name = "AZURE_AZ"
   }
   rack_allocation = {
     number_of_racks = 3
@@ -218,13 +218,13 @@ resource "instaclustr_cluster" "multi_DC_example" {
     name        = "DC2"
     data_centre = "CENTRAL_US"
     network     = "10.0.0.0/18"
-    node_size    = "Standard_DS2_v2-256"
+    node_size    = "Standard_DS2_v2-256-an"
     rack_allocation = {
       number_of_racks = 2
       nodes_per_rack  = 1
     }
     provider = {
-      name = "AZURE"
+      name = "AZURE_AZ"
     }
     bundles {
       bundle = "APACHE_CASSANDRA"
@@ -290,7 +290,7 @@ Configuration documentation can be found at the [Instaclustr Terraform Registry]
 | KAFKA_CONNECT            | 2.7.1, 2.8.1, 3.0.0                   |                                                                                    |
 | REDIS                    | 6.0.9                                 |                                                                                    |
 | APACHE_ZOOKEEPER         | 3.5.8                                 |                                                                                    |
-| POSTGRESQL               | 13.7, 14.3                            |                                                                                    |
+| POSTGRESQL               | 13.7                                  |                                                                                    |
 | PGBOUNCER                | 1.17.0                                | POSTGRESQL                                                                         |
 | CADENCE                  | 0.22.4                                |                                                                                    |
 

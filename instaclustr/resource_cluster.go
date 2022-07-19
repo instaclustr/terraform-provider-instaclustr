@@ -352,7 +352,7 @@ func resourceCluster() *schema.Resource {
 								Type: schema.TypeString,
 							},
 							Optional: true,
-							ForceNew: true,
+							ForceNew: false,
 						},
 					},
 				},
@@ -837,14 +837,12 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		OidcProvider:          fmt.Sprintf("%v", d.Get("oidc_provider")),
 	}
 
-	var privateLinkConfig PrivateLinkConfig
-	if len(d.Get("private_link").([]interface{})) > 0 && d.Get("private_link").([]interface{})[0] != nil {
-		privateLink := d.Get("private_link").([]interface{})[0].(map[string]interface{})
-		err := mapstructure.Decode(privateLink, &privateLinkConfig)
+	if len(d.Get("private_link").([]interface{})) > 0 {
+		privateLinkConfig, err := makePrivateLinkConfig(d)
 		if err != nil {
-			return fmt.Errorf("[Error] Error decoding the privateLink config to PrivateLinkConfig: %w", err)
+			return err
 		}
-		createData.PrivateLink = &privateLinkConfig
+		createData.PrivateLink = privateLinkConfig
 	}
 
 	dataCentre := d.Get("data_centre").(string)
@@ -1010,10 +1008,59 @@ func resourceClusterUpdate(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("[Error] Error updating the bundle user passwords, because it should be a KAFKA cluster in order to update the schema-registry or rest-proxy users")
 	}
 
+	if len(d.Get("private_link").([]interface{})) > 0 && d.HasChange("private_link") {
+		err := updateIAMPrincipals(d, client)
+		if err != nil {
+			return err
+		}
+		d.SetPartial("private_link")
+	}
 	d.SetPartial("node_size")
 	d.SetPartial("kafka_schema_registry_user_password")
 	d.SetPartial("kafka_rest_proxy_user_password")
 	return nil
+}
+
+func updateIAMPrincipals(d *schema.ResourceData, client *APIClient) error {
+	clusterID := d.Get("cluster_id").(string)
+	cluster, err := client.ReadCluster(clusterID)
+	clusterDataCentreId := cluster.DataCentres[0].ID
+
+	log.Printf("[INFO] Updating AWS Endpoint Service IAM Pricipals in %s.", clusterDataCentreId)
+
+	privateLinkConfig, err := makePrivateLinkConfig(d)
+	if err != nil {
+		return err
+	}
+
+	jsonStr, err := json.Marshal(privateLinkConfig)
+
+	if err != nil {
+		return fmt.Errorf("[Error] Error marshalling privateLinkConfig to JSON: %s", err)
+	}
+
+	err = client.UpdateEndpointServicePrincipals(clusterDataCentreId, jsonStr)
+	if err != nil {
+		return err
+	}
+
+	log.Printf("Successfully updated aws endpoint principal in %s", clusterID)
+	return nil
+}
+
+func makePrivateLinkConfig(d *schema.ResourceData) (*PrivateLinkConfig, error) {
+	var privateLinkConfig PrivateLinkConfig
+	if d.Get("private_link").([]interface{})[0] != nil {
+		privateLink := d.Get("private_link").([]interface{})[0].(map[string]interface{})
+		err := mapstructure.Decode(privateLink, &privateLinkConfig)
+		if err != nil {
+			return nil, fmt.Errorf("[Error] Error decoding the privateLink config to PrivateLinkConfig: %w", err)
+		}
+		return &privateLinkConfig, nil
+	} else {
+		return &privateLinkConfig, nil
+	}
+
 }
 
 func createBundleUserUpdateRequest(bundleUsername string, bundleUserPassword string) []byte {
@@ -1150,7 +1197,12 @@ func doClusterResize(client APIClientInterface, clusterID string, d resourceData
 		} else {
 			return nil
 		}
-
+	case "POSTGRESQL":
+		if hasSimpleNodeSizeChanges(d) {
+			return doPostgresqlClusterResize(client, cluster, d)
+		} else {
+			return nil
+		}
 	default:
 		return fmt.Errorf("CDC resize does not support: %s", cluster.BundleType)
 	}
@@ -1422,6 +1474,20 @@ func doCadenceClusterResize(client APIClientInterface, cluster *Cluster, d resou
 
 	log.Printf("[INFO] Resizing Cadence cluster. nodePurpose: %s, newSize: %s", nodePurpose, nodeSize)
 	err = client.ResizeCluster(cluster.ID, cluster.DataCentres[0].ID, nodeSize, nodePurpose)
+	if err != nil {
+		return fmt.Errorf("[Error] Error resizing cluster %s with error %s", cluster.ID, err)
+	}
+	return nil
+}
+
+func doPostgresqlClusterResize(client APIClientInterface, cluster *Cluster, d resourceDataInterface) error {
+	var nodePurpose NodePurpose = POSTGRESQL
+	nodeNewSize := getNewSizeOrEmpty(d, "node_size")
+	if len(nodeNewSize) == 0 {
+		return fmt.Errorf("[ERROR] Please change node size before resize")
+	}
+	log.Printf("[INFO] Resizing PostgreSQL data centre. nodePurpose: %s, newSize: %s", nodePurpose, nodeNewSize)
+	var err = client.ResizeCluster(cluster.ID, cluster.DataCentres[0].ID, nodeNewSize, &nodePurpose)
 	if err != nil {
 		return fmt.Errorf("[Error] Error resizing cluster %s with error %s", cluster.ID, err)
 	}
