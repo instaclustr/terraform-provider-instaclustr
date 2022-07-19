@@ -10,7 +10,6 @@ import (
 	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 )
 
-
 // we put the Kafka Connect cluster test here so that the Kafka cluster can be reused amongst bunch of other Kafka related tests
 /*func TestKafkaResources(t *testing.T) {
 	testProviders := map[string]terraform.ResourceProvider{
@@ -223,7 +222,6 @@ func testCheckResourceValidKafka(resourceName string) resource.TestCheckFunc {
 		return nil
 	}
 }
-
 
 func checkKafkaUserCreated(hostname, username, apiKey string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {

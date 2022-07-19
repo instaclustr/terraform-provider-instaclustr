@@ -565,7 +565,6 @@ func TestValidApacheZookeeperClusterCreate(t *testing.T) {
 	})
 }
 
-
 // flakey test since the cluster can sometimes take 40 minutes + to provision which is too long.
 //func TestValidPrivateLinkKafkaClusterCreate(t *testing.T) {
 //	testAccProvider := instaclustr.Provider()
@@ -616,7 +615,6 @@ func TestAccClusterCredentials(t *testing.T) {
 		},
 	})
 }
-
 
 // this test only works with internal version, which break all the time so commenting it out.
 //func TestCheckSingleDCRefreshToMultiDC(t *testing.T) {
