@@ -290,7 +290,7 @@ Configuration documentation can be found at the [Instaclustr Terraform Registry]
 | KAFKA_CONNECT            | 2.7.1, 2.8.1, 3.0.0, 3.1.1            |                                                                                    |
 | REDIS                    | 6.0.9                                 |                                                                                    |
 | APACHE_ZOOKEEPER         | 3.5.8                                 |                                                                                    |
-| POSTGRESQL               | 13.7, 14.3                            |                                                                                    |
+| POSTGRESQL               | 13.7                                  |                                                                                    |
 | PGBOUNCER                | 1.17.0                                | POSTGRESQL                                                                         |
 | CADENCE                  | 0.22.4                                |                                                                                    |
 
