@@ -165,7 +165,7 @@ resource "instaclustr_cluster" "example_kafka" {
 
   bundle {
     bundle = "KAFKA"
-    version = "3.0.0"
+    version = "3.1.1"
     options = {
       auth_n_authz = true
       dedicated_zookeeper = true
@@ -207,7 +207,7 @@ resource "instaclustr_cluster" "example_kafka_with_karapace_schema_registry" {
 
   bundle {
     bundle = "KAFKA"
-    version = "3.0.0"
+    version = "3.1.1"
     options = {
       auto_create_topics = true
       client_encryption = false
@@ -295,7 +295,7 @@ resource "instaclustr_cluster" "validKC" {
 
   bundle {
     bundle = "KAFKA_CONNECT"
-    version = "3.0.0"
+    version = "3.1.1"
     options = {
       target_kafka_cluster_id = "${instaclustr_cluster.example_kafka.id}"
       vpc_id = "SEPARATE_VPC"

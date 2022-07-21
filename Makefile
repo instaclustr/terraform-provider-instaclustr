@@ -7,6 +7,7 @@ BIN_NAME=terraform-provider-instaclustr
 
 VERSION=1.26.2
 
+
 INSTALL_FOLDER=$(HOME)/.terraform.d/plugins/terraform.instaclustr.com/instaclustr/instaclustr/$(VERSION)/darwin_amd64
 
 .PHONY: install clean all build test testacc testtarget release_version
