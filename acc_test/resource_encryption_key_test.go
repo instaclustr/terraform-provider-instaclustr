@@ -12,33 +12,33 @@ import (
 	"github.com/instaclustr/terraform-provider-instaclustr/instaclustr"
 )
 
-func TestAccEBSKey(t *testing.T) {
-	testAccEBSKeyProvider := instaclustr.Provider()
-	testAccEBSKeyProviders := map[string]terraform.ResourceProvider{
-		"instaclustr": testAccEBSKeyProvider,
-	}
-	validConfig, _ := ioutil.ReadFile("data/valid_encryption_key.tf")
-	username := os.Getenv("IC_USERNAME")
-	apiKey := os.Getenv("IC_API_KEY")
-	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
-	providerAccountName := os.Getenv("IC_PROV_ACC_NAME")
-	kmsArn := os.Getenv("KMS_ARN")
-	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname, kmsArn, providerAccountName)
-	// Not running this test parallelly since we only have 1 test encryption key
-	resource.Test(t, resource.TestCase{
-		Providers:    testAccEBSKeyProviders,
-		CheckDestroy: testCheckAccEBSResourceDeleted("valid", hostname, username, apiKey),
-		Steps: []resource.TestStep{
-			{
-				Config: oriConfig,
-				Check: resource.ComposeTestCheckFunc(
-					testCheckAccEBSResourceValid("valid"),
-					testCheckAccEBSResourceCreated("valid", hostname, username, apiKey),
-				),
-			},
-		},
-	})
-}
+//func TestAccEBSKey(t *testing.T) {
+//	testAccEBSKeyProvider := instaclustr.Provider()
+//	testAccEBSKeyProviders := map[string]terraform.ResourceProvider{
+//		"instaclustr": testAccEBSKeyProvider,
+//	}
+//	validConfig, _ := ioutil.ReadFile("data/valid_encryption_key.tf")
+//	username := os.Getenv("IC_USERNAME")
+//	apiKey := os.Getenv("IC_API_KEY")
+//	hostname := getOptionalEnv("IC_API_URL", instaclustr.DefaultApiHostname)
+//	providerAccountName := os.Getenv("IC_PROV_ACC_NAME")
+//	kmsArn := os.Getenv("KMS_ARN")
+//	oriConfig := fmt.Sprintf(string(validConfig), username, apiKey, hostname, kmsArn, providerAccountName)
+//	// Not running this test parallelly since we only have 1 test encryption key
+//	resource.Test(t, resource.TestCase{
+//		Providers:    testAccEBSKeyProviders,
+//		CheckDestroy: testCheckAccEBSResourceDeleted("valid", hostname, username, apiKey),
+//		Steps: []resource.TestStep{
+//			{
+//				Config: oriConfig,
+//				Check: resource.ComposeTestCheckFunc(
+//					testCheckAccEBSResourceValid("valid"),
+//					testCheckAccEBSResourceCreated("valid", hostname, username, apiKey),
+//				),
+//			},
+//		},
+//	})
+//}
 
 func TestAccEBSKeyInvalid(t *testing.T) {
 	testAccEBSKeyProvider := instaclustr.Provider()
