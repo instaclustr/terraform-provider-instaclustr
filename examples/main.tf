@@ -165,7 +165,7 @@ resource "instaclustr_cluster" "example_kafka" {
 
   bundle {
     bundle = "KAFKA"
-    version = "3.0.0"
+    version = "3.1.1"
     options = {
       auth_n_authz = true
       dedicated_zookeeper = true
@@ -275,7 +275,7 @@ resource "instaclustr_cluster" "example-opensearch" {
 
   bundle {
     bundle = "OPENSEARCH"
-    version = "1.3.1"
+    version = "1.3.2"
     options = {
       dedicated_master_nodes = true,
       master_node_size = "SRH-DEV-t4g.small-5",
@@ -303,7 +303,7 @@ resource "instaclustr_cluster" "validKC" {
 
   bundle {
     bundle = "KAFKA_CONNECT"
-    version = "3.0.0"
+    version = "3.1.1"
     options = {
       target_kafka_cluster_id = "${instaclustr_cluster.example_kafka.id}"
       vpc_id = "SEPARATE_VPC"
@@ -520,7 +520,7 @@ resource "instaclustr_cluster" "example-cadenceav-opensearch" {
 
   bundle {
     bundle = "OPENSEARCH"
-    version = "1.2.4" 
+    version = "1.3.2"
     options = {
       dedicated_master_nodes = true  
       master_node_size = "SRH-DM-t3.small-v2"

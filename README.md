@@ -281,14 +281,14 @@ Configuration documentation can be found at the [Instaclustr Terraform Registry]
 |--------------------------|---------------------------------------|------------------------------------------------------------------------------------|
 | APACHE_CASSANDRA         | 2.2.18, 3.0.19, 3.11.8, 4.0 (preview) |                                                                                    |
 | SPARK                    | 2.1.3, 2.3.2                          | APACHE_CASSANDRA                                                                   |
-| KAFKA                    | 2.7.1, 2.8.1, 3.0.0                   |                                                                                    |
+| KAFKA                    | 2.7.1, 2.8.1, 3.0.0, 3.1.1            |                                                                                    |
 | KAFKA_REST_PROXY         | 5.0.0                                 | KAFKA                                                                              |
 | KAFKA_SCHEMA_REGISTRY    | 5.0.0, 5.0.4                          | KAFKA                                                                              |
 | KARAPACE_SCHEMA_REGISTRY | 3.2.0                                 | KAFKA <br/> **Not compatible with:** <br/> KAFKA_REST_PROXY, KAFKA_SCHEMA_REGISTRY |
 | KARAPACE_REST_PROXY      | 3.2.0                                 | KAFKA <br/> **Not compatible with:** <br/> KAFKA_REST_PROXY, KAFKA_SCHEMA_REGISTRY |
-| OPENSEARCH               | 1.2.4                                 |                                                                                    |
+| OPENSEARCH               | 1.3.2, 2.0.0                          |                                                                                    |
 | ELASTICSEARCH (For Legacy Support Only)           | 1.13.3                                |                                                                                    |
-| KAFKA_CONNECT            | 2.7.1, 2.8.1, 3.0.0                   |                                                                                    |
+| KAFKA_CONNECT            | 2.7.1, 2.8.1, 3.0.0, 3.1.1            |                                                                                    |
 | REDIS                    | 6.0.9                                 |                                                                                    |
 | APACHE_ZOOKEEPER         | 3.5.8                                 |                                                                                    |
 | POSTGRESQL               | 13.7                                  |                                                                                    |
