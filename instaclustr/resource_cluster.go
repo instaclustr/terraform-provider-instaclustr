@@ -659,6 +659,11 @@ func resourceCluster() *schema.Resource {
 										Optional: true,
 										ForceNew: true,
 									},
+									"integrate_rest_proxy_with_schema_registry": {
+										Type:     schema.TypeBool,
+										Optional: true,
+										ForceNew: true,
+									},
 								},
 							},
 						},
@@ -882,6 +887,10 @@ func resourceClusterCreate(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("[Error] kafka-schema-registry or kafka-rest-proxy user passwords may only be provided for Kafka clusters")
 	}
 
+	if bundleConfig.HasKarapaceIntegration && !bundleConfig.HasKarapaceSchemaRegistry {
+		return fmt.Errorf("[Error] integrate_rest_proxy_with_schema_registry can only be set true when Karapace Schema Registry is in one of the bundles")
+	}
+
 	// Some Bundles do not use Rack Allocation so add that separately if needed. (Redis for example)
 	if isSingleDCCluster && checkIfBundleRequiresRackAllocation(bundles) {
 		var rackAllocation RackAllocation
@@ -1083,9 +1092,11 @@ func createBundleUserUpdateRequest(bundleUsername string, bundleUserPassword str
 
 func getBundleConfig(bundles []Bundle) BundleConfig {
 	configs := BundleConfig{
-		IsKafkaCluster:    false,
-		HasRestProxy:      false,
-		HasSchemaRegistry: false,
+		IsKafkaCluster:            false,
+		HasRestProxy:              false,
+		HasSchemaRegistry:         false,
+		HasKarapaceSchemaRegistry: false,
+		HasKarapaceIntegration:    false,
 	}
 
 	for i := 0; i < len(bundles); i++ {
@@ -1098,6 +1109,14 @@ func getBundleConfig(bundles []Bundle) BundleConfig {
 		}
 		if bundles[i].Bundle == "KAFKA_SCHEMA_REGISTRY" {
 			configs.HasSchemaRegistry = true
+		}
+		if bundles[i].Bundle == "KARAPACE_SCHEMA_REGISTRY" {
+			configs.HasKarapaceSchemaRegistry = true
+		}
+		if bundles[i].Bundle == "KARAPACE_REST_PROXY" && bundles[i].Options != nil &&
+			bundles[i].Options.IntegrateRestProxyWithSchemaRegistry != nil &&
+			*bundles[i].Options.IntegrateRestProxyWithSchemaRegistry {
+			configs.HasKarapaceIntegration = true
 		}
 	}
 	return configs
@@ -1698,6 +1717,15 @@ func getBundlesFromCluster(cluster *Cluster) ([]map[string]interface{}, error) {
 		if err != nil {
 			return nil, err
 		}
+
+		addonBundleOptions := make(map[string]interface{}, 0)
+		err = mapstructure.Decode(addOnBundle.Options, &addonBundleOptions)
+		if err != nil {
+			return nil, fmt.Errorf("[Error] Error decoding addon bundles option: %s", err)
+		}
+		// Dereference the pointers in the addon bundle options
+		convertedAddonBundleOptions := dereferencePointerInStruct(addonBundleOptions)
+		decodedAddonBundle["options"] = convertedAddonBundleOptions
 		addonBundles = append(addonBundles, decodedAddonBundle)
 	}
 

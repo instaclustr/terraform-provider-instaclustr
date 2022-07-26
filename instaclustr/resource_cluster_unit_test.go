@@ -29,9 +29,11 @@ func TestGetBundleConfig(t *testing.T) {
 	testBundles = append(testBundles, Bundle{Bundle: "KAFKA"})
 	testBundleConfig = getBundleConfig(testBundles)
 	expectedOutput := BundleConfig{
-		IsKafkaCluster:    true,
-		HasRestProxy:      false,
-		HasSchemaRegistry: false}
+		IsKafkaCluster:            true,
+		HasRestProxy:              false,
+		HasSchemaRegistry:         false,
+		HasKarapaceSchemaRegistry: false,
+		HasKarapaceIntegration:    false}
 
 	if testBundleConfig != expectedOutput {
 		t.Fatalf("Incorrect Bundle Config returned.\nExpected: %+v\nActual: %+v", expectedOutput, testBundleConfig)
@@ -40,9 +42,11 @@ func TestGetBundleConfig(t *testing.T) {
 	testBundles = append(testBundles, Bundle{Bundle: "KAFKA_REST_PROXY"})
 	testBundleConfig = getBundleConfig(testBundles)
 	expectedOutput = BundleConfig{
-		IsKafkaCluster:    true,
-		HasRestProxy:      true,
-		HasSchemaRegistry: false}
+		IsKafkaCluster:            true,
+		HasRestProxy:              true,
+		HasSchemaRegistry:         false,
+		HasKarapaceSchemaRegistry: false,
+		HasKarapaceIntegration:    false}
 
 	if testBundleConfig != expectedOutput {
 		t.Fatalf("Incorrect Bundle Config returned.\nExpected: %+v\nActual: %+v", expectedOutput, testBundleConfig)
@@ -51,9 +55,53 @@ func TestGetBundleConfig(t *testing.T) {
 	testBundles = append(testBundles, Bundle{Bundle: "KAFKA_SCHEMA_REGISTRY"})
 	testBundleConfig = getBundleConfig(testBundles)
 	expectedOutput = BundleConfig{
-		IsKafkaCluster:    true,
-		HasRestProxy:      true,
-		HasSchemaRegistry: true}
+		IsKafkaCluster:            true,
+		HasRestProxy:              true,
+		HasSchemaRegistry:         true,
+		HasKarapaceSchemaRegistry: false,
+		HasKarapaceIntegration:    false}
+
+	if testBundleConfig != expectedOutput {
+		t.Fatalf("Incorrect Bundle Config returned.\nExpected: %+v\nActual: %+v", expectedOutput, testBundleConfig)
+	}
+
+	testBundles = append(testBundles, Bundle{Bundle: "KARAPACE_SCHEMA_REGISTRY"})
+	testBundleConfig = getBundleConfig(testBundles)
+	expectedOutput = BundleConfig{
+		IsKafkaCluster:            true,
+		HasRestProxy:              true,
+		HasSchemaRegistry:         true,
+		HasKarapaceSchemaRegistry: true,
+		HasKarapaceIntegration:    false}
+
+	if testBundleConfig != expectedOutput {
+		t.Fatalf("Incorrect Bundle Config returned.\nExpected: %+v\nActual: %+v", expectedOutput, testBundleConfig)
+	}
+
+	integrate := false
+	testBundles = append(testBundles, Bundle{Bundle: "KARAPACE_REST_PROXY", Options: &BundleOptions{IntegrateRestProxyWithSchemaRegistry: &integrate}})
+	testBundleConfig = getBundleConfig(testBundles)
+	expectedOutput = BundleConfig{
+		IsKafkaCluster:            true,
+		HasRestProxy:              true,
+		HasSchemaRegistry:         true,
+		HasKarapaceSchemaRegistry: true,
+		HasKarapaceIntegration:    false}
+
+	if testBundleConfig != expectedOutput {
+		t.Fatalf("Incorrect Bundle Config returned.\nExpected: %+v\nActual: %+v", expectedOutput, testBundleConfig)
+	}
+
+	integrate = true
+	testBundles = testBundles[:len(testBundles)-1]
+	testBundles = append(testBundles, Bundle{Bundle: "KARAPACE_REST_PROXY", Options: &BundleOptions{IntegrateRestProxyWithSchemaRegistry: &integrate}})
+	testBundleConfig = getBundleConfig(testBundles)
+	expectedOutput = BundleConfig{
+		IsKafkaCluster:            true,
+		HasRestProxy:              true,
+		HasSchemaRegistry:         true,
+		HasKarapaceSchemaRegistry: true,
+		HasKarapaceIntegration:    true}
 
 	if testBundleConfig != expectedOutput {
 		t.Fatalf("Incorrect Bundle Config returned.\nExpected: %+v\nActual: %+v", expectedOutput, testBundleConfig)
