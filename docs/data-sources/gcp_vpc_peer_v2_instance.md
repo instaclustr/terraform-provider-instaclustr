@@ -22,10 +22,12 @@ description: |-
 ### Optional
 
 - **cdc_id** (String) ID of the Cluster Data Centre.
+- **failure_reason** (String) Reason for Peering Connection Failure.
 - **hidden_property_ignore** (String) This is a hidden property that should be ignored
 - **name** (String) Name of the Peering Connection.
 - **peer_project_id** (String) The project ID of the owner of the accepter VPC.
 - **peer_subnets** (List of String) The subnets for the peering VPC.
 - **peer_vpc_network_name** (String) The name of the VPC Network you wish to peer to.
+- **status_code** (String) Status of the VPC Peering Connection. Values can be `GENESIS`, `PROVISIONING`, `FAILED`, `INACTIVE`, `ACTIVE` or `UNKNOWN`.
 
 
