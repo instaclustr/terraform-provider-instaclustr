@@ -17,12 +17,22 @@ description: |-
 
 ### Optional
 
-- **alias** (String) Encryption key alias for display purposes.
-- **arn** (String) AWS ARN for the encryption key.
+- **account_id** (String)
+- **encryption_keys** (Block List) (see [below for nested schema](#nestedblock--encryption_keys))
 - **filter** (Block Set) (see [below for nested schema](#nestedblock--filter))
 - **id** (String) The ID of this resource.
+
+<a id="nestedblock--encryption_keys"></a>
+### Nested Schema for `encryption_keys`
+
+Optional:
+
+- **alias** (String) Encryption key alias for display purposes.
+- **arn** (String) AWS ARN for the encryption key.
+- **id** (String) ID of the encryption key.
 - **in_use** (Boolean) Whether the encryption key is used by a cluster.
 - **provider_account_name** (String) For customers running in their own account. Your provider account can be found on the Create Cluster page on the Instaclustr Console, or the "Provider Account" property on any existing cluster. For customers provisioning on Instaclustr's cloud provider accounts, this property may be omitted.
+
 
 <a id="nestedblock--filter"></a>
 ### Nested Schema for `filter`
