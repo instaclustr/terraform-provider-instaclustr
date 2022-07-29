@@ -293,8 +293,8 @@ github.com/imdario/mergo v0.3.11/go.mod h1:jmQim1M+e3UYxmgPu/WyfjB3N3VflVyUjjjwH
 github.com/imdario/mergo v0.3.12 h1:b6R2BslTbIEToALKP7LxUvijTsNI9TAe80pLWN2g/HU=
 github.com/imdario/mergo v0.3.12/go.mod h1:jmQim1M+e3UYxmgPu/WyfjB3N3VflVyUjjjwH0dnCYA=
 github.com/inconshreveable/mousetrap v1.0.0/go.mod h1:PxqpIevigyE2G7u3NXJIT2ANytuPF1OarO4DADm73n8=
-github.com/instaclustr/terraform-provider-openapi/v3 v3.0.1-0.20220525033528-b287aa636768 h1:UjEik6LFZUguKv70vqrdkGEeOg/B4rq4fr+B7U4Iuww=
-github.com/instaclustr/terraform-provider-openapi/v3 v3.0.1-0.20220525033528-b287aa636768/go.mod h1:xprUAaxWHlpr+LK+nGa4Sp3Y4UnFaeBP5B329VpqMlg=
+github.com/instaclustr/terraform-provider-openapi/v3 v3.0.1-0.20220729100351-28a686815e4f h1:G2XI9VW95s54FF83oTeQeuNRBHwbO4/lsPisJamjhU8=
+github.com/instaclustr/terraform-provider-openapi/v3 v3.0.1-0.20220729100351-28a686815e4f/go.mod h1:xprUAaxWHlpr+LK+nGa4Sp3Y4UnFaeBP5B329VpqMlg=
 github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 h1:BQSFePA1RWJOlocH6Fxy8MmwDt+yVQYULKfN0RoTN8A=
 github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99/go.mod h1:1lJo3i6rXxKeerYnT8Nvf0QmHCRC1n8sfWVwXF2Frvo=
 github.com/jessevdk/go-flags v1.4.0/go.mod h1:4FA24M0QyGHXBuZZK/XkWh8h0e1EYbRYJSGM75WSRxI=
