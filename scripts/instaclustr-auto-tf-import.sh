@@ -30,6 +30,13 @@ then
   exit 0
 fi
 
+INSTACLUSTR_API_URL="$INSTACLUSTR_TF_IMPORT_API_URL"
+
+if [ -z "$INSTACLUSTR_API_URL" ]
+then
+  INSTACLUSTR_API_URL="https://api.instaclustr.com"
+fi
+
 
 ZIP_FILE_NAME="instaclustr-terraform-import.zip"
 
@@ -45,7 +52,7 @@ then
   fi
 fi
 
-curl https://api.instaclustr.com/cluster-management/v2/operations/terraform-import -u "$INSTACLUSTR_USERNAME:$INSTACLUSTR_API_KEY" --output "$ZIP_FILE_NAME" --fail
+curl $INSTACLUSTR_API_URL/cluster-management/v2/operations/terraform-import -u "$INSTACLUSTR_USERNAME:$INSTACLUSTR_API_KEY" --output "$ZIP_FILE_NAME" --fail
 
 rm -rf "$DEST_FOLDER_NAME"
 
