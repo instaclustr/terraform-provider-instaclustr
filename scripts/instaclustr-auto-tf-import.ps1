@@ -1,23 +1,35 @@
 $ErrorActionPreference = "Stop"
 
-$SCRIPT_NAME = "instaclustr-auto-import.ps1"
+$SCRIPT_NAME = "./instaclustr-auto-import.ps1"
 
-if ($args.Count -lt 3) {
+$INSTACLUSTR_USERNAME = [System.Environment]::GetEnvironmentVariable("INSTACLUSTR_TF_IMPORT_USERNAME")
+$INSTACLUSTR_API_KEY = [System.Environment]::GetEnvironmentVariable("INSTACLUSTR_TF_IMPORT_API_KEY")
+$DEST_FOLDER_NAME = $args[0]
+
+if ($DEST_FOLDER_NAME -eq $null -Or $INSTACLUSTR_USERNAME -eq $null -Or $INSTACLUSTR_API_KEY -eq $null) {
     Write-Output ""
-    Write-Output "Usage: $SCRIPT_NAME <instaclustr_username> <instaclustr_provisioning_api_key> <destination_directory> [auto-approve]"
+
+    if ($INSTACLUSTR_USERNAME -eq $null) {
+        Write-Output "Missing required environment variable 'INSTACLUSTR_TF_IMPORT_USERNAME'"
+        Write-Output ""
+    }
+
+    if ($INSTACLUSTR_API_KEY -eq $null) {
+        Write-Output "Missing required environment variable 'INSTACLUSTR_TF_IMPORT_API_KEY'"
+        Write-Output ""
+    }
+
+    Write-Output "Usage: $SCRIPT_NAME <destination_directory> [auto-approve]"
     Write-Output "'auto-approve' is an optional argument which will skip the confirmation on emptying the destination directory."
-    Write-Output "Example - $SCRIPT_NAME johndoe 0a1b2c3daabbccdd00112233e4f5g6h7 instaclustr"
+    Write-Output "This script also depends on existence of 2 environment variables - 'INSTACLUSTR_TF_IMPORT_USERNAME' and 'INSTACLUSTR_TF_IMPORT_API_KEY' which should contain the Instaclustr username and Provisioning API Key respectively."
+    Write-Output "Example - $SCRIPT_NAME instaclustr"
     Write-Output ""
     exit
 }
 
 $ZIP_FILE_NAME="instaclustr-terraform-import.zip"
 
-$INSTACLUSTR_USERNAME = $args[0]
-$INSTACLUSTR_API_KEY = $args[1]
-$DEST_FOLDER_NAME = $args[2]
-
-if ($args[3] -ne "auto-approve") {
+if ($args[1] -ne "auto-approve") {
     $choice = Read-Host "This script will delete the contents of the folder '$DEST_FOLDER_NAME', do you wish to proceed (y/n)? "
     if ($choice -notmatch '^[Yy]$') {
         Write-Host "Execution cancelled."
@@ -39,7 +51,7 @@ Push-Location "$DEST_FOLDER_NAME"
 
 terraform init
 
-./import-all.ps1 $INSTACLUSTR_USERNAME $INSTACLUSTR_API_KEY
+./import-all.ps1
 
 Pop-Location
 
