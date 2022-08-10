@@ -29,7 +29,7 @@ description: |-
 - **id** (String) The ID of this resource.
 - **name** (String) Name of the Vpc Peering Connection.
 - **peer_ad_object_id** (String) Id of the Active Directory Object to give peering permissions to, required for cross subscription peering.
-- **status_code** (String) Status of the VPC Peering Connection. Values can be `GENESIS`, `PROVISIONING`, `FAILED`, `INACTIVE`, `Connected` or `UNKNOWN`.
+- **status_code** (String) Status of the VPC Peering Connection. Values can be `GENESIS`, `PROVISIONING`, `FAILED`, `INACTIVE`, `CONNECTED` or `UNKNOWN`.
 - **timeouts** (Block, Optional) (see [below for nested schema](#nestedblock--timeouts))
 
 <a id="nestedblock--timeouts"></a>

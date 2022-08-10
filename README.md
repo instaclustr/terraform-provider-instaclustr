@@ -6,6 +6,9 @@ A [Terraform](http://terraform.io) provider for managing Instaclustr Platform re
 
 Documentation on using the Instaclustr Terraform Provider is available through [Terraform Registry](https://registry.terraform.io/providers/instaclustr/instaclustr/latest/docs).
 
+## Migrating from v1 to v2 of the Instaclustr Terraform Provider
+
+With the v2 version of the Instaclustr Terraform Provider, new resources have been introduced and schemas of existing resources have been changed. While the [Terraform Registry](https://registry.terraform.io/providers/instaclustr/instaclustr/latest/docs) contains the schema definitions of each resource, for a tool assisted approach of migrating to the v2 version of the Terraform Provider, see our support article on [importing Terraform resources](https://www.instaclustr.com/support/api-integrations/integrations/importing-terraform-resources/).
 
 ## Further information and documentation
 
