@@ -10,7 +10,7 @@ resource "instaclustr_cluster" "validOpenSearchPrivateLink" {
   data_centre             = "US_WEST_2"
   sla_tier                = "NON_PRODUCTION"
   cluster_network         = "192.168.0.0/18"
-  private_network_cluster = false
+  private_network_cluster = true
   cluster_provider        = {
     name = "AWS_VPC",
   }
