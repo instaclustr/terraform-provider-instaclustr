@@ -4,7 +4,7 @@ provider "instaclustr" {
   api_hostname = "%s"
 }
 
-resource "instaclustr_cluster" "validRedis" {
+resource "instaclustr_cluster" "invalidRedis" {
   cluster_name            = "tf-redis-test"
   node_size               = "r5.large-100-r"
   data_centre             = "US_WEST_2"
@@ -23,7 +23,7 @@ resource "instaclustr_cluster" "validRedis" {
 
   bundle {
     bundle  = "REDIS"
-    version = "6.0.9"
+    version = "6.2.7"
     options = {
       master_nodes      = 3,
       replica_nodes     = 3,
