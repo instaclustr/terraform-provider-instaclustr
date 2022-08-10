@@ -20,7 +20,7 @@ resource "instaclustr_cluster" "validOpenSearchPrivateLink" {
   }
   bundle {
     bundle  = "OPENSEARCH"
-    version = "1.3.2"
+    version = "1.3.4"
     options = {
       dedicated_master_nodes  = false,
       master_node_size        = "t3.small-v2",
