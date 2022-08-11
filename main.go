@@ -11,20 +11,17 @@ import (
 // Generate docs for website
 //go:generate go run github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs
 
-var ProviderHost = "https://api.instaclustr.com"
-
 const ProviderName = "instaclustr"
 
 func main() {
 
-	swaggerHostOverride := os.Getenv("IC_TF_PROVIDER_SWAGGER_HOST_OVERRIDE") //needed to target locally run API to generate docs for testing/preview
+	providerHost := os.Getenv("IC_API_URL") //needed to target locally run API to generate docs for testing/preview
 
-	finalProviderHost := ProviderHost
-	if len(swaggerHostOverride) > 0 {
-		finalProviderHost = swaggerHostOverride
+	if len(providerHost) == 0 {
+		providerHost = "https://api.instaclustr.com"
 	}
 
-	providerOpenAPIURL := finalProviderHost + "/cluster-management/v2/swagger-for-terraform.yaml"
+	providerOpenAPIURL := providerHost + "/cluster-management/v2/swagger-for-terraform.yaml"
 
 	p := openapi.ProviderOpenAPI{ProviderName: ProviderName}
 	serviceProviderConfig := &openapi.ServiceConfigV1{
