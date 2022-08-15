@@ -52,7 +52,7 @@ then
   fi
 fi
 
-curl $INSTACLUSTR_API_URL/cluster-management/v2/operations/terraform-import -u "$INSTACLUSTR_USERNAME:$INSTACLUSTR_API_KEY" --output "$ZIP_FILE_NAME" --fail
+curl $INSTACLUSTR_API_URL/cluster-management/v2/operations/generate-terraform-code/v2 -u "$INSTACLUSTR_USERNAME:$INSTACLUSTR_API_KEY" --output "$ZIP_FILE_NAME" --fail
 
 rm -rf "$DEST_FOLDER_NAME"
 

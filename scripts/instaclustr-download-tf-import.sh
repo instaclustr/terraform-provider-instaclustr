@@ -36,6 +36,6 @@ then
   INSTACLUSTR_API_URL="https://api.instaclustr.com"
 fi
 
-curl $INSTACLUSTR_API_URL/cluster-management/v2/operations/terraform-import -u "$INSTACLUSTR_USERNAME:$INSTACLUSTR_API_KEY" --output "$DEST_FILE_NAME" --fail
+curl $INSTACLUSTR_API_URL/cluster-management/v2/operations/generate-terraform-code/v2 -u "$INSTACLUSTR_USERNAME:$INSTACLUSTR_API_KEY" --output "$DEST_FILE_NAME" --fail
 
 echo "Terraform files downloaded to '$DEST_FILE_NAME'"

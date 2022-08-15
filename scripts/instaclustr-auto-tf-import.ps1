@@ -38,7 +38,7 @@ if ($args[1] -ne "auto-approve") {
 }
 
 $basicAuthHeaderValue = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("${INSTACLUSTR_USERNAME}:$INSTACLUSTR_API_KEY"))
-Invoke-WebRequest https://api.instaclustr.com/cluster-management/v2/operations/terraform-import -Headers @{Authorization="Basic $basicAuthHeaderValue"} -OutFile "$ZIP_FILE_NAME"
+Invoke-WebRequest https://api.instaclustr.com/cluster-management/v2/operations/generate-terraform-code/v2 -Headers @{Authorization="Basic $basicAuthHeaderValue"} -OutFile "$ZIP_FILE_NAME"
 
 
 cmd /c rmdir /s /q "$DEST_FOLDER_NAME" #need to do this instead of Remove-Item or other methods to deal with symlinks to terraform provider

@@ -27,6 +27,6 @@ if ($DEST_FILE_NAME -eq $null -Or $INSTACLUSTR_USERNAME -eq $null -Or $INSTACLUS
 }
 
 $basicAuthHeaderValue = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("${INSTACLUSTR_USERNAME}:$INSTACLUSTR_API_KEY"))
-Invoke-WebRequest https://api.instaclustr.com/cluster-management/v2/operations/terraform-import -Headers @{Authorization="Basic $basicAuthHeaderValue"} -OutFile "$DEST_FILE_NAME"
+Invoke-WebRequest https://api.instaclustr.com/cluster-management/v2/operations/generate-terraform-code/v2 -Headers @{Authorization="Basic $basicAuthHeaderValue"} -OutFile "$DEST_FILE_NAME"
 
 Write-Host "Terraform files downloaded to '$DEST_FILE_NAME'"
