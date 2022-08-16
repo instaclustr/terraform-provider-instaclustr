@@ -34,7 +34,6 @@ resource "instaclustr_gcp_vpc_peer_v2" "myvpcpeer" {
 ### Optional
 
 - **failure_reason** (String) Reason for Peering Connection Failure.
-- **hidden_property_ignore** (String) This is a hidden property that should be ignored
 - **id** (String) The ID of this resource.
 - **name** (String) Name of the Peering Connection.
 - **status_code** (String) Status of the VPC Peering Connection. Values can be `GENESIS`, `PROVISIONING`, `FAILED`, `INACTIVE`, `ACTIVE` or `UNKNOWN`.
