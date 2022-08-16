@@ -26,7 +26,7 @@ resource "instaclustr_cluster" "valid_with_password_and_client_encryption" {
     options = {
       auth_n_authz = true
       use_private_broadcast_rpc_address = true
-      lucene_enabled = true
+      lucene_enabled = false
       continuous_backup_enabled = true
       client_encryption = true
     }
