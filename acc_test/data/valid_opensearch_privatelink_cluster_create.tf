@@ -23,8 +23,8 @@ resource "instaclustr_cluster" "validOpenSearchPrivateLink" {
     version = "1.3.4"
     options = {
       dedicated_master_nodes  = false,
-      master_node_size        = "SRH-DM-PRD-m6g.large-10",
-      data_node_size          = "SRH-DM-PRD-m6g.large-10",
+      master_node_size        = "SRH-PRD-m6g.large-120",
+      data_node_size          = "SRH-PRD-m6g.large-120",
       security_plugin         = true,
       index_management_plugin = true
       client_encryption       = true
