@@ -78,7 +78,7 @@ A resource for managing clusters on Instaclustr Managed Platform. A cluster cont
 | ELASTICSEARCH (For Legacy Support Only)           | 1.13.3                                |                                                                                    |
 | KAFKA_CONNECT            | 2.7.1, 2.8.1, 3.0.0, 3.1.1            |                                                                                    |
 | REDIS                    | 6.2.7                                 |                                                                                    |
-| APACHE_ZOOKEEPER         | 3.5.8                                 |                                                                                    |
+| APACHE_ZOOKEEPER         | 3.6.3, 3.7.1                          |                                                                                    |
 | POSTGRESQL               | 13.7, 14.4                            |                                                                                    |
 | PGBOUNCER                | 1.17.0                                | POSTGRESQL                                                                         |
 | CADENCE                  | 0.22.4                                |                                                                                    |
