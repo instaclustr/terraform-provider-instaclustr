@@ -5,12 +5,12 @@ provider "instaclustr" {
 }
 
 
-resource "instaclustr_cluster" "validOpenSearch" {
+resource "instaclustr_cluster" "validOpenSearchPrivateLink" {
   cluster_name            = "tf-opensearch-test"
   data_centre             = "US_WEST_2"
   sla_tier                = "NON_PRODUCTION"
   cluster_network         = "192.168.0.0/18"
-  private_network_cluster = false
+  private_network_cluster = true
   cluster_provider        = {
     name = "AWS_VPC",
   }
@@ -23,11 +23,15 @@ resource "instaclustr_cluster" "validOpenSearch" {
     version = "1.3.4"
     options = {
       dedicated_master_nodes  = false,
-      master_node_size        = "t3.small-v2",
-      data_node_size          = "t3.small-v2",
+      master_node_size        = "SRH-PRD-m6g.large-120",
+      data_node_size          = "SRH-PRD-m6g.large-120",
       security_plugin         = true,
       index_management_plugin = true
       client_encryption       = true
     }
+  }
+
+  private_link {
+    iam_principal_arns = ["arn:aws:iam::123456789012:root"]
   }
 }
