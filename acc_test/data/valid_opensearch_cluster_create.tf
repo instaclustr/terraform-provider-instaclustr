@@ -23,8 +23,8 @@ resource "instaclustr_cluster" "validOpenSearch" {
     version = "1.3.4"
     options = {
       dedicated_master_nodes  = false,
-      master_node_size        = "t3.small-v2",
-      data_node_size          = "t3.small-v2",
+      master_node_size        = "SRH-DEV-t4g.small-5",
+      data_node_size          = "SRH-DEV-t4g.small-5",
       security_plugin         = true,
       index_management_plugin = true
       client_encryption       = true
