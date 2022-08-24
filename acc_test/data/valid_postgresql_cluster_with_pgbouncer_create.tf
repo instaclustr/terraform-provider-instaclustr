@@ -24,7 +24,7 @@ resource "instaclustr_cluster" "validPostgresqlWithPgBouncer" {
     options = {
       postgresql_node_count = 1,
       client_encryption     = false,
-      replication_mode      = "SYNCHRONOUS",
+      replication_mode      = "ASYNCHRONOUS",
     }
   }
 
