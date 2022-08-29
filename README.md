@@ -289,9 +289,9 @@ Configuration documentation can be found at the [Instaclustr Terraform Registry]
 | OPENSEARCH               | 1.3.4, 2.0.0                          |                                                                                    |
 | ELASTICSEARCH (For Legacy Support Only)           | 1.13.3                                |                                                                                    |
 | KAFKA_CONNECT            | 2.7.1, 2.8.1, 3.0.0, 3.1.1            |                                                                                    |
-| REDIS                    | 6.2.7, 7.0.4                                 |                                                                                    |
+| REDIS                    | 6.2.7, 7.0.4                          |                                                                                    |
 | APACHE_ZOOKEEPER         | 3.6.3, 3.7.1                          |                                                                                    |
-| POSTGRESQL               | 13.7, 14.4                            |                                                                                    |
+| POSTGRESQL               | 13.8, 14.5                            |                                                                                    |
 | PGBOUNCER                | 1.17.0                                | POSTGRESQL                                                                         |
 | CADENCE                  | 0.22.4                                |                                                                                    |
 
