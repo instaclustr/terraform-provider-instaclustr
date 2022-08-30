@@ -8,9 +8,6 @@ import (
 	"os"
 )
 
-// Generate docs for website
-//go:generate go run github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs
-
 const ProviderName = "instaclustr"
 
 func main() {

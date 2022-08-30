@@ -10,7 +10,7 @@ then
 fi
 
 ZIP_FILE_NAME="terraform-registry-documentation.zip"
-DEST_FOLDER_NAME="../"
+DEST_FOLDER_NAME="."
 
 curl $INSTACLUSTR_API_URL/cluster-management/v2/operations/generate-terraform-documentation/v2 --output "$ZIP_FILE_NAME" --fail
 
