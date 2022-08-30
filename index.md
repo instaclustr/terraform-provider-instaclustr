@@ -16,6 +16,15 @@ For further information about Instaclustr, please see [FAQ](https://www.instaclu
 ## Example Usage
 
 ```terraform
+terraform {
+  required_providers {
+    instaclustr = {
+      source  = "instaclustr/instaclustr"
+      version = ">= 2.0.0, < 3.0.0"
+    }
+  }
+}
+
 provider "instaclustr" {
   terraform_key = "Instaclustr-Terraform johndoe:a1b2c3def45g6hij789k0l1m2n3opq45"
 }
