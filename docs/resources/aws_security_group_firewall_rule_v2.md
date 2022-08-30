@@ -5,7 +5,23 @@ description: |-
 ---
 
 # instaclustr_aws_security_group_firewall_rule_v2 (Resource)
-
+Definition of an AWS Security Group based firewall rule to be applied to a cluster.
+## Example Usage
+```
+resource "instaclustr_aws_security_group_firewall_rule_v2" "example" {
+  security_group_id = "sg-01abc2345defg6789"
+  cluster_id = "c1af59c6-ba0e-4cc2-a0f3-65cee17a5f37"
+  type = "CASSANDRA"
+}
+```
+## Glossary
+The following terms are used to describe properties in the schema of this resource:
+- **_read-only_** - These are properties that can only be read and not provided as an input to the resource.<br><br>
+- **_required_** - These properties must be provided for the resource to be created.<br><br>
+- **_optional_** - These input properties can be omitted, and doing so may result in a default value being used.<br><br>
+- **_immutable_** - These are input properties that cannot be changed after the resource is created. The resource will be destroyed and re-created on `terraform apply` if Terraform detects a change in such properties.<br><br>
+- **_updatable_** - These input properties can be updated to a different value if needed, and doing so will trigger an update operation.<br><br>
+- **_nested block_** - These properties use the [Terraform block syntax](https://www.terraform.io/language/attr-as-blocks) when defined as an input in the Terraform code. Properties with the type **_repeatable nested block_** are the same except that the nested block can be defined multiple times with varying nested properties. When reading nested block properties, an index must be provided when accessing the contents of the nested block, example - `my_resource.nested_block_property[0].nested_property`.
 ## Schema
 ### security_group_id<br>
 <ins>Type</ins>: string, optional, immutable<br>
@@ -26,3 +42,9 @@ description: |-
 <ins>Type</ins>: string, read-only<br>
 <br>The status of the AWS security group firewall rule.
 
+## Import
+This resource can be imported using the `terraform import` command as follows:
+```
+terraform import instaclustr_aws_security_group_firewall_rule_v2.<resource-name> "<resource-id>"
+```
+`<resource-id>` is the unique identifier for this resource matching the value of the `id` property defined above.

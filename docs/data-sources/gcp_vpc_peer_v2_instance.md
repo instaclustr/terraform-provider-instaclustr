@@ -5,6 +5,7 @@ description: |-
 ---
 
 # instaclustr_gcp_vpc_peer_v2_instance (Data Source)
+Definition of an GCP VPC Peering request to allow privately routed connections to a target data centre.
 
 ## Schema
 ### peer_project_id<br>

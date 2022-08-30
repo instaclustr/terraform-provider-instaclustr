@@ -5,6 +5,7 @@ description: |-
 ---
 
 # instaclustr_aws_encryption_key_v2_instance (Data Source)
+Definition of a customer managed AWS KMS Key for use with at rest EBS encryption in Instaclustr managed clusters.
 
 ## Schema
 ### in_use<br>

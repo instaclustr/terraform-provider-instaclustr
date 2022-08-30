@@ -5,6 +5,7 @@ description: |-
 ---
 
 # instaclustr_cluster_network_firewall_rule_v2_instance (Data Source)
+Definition of an CIDR based firewall rule to be applied to a cluster.
 
 ## Schema
 ### deferred_reason<br>

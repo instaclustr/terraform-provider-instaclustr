@@ -5,13 +5,14 @@ description: |-
 ---
 
 # instaclustr_aws_vpc_peers_v2 (Data Source)
+A listable data source of all AWS VPC Peering requests in an Instaclustr Account.
 
 ## Schema
 ### account_id<br>
 <ins>Type</ins>: string<br>
 
 ### peering_requests<br>
-<ins>Type</ins>: block list, see [peering_requests](#nested--peering_requests) for nested schema<br>
+<ins>Type</ins>: repeatable nested block, see [peering_requests](#nested--peering_requests) for nested schema<br>
 
 <a id="nested--peering_requests"></a>
 ## Nested schema for `peering_requests`<br>

@@ -5,13 +5,14 @@ description: |-
 ---
 
 # instaclustr_aws_encryption_keys_v2 (Data Source)
+A listable data source of all AWS Encryption Keys in an Instaclustr Account.
 
 ## Schema
 ### account_id<br>
 <ins>Type</ins>: string<br>
 
 ### encryption_keys<br>
-<ins>Type</ins>: block list, see [encryption_keys](#nested--encryption_keys) for nested schema<br>
+<ins>Type</ins>: repeatable nested block, see [encryption_keys](#nested--encryption_keys) for nested schema<br>
 
 <a id="nested--encryption_keys"></a>
 ## Nested schema for `encryption_keys`<br>

@@ -5,6 +5,7 @@ description: |-
 ---
 
 # instaclustr_aws_security_group_firewall_rule_v2_instance (Data Source)
+Definition of an AWS Security Group based firewall rule to be applied to a cluster.
 
 ## Schema
 ### security_group_id<br>

@@ -5,6 +5,7 @@ description: |-
 ---
 
 # instaclustr_azure_vnet_peer_v2_instance (Data Source)
+Definition of an Azure Virtual Network Peering request to allow privately routed connections to a target data centre.
 
 ## Schema
 ### peer_virtual_network_name<br>

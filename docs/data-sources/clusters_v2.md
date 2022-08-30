@@ -5,13 +5,14 @@ description: |-
 ---
 
 # instaclustr_clusters_v2 (Data Source)
+A listable data source of all cluster IDs in an Instaclustr Account.
 
 ## Schema
 ### account_id<br>
 <ins>Type</ins>: string<br>
 
 ### clusters<br>
-<ins>Type</ins>: block list, see [clusters](#nested--clusters) for nested schema<br>
+<ins>Type</ins>: repeatable nested block, see [clusters](#nested--clusters) for nested schema<br>
 
 <a id="nested--clusters"></a>
 ## Nested schema for `clusters`<br>
