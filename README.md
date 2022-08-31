@@ -302,7 +302,7 @@ A schema change has been made from 0.0.1 which no longer supports the `bundles` 
 
 ## Contributing
 
-Firstly thanks!  We value your time and will do our best to review the PR as soon as possible.
+Firstly, thanks!  We value your time and will do our best to review the PR as soon as possible.
 
 1. [Install golang](https://golang.org/doc/install#install)
 2. Clone repository to: ```$GOPATH/src/github.com/instaclustr/terraform-provider-instaclustr```
