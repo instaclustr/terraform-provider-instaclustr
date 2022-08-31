@@ -20,4 +20,6 @@ mkdir -p "$DEST_FOLDER_NAME/docs"
 
 tar xvf "$ZIP_FILE_NAME" -C "$DEST_FOLDER_NAME"
 
+cp -a docs-base/. docs/
+
 rm "$ZIP_FILE_NAME"
