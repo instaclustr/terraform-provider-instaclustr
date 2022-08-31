@@ -291,7 +291,7 @@ Configuration documentation can be found at the [Instaclustr Terraform Registry]
 | KAFKA_CONNECT            | 2.7.1, 2.8.1, 3.0.0, 3.1.1            |                                                                                    |
 | REDIS                    | 6.2.7, 7.0.4                                 |                                                                                    |
 | APACHE_ZOOKEEPER         | 3.6.3, 3.7.1                          |                                                                                    |
-| POSTGRESQL               | 13.7, 14.4                            |                                                                                    |
+| POSTGRESQL               | 13.8, 14.5                            |                                                                                    |
 | PGBOUNCER                | 1.17.0                                | POSTGRESQL                                                                         |
 | CADENCE                  | 0.22.4                                |                                                                                    |
 
@@ -302,7 +302,7 @@ A schema change has been made from 0.0.1 which no longer supports the `bundles` 
 
 ## Contributing
 
-Firstly thanks!  We value your time and will do our best to review the PR as soon as possible.
+Firstly, thanks!  We value your time and will do our best to review the PR as soon as possible.
 
 1. [Install golang](https://golang.org/doc/install#install)
 2. Clone repository to: ```$GOPATH/src/github.com/instaclustr/terraform-provider-instaclustr```
