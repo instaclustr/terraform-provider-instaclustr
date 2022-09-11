@@ -47,16 +47,16 @@ For further details on Provider installation, and installation on older versions
 
 ## Authentication
 
-This provider requires an API Key in order to provision Instaclustr resources. To create an API key, please log into the [Instaclustr Console](https://console.instaclustr.com) or signup for an account [here](https://console.instaclustr.com/user/signup) if you don't have one.  Navigate to `Account` -> `API Keys` page, locate the `Provisioning` role and click `Generate Key`.  This username and API key combination should be placed into the provider configuration:
+This provider requires an API Key in order to provision Instaclustr resources. To create an API key, please log into the [Instaclustr Console](https://console.instaclustr.com) or signup for an account [here](https://console.instaclustr.com/user/signup) if you don't have one.  Navigate to `Account Settings` -> `API Keys` page, locate the `Provisioning` role and click `Generate Key`.  This username and API key combination should be placed into the provider configuration:
 
 ```
 provider "instaclustr" {
-    username = "<Your instaclustr username here>"
-    api_key = "<Your provisioning API key here>"
+    username= "<Your instaclustr username>"
+    api_key = var.api_key
 }
 ```
 
-If you wish to keep secrets in the ENV instead of stored in your terraform file use the following method:
+In order to keep the `api_key` variable secret in the ENV, instead of stored in your terraform file like the `username`, use the following method:
 
 In console export the desired variable:
 
@@ -70,13 +70,6 @@ variable "api_key" {
 }
 ```
 
-In the provider block use the variable:
-```
-provider "instaclustr" {
-    username= "<Your instaclustr username>"
-    api_key = var.api_key
-}
-```
 When running terraform plan/apply, pipe in the variables as follows:
 
 ```terraform apply -var= "api_key=$api_key"```
