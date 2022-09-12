@@ -20,7 +20,7 @@ The following terms are used to describe attributes in the schema of this data s
 # Schema
 ## Read-only attributes
 ### peer_subnets<br>
-<ins>Type</ins>: list of arrays, read-only<br>
+<ins>Type</ins>: list of strings, read-only<br>
 <br>The subnets for the peering VPC.
 ### peer_vpc_network_name<br>
 <ins>Type</ins>: string, read-only<br>

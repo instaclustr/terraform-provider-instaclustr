@@ -27,7 +27,7 @@ The following terms are used to describe attributes in the schema of this resour
 # Schema
 ## Input attributes - Required
 ### peer_subnets<br>
-<ins>Type</ins>: list of arrays, required, updatable<br>
+<ins>Type</ins>: list of strings, required, updatable<br>
 <br>The subnets for the peering VPC.
 ### cdc_id<br>
 <ins>Type</ins>: string (uuid), required, immutable<br>

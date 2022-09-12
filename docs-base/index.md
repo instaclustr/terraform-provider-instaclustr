@@ -15,7 +15,7 @@ This provider is in __Preview Release__ with support for the following offerings
 
 | Application | Support Status |
 | ----------- | ----------- |
-| Apache Cassandra | Complete Support |
+| Apache Cassandra | Complete |
 | Apache Kafka | In Progress |
 | Kafka Connect | In Progress |
 | Apache ZooKeeper | In Progress |

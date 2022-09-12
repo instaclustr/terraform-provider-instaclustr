@@ -26,7 +26,7 @@ The following terms are used to describe attributes in the schema of this resour
 # Schema
 ## Input attributes - Required
 ### peer_subnets<br>
-<ins>Type</ins>: list of arrays, required, immutable<br>
+<ins>Type</ins>: list of strings, required, immutable<br>
 <br>The subnets for the peering VPC.
 ### peer_vpc_network_name<br>
 <ins>Type</ins>: string, required, immutable<br>
