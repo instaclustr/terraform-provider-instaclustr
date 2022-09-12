@@ -13,7 +13,7 @@ It provides a flexible set of resources for provisioning and managing Instaclust
 
 This provider is in __Preview Release__ with support for the following offerings:
 
-| Application | Support Progress |
+| Application | Support Status |
 | ----------- | ----------- |
 | Apache Cassandra | Complete Support |
 | Apache Kafka | In Progress |
