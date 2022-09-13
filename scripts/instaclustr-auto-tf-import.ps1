@@ -2,26 +2,26 @@ $ErrorActionPreference = "Stop"
 
 $SCRIPT_NAME = "./instaclustr-auto-import.ps1"
 
-$INSTACLUSTR_USERNAME = [System.Environment]::GetEnvironmentVariable("INSTACLUSTR_TF_IMPORT_USERNAME")
-$INSTACLUSTR_API_KEY = [System.Environment]::GetEnvironmentVariable("INSTACLUSTR_TF_IMPORT_API_KEY")
+$INSTACLUSTR_USERNAME = [System.Environment]::GetEnvironmentVariable("IC_USERNAME")
+$INSTACLUSTR_API_KEY = [System.Environment]::GetEnvironmentVariable("IC_API_KEY")
 $DEST_FOLDER_NAME = $args[0]
 
 if ($DEST_FOLDER_NAME -eq $null -Or $INSTACLUSTR_USERNAME -eq $null -Or $INSTACLUSTR_API_KEY -eq $null) {
     Write-Output ""
 
     if ($INSTACLUSTR_USERNAME -eq $null) {
-        Write-Output "Missing required environment variable 'INSTACLUSTR_TF_IMPORT_USERNAME'"
+        Write-Output "Missing required environment variable 'IC_USERNAME'"
         Write-Output ""
     }
 
     if ($INSTACLUSTR_API_KEY -eq $null) {
-        Write-Output "Missing required environment variable 'INSTACLUSTR_TF_IMPORT_API_KEY'"
+        Write-Output "Missing required environment variable 'IC_API_KEY'"
         Write-Output ""
     }
 
     Write-Output "Usage: $SCRIPT_NAME <destination_directory> [auto-approve]"
     Write-Output "'auto-approve' is an optional argument which will skip the confirmation on emptying the destination directory."
-    Write-Output "This script also depends on existence of 2 environment variables - 'INSTACLUSTR_TF_IMPORT_USERNAME' and 'INSTACLUSTR_TF_IMPORT_API_KEY' which should contain the Instaclustr username and Provisioning API Key respectively."
+    Write-Output "This script also depends on existence of 2 environment variables - 'IC_USERNAME' and 'IC_API_KEY' which should contain the Instaclustr username and Provisioning API Key respectively."
     Write-Output "Example - $SCRIPT_NAME instaclustr"
     Write-Output ""
     exit
@@ -38,7 +38,7 @@ if ($args[1] -ne "auto-approve") {
 }
 
 $basicAuthHeaderValue = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("${INSTACLUSTR_USERNAME}:$INSTACLUSTR_API_KEY"))
-Invoke-WebRequest https://api.instaclustr.com/cluster-management/v2/operations/terraform-import -Headers @{Authorization="Basic $basicAuthHeaderValue"} -OutFile "$ZIP_FILE_NAME"
+Invoke-WebRequest https://api.instaclustr.com/cluster-management/v2/operations/generate-terraform-code/v2 -Headers @{Authorization="Basic $basicAuthHeaderValue"} -OutFile "$ZIP_FILE_NAME"
 
 
 cmd /c rmdir /s /q "$DEST_FOLDER_NAME" #need to do this instead of Remove-Item or other methods to deal with symlinks to terraform provider
