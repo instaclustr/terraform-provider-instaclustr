@@ -278,7 +278,7 @@ resource "instaclustr_cluster" "example-opensearch" {
     version = "1.3.5"
     options = {
       dedicated_master_nodes = true,
-      master_node_size = "SRH-DEV-t4g.small-5",
+      master_node_size = "SRH-DM-DEV-t4g.small-5",
       data_node_size = "SRH-DEV-t4g.small-5",
       opensearch_dashboards_node_size = "SRH-DEV-t4g.small-5",
     }
