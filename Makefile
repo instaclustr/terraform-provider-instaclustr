@@ -33,6 +33,7 @@ build-all-platforms:
 	zip -j bin/${FULL_BIN_NAME}_windows_386.zip bin/${FULL_BIN_NAME}
 	rm bin/${FULL_BIN_NAME} # remove lingering build
 	shasum -a 256 bin/*.zip > bin/${SHASUM_NAME}
+	sed -i '' -e 's/bin\///g' bin/${SHASUM_NAME}
 
 install:
 	@if [ ! -d $(INSTALL_FOLDER) ]; then \
