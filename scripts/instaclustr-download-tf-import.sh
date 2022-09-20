@@ -22,9 +22,9 @@ then
     echo
   fi
 
-  echo "Usage: ./$0 <path_to_output_file>"
+  echo "Usage: $0 <path_to_output_file>"
   echo "This script also depends on existence of 2 environment variables - 'IC_USERNAME' and 'IC_API_KEY' which should contain the Instaclustr username and Provisioning API Key respectively."
-  echo "Example - ./$0 instaclustr/terraform-import.zip"
+  echo "Example - $0 instaclustr/terraform-import.zip"
   echo
   exit 0
 fi
