@@ -1,6 +1,6 @@
 # Terraform Instaclustr Provider
 
-A [Terraform](http://terraform.io) provider for managing Instaclustr Platform resources.
+A [Terraform](http://terraform.io) provider for managing Instaclustr Platform resources. 
 
 ## Documentation
 
