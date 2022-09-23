@@ -52,6 +52,8 @@ commands:
             SHASUM_NAME="${BIN_NAME}_${RELEASE_TAG:1}"
             env GOOS=darwin GOARCH=amd64 make build
             zip -j bin/${FULL_BIN_NAME}_darwin_amd64.zip bin/${FULL_BIN_NAME}
+            env GOOS=darwin GOARCH=arm64 make build
+            zip -j bin/${FULL_BIN_NAME}_darwin_arm64.zip bin/${FULL_BIN_NAME}
             env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 make build FLAGS="-ldflags '-w -s -extldflags \"-static\"' -tags netgo -a -v"
             zip -j bin/${FULL_BIN_NAME}_linux_amd64.zip bin/${FULL_BIN_NAME}
             cp bin/${FULL_BIN_NAME}_linux_amd64.zip bin/${FULL_BIN_NAME}_alpine_amd64.zip
@@ -152,8 +154,6 @@ workflows:
           filters:
             tags:
               only: /^v.*/
-            branches:
-              ignore: /.*/
   unit-test-workflow:
     jobs:
       - commit-build-test:
