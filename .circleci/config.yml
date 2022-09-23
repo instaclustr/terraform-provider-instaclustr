@@ -104,3 +104,5 @@ workflows:
           filters:
             tags:
               only: /^v.*/
+            branches:
+              only: provider-v2
