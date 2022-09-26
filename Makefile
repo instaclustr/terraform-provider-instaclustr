@@ -7,7 +7,10 @@ SHASUM_NAME="${BIN_NAME}_${VERSION}_SHA256SUMS"
 
 INSTALL_FOLDER=$(HOME)/.terraform.d/plugins/terraform.instaclustr.com/instaclustr/instaclustr/$(VERSION)/darwin_amd64
 
-.PHONY: local-build preprod-build build build-all install local-gen-docs gen-docs
+.PHONY: local-build preprod-build build build-all install local-gen-docs gen-docs release_version
+
+release_version:
+	@echo v$(VERSION)
 
 build:
 	go build $(FLAGS) -o bin/${FULL_BIN_NAME} main.go
