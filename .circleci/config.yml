@@ -85,7 +85,7 @@ commands:
 jobs:
   build:
     docker:
-      - image: circleci/golang:1.14
+      - image: circleci/golang:1.17.5
     working_directory: /go/src/github.com/arjunrajshekhar/terraform-provider-instaclustr
     steps:
       - checkout
