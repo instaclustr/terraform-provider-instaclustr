@@ -520,7 +520,7 @@ resource "instaclustr_cluster" "example-cadenceav-opensearch" {
 
   bundle {
     bundle = "OPENSEARCH"
-    version = "1.3.4"
+    version = "1.3.5"
     options = {
       dedicated_master_nodes = true  
       master_node_size = "SRH-DM-t3.small-v2"
