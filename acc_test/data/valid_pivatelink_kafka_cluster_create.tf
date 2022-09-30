@@ -22,7 +22,7 @@ resource "instaclustr_cluster" "validPrivateLinkKafka" {
 
   bundle {
     bundle = "KAFKA"
-    version = "3.1.1"
+    version = "3.1.2"
     options = {
       auto_create_topics = true
       client_encryption = false

@@ -29,7 +29,7 @@ A resource for managing clusters on Instaclustr Managed Platform. A cluster cont
 | `oidc_provider`                       | The ID of an OIDC provider to be used for Elasticsearch Kibana or OpenSearch Dashboards. OIDC providers must be set in Console Cluster Resources to be available for use.                                                                                             | Optional                                                   |
 | `cluster_id`                          | Returns the Cluster ID as a UUID                                                                                                                                                                                                                                      | READ ONLY                                                  |
 | `default_data_centre_id`              | Returned the default Data Centre ID as a UUID                                                                                                                                                                                                                         | READ ONLY                                                  |
-| `private_link`                        | Creates a PrivateLink cluster, see [here](https://www.instaclustr.com/support/documentation/useful-information/privatelink/) for more details. PrivateLink can only be supported on AWS_VPC for Kafka and OpenSearch currently. See below for its properties.                                                      | Optional, but Required for creating a PrivateLink cluster. 
+| `private_link`                        | Creates a PrivateLink cluster, see [here](https://www.instaclustr.com/support/documentation/useful-information/privatelink/) for more details. PrivateLink can only be supported on AWS_VPC for Kafka and OpenSearch currently. See below for its properties.                                                      | Optional, but Required for creating a PrivateLink cluster. |
 
 ### cluster_provider
 
@@ -69,14 +69,14 @@ A resource for managing clusters on Instaclustr Managed Platform. A cluster cont
 |--------------------------|---------------------------------------|------------------------------------------------------------------------------------|
 | APACHE_CASSANDRA         | 2.2.18, 3.0.19, 3.11.8, 4.0 (preview) |                                                                                    |
 | SPARK                    | 2.1.3, 2.3.2                          | APACHE_CASSANDRA                                                                   |
-| KAFKA                    | 2.7.1, 2.8.1, 3.0.0, 3.1.1            |                                                                                    |
+| KAFKA                    | 2.7.1, 2.8.2, 3.0.2, 3.1.2            |                                                                                    |
 | KAFKA_REST_PROXY         | 5.0.0                                 | KAFKA                                                                              |
 | KAFKA_SCHEMA_REGISTRY    | 5.0.0, 5.0.4                          | KAFKA                                                                              |
 | KARAPACE_SCHEMA_REGISTRY | 3.2.0                                 | KAFKA <br/> **Not compatible with:** <br/> KAFKA_REST_PROXY, KAFKA_SCHEMA_REGISTRY |
 | KARAPACE_REST_PROXY      | 3.2.0                                 | KAFKA <br/> **Not compatible with:** <br/> KAFKA_REST_PROXY, KAFKA_SCHEMA_REGISTRY |
 | OPENSEARCH               | 1.3.5, 2.0.0                          |                                                                                    |
 | ELASTICSEARCH (For Legacy Support Only)           | 1.13.3                                |                                                                                    |
-| KAFKA_CONNECT            | 2.7.1, 2.8.1, 3.0.0, 3.1.1            |                                                                                    |
+| KAFKA_CONNECT            | 2.7.1, 2.8.2, 3.0.2, 3.1.2            |                                                                                    |
 | REDIS                    | 6.2.7, 7.0.4                          |                                                                                    |
 | APACHE_ZOOKEEPER         | 3.6.3, 3.7.1                          |                                                                                    |
 | POSTGRESQL               | 13.8, 14.5                            |                                                                                    |
