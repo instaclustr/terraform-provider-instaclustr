@@ -16,37 +16,37 @@ resource "instaclustr_aws_security_group_firewall_rule_v2" "example" {
 ```
 ## Glossary
 The following terms are used to describe attributes in the schema of this resource:
-- **_read-only_** - These are attributes that can only be read and not provided as an input to the resource.
-- **_required_** - These attributes must be provided for the resource to be created.
-- **_optional_** - These input attributes can be omitted, and doing so may result in a default value being used.
-- **_immutable_** - These are input attributes that cannot be changed after the resource is created.
-- **_updatable_** - These input attributes can be updated to a different value if needed, and doing so will trigger an update operation.
+- **_read-only_** - These are attributes that can only be read and not provided as an input to the resource.<br><br>
+- **_required_** - These attributes must be provided for the resource to be created.<br><br>
+- **_optional_** - These input attributes can be omitted, and doing so may result in a default value being used.<br><br>
+- **_immutable_** - These are input attributes that cannot be changed after the resource is created.<br><br>
+- **_updatable_** - These input attributes can be updated to a different value if needed, and doing so will trigger an update operation.<br><br>
 - **_nested block_** - These attributes use the [Terraform block syntax](https://www.terraform.io/language/attr-as-blocks) when defined as an input in the Terraform code. Attributes with the type **_repeatable nested block_** are the same except that the nested block can be defined multiple times with varying nested attributes. When reading nested block attributes, an index must be provided when accessing the contents of the nested block, example - `my_resource.nested_block_attribute[0].nested_attribute`.
-## Root Level Schema
-### Input attributes - Required
-*___type___*<br>
+# Schema
+## Input attributes - Required
+### type<br>
 <ins>Type</ins>: string, required, immutable<br>
-<ins>Constraints</ins>: allowed values: [ `APACHE_ZOOKEEPER`, `CADENCE`, `CADENCE_GRPC`, `CADENCE_WEB`, `CASSANDRA`, `CASSANDRA_CQL`, `ELASTICSEARCH`, `KAFKA`, `KAFKA_CONNECT`, `KAFKA_REST_PROXY`, `KAFKA_SCHEMA_REGISTRY`, `KARAPACE_REST_PROXY`, `KARAPACE_SCHEMA_REGISTRY`, `OPENSEARCH`, `OPENSEARCH_DASHBOARDS`, `PGBOUNCER`, `POSTGRESQL`, `REDIS`, `SEARCH_DASHBOARDS`, `SECURE_APACHE_ZOOKEEPER`, `SPARK`, `SPARK_JOBSERVER` ]<br><br>The type of firewall rule.<br><br>
-*___cluster_id___*<br>
+<ins>Constraints</ins>: allowed values: [ `APACHE_ZOOKEEPER`, `CADENCE`, `CADENCE_GRPC`, `CADENCE_WEB`, `CASSANDRA`, `CASSANDRA_CQL`, `ELASTICSEARCH`, `KAFKA`, `MTLS_KAFKA`, `KAFKA_CONNECT`, `KAFKA_REST_PROXY`, `KAFKA_SCHEMA_REGISTRY`, `KARAPACE_REST_PROXY`, `KARAPACE_SCHEMA_REGISTRY`, `OPENSEARCH`, `OPENSEARCH_DASHBOARDS`, `PGBOUNCER`, `POSTGRESQL`, `REDIS`, `SEARCH_DASHBOARDS`, `SECURE_APACHE_ZOOKEEPER`, `SPARK`, `SPARK_JOBSERVER` ]<br><br>The type of firewall rule.
+### cluster_id<br>
 <ins>Type</ins>: string (uuid), required, immutable<br>
-<br>ID of the cluster for the AWS security group firewall rule.<br><br>
-### Input attributes - Optional
-*___security_group_id___*<br>
+<br>ID of the cluster for the AWS security group firewall rule.
+## Input attributes - Optional
+### security_group_id<br>
 <ins>Type</ins>: string, optional, immutable<br>
-<br>The security group ID of the AWS security group firewall rule.<br><br>
-### Read-only attributes
-*___status___*<br>
+<br>The security group ID of the AWS security group firewall rule.
+## Read-only attributes
+### status<br>
 <ins>Type</ins>: string, read-only<br>
-<br>The status of the AWS security group firewall rule.<br><br>
-*___deferred_reason___*<br>
+<br>The status of the AWS security group firewall rule.
+### deferred_reason<br>
 <ins>Type</ins>: string, read-only<br>
-<br>The reason (if needed) for the deferred status of the AWS security group firewall rule.<br><br>
-*___id___*<br>
+<br>The reason (if needed) for the deferred status of the AWS security group firewall rule.
+### id<br>
 <ins>Type</ins>: string (uuid), read-only<br>
-<br>ID of the AWS security group firewall rule.<br><br>
+<br>ID of the AWS security group firewall rule.
 ## Import
 This resource can be imported using the `terraform import` command as follows:
 ```
-terraform import instaclustr_aws_security_group_firewall_rule_v2.[resource-name] "[resource-id]"
+terraform import instaclustr_aws_security_group_firewall_rule_v2.<resource-name> "<resource-id>"
 ```
-`[resource-id]` is the unique identifier for this resource matching the value of the `id` attribute defined in the root schema above.
+`<resource-id>` is the unique identifier for this resource matching the value of the `id` attribute defined in the root schema above.
