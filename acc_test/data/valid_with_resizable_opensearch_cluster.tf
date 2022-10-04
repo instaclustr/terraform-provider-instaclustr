@@ -20,7 +20,7 @@ resource "instaclustr_cluster" "resizable_cluster" {
   }
   bundle {
     bundle  = "OPENSEARCH"
-    version = "1.3.4"
+    version = "1.3.5"
     options = {
       dedicated_master_nodes          = false,
       master_node_size                = "SRH-DEV-t4g.small-5",
