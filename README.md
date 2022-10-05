@@ -37,30 +37,27 @@ terraform {
   required_providers {
     instaclustr = {
       source = "instaclustr/instaclustr"
-      version = "1.9.9"
+      version = ">= 1.0.0, < 2.0.0"
     }
   }
 }
 
-provider "instaclustr" {
-  # Configuration options
-}
 ```
 
 For further details on Provider installation, and installation on older versions of terraform please see the [Terraform installation guide](https://www.terraform.io/docs/plugins/basics.html#installing-a-plugin).
 
 ## Authentication
 
-This provider requires an API Key in order to provision Instaclustr resources. To create an API key, please log into the [Instaclustr Console](https://console.instaclustr.com) or signup for an account [here](https://console.instaclustr.com/user/signup) if you don't have one.  Navigate to `Account` -> `API Keys` page, locate the `Provisioning` role and click `Generate Key`.  This username and API key combination should be placed into the provider configuration:
+This provider requires an API Key in order to provision Instaclustr resources. To create an API key, please log into the [Instaclustr Console](https://console.instaclustr.com) or signup for an account [here](https://console.instaclustr.com/user/signup) if you don't have one.  Navigate to `Account Settings` -> `API Keys` page, locate the `Provisioning` role and click `Generate Key`.  This username and API key combination should be placed into the provider configuration:
 
 ```
 provider "instaclustr" {
-    username = "<Your instaclustr username here>"
-    api_key = "<Your provisioning API key here>"
+    username= "<Your instaclustr username>"
+    api_key = var.api_key
 }
 ```
 
-If you wish to keep secrets in the ENV instead of stored in your terraform file use the following method:
+In order to keep the `api_key` variable secret in the ENV, instead of stored in your terraform file like the `username`, use the following method:
 
 In console export the desired variable:
 
@@ -74,13 +71,6 @@ variable "api_key" {
 }
 ```
 
-In the provider block use the variable:
-```
-provider "instaclustr" {
-    username= "<Your instaclustr username>"
-    api_key = var.api_key
-}
-```
 When running terraform plan/apply, pipe in the variables as follows:
 
 ```terraform apply -var= "api_key=$api_key"```
@@ -289,7 +279,7 @@ Configuration documentation can be found at the [Instaclustr Terraform Registry]
 | OPENSEARCH               | 1.3.5, 2.0.0                          |                                                                                    |
 | ELASTICSEARCH (For Legacy Support Only)           | 1.13.3                                |                                                                                    |
 | KAFKA_CONNECT            | 2.7.1, 2.8.1, 3.0.0, 3.1.1            |                                                                                    |
-| REDIS                    | 6.2.7, 7.0.4                          |                                                                                    |
+| REDIS                    | 6.2.7                                 |                                                                                    |
 | APACHE_ZOOKEEPER         | 3.6.3, 3.7.1                          |                                                                                    |
 | POSTGRESQL               | 13.8, 14.5                            |                                                                                    |
 | PGBOUNCER                | 1.17.0                                | POSTGRESQL                                                                         |
