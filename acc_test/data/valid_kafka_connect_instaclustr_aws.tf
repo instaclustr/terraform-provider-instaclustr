@@ -22,7 +22,7 @@ resource "instaclustr_cluster" "validKC" {
 
     bundle {
         bundle = "KAFKA_CONNECT"
-        version = "2.8.1"
+        version = "2.8.2"
         options = {
             target_kafka_cluster_id = "%s"
             vpc_id = "SEPARATE_VPC"
