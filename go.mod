@@ -74,4 +74,4 @@ require (
 	gopkg.in/yaml.v2 v2.3.0 // indirect
 )
 
-replace github.com/dikhan/terraform-provider-openapi/v3 v3.0.0 => github.com/instaclustr/terraform-provider-openapi/v3 v3.0.1-0.20221004073927-fb3febf47872
+replace github.com/dikhan/terraform-provider-openapi/v3 v3.0.0 => github.com/instaclustr/terraform-provider-openapi/v3 v3.0.1-0.20221005234055-353c80866391

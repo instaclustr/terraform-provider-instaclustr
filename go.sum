@@ -286,6 +286,8 @@ github.com/instaclustr/terraform-provider-openapi/v3 v3.0.1-0.20220729100351-28a
 github.com/instaclustr/terraform-provider-openapi/v3 v3.0.1-0.20220729100351-28a686815e4f/go.mod h1:xprUAaxWHlpr+LK+nGa4Sp3Y4UnFaeBP5B329VpqMlg=
 github.com/instaclustr/terraform-provider-openapi/v3 v3.0.1-0.20221004073927-fb3febf47872 h1:GtQEz4W95XJiinX3owz6w8zyYP+tPMns5o7tv3phNTc=
 github.com/instaclustr/terraform-provider-openapi/v3 v3.0.1-0.20221004073927-fb3febf47872/go.mod h1:iCQGfmUx2t1U6JLwP2zibFOvR1Sl0FofHggsPVgohq0=
+github.com/instaclustr/terraform-provider-openapi/v3 v3.0.1-0.20221005234055-353c80866391 h1:mj6wzlv121PlXaphFEqQse9lKY4oAkS+D8LvEx49V+Q=
+github.com/instaclustr/terraform-provider-openapi/v3 v3.0.1-0.20221005234055-353c80866391/go.mod h1:iCQGfmUx2t1U6JLwP2zibFOvR1Sl0FofHggsPVgohq0=
 github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 h1:BQSFePA1RWJOlocH6Fxy8MmwDt+yVQYULKfN0RoTN8A=
 github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99/go.mod h1:1lJo3i6rXxKeerYnT8Nvf0QmHCRC1n8sfWVwXF2Frvo=
 github.com/jessevdk/go-flags v1.4.0/go.mod h1:4FA24M0QyGHXBuZZK/XkWh8h0e1EYbRYJSGM75WSRxI=
