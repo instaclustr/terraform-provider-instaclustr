@@ -5,7 +5,7 @@ description: |-
 ---
 
 # instaclustr_azure_vnet_peers_v2 (Data Source)
-A listable data source of all Azure Virtul Network Peering requests in an Instaclustr Account.
+A listable data source of all Azure Virtual Network Peering requests in an Instaclustr Account.
 ## Example Usage
 ```
 data "instaclustr_azure_vnet_peers_v2" "example" { }
