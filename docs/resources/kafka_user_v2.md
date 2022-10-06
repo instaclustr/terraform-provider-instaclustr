@@ -42,9 +42,8 @@ The following terms are used to describe attributes in the schema of this resour
 *___password___*<br>
 <ins>Type</ins>: string (password), required, updatable<br>
 <br>Password for the Kafka user.<br><br>
-### Input attributes - Optional
 *___initial_permissions___*<br>
-<ins>Type</ins>: string, optional, immutable<br>
+<ins>Type</ins>: string, required, immutable<br>
 <ins>Constraints</ins>: allowed values: [ `standard`, `read-only`, `none` ]<br><br>Permissions initially granted to Kafka user upon creation.<br><br>
 ### Read-only attributes
 *___id___*<br>
