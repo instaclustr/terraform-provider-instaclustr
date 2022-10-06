@@ -49,7 +49,7 @@ The following terms are used to describe attributes in the schema of this resour
 ### Read-only attributes
 *___id___*<br>
 <ins>Type</ins>: string, read-only<br>
-<br>Instaclustr identifier for the Kafka user. Of the form: [cluster-id]_[kafka-username]<br><br>
+<br>Instaclustr identifier for the Kafka user. The value of this property has the form: [cluster-id]_[kafka-username]<br><br>
 <a id="nested--options"></a>
 ## Nested schema for `options`
 Initial options used when creating Kafka user<br>
