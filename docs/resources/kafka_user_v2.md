@@ -9,6 +9,7 @@ Definition of a Kafka User to be applied to a Kafka cluster.
 ## Example Usage
 ```
 resource "instaclustr_kafka_user_v2" "example" {
+  password = "myPassword1."
   options = {
     override_existing_user = false
     sasl_scram_mechanism = "SCRAM-SHA-256"
@@ -48,7 +49,7 @@ The following terms are used to describe attributes in the schema of this resour
 ### Read-only attributes
 *___id___*<br>
 <ins>Type</ins>: string, read-only<br>
-<br>Instaclustr identifier for the Kafka user.<br><br>
+<br>Instaclustr identifier for the Kafka user. Of the form: [cluster-id]_[kafka-username]<br><br>
 <a id="nested--options"></a>
 ## Nested schema for `options`
 Initial options used when creating Kafka user<br>

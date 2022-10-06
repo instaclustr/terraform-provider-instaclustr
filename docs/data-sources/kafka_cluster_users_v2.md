@@ -38,7 +38,7 @@ List of all Kafka users in the cluster.<br>
 <ins>Constraints</ins>: pattern: `^(?![zZ][oO][oO][kK][eE][eE][pP][eE][rR]$)[a-zA-Z0-9][a-zA-Z0-9_-]*$`<br><br>Username of the Kafka user.<br><br>
 *___id___*<br>
 <ins>Type</ins>: string, read-only<br>
-<br>Instaclustr identifier for the Kafka user.<br><br>
+<br>Instaclustr identifier for the Kafka user. Of the form: [cluster-id]_[kafka-username]<br><br>
 *___cluster_id___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
 <br>ID of the Kafka cluster.<br><br>
