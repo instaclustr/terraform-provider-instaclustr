@@ -32,4 +32,4 @@ The following terms are used to describe attributes in the schema of this data s
 <br>
 *___application___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: allowed values: [ `APACHE_CASSANDRA`, `KAFKA`, `UNKNOWN` ]<br><br>
+<ins>Constraints</ins>: allowed values: [ `APACHE_CASSANDRA`, `KAFKA`, `KAFKA_CONNECT`, `UNKNOWN` ]<br><br>
