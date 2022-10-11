@@ -35,10 +35,10 @@ The following terms are used to describe attributes in the schema of this resour
 <ins>Type</ins>: repeatable nested block, required, updatable, see [acl](#nested--acl) for nested schema<br>
 <br>List of ACLs for the given principal.<br><br>
 *___cluster_id___*<br>
-<ins>Type</ins>: string (uuid), required, updatable<br>
+<ins>Type</ins>: string (uuid), required, immutable<br>
 <br>UUID of the Kafka cluster.<br><br>
 *___user_query___*<br>
-<ins>Type</ins>: string, required, updatable<br>
+<ins>Type</ins>: string, required, immutable<br>
 <br>This is the principal without the "User:" prefix.<br><br>
 ### Read-only attributes
 *___id___*<br>
