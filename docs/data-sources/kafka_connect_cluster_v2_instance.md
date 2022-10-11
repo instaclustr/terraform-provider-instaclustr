@@ -236,7 +236,7 @@ Details to connect to a Instaclustr managed cluster.<br>
 *___target_kafka_cluster_id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Target kafka cluster id.<br><br>
-*___kafka_connect_v_p_c_type___*<br>
+*___kafka_connect_vpc_type___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Available options are KAFKA_VPC, VPC_PEERED, SEPARATE_VPC<br><br>
 <a id="nested--aws_settings"></a>
