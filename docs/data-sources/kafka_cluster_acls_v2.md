@@ -35,7 +35,7 @@ List of ACLs for the given principal.<br>
 ### Read-only attributes
 *___principal___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: pattern: `^User:.*$`<br><br>Specifies the users(s) for which this ACL applies and can include the wildcard '*'. Valid values must start with "User:" including the wildcard.<br><br>
+<ins>Constraints</ins>: pattern: `^User:.*$`<br><br>Specifies the users(s) for which this ACL applies and can include the wildcard `*`. Valid values must start with "User:" including the wildcard.<br><br>
 *___permission_type___*<br>
 <ins>Type</ins>: string, read-only<br>
 <ins>Constraints</ins>: allowed values: [ `ALLOW`, `DENY` ]<br><br>Specifies whether to allow or deny the operation.<br><br>
@@ -44,7 +44,7 @@ List of ACLs for the given principal.<br>
 <ins>Constraints</ins>: allowed values: [ `LITERAL`, `PREFIXED` ]<br><br>Indicates the resource-pattern-type<br><br>
 *___host___*<br>
 <ins>Type</ins>: string, read-only<br>
-<br>The IP address to which this ACL applies. It takes any string including the wildcard "*" for all IP addresses.<br><br>
+<br>The IP address to which this ACL applies. It takes any string including the wildcard `*` for all IP addresses.<br><br>
 *___resource_name___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Any string that fits the resource name, e.g. topic name if the resource type is TOPIC<br><br>
@@ -61,7 +61,7 @@ List of all ACLs in the Kafka cluster.<br>
 *___id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Instaclustr identifier for the ACL list for a principal. The value of this property has the form: [clusterId]_[principalUserQuery]
-The user query is the principal value without the leading "User:".<br><br>
+The user query is the principal value without the leading `User:`.<br><br>
 *___acl___*<br>
 <ins>Type</ins>: repeatable nested block, read-only, see [acl](#nested--acl) for nested schema<br>
 <br>List of ACLs for the given principal.<br><br>
@@ -70,4 +70,4 @@ The user query is the principal value without the leading "User:".<br><br>
 <br>UUID of the Kafka cluster.<br><br>
 *___user_query___*<br>
 <ins>Type</ins>: string, read-only<br>
-<br>This is the principal without the "User:" prefix.<br><br>
+<br>This is the principal without the `User:` prefix.<br><br>
