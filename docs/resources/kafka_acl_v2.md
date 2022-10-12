@@ -22,7 +22,7 @@ resource "instaclustr_kafka_acl_v2" "example" {
   acl {
     host = "*"
     operation = "CREATE"
-    pattern_type = "PREFIX"
+    pattern_type = "PREFIXED"
     permission_type = "ALLOW"
     principal = "User:test"
     resource_name = "kafka-topic"
