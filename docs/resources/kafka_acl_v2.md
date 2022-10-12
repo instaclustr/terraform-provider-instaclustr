@@ -19,6 +19,18 @@ resource "instaclustr_kafka_acl_v2" "example" {
     resource_type = "CLUSTER"
   }
 
+  acl {
+    host = "*"
+    operation = "CREATE"
+    pattern_type = "PREFIX"
+    permission_type = "ALLOW"
+    principal = "User:test"
+    resource_name = "kafka-topic"
+    resource_type = "TOPIC"
+  }
+
+  user_query = "test"
+  cluster_id = "c1af59c6-ba0e-4cc2-a0f3-65cee17a5f37"
 }
 ```
 ## Glossary
@@ -51,26 +63,25 @@ List of ACLs for the given principal.<br>
 ### Input attributes - Required
 *___principal___*<br>
 <ins>Type</ins>: string, required, updatable<br>
-<ins>Constraints</ins>: pattern: `^User:.*$`<br><br>Valid values must start with "User:" including the wildcard, e.g., "User:*"<br><br>
+<ins>Constraints</ins>: pattern: `^User:.*$`<br><br>Specifies the users(s) for which this ACL applies and can include the wildcard '*'. Valid values must start with "User:" including the wildcard.<br><br>
 *___permission_type___*<br>
 <ins>Type</ins>: string, required, updatable<br>
-<ins>Constraints</ins>: allowed values: [ `ALLOW`, `DENY` ]<br><br>Valid values for permissionType: "ALLOW", "DENY"<br><br>
+<ins>Constraints</ins>: allowed values: [ `ALLOW`, `DENY` ]<br><br>Specifies whether to allow or deny the operation.<br><br>
 *___pattern_type___*<br>
 <ins>Type</ins>: string, required, updatable<br>
-<ins>Constraints</ins>: allowed values: [ `LITERAL`, `PREFIXED` ]<br><br>Valid values for patternType: "LITERAL", "PREFIXED"<br><br>
+<ins>Constraints</ins>: allowed values: [ `LITERAL`, `PREFIXED` ]<br><br>Indicates the resource-pattern-type<br><br>
 *___host___*<br>
 <ins>Type</ins>: string, required, updatable<br>
-<br>It takes any string including the wildcard "*"<br><br>
+<br>The IP address to which this ACL applies. It takes any string including the wildcard "*" for all IP addresses.<br><br>
 *___resource_name___*<br>
 <ins>Type</ins>: string, required, updatable<br>
-<br>It takes any string including the wildcard "*"<br><br>
+<br>Any string that fits the resource name, e.g. topic name if the resource type is TOPIC<br><br>
 *___resource_type___*<br>
 <ins>Type</ins>: string, required, updatable<br>
-<ins>Constraints</ins>: allowed values: [ `CLUSTER`, `TOPIC`, `GROUP`, `DELEGATION_TOKEN`, `TRANSACTIONAL_ID` ]<br><br>Valid values for resourceType: "CLUSTER", "TOPIC", "GROUP", "DELEGATION_TOKEN", "TRANSACTIONAL_ID"
-<br><br>
+<ins>Constraints</ins>: allowed values: [ `CLUSTER`, `TOPIC`, `GROUP`, `DELEGATION_TOKEN`, `TRANSACTIONAL_ID` ]<br><br>Specifies the type of resource.<br><br>
 *___operation___*<br>
 <ins>Type</ins>: string, required, updatable<br>
-<ins>Constraints</ins>: allowed values: [ `ALL`, `READ`, `WRITE`, `CREATE`, `DELETE`, `ALTER`, `DESCRIBE`, `CLUSTER_ACTION`, `DESCRIBE_CONFIGS`, `ALTER_CONFIGS`, `IDEMPOTENT_WRITE` ]<br><br>Valid values for operation: "ALL", "READ", "WRITE", "CREATE", "DELETE", "ALTER", "DESCRIBE", "CLUSTER_ACTION", "DESCRIBE_CONFIGS", "ALTER_CONFIGS", "IDEMPOTENT_WRITE"<br><br>
+<ins>Constraints</ins>: allowed values: [ `ALL`, `READ`, `WRITE`, `CREATE`, `DELETE`, `ALTER`, `DESCRIBE`, `CLUSTER_ACTION`, `DESCRIBE_CONFIGS`, `ALTER_CONFIGS`, `IDEMPOTENT_WRITE` ]<br><br>The operation that will be allowed or denied.<br><br>
 ## Import
 This resource can be imported using the `terraform import` command as follows:
 ```
