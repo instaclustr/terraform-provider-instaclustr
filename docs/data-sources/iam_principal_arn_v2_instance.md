@@ -24,7 +24,7 @@ The following terms are used to describe attributes in the schema of this data s
 <br>The Endpoint Service on AWS.<br><br>
 *___principal_arn___*<br>
 <ins>Type</ins>: string, read-only<br>
-<br>The IAM Principal ARN.<br><br>
+<ins>Constraints</ins>: pattern: `^arn:aws:iam::[0-9]{12}:(root$|user\/[\w+=,.@-]+|role\/[\w+=,.@-]+)$`<br><br>The IAM Principal ARN.<br><br>
 *___id___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
 <br>The Id of the IAM Principal ARN.<br><br>
