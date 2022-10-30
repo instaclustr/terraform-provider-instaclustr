@@ -1,14 +1,14 @@
 ---
-page_title: "instaclustr_cluster_data_center_iam_principal_arn_v2 Data Source - terraform-provider-instaclustr"
+page_title: "instaclustr_cluster_data_center_iam_principal_arns_v2 Data Source - terraform-provider-instaclustr"
 subcategory: ""
 description: |-
 ---
 
-# instaclustr_cluster_data_center_iam_principal_arn_v2 (Data Source)
+# instaclustr_cluster_data_center_iam_principal_arns_v2 (Data Source)
 List of IAM Principal ARNs for a cluster data center
 ## Example Usage
 ```
-data "instaclustr_cluster_data_center_iam_principal_arn_v2" "example" { 
+data "instaclustr_cluster_data_center_iam_principal_arns_v2" "example" { 
   cluster_data_center_id = "<cluster_data_center_id>" // the value of the `cluster_data_center_id` attribute defined in the root schema below
 }
 ```
@@ -23,14 +23,14 @@ The following terms are used to describe attributes in the schema of this data s
 <ins>Type</ins>: string, required<br>
 <br>ID of the Cluster Data Center.<br><br>
 ### Read-only attributes
-*___iam_principal_a_r_ns___*<br>
-<ins>Type</ins>: repeatable nested block, read-only, see [iam_principal_a_r_ns](#nested--iam_principal_a_r_ns) for nested schema<br>
+*___iam_principal_arns___*<br>
+<ins>Type</ins>: repeatable nested block, read-only, see [iam_principal_arns](#nested--iam_principal_arns) for nested schema<br>
 <br>IAM Principal ARNs to allow connection to the AWS Endpoint Service.<br><br>
 *___cluster_data_center_id___*<br>
 <ins>Type</ins>: string, read-only<br>
-<br>Id of the cluster data center<br><br>
-<a id="nested--iam_principal_a_r_ns"></a>
-## Nested schema for `iam_principal_a_r_ns`
+<br>ID of the cluster data center<br><br>
+<a id="nested--iam_principal_arns"></a>
+## Nested schema for `iam_principal_arns`
 IAM Principal ARNs to allow connection to the AWS Endpoint Service.<br>
 ### Read-only attributes
 *___aws_vpc_endpoint_service___*<br>
@@ -41,7 +41,7 @@ IAM Principal ARNs to allow connection to the AWS Endpoint Service.<br>
 <ins>Constraints</ins>: pattern: `^arn:aws:iam::[0-9]{12}:(root$|user\/[\w+=,.@-]+|role\/[\w+=,.@-]+)$`<br><br>The IAM Principal ARN.<br><br>
 *___id___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
-<br>The Id of the IAM Principal ARN.<br><br>
+<br>The Instaclustr ID of the IAM Principal ARN.<br><br>
 *___cluster_data_center_id___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
-<br>Id of the cluster data center.<br><br>
+<br>The Instaclustr ID of the cluster data center.<br><br>

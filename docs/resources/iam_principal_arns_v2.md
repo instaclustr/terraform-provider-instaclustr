@@ -1,14 +1,14 @@
 ---
-page_title: "instaclustr_iam_principal_arn_v2 Resource - terraform-provider-instaclustr"
+page_title: "instaclustr_iam_principal_arns_v2 Resource - terraform-provider-instaclustr"
 subcategory: ""
 description: |-
 ---
 
-# instaclustr_iam_principal_arn_v2 (Resource)
+# instaclustr_iam_principal_arns_v2 (Resource)
 Definition of an IAM Principal ARN being used for Kafka PrivateLink.
 ## Example Usage
 ```
-resource "instaclustr_iam_principal_arn_v2" "example" {
+resource "instaclustr_iam_principal_arns_v2" "example" {
   cluster_data_center_id = "f3eab841-6952-430d-ba90-1bfc3f15da10"
   aws_vpc_endpoint_service = "c1af59c6-ba0e-4cc2-a0f3-65cee17a5f37"
   principal_arn = "arn:aws:iam::123456789012:resource-type/resource-id"
@@ -29,7 +29,7 @@ The following terms are used to describe attributes in the schema of this resour
 <ins>Constraints</ins>: pattern: `^arn:aws:iam::[0-9]{12}:(root$|user\/[\w+=,.@-]+|role\/[\w+=,.@-]+)$`<br><br>The IAM Principal ARN.<br><br>
 *___cluster_data_center_id___*<br>
 <ins>Type</ins>: string (uuid), required, updatable<br>
-<br>Id of the cluster data center.<br><br>
+<br>The Instaclustr ID of the cluster data center.<br><br>
 ### Input attributes - Optional
 *___aws_vpc_endpoint_service___*<br>
 <ins>Type</ins>: string (uuid), optional, updatable<br>
@@ -37,10 +37,10 @@ The following terms are used to describe attributes in the schema of this resour
 ### Read-only attributes
 *___id___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
-<br>The Id of the IAM Principal ARN.<br><br>
+<br>The Instaclustr ID of the IAM Principal ARN.<br><br>
 ## Import
 This resource can be imported using the `terraform import` command as follows:
 ```
-terraform import instaclustr_iam_principal_arn_v2.[resource-name] "[resource-id]"
+terraform import instaclustr_iam_principal_arns_v2.[resource-name] "[resource-id]"
 ```
 `[resource-id]` is the unique identifier for this resource matching the value of the `id` attribute defined in the root schema above.
