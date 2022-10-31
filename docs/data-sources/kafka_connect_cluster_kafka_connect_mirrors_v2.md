@@ -55,7 +55,7 @@ List of all mirrors in the cluster.<br>
 <br>Name of the mirror connector. The value of this property has the form: [source-cluster].[target-cluster].[random-string]<br><br>
 *___rename_mirrored_topics___*<br>
 <ins>Type</ins>: boolean, read-only<br>
-<br>Whether to rename topics as they are mirrored, by prefixing the sourceClusterAlias to the topic name.<br><br>
+<br>Whether to rename topics as they are mirrored, by prefixing the sourceCluster.alias to the topic name.<br><br>
 *___max_tasks___*<br>
 <ins>Type</ins>: integer, read-only<br>
 <br>Maximum number of tasks for Kafka Connect to use. Should be greater than 0.<br><br>
@@ -65,9 +65,6 @@ List of all mirrors in the cluster.<br>
 *___kafka_connect_cluster_id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>ID of the kafka connect cluster<br><br>
-*___source_cluster_alias___*<br>
-<ins>Type</ins>: string, read-only<br>
-<br>Alias to use for the source kafka cluster. This will be used to rename topics if renameMirroredTopics is turned on<br><br>
 *___target_latency___*<br>
 <ins>Type</ins>: integer, read-only<br>
 <br>The latency in milliseconds above which this mirror will be considered out of sync. It can not be less than 1000ms. The suggested initial latency is 30000ms  for connectors to be created.<br><br>
@@ -84,6 +81,9 @@ Details to connect to the source kafka cluster<br>
 *___external_cluster___*<br>
 <ins>Type</ins>: nested block, read-only, see [external_cluster](#nested--external_cluster) for nested schema<br>
 <br>Details to connect to a Non-Instaclustr managed cluster. Cannot be provided if targeting an Instaclustr managed cluster.<br><br>
+*___alias___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Alias to use for the source kafka cluster. This will be used to rename topics if renameMirroredTopics is turned on<br><br>
 *___managed_cluster___*<br>
 <ins>Type</ins>: nested block, read-only, see [managed_cluster](#nested--managed_cluster) for nested schema<br>
 <br>Details to connect to a Instaclustr managed cluster. Cannot be provided if targeting a non-Instaclustr managed cluster.<br><br>

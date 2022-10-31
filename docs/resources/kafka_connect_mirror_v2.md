@@ -17,11 +17,11 @@ resource "instaclustr_kafka_connect_mirror_v2" "example" {
       use_private_ips = true
     }
 
+    alias = "source-cluster"
   }
 
   max_tasks = 3
   rename_mirrored_topics = true
-  source_cluster_alias = "source-cluster"
   topics_regex = ".*"
 }
 ```
@@ -37,16 +37,13 @@ The following terms are used to describe attributes in the schema of this resour
 ### Input attributes - Required
 *___rename_mirrored_topics___*<br>
 <ins>Type</ins>: boolean, required, immutable<br>
-<br>Whether to rename topics as they are mirrored, by prefixing the sourceClusterAlias to the topic name.<br><br>
+<br>Whether to rename topics as they are mirrored, by prefixing the sourceCluster.alias to the topic name.<br><br>
 *___max_tasks___*<br>
 <ins>Type</ins>: integer, required, immutable<br>
 <br>Maximum number of tasks for Kafka Connect to use. Should be greater than 0.<br><br>
 *___kafka_connect_cluster_id___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <br>ID of the kafka connect cluster<br><br>
-*___source_cluster_alias___*<br>
-<ins>Type</ins>: string, required, immutable<br>
-<br>Alias to use for the source kafka cluster. This will be used to rename topics if renameMirroredTopics is turned on<br><br>
 *___target_latency___*<br>
 <ins>Type</ins>: integer, required, updatable<br>
 <br>The latency in milliseconds above which this mirror will be considered out of sync. It can not be less than 1000ms. The suggested initial latency is 30000ms  for connectors to be created.<br><br>
@@ -122,6 +119,9 @@ Details to connect to the source kafka cluster<br>
 *___external_cluster___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [external_cluster](#nested--external_cluster) for nested schema<br>
 <br>Details to connect to a Non-Instaclustr managed cluster. Cannot be provided if targeting an Instaclustr managed cluster.<br><br>
+*___alias___*<br>
+<ins>Type</ins>: string, optional, immutable<br>
+<br>Alias to use for the source kafka cluster. This will be used to rename topics if renameMirroredTopics is turned on<br><br>
 *___managed_cluster___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [managed_cluster](#nested--managed_cluster) for nested schema<br>
 <br>Details to connect to a Instaclustr managed cluster. Cannot be provided if targeting a non-Instaclustr managed cluster.<br><br>
