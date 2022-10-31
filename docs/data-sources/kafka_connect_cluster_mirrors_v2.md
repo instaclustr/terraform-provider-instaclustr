@@ -1,14 +1,14 @@
 ---
-page_title: "instaclustr_kafka_connect_cluster_kafka_connect_mirrors_v2 Data Source - terraform-provider-instaclustr"
+page_title: "instaclustr_kafka_connect_cluster_mirrors_v2 Data Source - terraform-provider-instaclustr"
 subcategory: ""
 description: |-
 ---
 
-# instaclustr_kafka_connect_cluster_kafka_connect_mirrors_v2 (Data Source)
+# instaclustr_kafka_connect_cluster_mirrors_v2 (Data Source)
 A listable data source of all Mirrors within a Kafka Connect Cluster.
 ## Example Usage
 ```
-data "instaclustr_kafka_connect_cluster_kafka_connect_mirrors_v2" "example" { 
+data "instaclustr_kafka_connect_cluster_mirrors_v2" "example" { 
   kafka_connect_cluster_id = "<kafka_connect_cluster_id>" // the value of the `kafka_connect_cluster_id` attribute defined in the root schema below
 }
 ```
