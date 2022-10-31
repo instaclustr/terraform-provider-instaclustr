@@ -115,13 +115,14 @@ Detailed list of Mirrored topics.<br>
 <a id="nested--source_cluster"></a>
 ## Nested schema for `source_cluster`
 Details to connect to the source kafka cluster<br>
+### Input attributes - Required
+*___alias___*<br>
+<ins>Type</ins>: string, required, immutable<br>
+<br>Alias to use for the source kafka cluster. This will be used to rename topics if renameMirroredTopics is turned on<br><br>
 ### Input attributes - Optional
 *___external_cluster___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [external_cluster](#nested--external_cluster) for nested schema<br>
 <br>Details to connect to a Non-Instaclustr managed cluster. Cannot be provided if targeting an Instaclustr managed cluster.<br><br>
-*___alias___*<br>
-<ins>Type</ins>: string, optional, immutable<br>
-<br>Alias to use for the source kafka cluster. This will be used to rename topics if renameMirroredTopics is turned on<br><br>
 *___managed_cluster___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [managed_cluster](#nested--managed_cluster) for nested schema<br>
 <br>Details to connect to a Instaclustr managed cluster. Cannot be provided if targeting a non-Instaclustr managed cluster.<br><br>

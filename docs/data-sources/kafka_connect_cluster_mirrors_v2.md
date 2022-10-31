@@ -23,7 +23,7 @@ The following terms are used to describe attributes in the schema of this data s
 <ins>Type</ins>: string, required<br>
 <br>ID of the Kafka Connect cluster.<br><br>
 ### Read-only attributes
-*___id___*<br>
+*___cluster_id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>ID of the kafka Connect cluster<br><br>
 *___mirrors___*<br>
