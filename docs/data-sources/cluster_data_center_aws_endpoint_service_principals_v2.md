@@ -1,14 +1,14 @@
 ---
-page_title: "instaclustr_cluster_data_center_iam_principal_arns_v2 Data Source - terraform-provider-instaclustr"
+page_title: "instaclustr_cluster_data_center_aws_endpoint_service_principals_v2 Data Source - terraform-provider-instaclustr"
 subcategory: ""
 description: |-
 ---
 
-# instaclustr_cluster_data_center_iam_principal_arns_v2 (Data Source)
+# instaclustr_cluster_data_center_aws_endpoint_service_principals_v2 (Data Source)
 List of IAM Principal ARNs for a cluster data center
 ## Example Usage
 ```
-data "instaclustr_cluster_data_center_iam_principal_arns_v2" "example" { 
+data "instaclustr_cluster_data_center_aws_endpoint_service_principals_v2" "example" { 
   cluster_data_center_id = "<cluster_data_center_id>" // the value of the `cluster_data_center_id` attribute defined in the root schema below
 }
 ```
@@ -36,12 +36,12 @@ IAM Principal ARNs to allow connection to the AWS Endpoint Service.<br>
 *___principal_arn___*<br>
 <ins>Type</ins>: string, read-only<br>
 <ins>Constraints</ins>: pattern: `^arn:aws:iam::[0-9]{12}:(root$|user\/[\w+=,.@-]+|role\/[\w+=,.@-]+)$`<br><br>The IAM Principal ARN.<br><br>
+*___end_point_service_id___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>The Instaclustr ID of the AWS endpoint service<br><br>
 *___id___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
 <br>The Instaclustr ID of the IAM Principal ARN.<br><br>
 *___cluster_data_center_id___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
-<br>The Instaclustr ID of the cluster data center.<br><br>
-*___hidden_property_ignore___*<br>
-<ins>Type</ins>: string, read-only<br>
-<br>
+<br>The ID of the cluster data center.<br><br>
