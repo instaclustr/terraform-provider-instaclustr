@@ -10,8 +10,7 @@ Definition of an IAM Principal ARN being used for Kafka PrivateLink.
 ```
 resource "instaclustr_iam_principal_arns_v2" "example" {
   cluster_data_center_id = "f3eab841-6952-430d-ba90-1bfc3f15da10"
-  aws_vpc_endpoint_service = "c1af59c6-ba0e-4cc2-a0f3-65cee17a5f37"
-  principal_arn = "arn:aws:iam::123456789012:resource-type/resource-id"
+  principal_arn = "arn:aws:iam::123456789012:role/role-name"
 }
 ```
 ## Glossary
@@ -25,19 +24,18 @@ The following terms are used to describe attributes in the schema of this resour
 ## Root Level Schema
 ### Input attributes - Required
 *___principal_arn___*<br>
-<ins>Type</ins>: string, required, updatable<br>
+<ins>Type</ins>: string, required, immutable<br>
 <ins>Constraints</ins>: pattern: `^arn:aws:iam::[0-9]{12}:(root$|user\/[\w+=,.@-]+|role\/[\w+=,.@-]+)$`<br><br>The IAM Principal ARN.<br><br>
 *___cluster_data_center_id___*<br>
-<ins>Type</ins>: string (uuid), required, updatable<br>
+<ins>Type</ins>: string (uuid), required, immutable<br>
 <br>The Instaclustr ID of the cluster data center.<br><br>
-### Input attributes - Optional
-*___aws_vpc_endpoint_service___*<br>
-<ins>Type</ins>: string (uuid), optional, updatable<br>
-<br>The Endpoint Service on AWS.<br><br>
 ### Read-only attributes
 *___id___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
 <br>The Instaclustr ID of the IAM Principal ARN.<br><br>
+*___hidden_property_ignore___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>
 ## Import
 This resource can be imported using the `terraform import` command as follows:
 ```
