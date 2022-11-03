@@ -22,21 +22,21 @@ resource "instaclustr_cadence_cluster_v2" "example" {
   }
 
   cadence_version = "0.22.4"
-  standard_provisioning = {
-    advanced_visibility = {
-      target_kafka = {
+  standard_provisioning {
+    advanced_visibility {
+      target_kafka {
         dependency_cdc_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
         dependency_vpc_type = "VPC_PEERED"
       }
 
-      target_open_search = {
+      target_open_search {
         dependency_cdc_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
         dependency_vpc_type = "VPC_PEERED"
       }
 
     }
 
-    target_cassandra = {
+    target_cassandra {
       dependency_cdc_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
       dependency_vpc_type = "VPC_PEERED"
     }
@@ -219,7 +219,7 @@ List of tags to apply to the Data Centre. Tags are metadata labels which  allow 
 <br>Private IP address of the node.<br><br>
 *___node_roles___*<br>
 <ins>Type</ins>: list of strings, read-only<br>
-<ins>Constraints</ins>: allowed values: [ `CASSANDRA`, `SPARK_MASTER`, `SPARK_JOBSERVER`, `KAFKA_BROKER`, `KAFKA_DEDICATED_ZOOKEEPER`, `KAFKA_ZOOKEEPER`, `KAFKA_SCHEMA_REGISTRY`, `KAFKA_REST_PROXY`, `POSTGRESQL`, `PGBOUNCER`, `KAFKA_CONNECT`, `CADENCE` ]<br><br>The roles or purposes of the node. Useful for filtering for nodes that have a specific role.<br><br>
+<ins>Constraints</ins>: allowed values: [ `CASSANDRA`, `SPARK_MASTER`, `SPARK_JOBSERVER`, `KAFKA_BROKER`, `KAFKA_DEDICATED_ZOOKEEPER`, `KAFKA_ZOOKEEPER`, `KAFKA_SCHEMA_REGISTRY`, `KAFKA_REST_PROXY`, `POSTGRESQL`, `PGBOUNCER`, `KAFKA_CONNECT`, `KAFKA_KARAPACE_SCHEMA_REGISTRY`, `KAFKA_KARAPACE_REST_PROXY`, `CADENCE` ]<br><br>The roles or purposes of the node. Useful for filtering for nodes that have a specific role.<br><br>
 *___public_address___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Public IP address of the node.<br><br>

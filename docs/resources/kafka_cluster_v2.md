@@ -88,6 +88,9 @@ The following terms are used to describe attributes in the schema of this resour
 *___client_auth_broker_with_encryption___*<br>
 <ins>Type</ins>: boolean, optional, immutable<br>
 <br>Enables Client ⇄ Broker Authentication with Encryption.<br><br>
+*___karapace_rest_proxy___*<br>
+<ins>Type</ins>: nested block, optional, immutable, see [karapace_rest_proxy](#nested--karapace_rest_proxy) for nested schema<br>
+<br>Adds the specified version of Kafka Karapace REST Proxy to this Kafka cluster.<br><br>
 *___client_auth_broker_without_encryption___*<br>
 <ins>Type</ins>: boolean, optional, immutable<br>
 <br>Enables Client ⇄ Broker Authentication without Encryption.<br><br>
@@ -97,6 +100,9 @@ The following terms are used to describe attributes in the schema of this resour
 *___client_broker_auth_with_mtls___*<br>
 <ins>Type</ins>: boolean, optional, immutable<br>
 <br>Enables Client ⇄ Broker Authentication with mTLS.<br><br>
+*___karapace_schema_registry___*<br>
+<ins>Type</ins>: nested block, optional, immutable, see [karapace_schema_registry](#nested--karapace_schema_registry) for nested schema<br>
+<br>Adds the specified version of Kafka Karapace Schema Registry to this Kafka cluster.<br><br>
 *___schema_registry___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [schema_registry](#nested--schema_registry) for nested schema<br>
 <br>Adds the specified version of Kafka Schema Registry to this Kafka cluster.<br><br>
@@ -201,6 +207,16 @@ Azure specific settings for the Data Centre. Cannot be provided with AWS or GCP 
 *___resource_group___*<br>
 <ins>Type</ins>: string, optional, immutable<br>
 <br>The name of the Azure Resource Group into which the Data Centre will be provisioned.<br><br>
+<a id="nested--karapace_rest_proxy"></a>
+## Nested schema for `karapace_rest_proxy`
+Adds the specified version of Kafka Karapace REST Proxy to this Kafka cluster.<br>
+### Input attributes - Required
+*___integrate_rest_proxy_with_schema_registry___*<br>
+<ins>Type</ins>: boolean, required, updatable<br>
+<br>Enables Integration of the Karapace REST proxy with the local Karapace Schema registry.<br><br>
+*___version___*<br>
+<ins>Type</ins>: string, required, updatable<br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Adds the specified version of Kafka REST Proxy to the Kafka cluster. Available versions: <ul> <li>`3.2.0`</li> </ul><br><br>
 <a id="nested--gcp_settings"></a>
 ## Nested schema for `gcp_settings`
 GCP specific settings for the Data Centre. Cannot be provided with AWS or Azure settings.<br>
@@ -239,7 +255,7 @@ List of tags to apply to the Data Centre. Tags are metadata labels which  allow 
 <br>Private IP address of the node.<br><br>
 *___node_roles___*<br>
 <ins>Type</ins>: list of strings, read-only<br>
-<ins>Constraints</ins>: allowed values: [ `CASSANDRA`, `SPARK_MASTER`, `SPARK_JOBSERVER`, `KAFKA_BROKER`, `KAFKA_DEDICATED_ZOOKEEPER`, `KAFKA_ZOOKEEPER`, `KAFKA_SCHEMA_REGISTRY`, `KAFKA_REST_PROXY`, `POSTGRESQL`, `PGBOUNCER`, `KAFKA_CONNECT`, `CADENCE` ]<br><br>The roles or purposes of the node. Useful for filtering for nodes that have a specific role.<br><br>
+<ins>Constraints</ins>: allowed values: [ `CASSANDRA`, `SPARK_MASTER`, `SPARK_JOBSERVER`, `KAFKA_BROKER`, `KAFKA_DEDICATED_ZOOKEEPER`, `KAFKA_ZOOKEEPER`, `KAFKA_SCHEMA_REGISTRY`, `KAFKA_REST_PROXY`, `POSTGRESQL`, `PGBOUNCER`, `KAFKA_CONNECT`, `KAFKA_KARAPACE_SCHEMA_REGISTRY`, `KAFKA_KARAPACE_REST_PROXY`, `CADENCE` ]<br><br>The roles or purposes of the node. Useful for filtering for nodes that have a specific role.<br><br>
 *___public_address___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Public IP address of the node.<br><br>
@@ -271,6 +287,13 @@ Create a PrivateLink enabled cluster, see [PrivateLink](https://www.instaclustr.
 *___confirmation_phone_number___*<br>
 <ins>Type</ins>: string, optional, immutable<br>
 <br>The phone number which will be contacted when the cluster is requested to be delete.<br><br>
+<a id="nested--karapace_schema_registry"></a>
+## Nested schema for `karapace_schema_registry`
+Adds the specified version of Kafka Karapace Schema Registry to this Kafka cluster.<br>
+### Input attributes - Required
+*___version___*<br>
+<ins>Type</ins>: string, required, updatable<br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Adds the specified version of Kafka Schema Registry to the Kafka cluster. Available versions: <ul> <li>`3.2.0`</li> </ul><br><br>
 <a id="nested--schema_registry"></a>
 ## Nested schema for `schema_registry`
 Adds the specified version of Kafka Schema Registry to this Kafka cluster.<br>

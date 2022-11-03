@@ -5,13 +5,13 @@ description: |-
   A Terraform provider for managing Instaclustr Platform resources.
 ---
 
-# Instaclustr Terraform Provider v2 (Preview Release)
+# Instaclustr Terraform Provider v2
 
 A Terraform provider for managing resources on the [Instaclustr Platform](https://instaclustr.com).
 
 It provides a flexible set of resources for provisioning and managing Instaclustr based clusters via the use of Terraform.  
 
-This provider is in __Preview Release__ with support for the following offerings:
+This provider is in __General Availability__ with support for the following offerings:
 
 | Application | Support Status |
 | ----------- |----------------|
