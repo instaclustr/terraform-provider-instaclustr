@@ -24,19 +24,19 @@ resource "instaclustr_cadence_cluster_v2" "example" {
   cadence_version = "0.22.4"
   standard_provisioning {
     advanced_visibility {
-      target_kafka = {
+      target_kafka {
         dependency_cdc_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
         dependency_vpc_type = "VPC_PEERED"
       }
 
-      target_open_search = {
+      target_open_search {
         dependency_cdc_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
         dependency_vpc_type = "VPC_PEERED"
       }
 
     }
 
-    target_cassandra = {
+    target_cassandra {
       dependency_cdc_id = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
       dependency_vpc_type = "VPC_PEERED"
     }
@@ -219,7 +219,7 @@ List of tags to apply to the Data Centre. Tags are metadata labels which  allow 
 <br>Private IP address of the node.<br><br>
 *___node_roles___*<br>
 <ins>Type</ins>: list of strings, read-only<br>
-<ins>Constraints</ins>: allowed values: [ `CASSANDRA`, `SPARK_MASTER`, `SPARK_JOBSERVER`, `KAFKA_BROKER`, `KAFKA_DEDICATED_ZOOKEEPER`, `KAFKA_ZOOKEEPER`, `KAFKA_SCHEMA_REGISTRY`, `KAFKA_REST_PROXY`, `POSTGRESQL`, `PGBOUNCER`, `KAFKA_CONNECT`, `CADENCE` ]<br><br>The roles or purposes of the node. Useful for filtering for nodes that have a specific role.<br><br>
+<ins>Constraints</ins>: allowed values: [ `CASSANDRA`, `SPARK_MASTER`, `SPARK_JOBSERVER`, `KAFKA_BROKER`, `KAFKA_DEDICATED_ZOOKEEPER`, `KAFKA_ZOOKEEPER`, `KAFKA_SCHEMA_REGISTRY`, `KAFKA_REST_PROXY`, `POSTGRESQL`, `PGBOUNCER`, `KAFKA_CONNECT`, `KAFKA_KARAPACE_SCHEMA_REGISTRY`, `KAFKA_KARAPACE_REST_PROXY`, `CADENCE` ]<br><br>The roles or purposes of the node. Useful for filtering for nodes that have a specific role.<br><br>
 *___public_address___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Public IP address of the node.<br><br>
@@ -284,19 +284,20 @@ Settings for SHARED provisioning. Must not be defined with STANDARD provisioning
 <a id="nested--aws_archival"></a>
 ## Nested schema for `aws_archival`
 Cadence AWS Archival settings<br>
+### Input attributes - Required
+*___archival_s3_region___*<br>
+<ins>Type</ins>: string, required, immutable<br>
+<br>S3 resource region<br><br>
+*___archival_s3_uri___*<br>
+<ins>Type</ins>: string, required, immutable<br>
+<ins>Constraints</ins>: pattern: `^s3:\/\/[a-zA-Z0-9_-]+[^\/]$`<br><br>S3 resource URI<br><br>
 ### Input attributes - Optional
 *___aws_access_key_id___*<br>
 <ins>Type</ins>: string, optional, immutable<br>
 <br>AWS access Key ID<br><br>
-*___archival_s3_region___*<br>
-<ins>Type</ins>: string, optional, immutable<br>
-<br>S3 resource region<br><br>
 *___aws_secret_access_key___*<br>
 <ins>Type</ins>: string, optional, immutable<br>
 <br>AWS secret access key<br><br>
-*___archival_s3_uri___*<br>
-<ins>Type</ins>: string, optional, immutable<br>
-<br>S3 resource URI<br><br>
 ## Import
 This resource can be imported using the `terraform import` command as follows:
 ```
