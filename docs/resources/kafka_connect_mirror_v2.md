@@ -12,12 +12,12 @@ resource "instaclustr_kafka_connect_mirror_v2" "example" {
   target_latency = 5000
   kafka_connect_cluster_id = "[UUID of the kafka connect cluster]"
   source_cluster {
+    alias = "source-cluster"
     managed_cluster {
       source_kafka_cluster_id = "[UUID of kafka cluster]"
       use_private_ips = true
     }
 
-    alias = "source-cluster"
   }
 
   max_tasks = 3
