@@ -36,7 +36,7 @@ The following terms are used to describe attributes in the schema of this data s
 <br>Name of the Vpc Peering Connection.<br><br>
 *___peer_ad_object_id___*<br>
 <ins>Type</ins>: string, read-only<br>
-<br>Id of the Active Directory Object to give peering permissions to, required for cross subscription peering.<br><br>
+<br>ID of the Active Directory Object to give peering permissions to, required for cross subscription peering.<br><br>
 *___peer_resource_group___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Resource Group Name of the Virtual Network.<br><br>
@@ -45,7 +45,7 @@ The following terms are used to describe attributes in the schema of this data s
 <br>The name of the VPC Network you wish to peer to.<br><br>
 *___peer_subscription_id___*<br>
 <ins>Type</ins>: string, read-only<br>
-<br>Subscription Id of the Virtual Network.<br><br>
+<br>Subscription ID of the Virtual Network.<br><br>
 *___failure_reason___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Reason for Peering Connection Failure.<br><br>

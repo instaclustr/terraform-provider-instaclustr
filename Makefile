@@ -1,6 +1,6 @@
 BIN_NAME=terraform-provider-instaclustr
 
-VERSION=2.0.6
+VERSION=2.0.7
 
 FULL_BIN_NAME="${BIN_NAME}_v${VERSION}"
 SHASUM_NAME="${BIN_NAME}_${VERSION}_SHA256SUMS"
