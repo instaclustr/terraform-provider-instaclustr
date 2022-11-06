@@ -41,11 +41,11 @@ The following terms are used to describe attributes in the schema of this resour
 <br>The name of the VPC Network you wish to peer to.<br><br>
 *___peer_subscription_id___*<br>
 <ins>Type</ins>: string, required, immutable<br>
-<br>Subscription Id of the Virtual Network.<br><br>
+<br>Subscription ID of the Virtual Network.<br><br>
 ### Input attributes - Optional
 *___peer_ad_object_id___*<br>
 <ins>Type</ins>: string, optional, immutable<br>
-<br>Id of the Active Directory Object to give peering permissions to, required for cross subscription peering.<br><br>
+<br>ID of the Active Directory Object to give peering permissions to, required for cross subscription peering.<br><br>
 ### Read-only attributes
 *___status_code___*<br>
 <ins>Type</ins>: string, read-only<br>

@@ -5,24 +5,24 @@ description: |-
   A Terraform provider for managing Instaclustr Platform resources.
 ---
 
-# Instaclustr Terraform Provider v2 (Preview Release)
+# Instaclustr Terraform Provider v2
 
 A Terraform provider for managing resources on the [Instaclustr Platform](https://instaclustr.com).
 
 It provides a flexible set of resources for provisioning and managing Instaclustr based clusters via the use of Terraform.  
 
-This provider is in __Preview Release__ with support for the following offerings:
+This provider is in __General Availability__ with support for the following offerings:
 
 | Application | Support Status |
-| ----------- | ----------- |
-| Apache Cassandra | Complete |
-| Apache Kafka | In Progress |
-| Kafka Connect | Complete |
-| Apache ZooKeeper | In Progress |
-| OpenSearch | In Progress |
-| Redis | In Progress |
-| PostgreSQL | In Progress |
-| Cadence | In Progress |
+| ----------- |----------------|
+| Apache Cassandra | Complete       |
+| Apache Kafka | Complete       |
+| Kafka Connect | Complete    |
+| Apache ZooKeeper | In Progress    |
+| OpenSearch | In Progress    |
+| Redis | In Progress    |
+| PostgreSQL | In Progress    |
+| Cadence | In Progress    |
 
 Support for other offerings will be added progressively through to the end of 2022. If a resource you are looking to manage through Terraform is not yet supported by the Instaclustr Terraform Provider v2, you may use v1.x of the Instaclustr Terraform Provider instead. 
 
