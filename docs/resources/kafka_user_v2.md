@@ -10,7 +10,7 @@ Definition of a Kafka User to be applied to a Kafka cluster.
 ```
 resource "instaclustr_kafka_user_v2" "example" {
   password = "myPassword1."
-  options = {
+  options {
     override_existing_user = false
     sasl_scram_mechanism = "SCRAM-SHA-256"
   }
