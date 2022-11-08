@@ -26,8 +26,8 @@ The following terms are used to describe attributes in the schema of this data s
 <ins>Type</ins>: string, read-only<br>
 <ins>Constraints</ins>: allowed values: [ `PRODUCTION`, `NON_PRODUCTION` ]<br><br>SLA Tier of the cluster. Non-production clusters may receive lower priority support and reduced SLAs. Production tier is not available when using Developer class nodes. See [SLA Tier](https://www.instaclustr.com/support/documentation/useful-information/sla-tier/) for more information.<br><br>
 *___standard_provisioning___*<br>
-<ins>Type</ins>: nested object, read-only, see [standard_provisioning](#nested--standard_provisioning) for nested schema<br>
-<br>Settings for STARDARD provisioning<br><br>
+<ins>Type</ins>: nested block, read-only, see [standard_provisioning](#nested--standard_provisioning) for nested schema<br>
+<br>Settings for STARDARD provisioning. Must not be defined with SHARED provisioning options.<br><br>
 *___status___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Status of the cluster.<br><br>
@@ -56,11 +56,11 @@ The following terms are used to describe attributes in the schema of this data s
 <ins>Type</ins>: boolean, read-only<br>
 <br>Enable Authentication for Cadence Web<br><br>
 *___shared_provisioning___*<br>
-<ins>Type</ins>: nested object, read-only, see [shared_provisioning](#nested--shared_provisioning) for nested schema<br>
-<br>Settings for SHARED provisioning<br><br>
+<ins>Type</ins>: nested block, read-only, see [shared_provisioning](#nested--shared_provisioning) for nested schema<br>
+<br>Settings for SHARED provisioning. Must not be defined with STANDARD provisioning options.<br><br>
 *___aws_archival___*<br>
-<ins>Type</ins>: nested object, read-only, see [aws_archival](#nested--aws_archival) for nested schema<br>
-<br>
+<ins>Type</ins>: nested block, read-only, see [aws_archival](#nested--aws_archival) for nested schema<br>
+<br>Cadence AWS Archival settings<br><br>
 <a id="nested--data_centre"></a>
 ## Nested schema for `data_centre`
 List of data centre settings.<br>
@@ -112,11 +112,11 @@ List of data centre settings.<br>
 <br>For customers running in their own account. Your provider account can be found on the Create Cluster page on the Instaclustr Console, or the "Provider Account" property on any existing cluster. For customers provisioning on Instaclustr's cloud provider accounts, this property may be omitted.<br><br>
 <a id="nested--standard_provisioning"></a>
 ## Nested schema for `standard_provisioning`
-Settings for STARDARD provisioning<br>
+Settings for STARDARD provisioning. Must not be defined with SHARED provisioning options.<br>
 ### Read-only attributes
 *___advanced_visibility___*<br>
-<ins>Type</ins>: nested object, read-only, see [advanced_visibility](#nested--advanced_visibility) for nested schema<br>
-<br>Settings for enable advanced visibility<br><br>
+<ins>Type</ins>: nested block, read-only, see [advanced_visibility](#nested--advanced_visibility) for nested schema<br>
+<br>Cadence advanced visibility settings<br><br>
 *___target_cassandra___*<br>
 <ins>Type</ins>: nested object, read-only, see [target_cassandra](#nested--target_cassandra) for nested schema<br>
 <br>
@@ -181,7 +181,7 @@ List of tags to apply to the Data Centre. Tags are metadata labels which  allow 
 <br>Public IP address of the node.<br><br>
 <a id="nested--advanced_visibility"></a>
 ## Nested schema for `advanced_visibility`
-Settings for enable advanced visibility<br>
+Cadence advanced visibility settings<br>
 ### Read-only attributes
 *___target_kafka___*<br>
 <ins>Type</ins>: nested object, read-only, see [target_kafka](#nested--target_kafka) for nested schema<br>
@@ -231,14 +231,14 @@ AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure 
 <br>The email address which will be contacted when the cluster is requested to be deleted.<br><br>
 <a id="nested--shared_provisioning"></a>
 ## Nested schema for `shared_provisioning`
-Settings for SHARED provisioning<br>
+Settings for SHARED provisioning. Must not be defined with STANDARD provisioning options.<br>
 ### Read-only attributes
 *___use_advanced_visibility___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Use Advanced Visibility<br><br>
 <a id="nested--aws_archival"></a>
 ## Nested schema for `aws_archival`
-
+Cadence AWS Archival settings<br>
 ### Read-only attributes
 *___aws_access_key_id___*<br>
 <ins>Type</ins>: string, read-only<br>
@@ -251,4 +251,4 @@ Settings for SHARED provisioning<br>
 <br>AWS secret access key<br><br>
 *___archival_s3_uri___*<br>
 <ins>Type</ins>: string, read-only<br>
-<br>S3 resource URI<br><br>
+<ins>Constraints</ins>: pattern: `^s3:\/\/[a-zA-Z0-9_-]+[^\/]$`<br><br>S3 resource URI<br><br>

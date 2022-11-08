@@ -81,17 +81,17 @@ The following terms are used to describe attributes in the schema of this resour
 <br>Enable Authentication for Cadence Web<br><br>
 ### Input attributes - Optional
 *___standard_provisioning___*<br>
-<ins>Type</ins>: nested object, optional, updatable, see [standard_provisioning](#nested--standard_provisioning) for nested schema<br>
-<br>Settings for STARDARD provisioning<br><br>
+<ins>Type</ins>: nested block, optional, immutable, see [standard_provisioning](#nested--standard_provisioning) for nested schema<br>
+<br>Settings for STARDARD provisioning. Must not be defined with SHARED provisioning options.<br><br>
 *___two_factor_delete___*<br>
 <ins>Type</ins>: nested block, optional, updatable, see [two_factor_delete](#nested--two_factor_delete) for nested schema<br>
 <br>
 *___shared_provisioning___*<br>
-<ins>Type</ins>: nested object, optional, updatable, see [shared_provisioning](#nested--shared_provisioning) for nested schema<br>
-<br>Settings for SHARED provisioning<br><br>
+<ins>Type</ins>: nested block, optional, immutable, see [shared_provisioning](#nested--shared_provisioning) for nested schema<br>
+<br>Settings for SHARED provisioning. Must not be defined with STANDARD provisioning options.<br><br>
 *___aws_archival___*<br>
-<ins>Type</ins>: nested object, optional, updatable, see [aws_archival](#nested--aws_archival) for nested schema<br>
-<br>
+<ins>Type</ins>: nested block, optional, immutable, see [aws_archival](#nested--aws_archival) for nested schema<br>
+<br>Cadence AWS Archival settings<br><br>
 ### Read-only attributes
 *___status___*<br>
 <ins>Type</ins>: string, read-only<br>
@@ -155,15 +155,15 @@ List of data centre settings.<br>
 <br>
 <a id="nested--standard_provisioning"></a>
 ## Nested schema for `standard_provisioning`
-Settings for STARDARD provisioning<br>
+Settings for STARDARD provisioning. Must not be defined with SHARED provisioning options.<br>
 ### Input attributes - Required
 *___target_cassandra___*<br>
 <ins>Type</ins>: nested object, required, updatable, see [target_cassandra](#nested--target_cassandra) for nested schema<br>
 <br>
 ### Input attributes - Optional
 *___advanced_visibility___*<br>
-<ins>Type</ins>: nested object, optional, updatable, see [advanced_visibility](#nested--advanced_visibility) for nested schema<br>
-<br>Settings for enable advanced visibility<br><br>
+<ins>Type</ins>: nested block, optional, immutable, see [advanced_visibility](#nested--advanced_visibility) for nested schema<br>
+<br>Cadence advanced visibility settings<br><br>
 <a id="nested--azure_settings"></a>
 ## Nested schema for `azure_settings`
 Azure specific settings for the Data Centre. Cannot be provided with AWS or GCP settings.<br>
@@ -225,7 +225,7 @@ List of tags to apply to the Data Centre. Tags are metadata labels which  allow 
 <br>Public IP address of the node.<br><br>
 <a id="nested--advanced_visibility"></a>
 ## Nested schema for `advanced_visibility`
-Settings for enable advanced visibility<br>
+Cadence advanced visibility settings<br>
 ### Input attributes - Required
 *___target_kafka___*<br>
 <ins>Type</ins>: nested object, required, updatable, see [target_kafka](#nested--target_kafka) for nested schema<br>
@@ -276,27 +276,28 @@ AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure 
 <br>The phone number which will be contacted when the cluster is requested to be delete.<br><br>
 <a id="nested--shared_provisioning"></a>
 ## Nested schema for `shared_provisioning`
-Settings for SHARED provisioning<br>
+Settings for SHARED provisioning. Must not be defined with STANDARD provisioning options.<br>
 ### Input attributes - Required
 *___use_advanced_visibility___*<br>
 <ins>Type</ins>: boolean, required, immutable<br>
 <br>Use Advanced Visibility<br><br>
 <a id="nested--aws_archival"></a>
 ## Nested schema for `aws_archival`
-
+Cadence AWS Archival settings<br>
+### Input attributes - Required
+*___archival_s3_region___*<br>
+<ins>Type</ins>: string, required, immutable<br>
+<br>S3 resource region<br><br>
+*___archival_s3_uri___*<br>
+<ins>Type</ins>: string, required, immutable<br>
+<ins>Constraints</ins>: pattern: `^s3:\/\/[a-zA-Z0-9_-]+[^\/]$`<br><br>S3 resource URI<br><br>
 ### Input attributes - Optional
 *___aws_access_key_id___*<br>
 <ins>Type</ins>: string, optional, immutable<br>
 <br>AWS access Key ID<br><br>
-*___archival_s3_region___*<br>
-<ins>Type</ins>: string, optional, immutable<br>
-<br>S3 resource region<br><br>
 *___aws_secret_access_key___*<br>
 <ins>Type</ins>: string, optional, immutable<br>
 <br>AWS secret access key<br><br>
-*___archival_s3_uri___*<br>
-<ins>Type</ins>: string, optional, immutable<br>
-<br>S3 resource URI<br><br>
 ## Import
 This resource can be imported using the `terraform import` command as follows:
 ```
