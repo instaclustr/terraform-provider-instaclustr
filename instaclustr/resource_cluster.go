@@ -474,6 +474,11 @@ func resourceCluster() *schema.Resource {
 										Optional: true,
 										ForceNew: true,
 									},
+									"aws_s3_role_arn": {
+										Type:     schema.TypeString,
+										Optional: true,
+										ForceNew: true,
+									},
 									"azure_storage_account_name": {
 										Type:     schema.TypeString,
 										Optional: true,
