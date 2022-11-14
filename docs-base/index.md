@@ -17,8 +17,8 @@ This provider is in __General Availability__ with support for the following offe
 | ----------- |----------------|
 | Apache Cassandra | Complete       |
 | Apache Kafka | Complete       |
-| Kafka Connect | In Progress    |
-| Apache ZooKeeper | In Progress    |
+| Kafka Connect | Complete    |
+| Apache ZooKeeper | Complete    |
 | OpenSearch | In Progress    |
 | Redis | In Progress    |
 | PostgreSQL | In Progress    |
