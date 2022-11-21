@@ -9,7 +9,7 @@ description: |-
 
 A Terraform provider for managing resources on the [Instaclustr Platform](https://instaclustr.com).
 
-It provides a flexible set of resources for provisioning and managing Instaclustr based clusters via the use of Terraform.  
+It provides a flexible set of resources for provisioning and managing Instaclustr based clusters with the use of Terraform.
 
 This provider is in __General Availability__ with support for the following offerings:
 
