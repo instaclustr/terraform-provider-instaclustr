@@ -1,28 +1,52 @@
 ---
-page_title: "instaclustr_zookeeper_cluster_v2 Resource - terraform-provider-instaclustr"
+page_title: "instaclustr_opensearch_cluster_v2 Resource - terraform-provider-instaclustr"
 subcategory: ""
 description: |-
 ---
 
-# instaclustr_zookeeper_cluster_v2 (Resource)
-Definition of a managed Apache Zookeeper cluster that can be provisioned in Instaclustr.
+# instaclustr_opensearch_cluster_v2 (Resource)
+Definition of a managed OpenSearch cluster that can be provisioned in Instaclustr.
 ## Example Usage
 ```
-resource "instaclustr_zookeeper_cluster_v2" "example" {
+resource "instaclustr_opensearch_cluster_v2" "example" {
+  data_nodes {
+    node_count = 3
+    node_size = "SRH-DEV-t4g.small-5"
+  }
+
+  pci_compliance_mode = false
+  icu_plugin = true
+  opensearch_version = "2.2.1"
+  knn_plugin = true
+  opensearch_dashboards {
+    node_size = "SRH-DEV-t4g.small-30"
+    oidc_provider = ""
+    version = "2.2.1"
+  }
+
+  reporting_plugin = true
   data_centre {
-    client_to_server_encryption = true
     cloud_provider = "AWS_VPC"
-    name = "MyTestDataCentre1"
+    name = "AWS_VPC_US_EAST_1"
     network = "10.0.0.0/16"
-    node_size = "ZKR-PRD-m5d.large-75"
-    number_of_nodes = 3
+    number_of_racks = 3
+    private_link {
+      iam_principal_arns = [ "arn:aws:iam::494770124270:user/user.a@instaclustr-test" ]
+    }
+
     region = "US_EAST_1"
   }
 
+  load_balancer = false
   private_network_cluster = false
-  zookeeper_version = "[x.y.z]"
-  name = "MyZookeeperCluster"
-  sla_tier = "PRODUCTION"
+  name = "OpenSearch_Cluster"
+  cluster_manager_nodes {
+    dedicated_manager = true
+    node_size = "SRH-DM-DEV-t4g.small-5"
+  }
+
+  index_management_plugin = true
+  sla_tier = "NON_PRODUCTION"
 }
 ```
 ## Glossary
@@ -38,22 +62,49 @@ The following terms are used to describe attributes in the schema of this resour
 *___data_centre___*<br>
 <ins>Type</ins>: nested block, required, updatable, see [data_centre](#nested--data_centre) for nested schema<br>
 <ins>Constraints</ins>: minimum items: 1<br><br>List of data centre settings.<br><br>
-*___sla_tier___*<br>
+*___opensearch_version___*<br>
 <ins>Type</ins>: string, required, immutable<br>
-<ins>Constraints</ins>: allowed values: [ `PRODUCTION`, `NON_PRODUCTION` ]<br><br>SLA Tier of the cluster. Non-production clusters may receive lower priority support and reduced SLAs. Production tier is not available when using Developer class nodes. See [SLA Tier](https://www.instaclustr.com/support/documentation/useful-information/sla-tier/) for more information.<br><br>
-*___zookeeper_version___*<br>
-<ins>Type</ins>: string, required, immutable<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Apache Zookeeper to run on the cluster. --AVAILABLE_BUNDLE_VERSIONS_MARKER_V2_ZOOKEEPER--<br><br>
-*___name___*<br>
-<ins>Type</ins>: string, required, immutable<br>
-<ins>Constraints</ins>: pattern: `[a-zA-Z0-9][a-zA-Z0-9_-]*`<br><br>Name of the cluster.<br><br>
-*___private_network_cluster___*<br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of OpenSearch to run on the cluster<br><br>
+*___pci_compliance_mode___*<br>
 <ins>Type</ins>: boolean, required, immutable<br>
-<br>Creates the cluster with private network only, see [Private Network Clusters](https://www.instaclustr.com/support/documentation/useful-information/private-network-clusters/).<br><br>
+<br>Creates a PCI compliant cluster, see [PCI Compliance](https://www.instaclustr.com/support/documentation/useful-information/pci-compliance/).<br><br>
+*___data_nodes___*<br>
+<ins>Type</ins>: nested block, required, updatable, see [data_nodes](#nested--data_nodes) for nested schema<br>
+<ins>Constraints</ins>: minimum items: 1<br><br>List of data node settings.<br><br>
 ### Input attributes - Optional
+*___sla_tier___*<br>
+<ins>Type</ins>: string, optional, immutable<br>
+<ins>Constraints</ins>: allowed values: [ `PRODUCTION`, `NON_PRODUCTION` ]<br><br>SLA Tier of the cluster. Non-production clusters may receive lower priority support and reduced SLAs. Production tier is not available when using Developer class nodes. See [SLA Tier](https://www.instaclustr.com/support/documentation/useful-information/sla-tier/) for more information.<br><br>
+*___knn_plugin___*<br>
+<ins>Type</ins>: boolean, optional, immutable<br>
+<br>Enable knn plugin<br><br>
+*___index_management_plugin___*<br>
+<ins>Type</ins>: boolean, optional, immutable<br>
+<br>Enable index management plugin<br><br>
+*___name___*<br>
+<ins>Type</ins>: string, optional, immutable<br>
+<ins>Constraints</ins>: pattern: `[a-zA-Z0-9][a-zA-Z0-9_-]*`<br><br>Name of the cluster.<br><br>
+*___cluster_manager_nodes___*<br>
+<ins>Type</ins>: nested block, optional, updatable, see [cluster_manager_nodes](#nested--cluster_manager_nodes) for nested schema<br>
+<br>List of cluster managers node settings<br><br>
+*___reporting_plugin___*<br>
+<ins>Type</ins>: boolean, optional, immutable<br>
+<br>Enable reporting plugin<br><br>
+*___private_network_cluster___*<br>
+<ins>Type</ins>: boolean, optional, immutable<br>
+<br>Creates the cluster with private network only, see [Private Network Clusters](https://www.instaclustr.com/support/documentation/useful-information/private-network-clusters/).<br><br>
 *___two_factor_delete___*<br>
 <ins>Type</ins>: nested block, optional, updatable, see [two_factor_delete](#nested--two_factor_delete) for nested schema<br>
 <br>
+*___opensearch_dashboards___*<br>
+<ins>Type</ins>: nested block, optional, updatable, see [opensearch_dashboards](#nested--opensearch_dashboards) for nested schema<br>
+<br>List of openSearch dashboards settings<br><br>
+*___load_balancer___*<br>
+<ins>Type</ins>: boolean, optional, immutable<br>
+<br>Enable Load Balancer<br><br>
+*___icu_plugin___*<br>
+<ins>Type</ins>: boolean, optional, immutable<br>
+<br>Enable icu plugin<br><br>
 ### Read-only attributes
 *___status___*<br>
 <ins>Type</ins>: string, read-only<br>
@@ -71,37 +122,34 @@ List of data centre settings.<br>
 *___cloud_provider___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <ins>Constraints</ins>: allowed values: [ `AWS_VPC`, `GCP`, `AZURE`, `AZURE_AZ` ]<br><br>Name of the cloud provider service in which the Data Centre will be provisioned.<br><br>
-*___number_of_nodes___*<br>
-<ins>Type</ins>: integer, required, immutable<br>
-<br>Total number of Zookeeper nodes in the Data Centre.<br><br>
 *___region___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <br>Region of the Data Centre. See the description for node size for a compatible Data Centre for a given node size.<br><br>
 *___name___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <br>A logical name for the data centre within a cluster. These names must be unique in the cluster.<br><br>
-*___node_size___*<br>
-<ins>Type</ins>: string, required, immutable<br>
-<br>Size of the nodes provisioned in the Data Centre. --AVAILABLE_NODE_SIZES_MARKER_V2_ZOOKEEPER--<br><br>
 *___network___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <br>The private network address block for the Data Centre specified using CIDR address notation. The network must have a prefix length between `/12` and `/22` and must be part of a private address space.<br><br>
 ### Input attributes - Optional
+*___number_of_racks___*<br>
+<ins>Type</ins>: integer, optional, immutable<br>
+<br>Number of racks to use when allocating data nodes.<br><br>
 *___azure_settings___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [azure_settings](#nested--azure_settings) for nested schema<br>
 <br>Azure specific settings for the Data Centre. Cannot be provided with AWS or GCP settings.<br><br>
 *___gcp_settings___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [gcp_settings](#nested--gcp_settings) for nested schema<br>
 <br>GCP specific settings for the Data Centre. Cannot be provided with AWS or Azure settings.<br><br>
-*___client_to_server_encryption___*<br>
-<ins>Type</ins>: boolean, optional, immutable<br>
-<br>Enables Client ⇄ Node Encryption.<br><br>
 *___tag___*<br>
 <ins>Type</ins>: repeatable nested block, optional, immutable, see [tag](#nested--tag) for nested schema<br>
 <br>List of tags to apply to the Data Centre. Tags are metadata labels which  allow you to identify, categorize and filter clusters. This can be useful for grouping together clusters into applications, environments, or any category that you require.<br><br>
 *___aws_settings___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [aws_settings](#nested--aws_settings) for nested schema<br>
 <br>AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure settings.<br><br>
+*___private_link___*<br>
+<ins>Type</ins>: nested block, optional, updatable, see [private_link](#nested--private_link) for nested schema<br>
+<br>Private link enable or not<br><br>
 *___provider_account_name___*<br>
 <ins>Type</ins>: string, optional, immutable<br>
 <br>For customers running in their own account. Your provider account can be found on the Create Cluster page on the Instaclustr Console, or the "Provider Account" property on any existing cluster. For customers provisioning on Instaclustr's cloud provider accounts, this property may be omitted.<br><br>
@@ -164,6 +212,16 @@ List of tags to apply to the Data Centre. Tags are metadata labels which  allow 
 *___public_address___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Public IP address of the node.<br><br>
+<a id="nested--cluster_manager_nodes"></a>
+## Nested schema for `cluster_manager_nodes`
+List of cluster managers node settings<br>
+### Input attributes - Optional
+*___dedicated_manager___*<br>
+<ins>Type</ins>: boolean, optional, updatable<br>
+<br>
+*___node_size___*<br>
+<ins>Type</ins>: string, optional, updatable<br>
+<br>manager node size<br><br>
 <a id="nested--aws_settings"></a>
 ## Nested schema for `aws_settings`
 AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure settings.<br>
@@ -174,6 +232,13 @@ AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure 
 *___ebs_encryption_key___*<br>
 <ins>Type</ins>: string (uuid), optional, immutable<br>
 <br>ID of a KMS encryption key to encrypt data on nodes. KMS encryption key must be set in Cluster Resources through the Instaclustr Console before provisioning an encrypted Data Centre.<br><br>
+<a id="nested--private_link"></a>
+## Nested schema for `private_link`
+Private link enable or not<br>
+### Input attributes - Optional
+*___iam_principal_arns___*<br>
+<ins>Type</ins>: list of strings, optional, updatable<br>
+<br>
 <a id="nested--two_factor_delete"></a>
 ## Nested schema for `two_factor_delete`
 
@@ -185,9 +250,32 @@ AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure 
 *___confirmation_phone_number___*<br>
 <ins>Type</ins>: string, optional, immutable<br>
 <br>The phone number which will be contacted when the cluster is requested to be delete.<br><br>
+<a id="nested--opensearch_dashboards"></a>
+## Nested schema for `opensearch_dashboards`
+List of openSearch dashboards settings<br>
+### Input attributes - Optional
+*___oidc_provider___*<br>
+<ins>Type</ins>: string, optional, updatable<br>
+<br>OIDC provider<br><br>
+*___version___*<br>
+<ins>Type</ins>: string, optional, immutable<br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of OpenSearch to run on the cluster<br><br>
+*___node_size___*<br>
+<ins>Type</ins>: string, optional, updatable<br>
+<br>Size of the nodes provisioned as Dashboards nodes.<br><br>
+<a id="nested--data_nodes"></a>
+## Nested schema for `data_nodes`
+List of data node settings.<br>
+### Input attributes - Optional
+*___node_size___*<br>
+<ins>Type</ins>: string, optional, updatable<br>
+<br>Size of data node<br><br>
+*___node_count___*<br>
+<ins>Type</ins>: integer, optional, updatable<br>
+<br>Number of nodes<br><br>
 ## Import
 This resource can be imported using the `terraform import` command as follows:
 ```
-terraform import instaclustr_zookeeper_cluster_v2.[resource-name] "[resource-id]"
+terraform import instaclustr_opensearch_cluster_v2.[resource-name] "[resource-id]"
 ```
 `[resource-id]` is the unique identifier for this resource matching the value of the `id` attribute defined in the root schema above.
