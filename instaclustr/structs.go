@@ -42,6 +42,7 @@ type BundleOptions struct {
 	AWSAccessKeyId                       string `json:"aws.access.key.id,omitempty" mapstructure:"aws_access_key,omitempty"`
 	AWSSecretKey                         string `json:"aws.secret.access.key,omitempty" mapstructure:"aws_secret_key,omitempty"`
 	S3BucketName                         string `json:"s3.bucket.name,omitempty" mapstructure:"s3_bucket_name,omitempty"`
+	AwsS3RoleArn                         string `json:"aws.s3.role.arn,omitempty" mapstructure:"aws_s3_role_arn,omitempty"`
 	AzureStorageAccountName              string `json:"azure.storage.account.name,omitempty" mapstructure:"azure_storage_account_name,omitempty"`
 	AzureStorageAccountKey               string `json:"azure.storage.account.key,omitempty" mapstructure:"azure_storage_account_key,omitempty"`
 	AzureStorageContainerName            string `json:"azure.storage.container.name,omitempty" mapstructure:"azure_storage_container_name,omitempty"`
