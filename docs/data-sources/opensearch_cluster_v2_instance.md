@@ -214,7 +214,7 @@ List of openSearch dashboards settings<br>
 <br>OIDC provider<br><br>
 *___version___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of OpenSearch to run on the cluster<br><br>
+<br>Version of OpenSearch to run on the cluster<br><br>
 *___node_size___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Size of the nodes provisioned as Dashboards nodes.<br><br>

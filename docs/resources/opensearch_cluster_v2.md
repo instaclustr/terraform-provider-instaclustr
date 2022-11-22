@@ -21,7 +21,7 @@ resource "instaclustr_opensearch_cluster_v2" "example" {
   opensearch_dashboards {
     node_size = "SRH-DEV-t4g.small-30"
     oidc_provider = ""
-    version = "2.2.1"
+    version = "opensearch-dashboards:2.2.1"
   }
 
   reporting_plugin = true
@@ -255,11 +255,11 @@ Private link enable or not<br>
 List of openSearch dashboards settings<br>
 ### Input attributes - Optional
 *___oidc_provider___*<br>
-<ins>Type</ins>: string, optional, updatable<br>
+<ins>Type</ins>: string, optional, immutable<br>
 <br>OIDC provider<br><br>
 *___version___*<br>
 <ins>Type</ins>: string, optional, immutable<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of OpenSearch to run on the cluster<br><br>
+<br>Version of OpenSearch to run on the cluster<br><br>
 *___node_size___*<br>
 <ins>Type</ins>: string, optional, updatable<br>
 <br>Size of the nodes provisioned as Dashboards nodes.<br><br>
