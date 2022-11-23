@@ -25,7 +25,6 @@ build-all-platforms:
 	zip -j bin/${FULL_BIN_NAME}_darwin_arm64.zip bin/${FULL_BIN_NAME}
 	env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 make build FLAGS="-ldflags '-w -s -extldflags \"-static\"' -tags netgo -a -v"
 	zip -j bin/${FULL_BIN_NAME}_linux_amd64.zip bin/${FULL_BIN_NAME}
-	cp bin/${FULL_BIN_NAME}_linux_amd64.zip bin/${FULL_BIN_NAME}_alpine_amd64.zip # alpine build is the same as linux build
 	env GOOS=linux GOARCH=arm64 make build
 	zip -j bin/${FULL_BIN_NAME}_linux_arm64.zip bin/${FULL_BIN_NAME}
 	env GOOS=linux GOARCH=arm GOARM=6 make build
