@@ -24,16 +24,15 @@ The following terms are used to describe attributes in the schema of this resour
 - **_nested block_** - These attributes use the [Terraform block syntax](https://www.terraform.io/language/attr-as-blocks) when defined as an input in the Terraform code. Attributes with the type **_repeatable nested block_** are the same except that the nested block can be defined multiple times with varying nested attributes. When reading nested block attributes, an index must be provided when accessing the contents of the nested block, example - `my_resource.nested_block_attribute[0].nested_attribute`.
 ## Root Level Schema
 ### Input attributes - Required
+*___security_group_id___*<br>
+<ins>Type</ins>: string, required, immutable<br>
+<br>The security group ID of the AWS security group firewall rule.<br><br>
 *___type___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <ins>Constraints</ins>: allowed values: [ `APACHE_ZOOKEEPER`, `CADENCE`, `CADENCE_GRPC`, `CADENCE_WEB`, `CASSANDRA`, `CASSANDRA_CQL`, `ELASTICSEARCH`, `KAFKA`, `KAFKA_CONNECT`, `KAFKA_ENCRYPTION`, `KAFKA_MTLS`, `KAFKA_NO_ENCRYPTION`, `KAFKA_REST_PROXY`, `KAFKA_SCHEMA_REGISTRY`, `KARAPACE_REST_PROXY`, `KARAPACE_SCHEMA_REGISTRY`, `OPENSEARCH`, `OPENSEARCH_DASHBOARDS`, `PGBOUNCER`, `POSTGRESQL`, `REDIS`, `SEARCH_DASHBOARDS`, `SECURE_APACHE_ZOOKEEPER`, `SPARK`, `SPARK_JOBSERVER`, `SHOTOVER_PROXY` ]<br><br>The type of firewall rule.<br><br>
 *___cluster_id___*<br>
 <ins>Type</ins>: string (uuid), required, immutable<br>
 <br>ID of the cluster for the AWS security group firewall rule.<br><br>
-### Input attributes - Optional
-*___security_group_id___*<br>
-<ins>Type</ins>: string, optional, immutable<br>
-<br>The security group ID of the AWS security group firewall rule.<br><br>
 ### Read-only attributes
 *___status___*<br>
 <ins>Type</ins>: string, read-only<br>
