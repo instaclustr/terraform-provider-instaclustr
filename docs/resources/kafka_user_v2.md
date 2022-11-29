@@ -31,7 +31,7 @@ The following terms are used to describe attributes in the schema of this resour
 ## Root Level Schema
 ### Input attributes - Required
 *___options___*<br>
-<ins>Type</ins>: nested object, required, updatable, see [options](#nested--options) for nested schema<br>
+<ins>Type</ins>: nested object, required, immutable, see [options](#nested--options) for nested schema<br>
 <br>Initial options used when creating Kafka user<br><br>
 *___username___*<br>
 <ins>Type</ins>: string, required, immutable<br>
