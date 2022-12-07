@@ -28,7 +28,7 @@ The following terms are used to describe attributes in the schema of this resour
 <ins>Type</ins>: string, required, updatable<br>
 <br>Name of the configuration property.<br><br>
 *___value___*<br>
-<ins>Type</ins>: string, required, updatable<br>
+<ins>Type</ins>: string, required, immutable<br>
 <br>Value of the configuration property.<br><br>
 *___cluster_id___*<br>
 <ins>Type</ins>: string, required, updatable<br>
