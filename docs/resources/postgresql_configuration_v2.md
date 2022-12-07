@@ -1,14 +1,14 @@
 ---
-page_title: "instaclustr_postgresql_configurations_v2 Resource - terraform-provider-instaclustr"
+page_title: "instaclustr_postgresql_configuration_v2 Resource - terraform-provider-instaclustr"
 subcategory: ""
 description: |-
 ---
 
-# instaclustr_postgresql_configurations_v2 (Resource)
+# instaclustr_postgresql_configuration_v2 (Resource)
 PostgreSQL configuration property
 ## Example Usage
 ```
-resource "instaclustr_postgresql_configurations_v2" "example" {
+resource "instaclustr_postgresql_configuration_v2" "example" {
   name = "idle_in_transaction_session_timeout"
   cluster_id = "b997a00d-5bd4-4774-9bd7-5c0ad6189246"
   value = 1
@@ -40,6 +40,6 @@ The following terms are used to describe attributes in the schema of this resour
 ## Import
 This resource can be imported using the `terraform import` command as follows:
 ```
-terraform import instaclustr_postgresql_configurations_v2.[resource-name] "[resource-id]"
+terraform import instaclustr_postgresql_configuration_v2.[resource-name] "[resource-id]"
 ```
 `[resource-id]` is the unique identifier for this resource matching the value of the `id` attribute defined in the root schema above.
