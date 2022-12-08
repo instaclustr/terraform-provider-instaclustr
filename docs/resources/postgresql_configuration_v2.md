@@ -5,7 +5,7 @@ description: |-
 ---
 
 # instaclustr_postgresql_configuration_v2 (Resource)
-PostgreSQL configuration property
+PostgreSQL configuration property. Cluster nodes will need to be manually [reloaded](https://www.instaclustr.com/support/documentation/postgresql/postgresql-operations/reloading-a-node/) to apply configuration changes.
 ## Example Usage
 ```
 resource "instaclustr_postgresql_configuration_v2" "example" {
@@ -25,13 +25,13 @@ The following terms are used to describe attributes in the schema of this resour
 ## Root Level Schema
 ### Input attributes - Required
 *___name___*<br>
-<ins>Type</ins>: string, required, updatable<br>
+<ins>Type</ins>: string, required, immutable<br>
 <br>Name of the configuration property.<br><br>
 *___value___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <br>Value of the configuration property.<br><br>
 *___cluster_id___*<br>
-<ins>Type</ins>: string, required, updatable<br>
+<ins>Type</ins>: string, required, immutable<br>
 <br>Id of the PostgreSQL cluster.<br><br>
 ### Read-only attributes
 *___id___*<br>

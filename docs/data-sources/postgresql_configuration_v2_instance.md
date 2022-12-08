@@ -5,7 +5,7 @@ description: |-
 ---
 
 # instaclustr_postgresql_configuration_v2_instance (Data Source)
-PostgreSQL configuration property
+PostgreSQL configuration property. Cluster nodes will need to be manually [reloaded](https://www.instaclustr.com/support/documentation/postgresql/postgresql-operations/reloading-a-node/) to apply configuration changes.
 ## Example Usage
 ```
 data "instaclustr_postgresql_configuration_v2_instance" "example" { 
