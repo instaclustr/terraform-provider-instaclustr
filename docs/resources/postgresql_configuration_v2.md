@@ -11,7 +11,7 @@ PostgreSQL configuration property. Cluster nodes will need to be manually [reloa
 resource "instaclustr_postgresql_configuration_v2" "example" {
   name = "idle_in_transaction_session_timeout"
   cluster_id = "b997a00d-5bd4-4774-9bd7-5c0ad6189246"
-  value = 1
+  value = "1"
 }
 ```
 ## Glossary
@@ -28,14 +28,14 @@ The following terms are used to describe attributes in the schema of this resour
 <ins>Type</ins>: string, required, immutable<br>
 <br>Name of the configuration property.<br><br>
 *___value___*<br>
-<ins>Type</ins>: string, required, immutable<br>
+<ins>Type</ins>: string, required, updatable<br>
 <br>Value of the configuration property.<br><br>
 *___cluster_id___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <br>Id of the PostgreSQL cluster.<br><br>
-### Read-only attributes
+### Input attributes - Optional
 *___id___*<br>
-<ins>Type</ins>: string, read-only<br>
+<ins>Type</ins>: string, optional, updatable<br>
 <br>Instaclustr identifier for the PostgreSQL configuration property. The value of this property has the form: [cluster-id]|[configuration_name]<br><br>
 ## Import
 This resource can be imported using the `terraform import` command as follows:
