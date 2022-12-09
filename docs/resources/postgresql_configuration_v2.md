@@ -33,9 +33,9 @@ The following terms are used to describe attributes in the schema of this resour
 *___cluster_id___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <br>Id of the PostgreSQL cluster.<br><br>
-### Input attributes - Optional
+### Read-only attributes
 *___id___*<br>
-<ins>Type</ins>: string, optional, updatable<br>
+<ins>Type</ins>: string, read-only<br>
 <br>Instaclustr identifier for the PostgreSQL configuration property. The value of this property has the form: [cluster-id]|[configuration_name]<br><br>
 ## Import
 This resource can be imported using the `terraform import` command as follows:
