@@ -79,7 +79,7 @@ A resource for managing clusters on Instaclustr Managed Platform. A cluster cont
 | KAFKA_CONNECT            | 2.7.1, 2.8.2, 3.0.2, 3.1.2            |                                                                                    |
 | REDIS                    | 6.2.7                                 |                                                                                    |
 | APACHE_ZOOKEEPER         | 3.6.3, 3.7.1                          |                                                                                    |
-| POSTGRESQL               | 13.8, 14.5                            |                                                                                    |
+| POSTGRESQL               | 13.9, 14.6, 15.1 (Public Preview), 13.8 (Deprecated), 14.5 (Deprecated) |                                                                                    |
 | PGBOUNCER                | 1.17.0                                | POSTGRESQL                                                                         |
 | CADENCE                  | 0.22.4                                |                                                                                    |
 
