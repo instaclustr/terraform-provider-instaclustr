@@ -24,7 +24,7 @@ resource "instaclustr_cluster" "validOpenSearch" {
     options = {
       dedicated_master_nodes  = false
       master_node_size        = "SRH-DEV-t4g.small-5"
-      data_node_size          = "SRH-DM-DEV-t4g.small-5"
+      data_node_size          = "SRH-DEV-t4g.small-5"
       security_plugin         = true
       index_management_plugin = true
       knn_plugin              = true
