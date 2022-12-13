@@ -22,11 +22,16 @@ resource "instaclustr_cluster" "validOpenSearchPrivateLink" {
     bundle  = "OPENSEARCH"
     version = "1.3.5"
     options = {
-      dedicated_master_nodes  = false,
-      master_node_size        = "SRH-PRD-m6g.large-120",
-      data_node_size          = "SRH-PRD-m6g.large-120",
-      security_plugin         = true,
+      dedicated_master_nodes  = false
+      master_node_size        = "SRH-PRD-m6g.large-120"
+      data_node_size          = "SRH-DM-PRD-m6g.large-10"
+      security_plugin         = true
       index_management_plugin = true
+      knn_plugin              = true
+      reporting_plugin        = true
+      icu_plugin              = true
+      alerting_plugin         = false
+      notifications_plugin    = false
       client_encryption       = true
     }
   }
