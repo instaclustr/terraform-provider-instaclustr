@@ -30,11 +30,11 @@ type BundleOptions struct {
 	DataNodeSize                         string `json:"dataNodeSize,omitempty" mapstructure:"data_node_size,omitempty"`
 	SecurityPlugin                       *bool  `json:"securityPlugin,omitempty" mapstructure:"security_plugin,omitempty"`
 	IndexManagementPlugin                *bool  `json:"indexManagementPlugin,omitempty" mapstructure:"index_management_plugin,omitempty"`
-	KnnPlugin							 *bool  `json:"knnPlugin,omitempty" mapstructure:"knn_plugin,omitempty"`
-	ReportingPlugin 					 *bool  `json:"reportsPlugin,omitempty" mapstructure:"reporting_plugin,omitempty"`
-	IcuPlugin 					         *bool  `json:"icuPlugin,omitempty" mapstructure:"icu_plugin,omitempty"`
-	AlertingPlugin 					     *bool  `json:"alertingPlugin,omitempty" mapstructure:"alerting_plugin,omitempty"`
-	NotificationsPlugin					 *bool  `json:"notificationsPlugin,omitempty" mapstructure:"notifications_plugin,omitempty"`
+	KnnPlugin                            *bool  `json:"knnPlugin,omitempty" mapstructure:"knn_plugin,omitempty"`
+	ReportingPlugin                      *bool  `json:"reportsPlugin,omitempty" mapstructure:"reporting_plugin,omitempty"`
+	IcuPlugin                            *bool  `json:"icuPlugin,omitempty" mapstructure:"icu_plugin,omitempty"`
+	AlertingPlugin                       *bool  `json:"alertingPlugin,omitempty" mapstructure:"alerting_plugin,omitempty"`
+	NotificationsPlugin                  *bool  `json:"notificationsPlugin,omitempty" mapstructure:"notifications_plugin,omitempty"`
 	UsePrivateBroadcastRpcAddress        *bool  `json:"usePrivateBroadcastRPCAddress,omitempty" mapstructure:"use_private_broadcast_rpc_address,omitempty"`
 	LuceneEnabled                        *bool  `json:"luceneEnabled,omitempty" mapstructure:"lucene_enabled,omitempty"`
 	ContinuousBackupEnabled              *bool  `json:"continuousBackupEnabled,omitempty" mapstructure:"continuous_backup_enabled,omitempty"`
