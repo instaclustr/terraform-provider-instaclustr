@@ -12,3 +12,4 @@ tf.plan
 examples/crash.log
 examples/.terraform
 bin
+.DS_Store
