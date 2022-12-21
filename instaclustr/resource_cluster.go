@@ -273,6 +273,24 @@ func resourceCluster() *schema.Resource {
 				},
 			},
 
+			"public_contact_points": {
+				Type:     schema.TypeList,
+				Computed: true,
+				Optional: true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
+
+			"private_contact_points": {
+				Type:     schema.TypeList,
+				Computed: true,
+				Optional: true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
+
 			"cluster_provider": {
 				Type:          schema.TypeMap,
 				Optional:      true,
@@ -1543,6 +1561,15 @@ func doPostgresqlClusterResize(client APIClientInterface, cluster *Cluster, d re
 	return nil
 }
 
+func sortedMapKeys(m interface{}) (keyList []string) {
+	keys := reflect.ValueOf(m).MapKeys()
+	for _, key := range keys {
+		keyList = append(keyList, key.Interface().(string))
+	}
+	sort.Strings(keyList)
+	return
+}
+
 func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*Config).Client
 	id := d.Get("cluster_id").(string)
@@ -1655,37 +1682,68 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("pci_compliant_cluster", cluster.PciCompliance == "ENABLED")
 	d.Set("oidc_provider", cluster.OidcProvider)
 
-	azList := make([]string, 0)
+	nodesByRack := make(map[string][]Node)
 	publicContactPointList := make([]string, 0)
 	privateContactPointList := make([]string, 0)
+	publicContactPointsList := make([]string, 0)
+	privateContactPointsList := make([]string, 0)
 
+	// hunt
+	numContactPoints := 0
 	for _, dataCentre := range cluster.DataCentres {
 		for _, node := range dataCentre.Nodes {
-			if !stringInSlice(node.Rack, azList) {
-				if !isDedicatedZookeeperNodeSize(node.Size) {
-					azList = appendIfMissing(azList, node.Rack)
-					privateContactPointList = appendIfMissing(privateContactPointList, node.PrivateAddress)
-					publicContactPointList = appendIfMissing(publicContactPointList, node.PublicAddress)
-				}
+			if !isDedicatedZookeeperNodeSize(node.Size) {
+				nodesByRack[node.Rack] = append(nodesByRack[node.Rack], node)
+				numContactPoints++
 			}
 		}
 	}
 
+	// gather
+	gatheredFirstContactPoint := false
+	sortedRacks := sortedMapKeys(nodesByRack)
+	for numContactPoints > 0 {
+		for _, rack := range sortedRacks {
+			nodes := nodesByRack[rack]
+			node, nodes := nodes[0], nodes[1:] // pop
+			nodesByRack[rack] = nodes
+			publicContactPointsList = append(publicContactPointsList, node.PublicAddress)
+			privateContactPointsList = append(privateContactPointsList, node.PrivateAddress)
+			if !gatheredFirstContactPoint {
+				publicContactPointList = append(publicContactPointList, node.PublicAddress)
+				privateContactPointList = append(privateContactPointList, node.PrivateAddress)
+			}
+			numContactPoints--
+		}
+		gatheredFirstContactPoint = true
+	}
+
 	if !cluster.DataCentres[0].PrivateIPOnly && len(publicContactPointList) > 0 {
-		err = d.Set("public_contact_point", publicContactPointList)
+		if err := d.Set("public_contact_point", publicContactPointList); err != nil {
+			return fmt.Errorf("unable to set public_contact_point: %w", err)
+		}
+		if err := d.Set("public_contact_points", publicContactPointsList); err != nil {
+			return fmt.Errorf("unable to set public_contact_points: %w", err)
+		}
 	} else {
-		err = d.Set("public_contact_point", nil)
+		d.Set("public_contact_point", nil)
+		d.Set("public_contact_points", nil)
 	}
 
 	if len(privateContactPointList) > 0 {
-		err = d.Set("private_contact_point", privateContactPointList)
+		if err := d.Set("private_contact_point", privateContactPointList); err != nil {
+			return fmt.Errorf("unable to set private_contact_point: %w", err)
+		}
+		if err := d.Set("private_contact_points", privateContactPointsList); err != nil {
+			return fmt.Errorf("unable to set private_contact_points: %w", err)
+		}
 	} else {
-		err = d.Set("public_contact_point", nil)
+		d.Set("private_contact_point", nil)
+		d.Set("private_contact_points", nil)
 	}
 
 	toCheck := [2]string{"cluster_provider", "rack_allocation"}
 	for _, changing := range toCheck {
-
 		if !d.HasChange(changing) {
 			continue
 		}

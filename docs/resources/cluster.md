@@ -30,6 +30,11 @@ A resource for managing clusters on Instaclustr Managed Platform. A cluster cont
 | `cluster_id`                          | Returns the Cluster ID as a UUID                                                                                                                                                                                                                                      | READ ONLY                                                  |
 | `default_data_centre_id`              | Returned the default Data Centre ID as a UUID                                                                                                                                                                                                                         | READ ONLY                                                  |
 | `private_link`                        | Creates a PrivateLink cluster, see [here](https://www.instaclustr.com/support/documentation/useful-information/privatelink/) for more details. PrivateLink can only be supported on AWS_VPC for Kafka and OpenSearch currently. See below for its properties.         | Optional, but Required for creating a PrivateLink cluster. |
+| `private_contact_point` | Returns a set of private node ip addresses, once per rack. | READ_ONLY |
+| `private_contact_points` | Returns a set of private node ip addresses, one per rack, for all nodes. | READ_ONLY |
+| `public_contact_point` | Returns a set of public node ip addresses, one per rack. | READ_ONLY |
+| `public_contact_points` | Returns a set of public node ip addresses, one per rack, for all nodes. | READ_ONLY |
+
 
 ### cluster_provider
 
@@ -166,7 +171,7 @@ When dedicated master nodes are not enabled, the cluster will be provisioned wit
 
 #### kibana_node_size
 
-`kibana_node_size` is for Open Distro for Elasticsearch clusters (For Legacy Support Only) only. It represents the node size for the additional Kibana node. If it is not set, then a Kibana node will not be provisioned. 
+`kibana_node_size` is for Open Distro for Elasticsearch clusters (For Legacy Support Only) only. It represents the node size for the additional Kibana node. If it is not set, then a Kibana node will not be provisioned.
 
 #### opensearch_dashboards_node_size
 
