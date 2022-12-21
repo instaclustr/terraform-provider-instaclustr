@@ -1705,40 +1705,42 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	for numContactPoints > 0 {
 		for _, rack := range sortedRacks {
 			nodes := nodesByRack[rack]
-			node, nodes := nodes[0], nodes[1:] // pop
-			nodesByRack[rack] = nodes
-			publicContactPointsList = append(publicContactPointsList, node.PublicAddress)
-			privateContactPointsList = append(privateContactPointsList, node.PrivateAddress)
-			if !gatheredFirstContactPoint {
-				publicContactPointList = append(publicContactPointList, node.PublicAddress)
-				privateContactPointList = append(privateContactPointList, node.PrivateAddress)
+			if len(nodes) > 0 {
+				node, nodes := nodes[0], nodes[1:] // pop
+				nodesByRack[rack] = nodes
+				publicContactPointsList = append(publicContactPointsList, node.PublicAddress)
+				privateContactPointsList = append(privateContactPointsList, node.PrivateAddress)
+				if !gatheredFirstContactPoint {
+					publicContactPointList = append(publicContactPointList, node.PublicAddress)
+					privateContactPointList = append(privateContactPointList, node.PrivateAddress)
+				}
+				numContactPoints--
 			}
-			numContactPoints--
 		}
 		gatheredFirstContactPoint = true
 	}
 
 	if !cluster.DataCentres[0].PrivateIPOnly && len(publicContactPointList) > 0 {
-		if err := d.Set("public_contact_point", publicContactPointList); err != nil {
-			return fmt.Errorf("unable to set public_contact_point: %w", err)
-		}
-		if err := d.Set("public_contact_points", publicContactPointsList); err != nil {
-			return fmt.Errorf("unable to set public_contact_points: %w", err)
-		}
+		d.Set("public_contact_point", publicContactPointList)
 	} else {
 		d.Set("public_contact_point", nil)
+	}
+
+	if !cluster.DataCentres[0].PrivateIPOnly && len(publicContactPointsList) > 0 {
+		d.Set("public_contact_points", publicContactPointsList)
+	} else {
 		d.Set("public_contact_points", nil)
 	}
 
 	if len(privateContactPointList) > 0 {
-		if err := d.Set("private_contact_point", privateContactPointList); err != nil {
-			return fmt.Errorf("unable to set private_contact_point: %w", err)
-		}
-		if err := d.Set("private_contact_points", privateContactPointsList); err != nil {
-			return fmt.Errorf("unable to set private_contact_points: %w", err)
-		}
+		d.Set("private_contact_point", privateContactPointList)
 	} else {
 		d.Set("private_contact_point", nil)
+	}
+
+	if len(privateContactPointsList) > 0 {
+		d.Set("private_contact_points", privateContactPointsList)
+	} else {
 		d.Set("private_contact_points", nil)
 	}
 
