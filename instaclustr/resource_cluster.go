@@ -258,7 +258,6 @@ func resourceCluster() *schema.Resource {
 			"public_contact_point": {
 				Type:     schema.TypeSet,
 				Computed: true,
-				Optional: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
@@ -267,25 +266,22 @@ func resourceCluster() *schema.Resource {
 			"private_contact_point": {
 				Type:     schema.TypeSet,
 				Computed: true,
-				Optional: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
 			},
 
 			"public_contact_points": {
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Computed: true,
-				Optional: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
 			},
 
 			"private_contact_points": {
-				Type:     schema.TypeList,
+				Type:     schema.TypeSet,
 				Computed: true,
-				Optional: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
@@ -1719,6 +1715,8 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 		}
 		gatheredFirstContactPoint = true
 	}
+
+	// setting to nil instead of empty to respect previous behaviour
 
 	if !cluster.DataCentres[0].PrivateIPOnly && len(publicContactPointList) > 0 {
 		d.Set("public_contact_point", publicContactPointList)
