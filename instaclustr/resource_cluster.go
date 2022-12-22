@@ -801,10 +801,6 @@ func dcCustomNameDiffSuppressFunc(k, old, new string, d *schema.ResourceData) bo
 	return new == ""
 }
 
-func computedListDiffSuppressFunc(k, oldValue, newValue string, d *schema.ResourceData) bool {
-	return newValue == "<computed>" || oldValue == "<computed>" || oldValue == newValue
-}
-
 func resourceClusterCustomizeDiff(diff *schema.ResourceDiff, i interface{}) error {
 
 	if _, isBundle := diff.GetOk("bundle"); isBundle {
