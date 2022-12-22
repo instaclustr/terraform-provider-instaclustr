@@ -272,7 +272,7 @@ func resourceCluster() *schema.Resource {
 			},
 
 			"public_contact_points": {
-				Type:     schema.TypeSet, // trying a Set to see if it fixes the List diff during acceptance tests
+				Type:     schema.TypeList, // needs to be a list to maintain rack ordering
 				Computed: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
@@ -280,7 +280,7 @@ func resourceCluster() *schema.Resource {
 			},
 
 			"private_contact_points": {
-				Type:     schema.TypeSet, // trying a Set to see if it fixes the List diff during acceptance tests
+				Type:     schema.TypeList, // needs to be a list to maintain rack ordering
 				Computed: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
