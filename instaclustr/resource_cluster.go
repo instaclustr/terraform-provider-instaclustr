@@ -272,7 +272,7 @@ func resourceCluster() *schema.Resource {
 			},
 
 			"public_contact_points": {
-				Type:     schema.TypeSet,
+				Type:     schema.TypeList,
 				Computed: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
@@ -280,7 +280,7 @@ func resourceCluster() *schema.Resource {
 			},
 
 			"private_contact_points": {
-				Type:     schema.TypeSet,
+				Type:     schema.TypeList,
 				Computed: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
@@ -1679,8 +1679,6 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("oidc_provider", cluster.OidcProvider)
 
 	nodesByRack := make(map[string][]Node)
-	publicContactPointList := make([]string, 0)
-	privateContactPointList := make([]string, 0)
 	publicContactPointsList := make([]string, 0)
 	privateContactPointsList := make([]string, 0)
 
@@ -1696,50 +1694,34 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	// gather
-	gatheredFirstContactPoint := false
 	sortedRacks := sortedMapKeys(nodesByRack)
+	numRacks := len(sortedRacks)
 	for numContactPoints > 0 {
 		for _, rack := range sortedRacks {
 			nodes := nodesByRack[rack]
 			if len(nodes) > 0 {
-				node, nodes := nodes[0], nodes[1:] // pop
+				node, nodes := nodes[0], nodes[1:]
 				nodesByRack[rack] = nodes
-				publicContactPointsList = append(publicContactPointsList, node.PublicAddress)
-				privateContactPointsList = append(privateContactPointsList, node.PrivateAddress)
-				if !gatheredFirstContactPoint {
-					publicContactPointList = append(publicContactPointList, node.PublicAddress)
-					privateContactPointList = append(privateContactPointList, node.PrivateAddress)
+				if node.PublicAddress != "" {
+					publicContactPointsList = append(publicContactPointsList, node.PublicAddress)
+				}
+				if node.PrivateAddress != "" {
+					privateContactPointsList = append(privateContactPointsList, node.PrivateAddress)
 				}
 				numContactPoints--
 			}
 		}
-		gatheredFirstContactPoint = true
 	}
 
-	// setting to nil instead of empty to respect previous behaviour
-
-	if !cluster.DataCentres[0].PrivateIPOnly && len(publicContactPointList) > 0 {
-		d.Set("public_contact_point", publicContactPointList)
-	} else {
-		d.Set("public_contact_point", nil)
-	}
-
-	if !cluster.DataCentres[0].PrivateIPOnly && len(publicContactPointsList) > 0 {
+	// dont update state until we have enough contact points to cover the racks
+	if !cluster.DataCentres[0].PrivateIPOnly && len(publicContactPointsList) >= numRacks {
 		d.Set("public_contact_points", publicContactPointsList)
-	} else {
-		d.Set("public_contact_points", nil)
+		d.Set("public_contact_point", publicContactPointsList[:numRacks])
 	}
 
-	if len(privateContactPointList) > 0 {
-		d.Set("private_contact_point", privateContactPointList)
-	} else {
-		d.Set("private_contact_point", nil)
-	}
-
-	if len(privateContactPointsList) > 0 {
+	if len(privateContactPointsList) >= numRacks {
 		d.Set("private_contact_points", privateContactPointsList)
-	} else {
-		d.Set("private_contact_points", nil)
+		d.Set("private_contact_point", privateContactPointsList[:numRacks])
 	}
 
 	toCheck := [2]string{"cluster_provider", "rack_allocation"}
