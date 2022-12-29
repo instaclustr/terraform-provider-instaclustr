@@ -11,7 +11,7 @@ Defines an OpenSearch egress rule
 resource "instaclustr_opensearch_egress_rule_v2" "example" {
   open_search_binding_id = "qzPJmIQBGW3Cho0V3Ee_"
   cluster_id = "71e4380e-32ac-4fa7-ab42-c165fe35aa55"
-  source = "NOTIFICATION"
+  source = "NOTIFICATIONS"
   type = "WEBHOOK"
 }
 ```
@@ -26,8 +26,8 @@ The following terms are used to describe attributes in the schema of this resour
 ## Root Level Schema
 ### Input attributes - Required
 *___source___*<br>
-<ins>Type</ins>: string, required, updatable<br>
-<ins>Constraints</ins>: allowed values: [ `ALERTING`, `NOTIFICATION` ]<br><br>Source OpenSearch plugin that manages the channel/destination<br><br>
+<ins>Type</ins>: string, required, immutable<br>
+<ins>Constraints</ins>: allowed values: [ `ALERTING`, `NOTIFICATIONS` ]<br><br>Source OpenSearch plugin that manages the channel/destination<br><br>
 *___cluster_id___*<br>
 <ins>Type</ins>: string, required, updatable<br>
 <br>OpenSearch cluster Id<br><br>
@@ -36,8 +36,8 @@ The following terms are used to describe attributes in the schema of this resour
 <ins>Constraints</ins>: pattern: `[\w-]+`<br><br>OpenSearch ID for alerting/notifications channel/destination for webhook<br><br>
 ### Input attributes - Optional
 *___type___*<br>
-<ins>Type</ins>: string, optional, updatable<br>
-<ins>Constraints</ins>: allowed values: [ `SLACK`, `WEBHOOK` ]<br><br>Type of the channel/destination<br><br>
+<ins>Type</ins>: string, optional, immutable<br>
+<ins>Constraints</ins>: allowed values: [ `SLACK`, `WEBHOOK`, `CUSTOM_WEBHOOK`, `CHIME` ]<br><br>Type of the channel/destination<br><br>
 ### Read-only attributes
 *___id___*<br>
 <ins>Type</ins>: string, read-only<br>
