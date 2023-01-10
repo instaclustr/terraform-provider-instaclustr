@@ -1,14 +1,16 @@
 ---
-page_title: "instaclustr_clusters_v2 Data Source - terraform-provider-instaclustr"
+page_title: "instaclustr_postgresql_configuration_v2_instance Data Source - terraform-provider-instaclustr"
 subcategory: ""
 description: |-
 ---
 
-# instaclustr_clusters_v2 (Data Source)
-A listable data source of all cluster IDs in an Instaclustr Account.
+# instaclustr_postgresql_configuration_v2_instance (Data Source)
+PostgreSQL configuration property. Cluster nodes will need to be manually [reloaded](https://www.instaclustr.com/support/documentation/postgresql/postgresql-operations/reloading-a-node/) to apply configuration changes.
 ## Example Usage
 ```
-data "instaclustr_clusters_v2" "example" { }
+data "instaclustr_postgresql_configuration_v2_instance" "example" { 
+  id = "<id>" // the value of the `id` attribute defined in the root schema below
+}
 ```
 ## Glossary
 The following terms are used to describe attributes in the schema of this data source:
@@ -17,19 +19,15 @@ The following terms are used to describe attributes in the schema of this data s
 - **_nested block_** - These attributes use the [Terraform block syntax](https://www.terraform.io/language/attr-as-blocks) when defined as an input in the Terraform code. Attributes with the type **_repeatable nested block_** are the same except that the nested block can be defined multiple times with varying nested attributes. When reading nested block attributes, an index must be provided when accessing the contents of the nested block, example - `my_resource.nested_block_attribute[0].nested_attribute`.
 ## Root Level Schema
 ### Read-only attributes
-*___account_id___*<br>
-<ins>Type</ins>: string, read-only<br>
-<br>UUID of the Instaclustr Account.<br><br>
-*___clusters___*<br>
-<ins>Type</ins>: repeatable nested block, read-only, see [clusters](#nested--clusters) for nested schema<br>
-<br>
-<a id="nested--clusters"></a>
-## Nested schema for `clusters`
-
-### Read-only attributes
 *___id___*<br>
 <ins>Type</ins>: string, read-only<br>
-<br>
-*___application___*<br>
+<br>Instaclustr identifier for the PostgreSQL configuration property. The value of this property has the form: [cluster-id]|[configuration_name]<br><br>
+*___name___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: allowed values: [ `APACHE_CASSANDRA`, `KAFKA`, `APACHE_ZOOKEEPER`, `KAFKA_CONNECT`, `CADENCE`, `MONGODB`, `REDIS`, `OPENSEARCH`, `POSTGRESQL`, `UNKNOWN` ]<br><br>
+<br>Name of the configuration property.<br><br>
+*___value___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Value of the configuration property.<br><br>
+*___cluster_id___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Id of the PostgreSQL cluster.<br><br>
