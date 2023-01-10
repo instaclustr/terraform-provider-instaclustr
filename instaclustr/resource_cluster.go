@@ -258,7 +258,6 @@ func resourceCluster() *schema.Resource {
 			"public_contact_point": {
 				Type:     schema.TypeSet,
 				Computed: true,
-				Optional: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
@@ -267,7 +266,22 @@ func resourceCluster() *schema.Resource {
 			"private_contact_point": {
 				Type:     schema.TypeSet,
 				Computed: true,
-				Optional: true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
+
+			"public_contact_points": {
+				Type:     schema.TypeList, // needs to be a list to maintain rack ordering
+				Computed: true,
+				Elem: &schema.Schema{
+					Type: schema.TypeString,
+				},
+			},
+
+			"private_contact_points": {
+				Type:     schema.TypeList, // needs to be a list to maintain rack ordering
+				Computed: true,
 				Elem: &schema.Schema{
 					Type: schema.TypeString,
 				},
@@ -807,6 +821,9 @@ func resourceClusterCustomizeDiff(diff *schema.ResourceDiff, i interface{}) erro
 			}
 		}
 	}
+
+	diff.Clear("public_contact_points")
+	diff.Clear("private_contact_points")
 	return nil
 }
 
@@ -1543,6 +1560,15 @@ func doPostgresqlClusterResize(client APIClientInterface, cluster *Cluster, d re
 	return nil
 }
 
+func sortedMapKeys(m interface{}) (keyList []string) {
+	keys := reflect.ValueOf(m).MapKeys()
+	for _, key := range keys {
+		keyList = append(keyList, key.Interface().(string))
+	}
+	sort.Strings(keyList)
+	return
+}
+
 func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	client := meta.(*Config).Client
 	id := d.Get("cluster_id").(string)
@@ -1655,37 +1681,54 @@ func resourceClusterRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("pci_compliant_cluster", cluster.PciCompliance == "ENABLED")
 	d.Set("oidc_provider", cluster.OidcProvider)
 
-	azList := make([]string, 0)
-	publicContactPointList := make([]string, 0)
-	privateContactPointList := make([]string, 0)
+	nodesByRack := make(map[string][]Node)
+	publicContactPointsList := make([]string, 0)
+	privateContactPointsList := make([]string, 0)
 
+	// hunt
+	numContactPoints := 0
 	for _, dataCentre := range cluster.DataCentres {
 		for _, node := range dataCentre.Nodes {
-			if !stringInSlice(node.Rack, azList) {
-				if !isDedicatedZookeeperNodeSize(node.Size) {
-					azList = appendIfMissing(azList, node.Rack)
-					privateContactPointList = appendIfMissing(privateContactPointList, node.PrivateAddress)
-					publicContactPointList = appendIfMissing(publicContactPointList, node.PublicAddress)
-				}
+			if !isDedicatedZookeeperNodeSize(node.Size) {
+				nodesByRack[node.Rack] = append(nodesByRack[node.Rack], node)
+				numContactPoints++
 			}
 		}
 	}
 
-	if !cluster.DataCentres[0].PrivateIPOnly && len(publicContactPointList) > 0 {
-		err = d.Set("public_contact_point", publicContactPointList)
-	} else {
-		err = d.Set("public_contact_point", nil)
+	// gather
+	sortedRacks := sortedMapKeys(nodesByRack)
+	numRacks := len(sortedRacks)
+	for numContactPoints > 0 {
+		for _, rack := range sortedRacks {
+			nodes := nodesByRack[rack]
+			if len(nodes) > 0 {
+				node, nodes := nodes[0], nodes[1:]
+				nodesByRack[rack] = nodes
+				if node.PublicAddress != "" {
+					publicContactPointsList = append(publicContactPointsList, node.PublicAddress)
+				}
+				if node.PrivateAddress != "" {
+					privateContactPointsList = append(privateContactPointsList, node.PrivateAddress)
+				}
+				numContactPoints--
+			}
+		}
 	}
 
-	if len(privateContactPointList) > 0 {
-		err = d.Set("private_contact_point", privateContactPointList)
-	} else {
-		err = d.Set("public_contact_point", nil)
+	// dont update state until we have enough contact points to cover the racks
+	if !cluster.DataCentres[0].PrivateIPOnly && len(publicContactPointsList) >= numRacks {
+		d.Set("public_contact_points", publicContactPointsList)
+		d.Set("public_contact_point", publicContactPointsList[:numRacks])
+	}
+
+	if len(privateContactPointsList) >= numRacks {
+		d.Set("private_contact_points", privateContactPointsList)
+		d.Set("private_contact_point", privateContactPointsList[:numRacks])
 	}
 
 	toCheck := [2]string{"cluster_provider", "rack_allocation"}
 	for _, changing := range toCheck {
-
 		if !d.HasChange(changing) {
 			continue
 		}

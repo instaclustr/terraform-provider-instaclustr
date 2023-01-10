@@ -163,14 +163,14 @@ workflows:
           filters:
             branches:
               only: master
-  acceptance-test-workflow:
-    jobs:
-      - hold:
-          type: approval
-          filters:
-            branches:
-              ignore: master
-      - pr-build-test:
-          context: terraform provider preprod
-          requires:
-            - hold
+#  acceptance-test-workflow:
+#    jobs:
+#      - hold:
+#          type: approval
+#          filters:
+#            branches:
+#              ignore: master
+#      - pr-build-test:
+#          context: terraform provider preprod
+#          requires:
+#            - hold
