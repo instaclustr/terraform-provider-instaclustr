@@ -26,7 +26,7 @@ For general information about Terraform, visit the [official website](https://te
 
 ## Requirements
 
-- Terraform v0.10.x - .v0.15.x.
+- Terraform v0.11.x or higher
 - Go 1.14 or higher
 
 ## Using The Provider
