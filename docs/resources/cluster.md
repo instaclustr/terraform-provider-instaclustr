@@ -74,7 +74,7 @@ A resource for managing clusters on Instaclustr Managed Platform. A cluster cont
 |--------------------------|---------------------------------------|------------------------------------------------------------------------------------|
 | APACHE_CASSANDRA         | 2.2.18, 3.0.19, 3.11.8, 4.0 (preview) |                                                                                    |
 | SPARK                    | 2.1.3, 2.3.2                          | APACHE_CASSANDRA                                                                   |
-| KAFKA                    | 2.7.1, 2.8.2, 3.0.2, 3.1.2            |                                                                                    |
+| KAFKA                    | 2.8.2, 3.0.2, 3.1.2                   |                                                                                    |
 | KAFKA_REST_PROXY         | 5.0.0                                 | KAFKA                                                                              |
 | KAFKA_SCHEMA_REGISTRY    | 5.0.0, 5.0.4                          | KAFKA                                                                              |
 | KARAPACE_SCHEMA_REGISTRY | 3.2.0                                 | KAFKA <br/> **Not compatible with:** <br/> KAFKA_REST_PROXY, KAFKA_SCHEMA_REGISTRY |
