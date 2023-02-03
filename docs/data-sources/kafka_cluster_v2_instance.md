@@ -45,7 +45,7 @@ The following terms are used to describe attributes in the schema of this data s
 <br>Adds the specified version of Kafka Karapace REST Proxy to this Kafka cluster.<br><br>
 *___kafka_version___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Kafka to run on the cluster. Available versions: <ul> <li>`3.0.2`</li> <li>`3.1.2`</li> <li>`2.8.2`</li> <li>`2.7.1`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Kafka to run on the cluster. Available versions: <ul> <li>`3.0.2`</li> <li>`3.1.2`</li> <li>`2.8.2`</li> </ul><br><br>
 *___client_auth_broker_without_encryption___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Enables Client ⇄ Broker Authentication without Encryption.<br><br>
@@ -188,7 +188,7 @@ Adds the specified version of Kafka Karapace REST Proxy to this Kafka cluster.<b
 <br>Enables Integration of the Karapace REST proxy with the local Karapace Schema registry.<br><br>
 *___version___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Adds the specified version of Kafka REST Proxy to the Kafka cluster. Available versions: <ul> <li>`3.2.0`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Adds the specified version of Kafka REST Proxy to the Kafka cluster. Available versions: <ul> <li>`3.4.3`</li> </ul><br><br>
 <a id="nested--gcp_settings"></a>
 ## Nested schema for `gcp_settings`
 GCP specific settings for the Data Centre. Cannot be provided with AWS or Azure settings.<br>
@@ -264,7 +264,7 @@ Adds the specified version of Kafka Karapace Schema Registry to this Kafka clust
 ### Read-only attributes
 *___version___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Adds the specified version of Kafka Schema Registry to the Kafka cluster. Available versions: <ul> <li>`3.2.0`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Adds the specified version of Kafka Schema Registry to the Kafka cluster. Available versions: <ul> <li>`3.4.3`</li> </ul><br><br>
 <a id="nested--schema_registry"></a>
 ## Nested schema for `schema_registry`
 Adds the specified version of Kafka Schema Registry to this Kafka cluster.<br>

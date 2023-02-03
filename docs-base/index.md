@@ -20,7 +20,7 @@ This provider is in __General Availability__ with support for the following offe
 | Kafka Connect | Complete    |
 | Apache ZooKeeper | Complete    |
 | OpenSearch | In Progress    |
-| Redis | In Progress    |
+| Redis | Complete    |
 | PostgreSQL | Complete    |
 | Cadence | Complete    |
 
