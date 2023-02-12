@@ -12,6 +12,7 @@ resource "instaclustr_kafka_user_certificate_v2" "example" {
   csr = "generated csr string"
   kafka_username = "kafka username"
   cluster_id = "Id of the kafka cluster"
+  valid_period = 120
 }
 ```
 ## Glossary
@@ -27,16 +28,15 @@ The following terms are used to describe attributes in the schema of this resour
 *___kafka_username___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <br>The Kafka username<br><br>
+*___valid_period___*<br>
+<ins>Type</ins>: integer, required, immutable<br>
+<ins>Constraints</ins>: minimum: 3, maximum: 1.2E+2<br><br>Number of months for which the certificate will be valid.<br><br>
 *___csr___*<br>
 <ins>Type</ins>: string (string), required, immutable<br>
 <br>Certificate signing request.<br><br>
 *___cluster_id___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <br>ID of the kafka cluster<br><br>
-### Input attributes - Optional
-*___valid_period___*<br>
-<ins>Type</ins>: integer, optional, immutable<br>
-<ins>Constraints</ins>: minimum: 3, maximum: 1.2E+2<br><br>Number of months for which the certificate will be valid.<br><br>
 ### Read-only attributes
 *___id___*<br>
 <ins>Type</ins>: string (string), read-only<br>
