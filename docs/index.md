@@ -17,12 +17,12 @@ This provider is in __General Availability__ with support for the following offe
 | ----------- |----------------|
 | Apache Cassandra | Complete       |
 | Apache Kafka | Complete       |
-| Kafka Connect | Complete       |
-| Apache ZooKeeper | Complete       |
+| Kafka Connect | Complete    |
+| Apache ZooKeeper | Complete    |
 | OpenSearch | In Progress    |
-| Redis | Complete       |
-| PostgreSQL | Complete       |
-| Cadence | Complete       |
+| Redis | Complete    |
+| PostgreSQL | Complete    |
+| Cadence | Complete    |
 
 Support for other offerings will be added progressively through to the end of 2022. If a resource you are looking to manage through Terraform is not yet supported by the Instaclustr Terraform Provider v2, you may use v1.x of the Instaclustr Terraform Provider instead. 
 
