@@ -9,7 +9,7 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=instaclustr_terraform-provider-instaclustr&metric=alert_status)](https://sonarcloud.io/dashboard?id=instaclustr_terraform-provider-instaclustr)
 
 > **Warning**<br>
-There are two main versions of this plugin, **V1** and **V2**, with **v2** being the [actively
+There are two main versions of this plugin, **V1** and **V2**, with **V2** being the [actively
 developed branch](https://github.com/instaclustr/terraform-provider-instaclustr/tree/provider-v2). The first version of the plugin remains the default [master](https://github.com/instaclustr/terraform-provider-instaclustr) branch and is in a maintenance phase. At some point soon we will switch the default github branch to be **V2** but for now please be aware of this.
 
 A [Terraform](http://terraform.io) provider for managing Instaclustr Platform resources.
