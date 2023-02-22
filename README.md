@@ -31,7 +31,7 @@ For general information about Terraform, visit the [official website](https://te
 - Use of existing Instaclustr authentication methodologies
 
 ## Support Contact
-Please reach out to support@instaclustr.com for issues on our Terraform Provider. Please note that we've disabled the issues feature on this repository and transferred open issues to our Zendesk system.
+Please reach out to support@instaclustr.com for issues with this Terraform Provider. Please note that we've disabled the issues feature on this repository and transferred open issues to our Zendesk system.
 
 ## Requirements
 
