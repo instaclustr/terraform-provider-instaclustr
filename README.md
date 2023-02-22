@@ -24,14 +24,9 @@ For general information about Terraform, visit the [official website](https://te
 - Ease of customisation and configuration in order to meet operational requirements
 - Use of existing Instaclustr authentication methodologies
 
-<div class="panel panel-warning">
-**Versions**
-{: .panel-heading}
-<div class="panel-body">
+**Warning**
 There are two main versions of this plugin, **V1** and **V2**, with **v2** being the [actively
 developed branch](https://github.com/instaclustr/terraform-provider-instaclustr/tree/provider-v2). The first version of the plugin remains the default [master](https://github.com/instaclustr/terraform-provider-instaclustr) branch and is in a maintenance phase. At some point soon we will switch the default github branch to be **V2** but for now please be aware of this.
-</div>
-</div>
 
 ## Support Contact
 Please reach out to support@instaclustr.com for issues on Terraform Provider **V1** and Terraform Provider **V2**.
