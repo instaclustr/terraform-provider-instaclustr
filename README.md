@@ -24,6 +24,19 @@ For general information about Terraform, visit the [official website](https://te
 - Ease of customisation and configuration in order to meet operational requirements
 - Use of existing Instaclustr authentication methodologies
 
+<div class="panel panel-warning">
+**Versions**
+{: .panel-heading}
+<div class="panel-body">
+There are two main versions of this plugin, **V1** and **V2**, with **v2** being the [actively
+developed branch](https://github.com/instaclustr/terraform-provider-instaclustr/tree/provider-v2). The first version of the plugin remains the default [master](https://github.com/instaclustr/terraform-provider-instaclustr) branch and is in a maintenance phase. At some point soon we will switch the default github branch to be **V2** but for now please be aware of this.
+</div>
+</div>
+
+## Support Contact
+Please reach out to support@instaclustr.com for issues on Terraform Provider **V1** and Terraform Provider **V2**.
+We'll be removing the github issues feature shortly.
+
 ## Requirements
 
 - Terraform v0.11.x or higher
@@ -88,6 +101,7 @@ resource "instaclustr_cluster" "example" {
     cluster_name = "testcluster"
     node_size = "m5l-250-v2"
     data_centre = "US_WEST_2"
+    data_centre_custom_name = "Oregon"
     sla_tier = "NON_PRODUCTION"
     cluster_network = "192.168.0.0/18"
     private_network_cluster = false
@@ -119,6 +133,7 @@ resource "instaclustr_cluster" "azure_example" {
   cluster_name = "testcluster"
   node_size = "Standard_DS2_v2-256-an"
   data_centre = "CENTRAL_US"
+  data_centre_custom_name = "Illinois"
   sla_tier = "NON_PRODUCTION"
   cluster_network = "192.168.0.0/18"
   private_network_cluster = false
@@ -129,7 +144,6 @@ resource "instaclustr_cluster" "azure_example" {
     number_of_racks = 3
     nodes_per_rack = 1
   }
-
   bundle {
     bundle = "APACHE_CASSANDRA"
     version = "3.11.8"
@@ -146,6 +160,7 @@ resource "instaclustr_cluster" "gcp_example" {
   cluster_name = "testclustergcp"
   node_size = "n1-standard-2"
   data_centre = "us-east1"
+  data_centre_custom_name = "Moncks Corner"
   sla_tier = "NON_PRODUCTION"
   cluster_network = "192.168.0.0/18"
   private_network_cluster = false
@@ -169,8 +184,8 @@ resource "instaclustr_cluster" "gcp_example" {
 
 Multi Data Centre Provisioning:
 
-For Multi Data Centre provisioning, please specify `node_size`, `rack_allocation`, `provider` and `bundles` in each `data_centres`;  
-For each `data_centres`, it requires at least one `bundles` to be the base application, e.g. `APACHE_CASSANDRA`.  
+For Multi Data Centre provisioning, please specify `node_size`, `rack_allocation`, `provider` and `bundles` in each `data_centres`;
+For each `data_centres`, it requires at least one `bundles` to be the base application, e.g. `APACHE_CASSANDRA`.
 ```
 resource "instaclustr_cluster" "multi_DC_example" {
   cluster_name = "testcluster_multiDC"
@@ -321,7 +336,7 @@ Unit tests are within `instaclustr` folder with `_unit_test` suffix, and used to
 
 #### Acceptance Testing
 
-Acceptance tests are within `acc_test` folder, and used to run end-to-end testing. We recommend using CircleCI to run your acceptance tests, however you can run them locally. Acceptance tests require end to end interaction with the Instaclustr platform and will create real (paid) infrastructure. If you wish to perform local testing you must set the variables below and run: ```make testacc``` 
+Acceptance tests are within `acc_test` folder, and used to run end-to-end testing. We recommend using CircleCI to run your acceptance tests, however you can run them locally. Acceptance tests require end to end interaction with the Instaclustr platform and will create real (paid) infrastructure. If you wish to perform local testing you must set the variables below and run: ```make testacc```
 
 
 | Variable                        | Command                                                                    | Description                                                                                                                   |
