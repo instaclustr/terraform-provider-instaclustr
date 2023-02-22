@@ -8,6 +8,10 @@
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=instaclustr_terraform-provider-instaclustr&metric=alert_status)](https://sonarcloud.io/dashboard?id=instaclustr_terraform-provider-instaclustr)
 
+> **Warning**<br>
+There are two main versions of this plugin, **V1** and **V2**, with **v2** being the [actively
+developed branch](https://github.com/instaclustr/terraform-provider-instaclustr/tree/provider-v2). The first version of the plugin remains the default [master](https://github.com/instaclustr/terraform-provider-instaclustr) branch and is in a maintenance phase. At some point soon we will switch the default github branch to be **V2** but for now please be aware of this.
+
 A [Terraform](http://terraform.io) provider for managing Instaclustr Platform resources.
 
 It provides a flexible set of resources for provisioning and managing Apache Cassandra, Apache Kafka, Apache Zookeeper, OpenSearch and Redis clusters on the Instaclustr Managed Platform via Terraform.
@@ -23,10 +27,6 @@ For general information about Terraform, visit the [official website](https://te
 - Ease of integration into existing terraform or automated CI/CD based workflows
 - Ease of customisation and configuration in order to meet operational requirements
 - Use of existing Instaclustr authentication methodologies
-
-**Warning**
-There are two main versions of this plugin, **V1** and **V2**, with **v2** being the [actively
-developed branch](https://github.com/instaclustr/terraform-provider-instaclustr/tree/provider-v2). The first version of the plugin remains the default [master](https://github.com/instaclustr/terraform-provider-instaclustr) branch and is in a maintenance phase. At some point soon we will switch the default github branch to be **V2** but for now please be aware of this.
 
 ## Support Contact
 Please reach out to support@instaclustr.com for issues on Terraform Provider **V1** and Terraform Provider **V2**.
