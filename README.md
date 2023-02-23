@@ -10,7 +10,7 @@
 
 > **Warning**<br>
 There are two main versions of this plugin, **V1** and **V2**, with **V2** being the [actively
-developed branch](https://github.com/instaclustr/terraform-provider-instaclustr/tree/provider-v2). The first version of the plugin remains the default [master](https://github.com/instaclustr/terraform-provider-instaclustr) branch and is in a maintenance phase. In the coming weeks we will switch the default github branch to be **V2**.
+developed branch](https://github.com/instaclustr/terraform-provider-instaclustr/tree/provider-v2). The first version of the plugin remains the default [master](https://github.com/instaclustr/terraform-provider-instaclustr) branch and is in a maintenance phase. We will shortly switch the default github branch to be **V2**, at which time the **V1** version will be officially deprecated.
 
 A [Terraform](http://terraform.io) provider for managing Instaclustr Platform resources.
 
