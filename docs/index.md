@@ -24,9 +24,12 @@ This provider is in __General Availability__ with support for the following offe
 | PostgreSQL | Complete    |
 | Cadence | Complete    |
 
-Support for other offerings will be added progressively through to the end of 2022. If a resource you are looking to manage through Terraform is not yet supported by the Instaclustr Terraform Provider v2, you may use v1.x of the Instaclustr Terraform Provider instead. 
+Support for other offerings will be added progressively through to the end of 2022. If a resource you are looking to manage through Terraform is not yet supported by the Instaclustr Terraform Provider v2, you may use v1.x of the Instaclustr Terraform Provider instead.
 
 For further information about Instaclustr, please see [FAQ](https://www.instaclustr.com/faqs/) and [Support](https://support.instaclustr.com/).
+
+## Support Contact
+Please reach out to support@instaclustr.com for issues with this Terraform Provider. Please note that we've disabled the issues feature on this repository and transferred open issues to our Zendesk system.
 
 ## Example Usage
 
