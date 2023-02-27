@@ -8,6 +8,10 @@
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=instaclustr_terraform-provider-instaclustr&metric=alert_status)](https://sonarcloud.io/dashboard?id=instaclustr_terraform-provider-instaclustr)
 
+> **Warning**<br>
+There are two main versions of this plugin, **V1** and **V2**, with **V2** being the [actively
+developed branch](https://github.com/instaclustr/terraform-provider-instaclustr/tree/provider-v2). The first version of the plugin remains the default [master](https://github.com/instaclustr/terraform-provider-instaclustr) branch and is in a maintenance phase. We will shortly switch the default github branch to be **V2**, at which time the **V1** version will be officially deprecated.
+
 A [Terraform](http://terraform.io) provider for managing Instaclustr Platform resources.
 
 It provides a flexible set of resources for provisioning and managing Apache Cassandra, Apache Kafka, Apache Zookeeper, OpenSearch and Redis clusters on the Instaclustr Managed Platform via Terraform.
@@ -23,6 +27,9 @@ For general information about Terraform, visit the [official website](https://te
 - Ease of integration into existing terraform or automated CI/CD based workflows
 - Ease of customisation and configuration in order to meet operational requirements
 - Use of existing Instaclustr authentication methodologies
+
+## Support Contact
+Please reach out to support@instaclustr.com for issues with this Terraform Provider. Please note that we've disabled the issues feature on this repository and transferred open issues to our Zendesk system.
 
 ## Requirements
 
@@ -88,6 +95,7 @@ resource "instaclustr_cluster" "example" {
     cluster_name = "testcluster"
     node_size = "m5l-250-v2"
     data_centre = "US_WEST_2"
+    data_centre_custom_name = "Oregon"
     sla_tier = "NON_PRODUCTION"
     cluster_network = "192.168.0.0/18"
     private_network_cluster = false
@@ -119,6 +127,7 @@ resource "instaclustr_cluster" "azure_example" {
   cluster_name = "testcluster"
   node_size = "Standard_DS2_v2-256-an"
   data_centre = "CENTRAL_US"
+  data_centre_custom_name = "Illinois"
   sla_tier = "NON_PRODUCTION"
   cluster_network = "192.168.0.0/18"
   private_network_cluster = false
@@ -129,7 +138,6 @@ resource "instaclustr_cluster" "azure_example" {
     number_of_racks = 3
     nodes_per_rack = 1
   }
-
   bundle {
     bundle = "APACHE_CASSANDRA"
     version = "3.11.8"
@@ -146,6 +154,7 @@ resource "instaclustr_cluster" "gcp_example" {
   cluster_name = "testclustergcp"
   node_size = "n1-standard-2"
   data_centre = "us-east1"
+  data_centre_custom_name = "Moncks Corner"
   sla_tier = "NON_PRODUCTION"
   cluster_network = "192.168.0.0/18"
   private_network_cluster = false
@@ -169,8 +178,8 @@ resource "instaclustr_cluster" "gcp_example" {
 
 Multi Data Centre Provisioning:
 
-For Multi Data Centre provisioning, please specify `node_size`, `rack_allocation`, `provider` and `bundles` in each `data_centres`;  
-For each `data_centres`, it requires at least one `bundles` to be the base application, e.g. `APACHE_CASSANDRA`.  
+For Multi Data Centre provisioning, please specify `node_size`, `rack_allocation`, `provider` and `bundles` in each `data_centres`;
+For each `data_centres`, it requires at least one `bundles` to be the base application, e.g. `APACHE_CASSANDRA`.
 ```
 resource "instaclustr_cluster" "multi_DC_example" {
   cluster_name = "testcluster_multiDC"
@@ -321,7 +330,7 @@ Unit tests are within `instaclustr` folder with `_unit_test` suffix, and used to
 
 #### Acceptance Testing
 
-Acceptance tests are within `acc_test` folder, and used to run end-to-end testing. We recommend using CircleCI to run your acceptance tests, however you can run them locally. Acceptance tests require end to end interaction with the Instaclustr platform and will create real (paid) infrastructure. If you wish to perform local testing you must set the variables below and run: ```make testacc``` 
+Acceptance tests are within `acc_test` folder, and used to run end-to-end testing. We recommend using CircleCI to run your acceptance tests, however you can run them locally. Acceptance tests require end to end interaction with the Instaclustr platform and will create real (paid) infrastructure. If you wish to perform local testing you must set the variables below and run: ```make testacc```
 
 
 | Variable                        | Command                                                                    | Description                                                                                                                   |
