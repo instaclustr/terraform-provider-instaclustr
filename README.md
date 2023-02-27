@@ -1,6 +1,6 @@
 # Terraform Instaclustr Provider
 
-A [Terraform](http://terraform.io) provider for managing Instaclustr Platform resources. 
+A [Terraform](http://terraform.io) provider for managing Instaclustr Platform resources.
 
 ## Documentation
 
@@ -13,6 +13,9 @@ With the v2 version of the Instaclustr Terraform Provider, new resources have be
 ## Further information and documentation
 
 This provider makes use of the Instaclustr API. For further reference on the Instaclustr API, visit see [Instaclustr API Documentation website](https://docs.api.instaclustr.com).
+
+## Support Contact
+Please reach out to support@instaclustr.com for issues with this Terraform Provider. Please note that we've disabled the issues feature on this repository and transferred open issues to our Zendesk system.
 
 The support status of this project is available through https://www.instaclustr.com/support/documentation/announcements/instaclustr-open-source-project-status/.
 
