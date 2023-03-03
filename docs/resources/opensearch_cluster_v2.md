@@ -15,31 +15,31 @@ resource "instaclustr_opensearch_cluster_v2" "example" {
   }
 
   pci_compliance_mode = false
-  icu_plugin = true
+  icu_plugin = false
   opensearch_version = "2.2.1"
-  asynchronous_search_plugin = true
-  knn_plugin = true
+  asynchronous_search_plugin = false
+  knn_plugin = false
   opensearch_dashboards {
-    node_size = "SRH-DEV-t4g.small-30"
+    node_size = "SRH-DEV-t4g.small-5"
     oidc_provider = ""
     version = "opensearch-dashboards:2.2.1"
   }
 
-  reporting_plugin = true
-  sql_plugin = true
-  notifications_plugin = true
+  reporting_plugin = false
+  notifications_plugin = false
   data_centre {
     cloud_provider = "AWS_VPC"
     name = "AWS_VPC_US_EAST_1"
     network = "10.0.0.0/16"
     number_of_racks = 3
+    private_link = false
     region = "US_EAST_1"
   }
 
-  anomaly_detection_plugin = true
+  anomaly_detection_plugin = false
   load_balancer = false
   private_network_cluster = false
-  name = "OpenSearch_Cluster"
+  name = "OpenSearch_Cluster_V2"
   cluster_manager_nodes {
     dedicated_manager = true
     node_size = "SRH-DM-DEV-t4g.small-5"
@@ -47,7 +47,7 @@ resource "instaclustr_opensearch_cluster_v2" "example" {
 
   index_management_plugin = true
   sla_tier = "NON_PRODUCTION"
-  alerting_plugin = true
+  alerting_plugin = false
 }
 ```
 ## Glossary
