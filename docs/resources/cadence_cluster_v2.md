@@ -186,7 +186,7 @@ GCP specific settings for the Data Centre. Cannot be provided with AWS or Azure 
 
 ### Input attributes - Required
 *___dependency_cdc_id___*<br>
-<ins>Type</ins>: string (uuid), required, updatable<br>
+<ins>Type</ins>: string (uuid), required, immutable<br>
 <br>ID of the supporting Cluster's Cluster Data Centre<br><br>
 *___dependency_vpc_type___*<br>
 <ins>Type</ins>: string, required, updatable<br>
@@ -241,7 +241,7 @@ Cadence advanced visibility settings<br>
 
 ### Input attributes - Required
 *___dependency_cdc_id___*<br>
-<ins>Type</ins>: string (uuid), required, updatable<br>
+<ins>Type</ins>: string (uuid), required, immutable<br>
 <br>ID of the supporting Cluster's Cluster Data Centre<br><br>
 *___dependency_vpc_type___*<br>
 <ins>Type</ins>: string, required, updatable<br>
@@ -268,7 +268,7 @@ Create a PrivateLink enabled cluster, see [PrivateLink](https://www.instaclustr.
 
 ### Input attributes - Required
 *___dependency_cdc_id___*<br>
-<ins>Type</ins>: string (uuid), required, updatable<br>
+<ins>Type</ins>: string (uuid), required, immutable<br>
 <br>ID of the supporting Cluster's Cluster Data Centre<br><br>
 *___dependency_vpc_type___*<br>
 <ins>Type</ins>: string, required, updatable<br>
