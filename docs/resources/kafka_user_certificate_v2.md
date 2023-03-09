@@ -41,6 +41,9 @@ The following terms are used to describe attributes in the schema of this resour
 *___id___*<br>
 <ins>Type</ins>: string (string), read-only<br>
 <br>ID of the certificate.<br><br>
+*___expiry_date___*<br>
+<ins>Type</ins>: string (string), read-only<br>
+<br>Date certificate expires.<br><br>
 *___signed_certificate___*<br>
 <ins>Type</ins>: string (string), read-only<br>
 <br>Generated client signed certificate.<br><br>
