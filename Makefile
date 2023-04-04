@@ -1,13 +1,13 @@
 BIN_NAME=terraform-provider-instaclustr
 
-VERSION=2.0.32
+VERSION=2.0.34
 
 FULL_BIN_NAME="${BIN_NAME}_v${VERSION}"
 SHASUM_NAME="${BIN_NAME}_${VERSION}_SHA256SUMS"
 
-INSTALL_FOLDER=$(HOME)/.terraform.d/plugins/terraform.instaclustr.com/instaclustr/instaclustr/$(VERSION)
+INSTALL_FOLDER=$(HOME)/.terraform.d/plugins/terraform.instaclustr.com/instaclustr/instaclustr/$(VERSION)/darwin_amd64
 
-.PHONY: local-build preprod-build build build-all install install-for-platform local-gen-docs gen-docs release_version
+.PHONY: local-build preprod-build build build-all install local-gen-docs gen-docs release_version
 
 release_version:
 	@echo v$(VERSION)
@@ -38,16 +38,11 @@ build-all-platforms:
 	sed -i '' -e 's/bin\///g' bin/${SHASUM_NAME}
 
 install:
-	DESTINATION_FOLDER="$(INSTALL_FOLDER)/darwin_amd64" make install-for-platform
-	DESTINATION_FOLDER="$(INSTALL_FOLDER)/darwin_arm64" make install-for-platform
-
-
-install-for-platform:
-	@if [ ! -d $(DESTINATION_FOLDER) ]; then \
-		echo "$(DESTINATION_FOLDER) doesn't exist, creating..."; \
-		mkdir -p $(DESTINATION_FOLDER); \
+	@if [ ! -d $(INSTALL_FOLDER) ]; then \
+		echo "$(INSTALL_FOLDER) doesn't exist, creating..."; \
+		mkdir -p $(INSTALL_FOLDER); \
 	fi
-	cp ./bin/$(BIN_NAME)_v$(VERSION) $(DESTINATION_FOLDER)
+	cp ./bin/$(BIN_NAME)_v$(VERSION) $(INSTALL_FOLDER)
 
 local-gen-docs:
 	IC_API_URL=http://localhost:8090 ./scripts/instaclustr-terraform-registry-documentation-update.sh
