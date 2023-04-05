@@ -113,9 +113,6 @@ List of data centre settings.<br>
 *___aws_settings___*<br>
 <ins>Type</ins>: nested block, read-only, see [aws_settings](#nested--aws_settings) for nested schema<br>
 <br>AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure settings.<br><br>
-*___private_link___*<br>
-<ins>Type</ins>: boolean, read-only<br>
-<br>Create a PrivateLink enabled cluster, see [PrivateLink](https://www.instaclustr.com/support/documentation/useful-information/privatelink/).<br><br>
 *___private_ip_broadcast_for_discovery___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Enables broadcast of private IPs for auto-discovery.<br><br>

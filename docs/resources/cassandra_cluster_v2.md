@@ -156,9 +156,6 @@ List of data centre settings.<br>
 *___aws_settings___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [aws_settings](#nested--aws_settings) for nested schema<br>
 <br>AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure settings.<br><br>
-*___private_link___*<br>
-<ins>Type</ins>: boolean, optional, immutable<br>
-<br>Create a PrivateLink enabled cluster, see [PrivateLink](https://www.instaclustr.com/support/documentation/useful-information/privatelink/).<br><br>
 *___provider_account_name___*<br>
 <ins>Type</ins>: string, optional, immutable<br>
 <br>For customers running in their own account. Your provider account can be found on the Create Cluster page on the Instaclustr Console, or the "Provider Account" property on any existing cluster. For customers provisioning on Instaclustr's cloud provider accounts, this property may be omitted.<br><br>
