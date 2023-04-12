@@ -1,5 +1,0 @@
-{
-  "topic" : "test",
-  "replicationFactor" : 3,
-  "partitions" : 3
-}
