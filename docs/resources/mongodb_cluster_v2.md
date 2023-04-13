@@ -1,54 +1,28 @@
 ---
-page_title: "instaclustr_opensearch_cluster_v2 Resource - terraform-provider-instaclustr"
+page_title: "instaclustr_mongodb_cluster_v2 Resource - terraform-provider-instaclustr"
 subcategory: ""
 description: |-
 ---
 
-# instaclustr_opensearch_cluster_v2 (Resource)
-Definition of a managed OpenSearch cluster that can be provisioned in Instaclustr.
+# instaclustr_mongodb_cluster_v2 (Resource)
+Definition of a managed MongoDB cluster that can be provisioned in Instaclustr.
 ## Example Usage
 ```
-resource "instaclustr_opensearch_cluster_v2" "example" {
-  data_nodes {
-    node_count = 3
-    node_size = "SRH-DEV-t4g.small-5"
-  }
-
+resource "instaclustr_mongodb_cluster_v2" "example" {
   pci_compliance_mode = false
-  icu_plugin = false
-  opensearch_version = "2.5.0"
-  asynchronous_search_plugin = false
-  knn_plugin = false
-  opensearch_dashboards {
-    node_size = "SRH-DEV-t4g.small-5"
-    oidc_provider = ""
-    version = "opensearch-dashboards:2.5.0"
-  }
-
-  reporting_plugin = false
-  sql_plugin = false
-  notifications_plugin = false
   data_centre {
     cloud_provider = "AWS_VPC"
     name = "AWS_VPC_US_EAST_1"
     network = "10.0.0.0/16"
-    number_of_racks = 3
-    private_link = false
+    node_size = "MNG-DEV-t3.medium-80"
+    number_of_nodes = 3
     region = "US_EAST_1"
   }
 
-  anomaly_detection_plugin = false
-  load_balancer = false
   private_network_cluster = false
-  name = "OpenSearch_Cluster_V2"
-  cluster_manager_nodes {
-    dedicated_manager = true
-    node_size = "SRH-DM-DEV-t4g.small-5"
-  }
-
-  index_management_plugin = true
+  name = "MyMongoDBCluster"
   sla_tier = "NON_PRODUCTION"
-  alerting_plugin = false
+  mongodb_version = "[x.y.z]"
 }
 ```
 ## Glossary
@@ -64,68 +38,35 @@ The following terms are used to describe attributes in the schema of this resour
 *___data_centre___*<br>
 <ins>Type</ins>: nested block, required, updatable, see [data_centre](#nested--data_centre) for nested schema<br>
 <ins>Constraints</ins>: minimum items: 1<br><br>List of data centre settings.<br><br>
-*___opensearch_version___*<br>
+*___sla_tier___*<br>
 <ins>Type</ins>: string, required, immutable<br>
-<ins>Constraints</ins>: pattern: `([0-9]+\.){2}[0-9]+`<br><br>Version of OpenSearch to run on the cluster<br><br>
+<ins>Constraints</ins>: allowed values: [ `PRODUCTION`, `NON_PRODUCTION` ]<br><br>SLA Tier of the cluster. Non-production clusters may receive lower priority support and reduced SLAs. Production tier is not available when using Developer class nodes. See [SLA Tier](https://www.instaclustr.com/support/documentation/useful-information/sla-tier/) for more information.<br><br>
+*___name___*<br>
+<ins>Type</ins>: string, required, immutable<br>
+<ins>Constraints</ins>: pattern: `[a-zA-Z0-9][a-zA-Z0-9_-]*`<br><br>Name of the cluster.<br><br>
+*___mongodb_version___*<br>
+<ins>Type</ins>: string, required, immutable<br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of MongoDB to run on the cluster. Available versions: <ul> </ul><br><br>
+*___private_network_cluster___*<br>
+<ins>Type</ins>: boolean, required, immutable<br>
+<br>Creates the cluster with private network only, see [Private Network Clusters](https://www.instaclustr.com/support/documentation/useful-information/private-network-clusters/).<br><br>
 *___pci_compliance_mode___*<br>
 <ins>Type</ins>: boolean, required, immutable<br>
 <br>Creates a PCI compliant cluster, see [PCI Compliance](https://www.instaclustr.com/support/documentation/useful-information/pci-compliance/).<br><br>
-*___data_nodes___*<br>
-<ins>Type</ins>: nested block, required, updatable, see [data_nodes](#nested--data_nodes) for nested schema<br>
-<ins>Constraints</ins>: minimum items: 1<br><br>List of data node settings.<br><br>
 ### Input attributes - Optional
-*___notifications_plugin___*<br>
-<ins>Type</ins>: boolean, optional, immutable<br>
-<br>Enable notifications plugin<br><br>
-*___asynchronous_search_plugin___*<br>
-<ins>Type</ins>: boolean, optional, immutable<br>
-<br>Enable asynchronous search plugin<br><br>
-*___sla_tier___*<br>
-<ins>Type</ins>: string, optional, immutable<br>
-<ins>Constraints</ins>: allowed values: [ `PRODUCTION`, `NON_PRODUCTION` ]<br><br>SLA Tier of the cluster. Non-production clusters may receive lower priority support and reduced SLAs. Production tier is not available when using Developer class nodes. See [SLA Tier](https://www.instaclustr.com/support/documentation/useful-information/sla-tier/) for more information.<br><br>
-*___knn_plugin___*<br>
-<ins>Type</ins>: boolean, optional, immutable<br>
-<br>Enable knn plugin<br><br>
-*___index_management_plugin___*<br>
-<ins>Type</ins>: boolean, optional, immutable<br>
-<br>Enable index management plugin<br><br>
-*___name___*<br>
-<ins>Type</ins>: string, optional, immutable<br>
-<ins>Constraints</ins>: pattern: `[a-zA-Z0-9][a-zA-Z0-9_-]*`<br><br>Name of the cluster.<br><br>
-*___bundled_use_only___*<br>
-<ins>Type</ins>: boolean, optional, immutable<br>
-<br>Provision this cluster for [Bundled Use only](https://www.instaclustr.com/support/documentation/cadence/getting-started-with-cadence/bundled-use-only-cluster-deployments/).<br><br>
-*___cluster_manager_nodes___*<br>
-<ins>Type</ins>: nested block, optional, updatable, see [cluster_manager_nodes](#nested--cluster_manager_nodes) for nested schema<br>
-<br>List of cluster managers node settings<br><br>
-*___reporting_plugin___*<br>
-<ins>Type</ins>: boolean, optional, immutable<br>
-<br>Enable reporting plugin<br><br>
-*___private_network_cluster___*<br>
-<ins>Type</ins>: boolean, optional, immutable<br>
-<br>Creates the cluster with private network only, see [Private Network Clusters](https://www.instaclustr.com/support/documentation/useful-information/private-network-clusters/).<br><br>
+*___mongodb_configuration___*<br>
+<ins>Type</ins>: repeatable nested block, optional, immutable, see [mongodb_configuration](#nested--mongodb_configuration) for nested schema<br>
+<br>Key/Value pairs of mongod configuration options to override from the platform defaults<br><br>
 *___two_factor_delete___*<br>
 <ins>Type</ins>: nested block, optional, updatable, see [two_factor_delete](#nested--two_factor_delete) for nested schema<br>
 <br>
-*___opensearch_dashboards___*<br>
-<ins>Type</ins>: nested block, optional, updatable, see [opensearch_dashboards](#nested--opensearch_dashboards) for nested schema<br>
-<br>List of openSearch dashboards settings<br><br>
-*___load_balancer___*<br>
-<ins>Type</ins>: boolean, optional, immutable<br>
-<br>Enable Load Balancer<br><br>
-*___anomaly_detection_plugin___*<br>
-<ins>Type</ins>: boolean, optional, immutable<br>
-<br>Enable anomaly detection plugin<br><br>
-*___sql_plugin___*<br>
-<ins>Type</ins>: boolean, optional, immutable<br>
-<br>Enable sql plugin<br><br>
-*___icu_plugin___*<br>
-<ins>Type</ins>: boolean, optional, immutable<br>
-<br>Enable icu plugin<br><br>
-*___alerting_plugin___*<br>
-<ins>Type</ins>: boolean, optional, immutable<br>
-<br>Enable alerting plugin<br><br>
+*___mongodb_init_commands___*<br>
+<ins>Type</ins>: list of strings, optional, immutable<br>
+<br>List of command objects to run against the admin database on cluster creation. Equivalent to running db.adminCommand()<br><br>
 ### Read-only attributes
+*___connection_string___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Connection string to connect to MongoDB. It will include default user details if available. Password may be out of date if the user has changed this since cluster creation.<br><br>
 *___status___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Status of the cluster.<br><br>
@@ -142,15 +83,18 @@ List of data centre settings.<br>
 *___cloud_provider___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <ins>Constraints</ins>: allowed values: [ `AWS_VPC`, `GCP`, `AZURE`, `AZURE_AZ` ]<br><br>Name of the cloud provider service in which the Data Centre will be provisioned.<br><br>
-*___number_of_racks___*<br>
-<ins>Type</ins>: integer, required, immutable<br>
-<ins>Constraints</ins>: minimum: 2, maximum: 5<br><br>Number of racks to use when allocating data nodes.<br><br>
+*___number_of_nodes___*<br>
+<ins>Type</ins>: integer, required, updatable<br>
+<br>Total number of MongoDB nodes in the Data Centre.<br><br>
 *___region___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <br>Region of the Data Centre. See the description for node size for a compatible Data Centre for a given node size.<br><br>
 *___name___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <br>A logical name for the data centre within a cluster. These names must be unique in the cluster.<br><br>
+*___node_size___*<br>
+<ins>Type</ins>: string, required, updatable<br>
+<br>Size of the nodes provisioned in the Data Centre. --AVAILABLE_NODE_SIZES_MARKER_V2_MONGODB--<br><br>
 *___network___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <br>The private network address block for the Data Centre specified using CIDR address notation. The network must have a prefix length between `/12` and `/22` and must be part of a private address space.<br><br>
@@ -167,9 +111,6 @@ List of data centre settings.<br>
 *___aws_settings___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [aws_settings](#nested--aws_settings) for nested schema<br>
 <br>AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure settings.<br><br>
-*___private_link___*<br>
-<ins>Type</ins>: boolean, optional, immutable<br>
-<br>Create a PrivateLink enabled cluster, see [PrivateLink](https://www.instaclustr.com/support/documentation/useful-information/privatelink/).<br><br>
 *___provider_account_name___*<br>
 <ins>Type</ins>: string, optional, immutable<br>
 <br>For customers running in their own account. Your provider account can be found on the Create Cluster page on the Instaclustr Console, or the "Provider Account" property on any existing cluster. For customers provisioning on Instaclustr's cloud provider accounts, this property may be omitted.<br><br>
@@ -207,6 +148,16 @@ List of tags to apply to the Data Centre. Tags are metadata labels which  allow 
 *___value___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <br>Value of the tag to be added to the Data Centre.<br><br>
+<a id="nested--mongodb_configuration"></a>
+## Nested schema for `mongodb_configuration`
+Key/Value pairs of mongod configuration options to override from the platform defaults<br>
+### Input attributes - Optional
+*___key___*<br>
+<ins>Type</ins>: string, optional, updatable<br>
+<br>
+*___value___*<br>
+<ins>Type</ins>: string, optional, updatable<br>
+<br>
 <a id="nested--nodes"></a>
 ## Nested schema for `nodes`
 
@@ -228,20 +179,10 @@ List of tags to apply to the Data Centre. Tags are metadata labels which  allow 
 <br>Private IP address of the node.<br><br>
 *___node_roles___*<br>
 <ins>Type</ins>: list of strings, read-only<br>
-<ins>Constraints</ins>: allowed values: [ `CASSANDRA`, `SPARK_MASTER`, `SPARK_JOBSERVER`, `KAFKA_BROKER`, `KAFKA_DEDICATED_ZOOKEEPER`, `KAFKA_ZOOKEEPER`, `KAFKA_SCHEMA_REGISTRY`, `KAFKA_REST_PROXY`, `APACHE_ZOOKEEPER`, `POSTGRESQL`, `PGBOUNCER`, `KAFKA_CONNECT`, `KAFKA_KARAPACE_SCHEMA_REGISTRY`, `KAFKA_KARAPACE_REST_PROXY`, `CADENCE`, `REDIS_MASTER`, `REDIS_REPLICA`, `OPENSEARCH_DASHBOARDS`, `OPENSEARCH_COORDINATOR`, `OPENSEARCH_MASTER`, `OPENSEARCH_DATA_AND_INGEST` ]<br><br>The roles or purposes of the node. Useful for filtering for nodes that have a specific role.<br><br>
+<ins>Constraints</ins>: allowed values: [ `CASSANDRA`, `SPARK_MASTER`, `SPARK_JOBSERVER`, `KAFKA_BROKER`, `KAFKA_DEDICATED_ZOOKEEPER`, `KAFKA_ZOOKEEPER`, `KAFKA_SCHEMA_REGISTRY`, `KAFKA_REST_PROXY`, `APACHE_ZOOKEEPER`, `POSTGRESQL`, `PGBOUNCER`, `KAFKA_CONNECT`, `KAFKA_KARAPACE_SCHEMA_REGISTRY`, `KAFKA_KARAPACE_REST_PROXY`, `CADENCE`, `MONGODB`, `REDIS_MASTER`, `REDIS_REPLICA`, `OPENSEARCH_DASHBOARDS`, `OPENSEARCH_COORDINATOR`, `OPENSEARCH_MASTER`, `OPENSEARCH_DATA_AND_INGEST` ]<br><br>The roles or purposes of the node. Useful for filtering for nodes that have a specific role.<br><br>
 *___public_address___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Public IP address of the node.<br><br>
-<a id="nested--cluster_manager_nodes"></a>
-## Nested schema for `cluster_manager_nodes`
-List of cluster managers node settings<br>
-### Input attributes - Required
-*___dedicated_manager___*<br>
-<ins>Type</ins>: boolean, required, immutable<br>
-<br>
-*___node_size___*<br>
-<ins>Type</ins>: string, required, updatable<br>
-<br>manager node size<br><br>
 <a id="nested--aws_settings"></a>
 ## Nested schema for `aws_settings`
 AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure settings.<br>
@@ -263,33 +204,9 @@ AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure 
 *___confirmation_phone_number___*<br>
 <ins>Type</ins>: string, optional, immutable<br>
 <br>The phone number which will be contacted when the cluster is requested to be delete.<br><br>
-<a id="nested--opensearch_dashboards"></a>
-## Nested schema for `opensearch_dashboards`
-List of openSearch dashboards settings<br>
-### Input attributes - Required
-*___version___*<br>
-<ins>Type</ins>: string, required, immutable<br>
-<ins>Constraints</ins>: pattern: `^opensearch-dashboards:[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of dashboard to run on the cluster.<br><br>
-*___node_size___*<br>
-<ins>Type</ins>: string, required, updatable<br>
-<br>Size of the nodes provisioned as Dashboards nodes.<br><br>
-### Input attributes - Optional
-*___oidc_provider___*<br>
-<ins>Type</ins>: string, optional, immutable<br>
-<br>OIDC provider<br><br>
-<a id="nested--data_nodes"></a>
-## Nested schema for `data_nodes`
-List of data node settings.<br>
-### Input attributes - Required
-*___node_size___*<br>
-<ins>Type</ins>: string, required, updatable<br>
-<br>Size of data node<br><br>
-*___node_count___*<br>
-<ins>Type</ins>: integer, required, updatable<br>
-<br>Number of nodes<br><br>
 ## Import
 This resource can be imported using the `terraform import` command as follows:
 ```
-terraform import instaclustr_opensearch_cluster_v2.[resource-name] "[resource-id]"
+terraform import instaclustr_mongodb_cluster_v2.[resource-name] "[resource-id]"
 ```
 `[resource-id]` is the unique identifier for this resource matching the value of the `id` attribute defined in the root schema above.
