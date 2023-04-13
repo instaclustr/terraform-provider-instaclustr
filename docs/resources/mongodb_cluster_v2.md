@@ -5,7 +5,7 @@ description: |-
 ---
 
 # instaclustr_mongodb_cluster_v2 (Resource)
-Definition of a managed Kafka cluster that can be provisioned in Instaclustr.
+Definition of a managed MongoDB cluster that can be provisioned in Instaclustr.
 ## Example Usage
 ```
 resource "instaclustr_mongodb_cluster_v2" "example" {
