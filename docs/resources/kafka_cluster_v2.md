@@ -85,15 +85,9 @@ The following terms are used to describe attributes in the schema of this resour
 *___rest_proxy___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [rest_proxy](#nested--rest_proxy) for nested schema<br>
 <br>Adds the specified version of Kafka REST Proxy to this Kafka cluster.<br><br>
-*___client_auth_broker_with_encryption___*<br>
-<ins>Type</ins>: boolean, optional, immutable<br>
-<br>Enables Client ⇄ Broker Authentication with Encryption.<br><br>
 *___karapace_rest_proxy___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [karapace_rest_proxy](#nested--karapace_rest_proxy) for nested schema<br>
 <br>Adds the specified version of Kafka Karapace REST Proxy to this Kafka cluster.<br><br>
-*___client_auth_broker_without_encryption___*<br>
-<ins>Type</ins>: boolean, optional, immutable<br>
-<br>Enables Client ⇄ Broker Authentication without Encryption.<br><br>
 *___bundled_use_only___*<br>
 <ins>Type</ins>: boolean, optional, immutable<br>
 <br>Provision this cluster for [Bundled Use only](https://www.instaclustr.com/support/documentation/cadence/getting-started-with-cadence/bundled-use-only-cluster-deployments/).<br><br>
@@ -103,9 +97,6 @@ The following terms are used to describe attributes in the schema of this resour
 *___two_factor_delete___*<br>
 <ins>Type</ins>: nested block, optional, updatable, see [two_factor_delete](#nested--two_factor_delete) for nested schema<br>
 <br>
-*___client_broker_auth_with_mtls___*<br>
-<ins>Type</ins>: boolean, optional, immutable<br>
-<br>Enables Client ⇄ Broker Authentication with mTLS.<br><br>
 *___karapace_schema_registry___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [karapace_schema_registry](#nested--karapace_schema_registry) for nested schema<br>
 <br>Adds the specified version of Kafka Karapace Schema Registry to this Kafka cluster.<br><br>

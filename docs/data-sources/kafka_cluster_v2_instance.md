@@ -31,9 +31,6 @@ The following terms are used to describe attributes in the schema of this data s
 *___sla_tier___*<br>
 <ins>Type</ins>: string, read-only<br>
 <ins>Constraints</ins>: allowed values: [ `PRODUCTION`, `NON_PRODUCTION` ]<br><br>SLA Tier of the cluster. Non-production clusters may receive lower priority support and reduced SLAs. Production tier is not available when using Developer class nodes. See [SLA Tier](https://www.instaclustr.com/support/documentation/useful-information/sla-tier/) for more information.<br><br>
-*___client_auth_broker_with_encryption___*<br>
-<ins>Type</ins>: boolean, read-only<br>
-<br>Enables Client ⇄ Broker Authentication with Encryption.<br><br>
 *___client_to_cluster_encryption___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Enables Client ⇄ Cluster Encryption.<br><br>
@@ -46,9 +43,6 @@ The following terms are used to describe attributes in the schema of this data s
 *___kafka_version___*<br>
 <ins>Type</ins>: string, read-only<br>
 <ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Kafka to run on the cluster. Available versions: <ul> <li>`3.0.2`</li> <li>`3.1.2`</li> <li>`3.3.1`</li> <li>`2.8.2`</li> </ul><br><br>
-*___client_auth_broker_without_encryption___*<br>
-<ins>Type</ins>: boolean, read-only<br>
-<br>Enables Client ⇄ Broker Authentication without Encryption.<br><br>
 *___auto_create_topics___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Allows topics to be auto created by brokers when messages are published to a non-existent topic<br><br>
@@ -85,9 +79,6 @@ The following terms are used to describe attributes in the schema of this data s
 *___pci_compliance_mode___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Creates a PCI compliant cluster, see [PCI Compliance](https://www.instaclustr.com/support/documentation/useful-information/pci-compliance/).<br><br>
-*___client_broker_auth_with_mtls___*<br>
-<ins>Type</ins>: boolean, read-only<br>
-<br>Enables Client ⇄ Broker Authentication with mTLS.<br><br>
 *___karapace_schema_registry___*<br>
 <ins>Type</ins>: nested block, read-only, see [karapace_schema_registry](#nested--karapace_schema_registry) for nested schema<br>
 <br>Adds the specified version of Kafka Karapace Schema Registry to this Kafka cluster.<br><br>
