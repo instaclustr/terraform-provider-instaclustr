@@ -1,7 +1,0 @@
-{
-  "iamPrincipalARNs": [
-    "arn:aws:iam::494770124271:user/User1",
-    "arn:aws:iam::494770124272:user/User2",
-    "arn:aws:iam::494770124273:user/User3"
-  ]
-}

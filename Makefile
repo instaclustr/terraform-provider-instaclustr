@@ -1,79 +1,41 @@
-
 BIN_NAME=terraform-provider-instaclustr
 
+VERSION=2.0.37
 
-# for VERSION, don't add prefix "v", e.g., use "1.9.8" instead of "v1.9.8" as it could break circleCI stuff
-
-
-VERSION=1.29.3
+FULL_BIN_NAME="${BIN_NAME}_v${VERSION}"
+SHASUM_NAME="${BIN_NAME}_${VERSION}_SHA256SUMS"
 
 INSTALL_FOLDER=$(HOME)/.terraform.d/plugins/terraform.instaclustr.com/instaclustr/instaclustr/$(VERSION)/darwin_amd64
 
-.PHONY: install clean all build test testacc testtarget release_version
+.PHONY: local-build preprod-build build build-all install local-gen-docs gen-docs release_version
+
 release_version:
 	@echo v$(VERSION)
 
-all: build
-
-clean:
-	-rm -rf bin/$(BIN_NAME)_v$(VERSION)
-	-rm -rf $(INSTALL_FOLDER)
-
 build:
-	go build $(FLAGS) -o bin/$(BIN_NAME)_v$(VERSION) main.go
-
-test:
-	cd instaclustr && go test -v -timeout 120m -count=1 -coverprofile coverage.out -json ./... > report.json
-	@cd instaclustr && cat report.json | sed -n '/Output/p' | jq '.Output' # Prettify the report.json file to print it to stdout
-
-testacc:
-ifndef IC_USERNAME
-	@echo "IC_USERNAME for provisioning API must be set for acceptance tests"
-	@exit 1
-endif
-ifndef IC_API_KEY
-	@echo "IC_API_KEY for provisioning API must be set for acceptance tests"
-	@exit 1
-endif
-ifndef KMS_ARN
-	@echo "KMS_ARN for provisioning API must be set for acceptance tests"
-	@exit 1
-endif
-ifndef IC_PROV_ACC_NAME
-	@echo "IC_PROV_ACC_NAME for provisioning API must be set for acceptance tests"
-	@exit 1
-endif
-ifndef IC_PROV_VPC_ID
-	@echo "IC_PROV_VPC_ID for provisioning API must be set for acceptance tests"
-	@exit 1
-endif
-ifndef IC_AWS_ACCESS_KEY
-	@echo "IC_AWS_ACCESS_KEY must be set for acceptance tests (Kafka Connect custom connector bucket)"
-	@exit 1
-endif
-ifndef IC_AWS_SECRET_KEY
-	@echo "IC_AWS_SECRET_KEY must be set for acceptance test (Kafka Connect custom connector bucket)"
-	@exit 1
-endif
-ifndef IC_S3_BUCKET_NAME
-	@echo "IC_S3_BUCKET_NAME must be set for acceptance test (Kafka Connect custom connector bucket)"
-	@exit 1
-endif
-ifndef IC_AZURE_STORAGE_ACCOUNT_NAME
-	@echo "IC_AZURE_STORAGE_ACCOUNT_NAME must be set for acceptance test (Kafka Connect custom connector bucket)"
-	@exit 1
-endif
-ifndef IC_AZURE_STORAGE_ACCOUNT_KEY
-	@echo "IC_AZURE_STORAGE_ACCOUNT_KEY must be set for acceptance test (Kafka Connect custom connector bucket)"
-	@exit 1
-endif
-ifndef IC_AZURE_STORAGE_CONTAINER_NAME
-	@echo "IC_AZURE_STORAGE_CONTAINER_NAME must be set for acceptance test (Kafka Connect custom connector bucket)"
-	@exit 1
-endif
-	cd acc_test && TF_ACC=1 go test -v -timeout 200m -count=1 -parallel=6
+	go build $(FLAGS) -o bin/${FULL_BIN_NAME} main.go
 
 
+build-all-platforms:
+	rm -f bin/${BIN_NAME}*.zip
+	rm -f bin/${SHASUM_NAME}
+	env GOOS=darwin GOARCH=amd64 make build
+	zip -j bin/${FULL_BIN_NAME}_darwin_amd64.zip bin/${FULL_BIN_NAME}
+	env GOOS=darwin GOARCH=arm64 make build
+	zip -j bin/${FULL_BIN_NAME}_darwin_arm64.zip bin/${FULL_BIN_NAME}
+	env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 make build FLAGS="-ldflags '-w -s -extldflags \"-static\"' -tags netgo -a -v"
+	zip -j bin/${FULL_BIN_NAME}_linux_amd64.zip bin/${FULL_BIN_NAME}
+	env GOOS=linux GOARCH=arm64 make build
+	zip -j bin/${FULL_BIN_NAME}_linux_arm64.zip bin/${FULL_BIN_NAME}
+	env GOOS=linux GOARCH=arm GOARM=6 make build
+	zip -j bin/${FULL_BIN_NAME}_linux_arm.zip bin/${FULL_BIN_NAME}
+	env GOOS=windows GOARCH=amd64 make build
+	zip -j bin/${FULL_BIN_NAME}_windows_amd64.zip bin/${FULL_BIN_NAME}
+	env GOOS=windows GOARCH=386 make build
+	zip -j bin/${FULL_BIN_NAME}_windows_386.zip bin/${FULL_BIN_NAME}
+	rm bin/${FULL_BIN_NAME} # remove lingering build
+	shasum -a 256 bin/*.zip > bin/${SHASUM_NAME}
+	sed -i '' -e 's/bin\///g' bin/${SHASUM_NAME}
 
 install:
 	@if [ ! -d $(INSTALL_FOLDER) ]; then \
@@ -81,3 +43,9 @@ install:
 		mkdir -p $(INSTALL_FOLDER); \
 	fi
 	cp ./bin/$(BIN_NAME)_v$(VERSION) $(INSTALL_FOLDER)
+
+local-gen-docs:
+	IC_API_URL=http://localhost:8090 ./scripts/instaclustr-terraform-registry-documentation-update.sh
+
+gen-docs:
+	./scripts/instaclustr-terraform-registry-documentation-update.sh
