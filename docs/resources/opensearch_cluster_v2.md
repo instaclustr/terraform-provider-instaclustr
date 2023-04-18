@@ -1,28 +1,54 @@
 ---
-page_title: "instaclustr_zookeeper_cluster_v2 Resource - terraform-provider-instaclustr"
+page_title: "instaclustr_opensearch_cluster_v2 Resource - terraform-provider-instaclustr"
 subcategory: ""
 description: |-
 ---
 
-# instaclustr_zookeeper_cluster_v2 (Resource)
-Definition of a managed Apache Zookeeper cluster that can be provisioned in Instaclustr.
+# instaclustr_opensearch_cluster_v2 (Resource)
+Definition of a managed OpenSearch cluster that can be provisioned in Instaclustr.
 ## Example Usage
 ```
-resource "instaclustr_zookeeper_cluster_v2" "example" {
+resource "instaclustr_opensearch_cluster_v2" "example" {
+  data_nodes {
+    node_count = 3
+    node_size = "SRH-DEV-t4g.small-5"
+  }
+
+  pci_compliance_mode = false
+  icu_plugin = false
+  opensearch_version = "2.5.0"
+  asynchronous_search_plugin = false
+  knn_plugin = false
+  opensearch_dashboards {
+    node_size = "SRH-DEV-t4g.small-5"
+    oidc_provider = ""
+    version = "opensearch-dashboards:2.5.0"
+  }
+
+  reporting_plugin = false
+  sql_plugin = false
+  notifications_plugin = false
   data_centre {
-    client_to_server_encryption = true
     cloud_provider = "AWS_VPC"
-    name = "MyTestDataCentre1"
+    name = "AWS_VPC_US_EAST_1"
     network = "10.0.0.0/16"
-    node_size = "ZKR-PRD-m5d.large-75"
-    number_of_nodes = 3
+    number_of_racks = 3
+    private_link = false
     region = "US_EAST_1"
   }
 
+  anomaly_detection_plugin = false
+  load_balancer = false
   private_network_cluster = false
-  zookeeper_version = "[x.y.z]"
-  name = "MyZookeeperCluster"
-  sla_tier = "PRODUCTION"
+  name = "OpenSearch_Cluster_V2"
+  cluster_manager_nodes {
+    dedicated_manager = true
+    node_size = "SRH-DM-DEV-t4g.small-5"
+  }
+
+  index_management_plugin = true
+  sla_tier = "NON_PRODUCTION"
+  alerting_plugin = false
 }
 ```
 ## Glossary
@@ -38,22 +64,67 @@ The following terms are used to describe attributes in the schema of this resour
 *___data_centre___*<br>
 <ins>Type</ins>: nested block, required, updatable, see [data_centre](#nested--data_centre) for nested schema<br>
 <ins>Constraints</ins>: minimum items: 1<br><br>List of data centre settings.<br><br>
-*___sla_tier___*<br>
+*___opensearch_version___*<br>
 <ins>Type</ins>: string, required, immutable<br>
-<ins>Constraints</ins>: allowed values: [ `PRODUCTION`, `NON_PRODUCTION` ]<br><br>SLA Tier of the cluster. Non-production clusters may receive lower priority support and reduced SLAs. Production tier is not available when using Developer class nodes. See [SLA Tier](https://www.instaclustr.com/support/documentation/useful-information/sla-tier/) for more information.<br><br>
-*___zookeeper_version___*<br>
-<ins>Type</ins>: string, required, immutable<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Apache Zookeeper to run on the cluster. Available versions: <ul> <li>`3.6.3`</li> <li>`3.7.1`</li> </ul><br><br>
-*___name___*<br>
-<ins>Type</ins>: string, required, immutable<br>
-<ins>Constraints</ins>: pattern: `[a-zA-Z0-9][a-zA-Z0-9_-]*`<br><br>Name of the cluster.<br><br>
-*___private_network_cluster___*<br>
+<ins>Constraints</ins>: pattern: `([0-9]+\.){2}[0-9]+`<br><br>Version of OpenSearch to run on the cluster<br><br>
+*___pci_compliance_mode___*<br>
 <ins>Type</ins>: boolean, required, immutable<br>
-<br>Creates the cluster with private network only, see [Private Network Clusters](https://www.instaclustr.com/support/documentation/useful-information/private-network-clusters/).<br><br>
+<br>Creates a PCI compliant cluster, see [PCI Compliance](https://www.instaclustr.com/support/documentation/useful-information/pci-compliance/).<br><br>
+*___data_nodes___*<br>
+<ins>Type</ins>: nested block, required, updatable, see [data_nodes](#nested--data_nodes) for nested schema<br>
+<ins>Constraints</ins>: minimum items: 1<br><br>List of data node settings.<br><br>
 ### Input attributes - Optional
+*___notifications_plugin___*<br>
+<ins>Type</ins>: boolean, optional, immutable<br>
+<br>Enable notifications plugin<br><br>
+*___asynchronous_search_plugin___*<br>
+<ins>Type</ins>: boolean, optional, immutable<br>
+<br>Enable asynchronous search plugin<br><br>
+*___sla_tier___*<br>
+<ins>Type</ins>: string, optional, immutable<br>
+<ins>Constraints</ins>: allowed values: [ `PRODUCTION`, `NON_PRODUCTION` ]<br><br>SLA Tier of the cluster. Non-production clusters may receive lower priority support and reduced SLAs. Production tier is not available when using Developer class nodes. See [SLA Tier](https://www.instaclustr.com/support/documentation/useful-information/sla-tier/) for more information.<br><br>
+*___knn_plugin___*<br>
+<ins>Type</ins>: boolean, optional, immutable<br>
+<br>Enable knn plugin<br><br>
+*___index_management_plugin___*<br>
+<ins>Type</ins>: boolean, optional, immutable<br>
+<br>Enable index management plugin<br><br>
+*___name___*<br>
+<ins>Type</ins>: string, optional, immutable<br>
+<ins>Constraints</ins>: pattern: `[a-zA-Z0-9][a-zA-Z0-9_-]*`<br><br>Name of the cluster.<br><br>
+*___bundled_use_only___*<br>
+<ins>Type</ins>: boolean, optional, immutable<br>
+<br>Provision this cluster for [Bundled Use only](https://www.instaclustr.com/support/documentation/cadence/getting-started-with-cadence/bundled-use-only-cluster-deployments/).<br><br>
+*___cluster_manager_nodes___*<br>
+<ins>Type</ins>: nested block, optional, updatable, see [cluster_manager_nodes](#nested--cluster_manager_nodes) for nested schema<br>
+<br>List of cluster managers node settings<br><br>
+*___reporting_plugin___*<br>
+<ins>Type</ins>: boolean, optional, immutable<br>
+<br>Enable reporting plugin<br><br>
+*___private_network_cluster___*<br>
+<ins>Type</ins>: boolean, optional, immutable<br>
+<br>Creates the cluster with private network only, see [Private Network Clusters](https://www.instaclustr.com/support/documentation/useful-information/private-network-clusters/).<br><br>
 *___two_factor_delete___*<br>
 <ins>Type</ins>: nested block, optional, updatable, see [two_factor_delete](#nested--two_factor_delete) for nested schema<br>
 <br>
+*___opensearch_dashboards___*<br>
+<ins>Type</ins>: nested block, optional, updatable, see [opensearch_dashboards](#nested--opensearch_dashboards) for nested schema<br>
+<br>List of openSearch dashboards settings<br><br>
+*___load_balancer___*<br>
+<ins>Type</ins>: boolean, optional, immutable<br>
+<br>Enable Load Balancer<br><br>
+*___anomaly_detection_plugin___*<br>
+<ins>Type</ins>: boolean, optional, immutable<br>
+<br>Enable anomaly detection plugin<br><br>
+*___sql_plugin___*<br>
+<ins>Type</ins>: boolean, optional, immutable<br>
+<br>Enable sql plugin<br><br>
+*___icu_plugin___*<br>
+<ins>Type</ins>: boolean, optional, immutable<br>
+<br>Enable icu plugin<br><br>
+*___alerting_plugin___*<br>
+<ins>Type</ins>: boolean, optional, immutable<br>
+<br>Enable alerting plugin<br><br>
 ### Read-only attributes
 *___status___*<br>
 <ins>Type</ins>: string, read-only<br>
@@ -71,18 +142,15 @@ List of data centre settings.<br>
 *___cloud_provider___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <ins>Constraints</ins>: allowed values: [ `AWS_VPC`, `GCP`, `AZURE`, `AZURE_AZ` ]<br><br>Name of the cloud provider service in which the Data Centre will be provisioned.<br><br>
-*___number_of_nodes___*<br>
+*___number_of_racks___*<br>
 <ins>Type</ins>: integer, required, immutable<br>
-<br>Total number of Zookeeper nodes in the Data Centre.<br><br>
+<ins>Constraints</ins>: minimum: 2, maximum: 5<br><br>Number of racks to use when allocating data nodes.<br><br>
 *___region___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <br>Region of the Data Centre. See the description for node size for a compatible Data Centre for a given node size.<br><br>
 *___name___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <br>A logical name for the data centre within a cluster. These names must be unique in the cluster.<br><br>
-*___node_size___*<br>
-<ins>Type</ins>: string, required, immutable<br>
-<br>Size of the nodes provisioned in the Data Centre. Available node sizes: <details> <summary>*Amazon Web Services* [__AWS_VPC__]</summary> <br> <details> <summary>*Africa (Cape Town)* [__AF_SOUTH_1__]</summary> <br> <table> <tr> <th>Node Size</th> </tr> <tr> <td>ZKR-PRD-m5d.large-75</td> </tr> <tr> <td>ZKR-PRD-m5d.xlarge-150</td> </tr> <tr> <td>zookeeper-developer-t3.small-20</td> </tr> <tr> <td>zookeeper-production-m5.large-60</td> </tr> <tr> <td>zookeeper-production-m5.xlarge-120</td> </tr> </table> <br> </details> <details> <summary>*Asia Pacific (Hong Kong)* [__AP_EAST_1__]</summary> <br> <table> <tr> <th>Node Size</th> </tr> <tr> <td>ZKR-PRD-m5d.large-75</td> </tr> <tr> <td>ZKR-PRD-m5d.xlarge-150</td> </tr> <tr> <td>zookeeper-developer-t3.small-20</td> </tr> <tr> <td>zookeeper-production-m5.large-60</td> </tr> <tr> <td>zookeeper-production-m5.xlarge-120</td> </tr> </table> <br> </details> <details> <summary>*Asia Pacific (Mumbai)* [__AP_SOUTH_1__]</summary> <br> <table> <tr> <th>Node Size</th> </tr> <tr> <td>ZKR-PRD-m5d.large-75</td> </tr> <tr> <td>ZKR-PRD-m5d.xlarge-150</td> </tr> <tr> <td>zookeeper-developer-t3.small-20</td> </tr> <tr> <td>zookeeper-production-m5.large-60</td> </tr> <tr> <td>zookeeper-production-m5.xlarge-120</td> </tr> </table> <br> </details> <details> <summary>*Asia Pacific (Seoul)* [__AP_NORTHEAST_2__]</summary> <br> <table> <tr> <th>Node Size</th> </tr> <tr> <td>ZKR-PRD-m5d.large-75</td> </tr> <tr> <td>ZKR-PRD-m5d.xlarge-150</td> </tr> <tr> <td>zookeeper-developer-t3.small-20</td> </tr> <tr> <td>zookeeper-production-m5.large-60</td> </tr> <tr> <td>zookeeper-production-m5.xlarge-120</td> </tr> </table> <br> </details> <details> <summary>*Asia Pacific (Singapore)* [__AP_SOUTHEAST_1__]</summary> <br> <table> <tr> <th>Node Size</th> </tr> <tr> <td>ZKR-PRD-m5d.large-75</td> </tr> <tr> <td>ZKR-PRD-m5d.xlarge-150</td> </tr> <tr> <td>zookeeper-developer-t3.small-20</td> </tr> <tr> <td>zookeeper-production-m5.large-60</td> </tr> <tr> <td>zookeeper-production-m5.xlarge-120</td> </tr> </table> <br> </details> <details> <summary>*Asia Pacific (Sydney)* [__AP_SOUTHEAST_2__]</summary> <br> <table> <tr> <th>Node Size</th> </tr> <tr> <td>ZKR-PRD-m5d.large-75</td> </tr> <tr> <td>ZKR-PRD-m5d.xlarge-150</td> </tr> <tr> <td>zookeeper-developer-t3.small-20</td> </tr> <tr> <td>zookeeper-production-m5.large-60</td> </tr> <tr> <td>zookeeper-production-m5.xlarge-120</td> </tr> </table> <br> </details> <details> <summary>*Asia Pacific (Tokyo)* [__AP_NORTHEAST_1__]</summary> <br> <table> <tr> <th>Node Size</th> </tr> <tr> <td>ZKR-PRD-m5d.large-75</td> </tr> <tr> <td>ZKR-PRD-m5d.xlarge-150</td> </tr> <tr> <td>zookeeper-developer-t3.small-20</td> </tr> <tr> <td>zookeeper-production-m5.large-60</td> </tr> <tr> <td>zookeeper-production-m5.xlarge-120</td> </tr> </table> <br> </details> <details> <summary>*Canada (Central)* [__CA_CENTRAL_1__]</summary> <br> <table> <tr> <th>Node Size</th> </tr> <tr> <td>ZKR-PRD-m5d.large-75</td> </tr> <tr> <td>ZKR-PRD-m5d.xlarge-150</td> </tr> <tr> <td>zookeeper-developer-t3.small-20</td> </tr> <tr> <td>zookeeper-production-m5.large-60</td> </tr> <tr> <td>zookeeper-production-m5.xlarge-120</td> </tr> </table> <br> </details> <details> <summary>*EU Central (Frankfurt)* [__EU_CENTRAL_1__]</summary> <br> <table> <tr> <th>Node Size</th> </tr> <tr> <td>ZKR-PRD-m5d.large-75</td> </tr> <tr> <td>ZKR-PRD-m5d.xlarge-150</td> </tr> <tr> <td>zookeeper-developer-t3.small-20</td> </tr> <tr> <td>zookeeper-production-m5.large-60</td> </tr> <tr> <td>zookeeper-production-m5.xlarge-120</td> </tr> </table> <br> </details> <details> <summary>*EU North (Stockholm)* [__EU_NORTH_1__]</summary> <br> <table> <tr> <th>Node Size</th> </tr> <tr> <td>ZKR-PRD-m5d.large-75</td> </tr> <tr> <td>ZKR-PRD-m5d.xlarge-150</td> </tr> <tr> <td>zookeeper-developer-t3.small-20</td> </tr> <tr> <td>zookeeper-production-m5.large-60</td> </tr> <tr> <td>zookeeper-production-m5.xlarge-120</td> </tr> </table> <br> </details> <details> <summary>*EU South (Milan)* [__EU_SOUTH_1__]</summary> <br> <table> <tr> <th>Node Size</th> </tr> <tr> <td>ZKR-PRD-m5d.large-75</td> </tr> <tr> <td>ZKR-PRD-m5d.xlarge-150</td> </tr> <tr> <td>zookeeper-developer-t3.small-20</td> </tr> <tr> <td>zookeeper-production-m5.large-60</td> </tr> <tr> <td>zookeeper-production-m5.xlarge-120</td> </tr> </table> <br> </details> <details> <summary>*EU West (Ireland)* [__EU_WEST_1__]</summary> <br> <table> <tr> <th>Node Size</th> </tr> <tr> <td>ZKR-PRD-m5d.large-75</td> </tr> <tr> <td>ZKR-PRD-m5d.xlarge-150</td> </tr> <tr> <td>zookeeper-developer-t3.small-20</td> </tr> <tr> <td>zookeeper-production-m5.large-60</td> </tr> <tr> <td>zookeeper-production-m5.xlarge-120</td> </tr> </table> <br> </details> <details> <summary>*EU West (London)* [__EU_WEST_2__]</summary> <br> <table> <tr> <th>Node Size</th> </tr> <tr> <td>ZKR-PRD-m5d.large-75</td> </tr> <tr> <td>ZKR-PRD-m5d.xlarge-150</td> </tr> <tr> <td>zookeeper-developer-t3.small-20</td> </tr> <tr> <td>zookeeper-production-m5.large-60</td> </tr> <tr> <td>zookeeper-production-m5.xlarge-120</td> </tr> </table> <br> </details> <details> <summary>*EU West (Paris)* [__EU_WEST_3__]</summary> <br> <table> <tr> <th>Node Size</th> </tr> <tr> <td>ZKR-PRD-m5d.large-75</td> </tr> <tr> <td>ZKR-PRD-m5d.xlarge-150</td> </tr> <tr> <td>zookeeper-developer-t3.small-20</td> </tr> <tr> <td>zookeeper-production-m5.large-60</td> </tr> <tr> <td>zookeeper-production-m5.xlarge-120</td> </tr> </table> <br> </details> <details> <summary>*Middle East (Bahrain)* [__ME_SOUTH_1__]</summary> <br> <table> <tr> <th>Node Size</th> </tr> <tr> <td>ZKR-PRD-m5d.large-75</td> </tr> <tr> <td>ZKR-PRD-m5d.xlarge-150</td> </tr> <tr> <td>zookeeper-developer-t3.small-20</td> </tr> <tr> <td>zookeeper-production-m5.large-60</td> </tr> <tr> <td>zookeeper-production-m5.xlarge-120</td> </tr> </table> <br> </details> <details> <summary>*South America (São Paulo)* [__SA_EAST_1__]</summary> <br> <table> <tr> <th>Node Size</th> </tr> <tr> <td>ZKR-PRD-m5d.large-75</td> </tr> <tr> <td>ZKR-PRD-m5d.xlarge-150</td> </tr> <tr> <td>zookeeper-developer-t3.small-20</td> </tr> <tr> <td>zookeeper-production-m5.large-60</td> </tr> <tr> <td>zookeeper-production-m5.xlarge-120</td> </tr> </table> <br> </details> <details> <summary>*US East (Northern Virginia)* [__US_EAST_1__]</summary> <br> <table> <tr> <th>Node Size</th> </tr> <tr> <td>ZKR-PRD-m5d.large-75</td> </tr> <tr> <td>ZKR-PRD-m5d.xlarge-150</td> </tr> <tr> <td>zookeeper-developer-t3.small-20</td> </tr> <tr> <td>zookeeper-production-m5.large-60</td> </tr> <tr> <td>zookeeper-production-m5.xlarge-120</td> </tr> </table> <br> </details> <details> <summary>*US East (Ohio)* [__US_EAST_2__]</summary> <br> <table> <tr> <th>Node Size</th> </tr> <tr> <td>ZKR-PRD-m5d.large-75</td> </tr> <tr> <td>ZKR-PRD-m5d.xlarge-150</td> </tr> <tr> <td>zookeeper-developer-t3.small-20</td> </tr> <tr> <td>zookeeper-production-m5.large-60</td> </tr> <tr> <td>zookeeper-production-m5.xlarge-120</td> </tr> </table> <br> </details> <details> <summary>*US West (Northern California)* [__US_WEST_1__]</summary> <br> <table> <tr> <th>Node Size</th> </tr> <tr> <td>ZKR-PRD-m5d.large-75</td> </tr> <tr> <td>ZKR-PRD-m5d.xlarge-150</td> </tr> <tr> <td>zookeeper-developer-t3.small-20</td> </tr> <tr> <td>zookeeper-production-m5.large-60</td> </tr> <tr> <td>zookeeper-production-m5.xlarge-120</td> </tr> </table> <br> </details> <details> <summary>*US West (Oregon)* [__US_WEST_2__]</summary> <br> <table> <tr> <th>Node Size</th> </tr> <tr> <td>ZKR-PRD-m5d.large-75</td> </tr> <tr> <td>ZKR-PRD-m5d.xlarge-150</td> </tr> <tr> <td>zookeeper-developer-t3.small-20</td> </tr> <tr> <td>zookeeper-production-m5.large-60</td> </tr> <tr> <td>zookeeper-production-m5.xlarge-120</td> </tr> </table> <br> </details> <br> </details><br><br>
 *___network___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <br>The private network address block for the Data Centre specified using CIDR address notation. The network must have a prefix length between `/12` and `/22` and must be part of a private address space.<br><br>
@@ -93,15 +161,15 @@ List of data centre settings.<br>
 *___gcp_settings___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [gcp_settings](#nested--gcp_settings) for nested schema<br>
 <br>GCP specific settings for the Data Centre. Cannot be provided with AWS or Azure settings.<br><br>
-*___client_to_server_encryption___*<br>
-<ins>Type</ins>: boolean, optional, immutable<br>
-<br>Enables Client ⇄ Node Encryption.<br><br>
 *___tag___*<br>
 <ins>Type</ins>: repeatable nested block, optional, immutable, see [tag](#nested--tag) for nested schema<br>
 <br>List of tags to apply to the Data Centre. Tags are metadata labels which  allow you to identify, categorize and filter clusters. This can be useful for grouping together clusters into applications, environments, or any category that you require.<br><br>
 *___aws_settings___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [aws_settings](#nested--aws_settings) for nested schema<br>
 <br>AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure settings.<br><br>
+*___private_link___*<br>
+<ins>Type</ins>: boolean, optional, immutable<br>
+<br>Create a PrivateLink enabled cluster, see [PrivateLink](https://www.instaclustr.com/support/documentation/useful-information/privatelink/).<br><br>
 *___provider_account_name___*<br>
 <ins>Type</ins>: string, optional, immutable<br>
 <br>For customers running in their own account. Your provider account can be found on the Create Cluster page on the Instaclustr Console, or the "Provider Account" property on any existing cluster. For customers provisioning on Instaclustr's cloud provider accounts, this property may be omitted.<br><br>
@@ -164,6 +232,16 @@ List of tags to apply to the Data Centre. Tags are metadata labels which  allow 
 *___public_address___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Public IP address of the node.<br><br>
+<a id="nested--cluster_manager_nodes"></a>
+## Nested schema for `cluster_manager_nodes`
+List of cluster managers node settings<br>
+### Input attributes - Required
+*___dedicated_manager___*<br>
+<ins>Type</ins>: boolean, required, immutable<br>
+<br>
+*___node_size___*<br>
+<ins>Type</ins>: string, required, updatable<br>
+<br>manager node size<br><br>
 <a id="nested--aws_settings"></a>
 ## Nested schema for `aws_settings`
 AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure settings.<br>
@@ -185,9 +263,33 @@ AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure 
 *___confirmation_phone_number___*<br>
 <ins>Type</ins>: string, optional, immutable<br>
 <br>The phone number which will be contacted when the cluster is requested to be delete.<br><br>
+<a id="nested--opensearch_dashboards"></a>
+## Nested schema for `opensearch_dashboards`
+List of openSearch dashboards settings<br>
+### Input attributes - Required
+*___version___*<br>
+<ins>Type</ins>: string, required, immutable<br>
+<ins>Constraints</ins>: pattern: `^opensearch-dashboards:[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of dashboard to run on the cluster.<br><br>
+*___node_size___*<br>
+<ins>Type</ins>: string, required, updatable<br>
+<br>Size of the nodes provisioned as Dashboards nodes.<br><br>
+### Input attributes - Optional
+*___oidc_provider___*<br>
+<ins>Type</ins>: string, optional, immutable<br>
+<br>OIDC provider<br><br>
+<a id="nested--data_nodes"></a>
+## Nested schema for `data_nodes`
+List of data node settings.<br>
+### Input attributes - Required
+*___node_size___*<br>
+<ins>Type</ins>: string, required, updatable<br>
+<br>Size of data node<br><br>
+*___node_count___*<br>
+<ins>Type</ins>: integer, required, updatable<br>
+<br>Number of nodes<br><br>
 ## Import
 This resource can be imported using the `terraform import` command as follows:
 ```
-terraform import instaclustr_zookeeper_cluster_v2.[resource-name] "[resource-id]"
+terraform import instaclustr_opensearch_cluster_v2.[resource-name] "[resource-id]"
 ```
 `[resource-id]` is the unique identifier for this resource matching the value of the `id` attribute defined in the root schema above.

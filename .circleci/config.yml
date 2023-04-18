@@ -104,4 +104,4 @@ workflows:
             tags:
               only: /^v.*/
             branches:
-              only: provider-v2
+              only: master
