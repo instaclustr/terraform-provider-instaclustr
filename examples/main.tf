@@ -14,7 +14,7 @@ terraform {
 provider "instaclustr" {
   username = "<Your instaclustr username here>"
   api_key = "<Your provisioning API key here>"
-  
+
 }
 resource "instaclustr_encryption_key" "add_ebs_key" {
   alias = "testkey"
@@ -26,6 +26,7 @@ resource "instaclustr_cluster" "example" {
   cluster_name = "testcluster"
   node_size = "SRH-DEV-t4g.small-5"
   data_centre = "US_WEST_2"
+  data_centre_custom_name = "San Francisco"
   sla_tier = "NON_PRODUCTION"
   cluster_network = "192.168.0.0/18"
   wait_for_state="RUNNING"
@@ -49,10 +50,12 @@ resource "instaclustr_cluster" "example" {
     }
   }
 }
+
 resource "instaclustr_cluster" "gcp_example" {
   cluster_name = "testclustergcp"
   node_size = "n1-standard-2"
   data_centre = "us-east1"
+  data_centre_custom_name = "Moncks Corner"
   sla_tier = "NON_PRODUCTION"
   cluster_network = "192.168.0.0/18"
   wait_for_state="RUNNING"
@@ -82,11 +85,11 @@ data "instaclustr_clusters" "clusters" {
   depends_on = ["instaclustr_cluster.example"]
 }
 
-
 resource "instaclustr_cluster" "custom_vpc_example" {
   cluster_name = "testcluster"
   node_size = "t3.small"
   data_centre = "US_WEST_2"
+  data_centre_custom_name = "Oregon"
   sla_tier = "NON_PRODUCTION"
   cluster_network = "10.100.0.0/16"
   private_network_cluster = false
@@ -153,6 +156,7 @@ resource "instaclustr_cluster" "example_kafka" {
   cluster_name = "test_kafka"
   node_size = "r5.large-500-gp2"
   data_centre = "US_WEST_2"
+  data_centre_custom_name = "Oregon"
   sla_tier = "NON_PRODUCTION"
   cluster_network = "192.168.0.0/18"
   cluster_provider = {
@@ -194,6 +198,7 @@ resource "instaclustr_cluster" "example_kafka_with_karapace_schema_registry" {
   cluster_name = "test_kafka_with_karapace"
   node_size = "KFK-PRD-r6g.large-250"
   data_centre = "US_WEST_2"
+  data_centre_custom_name = "Oregon"
   sla_tier = "NON_PRODUCTION"
   cluster_network = "192.168.0.0/18"
   wait_for_state = "RUNNING"
@@ -234,6 +239,7 @@ resource "instaclustr_cluster" "example_kafka_with_karapace_schema_registry" {
 resource "instaclustr_cluster" "example-elasticsearch" {
   cluster_name = "es-cluster"
   data_centre = "US_EAST_1"
+  data_centre_custom_name = "New York"
   sla_tier = "NON_PRODUCTION"
   cluster_network = "192.168.0.0/18"
   private_network_cluster = false
@@ -262,6 +268,7 @@ resource "instaclustr_cluster" "example-elasticsearch" {
 resource "instaclustr_cluster" "example-opensearch" {
   cluster_name = "os-cluster"
   data_centre = "US_EAST_1"
+  data_centre_custom_name = "New York"
   sla_tier = "NON_PRODUCTION"
   cluster_network = "192.168.0.0/18"
   private_network_cluster = false
@@ -289,6 +296,7 @@ resource "instaclustr_cluster" "validKC" {
   cluster_name = "testcluster"
   node_size = "t3.medium-10-gp2"
   data_centre = "US_WEST_2"
+  data_centre_custom_name = "This can be anything"
   sla_tier = "NON_PRODUCTION"
   cluster_network = "192.168.0.0/18"
   private_network_cluster = false
@@ -334,6 +342,7 @@ resource "instaclustr_cluster" "private_cluster_example" {
   cluster_name = "testcluster"
   node_size = "m5l-250-v2"
   data_centre = "US_EAST_1"
+  data_centre_custom_name = "Big Building One"
   sla_tier = "PRODUCTION"
   cluster_network = "192.168.0.0/18"
   private_network_cluster = true
@@ -354,6 +363,7 @@ resource "instaclustr_cluster" "example-redis" {
   cluster_name = "testcluster"
   node_size = "t3.small-20-r"
   data_centre = "US_WEST_2"
+  data_centre_custom_name = "Axiom 101"
   sla_tier = "NON_PRODUCTION"
   cluster_network = "192.168.0.0/18"
   cluster_provider = {
@@ -376,6 +386,7 @@ resource "instaclustr_cluster" "example-postgresql" {
   cluster_name = "testcluster"
   node_size = "PGS-DEV-t3.small-5"
   data_centre = "US_WEST_2"
+  data_centre_custom_name = "The Big House"
   sla_tier = "NON_PRODUCTION"
   cluster_network = "192.168.0.0/18"
   cluster_provider = {
@@ -427,6 +438,7 @@ resource "instaclustr_cluster" "example-cadence-cassandra" {
   cluster_name = "testcluster-cadence-cassandra"
   node_size = "t3.small-v2"
   data_centre = "US_WEST_2"
+  data_centre_custom_name = "Area 51"
   sla_tier = "NON_PRODUCTION"
   cluster_network = "10.1.0.0/16"
   private_network_cluster = false
@@ -453,6 +465,7 @@ resource "instaclustr_cluster" "example-cadence" {
   cluster_name = "testcluster-cadence"
   node_size = "CAD-DEV-t3.small-5"
   data_centre = "US_WEST_2"
+  data_centre_custom_name = ""
   sla_tier = "NON_PRODUCTION"
   cluster_network = "10.2.0.0/16"
   private_network_cluster = false
@@ -482,6 +495,7 @@ resource "instaclustr_cluster" "example-cadenceav-cassandra" {
   cluster_name = "testcluster-cadenceav-cassandra"
   node_size = "t3.small-v2"
   data_centre = "US_WEST_2"
+  data_centre_custom_name = "Another Room"
   sla_tier = "NON_PRODUCTION"
   cluster_network = "10.1.0.0/16"
   private_network_cluster = false
@@ -507,6 +521,7 @@ resource "instaclustr_cluster" "example-cadenceav-cassandra" {
 resource "instaclustr_cluster" "example-cadenceav-opensearch" {
   cluster_name = "testcluster-cadenceav-opensearch"
   data_centre = "US_WEST_2"
+  data_centre_custom_name = "The Big Banana"
   sla_tier = "NON_PRODUCTION"
   cluster_network = "10.2.0.0/16"
   private_network_cluster = false
@@ -522,12 +537,12 @@ resource "instaclustr_cluster" "example-cadenceav-opensearch" {
     bundle = "OPENSEARCH"
     version = "1.3.7"
     options = {
-      dedicated_master_nodes = true  
+      dedicated_master_nodes = true
       master_node_size = "SRH-DM-DEV-t4g.small-5"
       opensearch_dashboards_node_size = "SRH-DEV-t4g.small-5"
       data_node_size = "SRH-DEV-t4g.small-5"
     }
-  }  
+  }
 
   wait_for_state = "RUNNING"
 }
@@ -536,6 +551,7 @@ resource "instaclustr_cluster" "example-cadenceav-kafka" {
   cluster_name = "testcluster-cadenceav-kafka"
   node_size = "KFK-DEV-t4g.small-5"
   data_centre = "US_WEST_2"
+  data_centre_custom_name = "Runway2"
   sla_tier = "NON_PRODUCTION"
   cluster_network = "10.3.0.0/16"
   private_network_cluster = false
@@ -566,6 +582,7 @@ resource "instaclustr_cluster" "example-cadenceav" {
   cluster_name = "testcluster-cadenceav"
   node_size = "CAD-DEV-t3.small-5"
   data_centre = "US_WEST_2"
+  data_centre_custom_name = "NetAppHQ"
   sla_tier = "NON_PRODUCTION"
   cluster_network = "10.4.0.0/16"
   private_network_cluster = false

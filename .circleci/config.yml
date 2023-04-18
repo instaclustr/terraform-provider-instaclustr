@@ -119,7 +119,7 @@ jobs:
       - run: go get -v -t -d ./...
       - build-provider
       - run-unit-tests
-  on-master-build-test:
+  on-provider-v1-build-test:
     docker:
       - image: circleci/golang:1.14
     working_directory: /go/src/github.com/arjunrajshekhar/terraform-provider-instaclustr
@@ -158,18 +158,18 @@ workflows:
       - commit-build-test:
           filters:
             branches:
-              ignore: master
-      - on-master-build-test:
+              ignore: provider-v1
+      - on-provider-v1-build-test:
           filters:
             branches:
-              only: master
+              only: provider-v1
 #  acceptance-test-workflow:
 #    jobs:
 #      - hold:
 #          type: approval
 #          filters:
 #            branches:
-#              ignore: master
+#              ignore: provider-v1
 #      - pr-build-test:
 #          context: terraform provider preprod
 #          requires:

@@ -2,21 +2,23 @@
 page_title: "instaclustr Provider"
 subcategory: ""
 description: |-
-  
+
 ---
 
 # Instaclustr Provider
 
-A [Terraform](http://terraform.io) provider for managing Instaclustr Platform resources.  
+A [Terraform](http://terraform.io) provider for managing Instaclustr Platform resources.
 
-It provides a flexible set of resources for provisioning and managing [Instaclustr based clusters](http://instaclustr.com/) via the use of Terraform.  
+It provides a flexible set of resources for provisioning and managing [Instaclustr based clusters](http://instaclustr.com/) via the use of Terraform.
 
 For installation instructions and source code visit the [Github project page](https://github.com/instaclustr/terraform-provider-instaclustr)
 
-For further information about Instaclustr, please see [FAQ](https://www.instaclustr.com/resources/faqs/) and [Support](https://support.instaclustr.com/hc/en-us) 
+For further information about Instaclustr, please see [FAQ](https://www.instaclustr.com/resources/faqs/) and [Support](https://support.instaclustr.com/hc/en-us)
 
 Use the navigation to the left to read about the available resources.
 
+## Support Contact
+Please reach out to support@instaclustr.com for issues with this Terraform Provider. Please note that we've disabled the issues feature on this repository and transferred open issues to our Zendesk system.
 
 ### Example Usage
 
@@ -44,6 +46,7 @@ resource "instaclustr_cluster" "example" {
   cluster_name = "testcluster"
   node_size = "t3.small"
   data_centre = "US_WEST_2"
+  data_centre_custom_name = "Bunker324"
   sla_tier = "NON_PRODUCTION"
   cluster_network = "192.168.0.0/18"
   private_network_cluster = false
