@@ -73,7 +73,7 @@ List of data centre settings.<br>
 ### Read-only attributes
 *___cloud_provider___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: allowed values: [ `AWS_VPC`, `GCP`, `AZURE`, `AZURE_AZ` ]<br><br>Name of the cloud provider service in which the Data Centre will be provisioned.<br><br>
+<ins>Constraints</ins>: allowed values: [ `AWS_VPC`, `GCP`, `AZURE`, `AZURE_AZ`, `ONPREMISES` ]<br><br>Name of a cloud provider service.<br><br>
 *___number_of_nodes___*<br>
 <ins>Type</ins>: integer, read-only<br>
 <br>Total number of nodes in the Data Centre.<br><br>

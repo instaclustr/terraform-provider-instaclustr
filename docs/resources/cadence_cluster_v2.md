@@ -114,7 +114,7 @@ List of data centre settings.<br>
 ### Input attributes - Required
 *___cloud_provider___*<br>
 <ins>Type</ins>: string, required, immutable<br>
-<ins>Constraints</ins>: allowed values: [ `AWS_VPC`, `GCP`, `AZURE`, `AZURE_AZ` ]<br><br>Name of the cloud provider service in which the Data Centre will be provisioned.<br><br>
+<ins>Constraints</ins>: allowed values: [ `AWS_VPC`, `GCP`, `AZURE`, `AZURE_AZ`, `ONPREMISES` ]<br><br>Name of a cloud provider service.<br><br>
 *___number_of_nodes___*<br>
 <ins>Type</ins>: integer, required, updatable<br>
 <br>Total number of nodes in the Data Centre.<br><br>
