@@ -86,6 +86,9 @@ The following terms are used to describe attributes in the schema of this resour
 *___two_factor_delete___*<br>
 <ins>Type</ins>: nested block, optional, updatable, see [two_factor_delete](#nested--two_factor_delete) for nested schema<br>
 <br>
+*___target_primary_cadence___*<br>
+<ins>Type</ins>: nested block, optional, updatable, see [target_primary_cadence](#nested--target_primary_cadence) for nested schema<br>
+<br>Supporting Primary Cadence info for Multi region Cadence.<br><br>
 *___shared_provisioning___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [shared_provisioning](#nested--shared_provisioning) for nested schema<br>
 <br>Settings for SHARED provisioning. Must not be defined with STANDARD provisioning options.<br><br>
@@ -99,6 +102,9 @@ The following terms are used to describe attributes in the schema of this resour
 *___id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>ID of the cluster.<br><br>
+*___target_secondary_cadence___*<br>
+<ins>Type</ins>: nested block, read-only, see [target_secondary_cadence](#nested--target_secondary_cadence) for nested schema<br>
+<br>Supporting Secondary Cadence info for Multi region Cadence.<br><br>
 *___current_cluster_operation_status___*<br>
 <ins>Type</ins>: string, read-only<br>
 <ins>Constraints</ins>: allowed values: [ `NO_OPERATION`, `OPERATION_IN_PROGRESS`, `OPERATION_FAILED` ]<br><br>Indicates if the cluster is currently performing any restructuring operation such as being created or resized<br><br>
@@ -236,6 +242,16 @@ Cadence advanced visibility settings<br>
 *___target_open_search___*<br>
 <ins>Type</ins>: nested object, required, updatable, see [target_open_search](#nested--target_open_search) for nested schema<br>
 <br>
+<a id="nested--target_secondary_cadence"></a>
+## Nested schema for `target_secondary_cadence`
+Supporting Secondary Cadence info for Multi region Cadence.<br>
+### Input attributes - Required
+*___dependency_cdc_id___*<br>
+<ins>Type</ins>: string (uuid), required, immutable<br>
+<br>ID of the supporting Cluster's Cluster Data Centre<br><br>
+*___dependency_vpc_type___*<br>
+<ins>Type</ins>: string, required, updatable<br>
+<ins>Constraints</ins>: allowed values: [ `TARGET_VPC`, `VPC_PEERED`, `SEPARATE_VPC` ]<br><br>
 <a id="nested--target_cassandra"></a>
 ## Nested schema for `target_cassandra`
 
@@ -284,6 +300,16 @@ Create a PrivateLink enabled cluster, see [PrivateLink](https://www.instaclustr.
 *___confirmation_phone_number___*<br>
 <ins>Type</ins>: string, optional, immutable<br>
 <br>The phone number which will be contacted when the cluster is requested to be delete.<br><br>
+<a id="nested--target_primary_cadence"></a>
+## Nested schema for `target_primary_cadence`
+Supporting Primary Cadence info for Multi region Cadence.<br>
+### Input attributes - Required
+*___dependency_cdc_id___*<br>
+<ins>Type</ins>: string (uuid), required, immutable<br>
+<br>ID of the supporting Cluster's Cluster Data Centre<br><br>
+*___dependency_vpc_type___*<br>
+<ins>Type</ins>: string, required, updatable<br>
+<ins>Constraints</ins>: allowed values: [ `TARGET_VPC`, `VPC_PEERED`, `SEPARATE_VPC` ]<br><br>
 <a id="nested--shared_provisioning"></a>
 ## Nested schema for `shared_provisioning`
 Settings for SHARED provisioning. Must not be defined with STANDARD provisioning options.<br>

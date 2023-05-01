@@ -40,6 +40,9 @@ The following terms are used to describe attributes in the schema of this data s
 *___cadence_version___*<br>
 <ins>Type</ins>: string, read-only<br>
 <ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Cadence to run on the cluster. Available versions: <ul> <li>`0.22.4`</li> <li>`0.24.0`</li> </ul><br><br>
+*___target_secondary_cadence___*<br>
+<ins>Type</ins>: nested block, read-only, see [target_secondary_cadence](#nested--target_secondary_cadence) for nested schema<br>
+<br>Supporting Secondary Cadence info for Multi region Cadence.<br><br>
 *___private_network_cluster___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Creates the cluster with private network only, see [Private Network Clusters](https://www.instaclustr.com/support/documentation/useful-information/private-network-clusters/).<br><br>
@@ -52,6 +55,9 @@ The following terms are used to describe attributes in the schema of this data s
 *___pci_compliance_mode___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Creates a PCI compliant cluster, see [PCI Compliance](https://www.instaclustr.com/support/documentation/useful-information/pci-compliance/).<br><br>
+*___target_primary_cadence___*<br>
+<ins>Type</ins>: nested block, read-only, see [target_primary_cadence](#nested--target_primary_cadence) for nested schema<br>
+<br>Supporting Primary Cadence info for Multi region Cadence.<br><br>
 *___use_cadence_web_auth___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Enable Authentication for Cadence Web<br><br>
@@ -192,6 +198,16 @@ Cadence advanced visibility settings<br>
 *___target_open_search___*<br>
 <ins>Type</ins>: nested object, read-only, see [target_open_search](#nested--target_open_search) for nested schema<br>
 <br>
+<a id="nested--target_secondary_cadence"></a>
+## Nested schema for `target_secondary_cadence`
+Supporting Secondary Cadence info for Multi region Cadence.<br>
+### Read-only attributes
+*___dependency_cdc_id___*<br>
+<ins>Type</ins>: string (uuid), read-only<br>
+<br>ID of the supporting Cluster's Cluster Data Centre<br><br>
+*___dependency_vpc_type___*<br>
+<ins>Type</ins>: string, read-only<br>
+<ins>Constraints</ins>: allowed values: [ `TARGET_VPC`, `VPC_PEERED`, `SEPARATE_VPC` ]<br><br>
 <a id="nested--target_cassandra"></a>
 ## Nested schema for `target_cassandra`
 
@@ -239,6 +255,16 @@ Create a PrivateLink enabled cluster, see [PrivateLink](https://www.instaclustr.
 *___confirmation_email___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>The email address which will be contacted when the cluster is requested to be deleted.<br><br>
+<a id="nested--target_primary_cadence"></a>
+## Nested schema for `target_primary_cadence`
+Supporting Primary Cadence info for Multi region Cadence.<br>
+### Read-only attributes
+*___dependency_cdc_id___*<br>
+<ins>Type</ins>: string (uuid), read-only<br>
+<br>ID of the supporting Cluster's Cluster Data Centre<br><br>
+*___dependency_vpc_type___*<br>
+<ins>Type</ins>: string, read-only<br>
+<ins>Constraints</ins>: allowed values: [ `TARGET_VPC`, `VPC_PEERED`, `SEPARATE_VPC` ]<br><br>
 <a id="nested--shared_provisioning"></a>
 ## Nested schema for `shared_provisioning`
 Settings for SHARED provisioning. Must not be defined with STANDARD provisioning options.<br>
