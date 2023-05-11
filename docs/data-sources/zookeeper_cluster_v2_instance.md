@@ -56,6 +56,9 @@ List of data centre settings.<br>
 *___number_of_nodes___*<br>
 <ins>Type</ins>: integer, read-only<br>
 <br>Total number of Zookeeper nodes in the Data Centre.<br><br>
+*___enforce_auth_schemes___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Comma separated list of enforced authentication schemes. At least one authentication scheme is necessary if enforce.auth.enabled=true.<br><br>
 *___region___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Region of the Data Centre. See the description for node size for a compatible Data Centre for a given node size.<br><br>
@@ -68,6 +71,9 @@ List of data centre settings.<br>
 *___gcp_settings___*<br>
 <ins>Type</ins>: nested block, read-only, see [gcp_settings](#nested--gcp_settings) for nested schema<br>
 <br>GCP specific settings for the Data Centre. Cannot be provided with AWS or Azure settings.<br><br>
+*___enforce_auth_enabled___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>Enables Enforce Authentication.<br><br>
 *___client_to_server_encryption___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Enables Client ⇄ Node Encryption.<br><br>
