@@ -79,6 +79,9 @@ The following terms are used to describe attributes in the schema of this data s
 *___pci_compliance_mode___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Creates a PCI compliant cluster, see [PCI Compliance](https://www.instaclustr.com/support/documentation/useful-information/pci-compliance/).<br><br>
+*___client_broker_auth_with_mtls___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>Enables Client ⇄ Broker Authentication with mTLS.<br><br>
 *___karapace_schema_registry___*<br>
 <ins>Type</ins>: nested block, read-only, see [karapace_schema_registry](#nested--karapace_schema_registry) for nested schema<br>
 <br>Adds the specified version of Kafka Karapace Schema Registry to this Kafka cluster.<br><br>
