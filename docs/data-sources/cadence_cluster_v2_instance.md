@@ -39,7 +39,7 @@ The following terms are used to describe attributes in the schema of this data s
 <ins>Constraints</ins>: pattern: `[a-zA-Z0-9][a-zA-Z0-9_-]*`<br><br>Name of the cluster.<br><br>
 *___cadence_version___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Cadence to run on the cluster. Available versions: <ul> <li>`0.22.4`</li> <li>`0.24.0`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Cadence to run on the cluster. Available versions: <ul> <li>`1.0.0`</li> </ul><br><br>
 *___target_secondary_cadence___*<br>
 <ins>Type</ins>: nested block, read-only, see [target_secondary_cadence](#nested--target_secondary_cadence) for nested schema<br>
 <br>Supporting Secondary Cadence info for Multi region Cadence.<br><br>
