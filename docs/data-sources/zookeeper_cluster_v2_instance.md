@@ -57,8 +57,8 @@ List of data centre settings.<br>
 <ins>Type</ins>: integer, read-only<br>
 <br>Total number of Zookeeper nodes in the Data Centre.<br><br>
 *___enforce_auth_schemes___*<br>
-<ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: allowed values: [ `SASL` ]<br><br>A list of authentication schemes to enforce when enforce.auth.enabled=true.<br><br>
+<ins>Type</ins>: list of strings, read-only<br>
+<ins>Constraints</ins>: allowed values: [ `NONE`, `SASL` ]<br><br>A list of authentication schemes to enforce when enforce.auth.enabled=true.<br><br>
 *___region___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Region of the Data Centre. See the description for node size for a compatible Data Centre for a given node size.<br><br>
