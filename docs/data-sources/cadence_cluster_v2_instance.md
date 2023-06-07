@@ -232,9 +232,15 @@ AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure 
 ## Nested schema for `private_link`
 Create a PrivateLink enabled cluster, see [PrivateLink](https://www.instaclustr.com/support/documentation/useful-information/privatelink/).<br>
 ### Read-only attributes
+*___end_point_service_id___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>The Instaclustr ID of the AWS endpoint service<br><br>
 *___advertised_hostname___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>The hostname to be used to connect to the PrivateLink cluster.<br><br>
+*___end_point_service_name___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Name of the created endpoint service<br><br>
 <a id="nested--target_open_search"></a>
 ## Nested schema for `target_open_search`
 
