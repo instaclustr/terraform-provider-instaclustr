@@ -29,10 +29,11 @@ The following terms are used to describe attributes in the schema of this resour
 *___cluster_data_center_id___*<br>
 <ins>Type</ins>: string (uuid), required, immutable<br>
 <br>The ID of the cluster data center.<br><br>
-### Read-only attributes
+### Input attributes - Optional
 *___end_point_service_id___*<br>
-<ins>Type</ins>: string, read-only<br>
+<ins>Type</ins>: string, optional, updatable<br>
 <br>The Instaclustr ID of the AWS endpoint service<br><br>
+### Read-only attributes
 *___id___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
 <br>The Instaclustr ID of the IAM Principal ARN.<br><br>
