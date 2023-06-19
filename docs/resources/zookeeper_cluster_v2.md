@@ -87,12 +87,18 @@ List of data centre settings.<br>
 <ins>Type</ins>: string, required, immutable<br>
 <br>The private network address block for the Data Centre specified using CIDR address notation. The network must have a prefix length between `/12` and `/22` and must be part of a private address space.<br><br>
 ### Input attributes - Optional
+*___enforce_auth_schemes___*<br>
+<ins>Type</ins>: list of strings, optional, immutable<br>
+<ins>Constraints</ins>: allowed values: [ `NONE`, `SASL` ]<br><br>A list of authentication schemes to enforce when enforce.auth.enabled=true.<br><br>
 *___azure_settings___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [azure_settings](#nested--azure_settings) for nested schema<br>
 <br>Azure specific settings for the Data Centre. Cannot be provided with AWS or GCP settings.<br><br>
 *___gcp_settings___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [gcp_settings](#nested--gcp_settings) for nested schema<br>
 <br>GCP specific settings for the Data Centre. Cannot be provided with AWS or Azure settings.<br><br>
+*___enforce_auth_enabled___*<br>
+<ins>Type</ins>: boolean, optional, immutable<br>
+<br>Enables Enforced SASL Authentication.<br><br>
 *___client_to_server_encryption___*<br>
 <ins>Type</ins>: boolean, optional, immutable<br>
 <br>Enables Client ⇄ Node Encryption.<br><br>
