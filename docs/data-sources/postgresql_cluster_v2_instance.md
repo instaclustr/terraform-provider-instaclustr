@@ -77,6 +77,9 @@ List of data centre settings.<br>
 *___azure_settings___*<br>
 <ins>Type</ins>: nested block, read-only, see [azure_settings](#nested--azure_settings) for nested schema<br>
 <br>Azure specific settings for the Data Centre. Cannot be provided with AWS or GCP settings.<br><br>
+*___deleted_nodes___*<br>
+<ins>Type</ins>: repeatable nested block, read-only, see [deleted_nodes](#nested--deleted_nodes) for nested schema<br>
+<br>List of deleted nodes in the data centre<br><br>
 *___gcp_settings___*<br>
 <ins>Type</ins>: nested block, read-only, see [gcp_settings](#nested--gcp_settings) for nested schema<br>
 <br>GCP specific settings for the Data Centre. Cannot be provided with AWS or Azure settings.<br><br>
@@ -91,7 +94,7 @@ List of data centre settings.<br>
 <br>A logical name for the data centre within a cluster. These names must be unique in the cluster.<br><br>
 *___nodes___*<br>
 <ins>Type</ins>: repeatable nested block, read-only, see [nodes](#nested--nodes) for nested schema<br>
-<br>
+<br>List of non-deleted nodes in the data centre<br><br>
 *___inter_data_centre_replication___*<br>
 <ins>Type</ins>: nested block, read-only, see [inter_data_centre_replication](#nested--inter_data_centre_replication) for nested schema<br>
 <br>
@@ -120,6 +123,37 @@ Azure specific settings for the Data Centre. Cannot be provided with AWS or GCP 
 *___resource_group___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>The name of the Azure Resource Group into which the Data Centre will be provisioned.<br><br>
+<a id="nested--deleted_nodes"></a>
+## Nested schema for `deleted_nodes`
+List of deleted nodes in the data centre<br>
+### Read-only attributes
+*___start_time___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Start time of the node as a UTC timestamp<br><br>
+*___status___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Provisioning status of the node.<br><br>
+*___deletion_time___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Deletion time of the node as a UTC timestamp<br><br>
+*___id___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>ID of the node.<br><br>
+*___rack___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Rack name in which the node is located.<br><br>
+*___node_size___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Size of the node.<br><br>
+*___private_address___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Private IP address of the node.<br><br>
+*___node_roles___*<br>
+<ins>Type</ins>: list of strings, read-only<br>
+<ins>Constraints</ins>: allowed values: [ `CASSANDRA`, `SPARK_MASTER`, `SPARK_JOBSERVER`, `KAFKA_BROKER`, `KAFKA_DEDICATED_ZOOKEEPER`, `KAFKA_ZOOKEEPER`, `KAFKA_SCHEMA_REGISTRY`, `KAFKA_REST_PROXY`, `APACHE_ZOOKEEPER`, `POSTGRESQL`, `PGBOUNCER`, `KAFKA_CONNECT`, `KAFKA_KARAPACE_SCHEMA_REGISTRY`, `KAFKA_KARAPACE_REST_PROXY`, `CADENCE`, `MONGODB`, `REDIS_MASTER`, `REDIS_REPLICA`, `OPENSEARCH_DASHBOARDS`, `OPENSEARCH_COORDINATOR`, `OPENSEARCH_MASTER`, `OPENSEARCH_DATA_AND_INGEST` ]<br><br>The roles or purposes of the node. Useful for filtering for nodes that have a specific role.<br><br>
+*___public_address___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Public IP address of the node.<br><br>
 <a id="nested--gcp_settings"></a>
 ## Nested schema for `gcp_settings`
 GCP specific settings for the Data Centre. Cannot be provided with AWS or Azure settings.<br>
@@ -139,11 +173,17 @@ List of tags to apply to the Data Centre. Tags are metadata labels which  allow 
 <br>Value of the tag to be added to the Data Centre.<br><br>
 <a id="nested--nodes"></a>
 ## Nested schema for `nodes`
-
+List of non-deleted nodes in the data centre<br>
 ### Read-only attributes
+*___start_time___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Start time of the node as a UTC timestamp<br><br>
 *___status___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Provisioning status of the node.<br><br>
+*___deletion_time___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Deletion time of the node as a UTC timestamp<br><br>
 *___id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>ID of the node.<br><br>
