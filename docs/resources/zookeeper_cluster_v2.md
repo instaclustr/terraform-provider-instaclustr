@@ -43,7 +43,7 @@ The following terms are used to describe attributes in the schema of this resour
 <ins>Constraints</ins>: allowed values: [ `PRODUCTION`, `NON_PRODUCTION` ]<br><br>SLA Tier of the cluster. Non-production clusters may receive lower priority support and reduced SLAs. Production tier is not available when using Developer class nodes. See [SLA Tier](https://www.instaclustr.com/support/documentation/useful-information/sla-tier/) for more information.<br><br>
 *___zookeeper_version___*<br>
 <ins>Type</ins>: string, required, immutable<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Apache Zookeeper to run on the cluster. Available versions: <ul> <li>`3.6.3`</li> <li>`3.7.1`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Apache Zookeeper to run on the cluster. Available versions: <ul> <li>`3.7.1`</li> </ul><br><br>
 *___name___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <ins>Constraints</ins>: pattern: `[a-zA-Z0-9][a-zA-Z0-9_-]*`<br><br>Name of the cluster.<br><br>
@@ -70,7 +70,7 @@ List of data centre settings.<br>
 ### Input attributes - Required
 *___cloud_provider___*<br>
 <ins>Type</ins>: string, required, immutable<br>
-<ins>Constraints</ins>: allowed values: [ `AWS_VPC`, `GCP`, `AZURE`, `AZURE_AZ` ]<br><br>Name of the cloud provider service in which the Data Centre will be provisioned.<br><br>
+<ins>Constraints</ins>: allowed values: [ `AWS_VPC`, `GCP`, `AZURE`, `AZURE_AZ`, `ONPREMISES` ]<br><br>Name of a cloud provider service.<br><br>
 *___number_of_nodes___*<br>
 <ins>Type</ins>: integer, required, immutable<br>
 <br>Total number of Zookeeper nodes in the Data Centre.<br><br>
@@ -87,12 +87,18 @@ List of data centre settings.<br>
 <ins>Type</ins>: string, required, immutable<br>
 <br>The private network address block for the Data Centre specified using CIDR address notation. The network must have a prefix length between `/12` and `/22` and must be part of a private address space.<br><br>
 ### Input attributes - Optional
+*___enforce_auth_schemes___*<br>
+<ins>Type</ins>: list of strings, optional, immutable<br>
+<ins>Constraints</ins>: allowed values: [ `NONE`, `SASL` ]<br><br>A list of authentication schemes to enforce when enforce.auth.enabled=true.<br><br>
 *___azure_settings___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [azure_settings](#nested--azure_settings) for nested schema<br>
 <br>Azure specific settings for the Data Centre. Cannot be provided with AWS or GCP settings.<br><br>
 *___gcp_settings___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [gcp_settings](#nested--gcp_settings) for nested schema<br>
 <br>GCP specific settings for the Data Centre. Cannot be provided with AWS or Azure settings.<br><br>
+*___enforce_auth_enabled___*<br>
+<ins>Type</ins>: boolean, optional, immutable<br>
+<br>Enables Enforced SASL Authentication.<br><br>
 *___client_to_server_encryption___*<br>
 <ins>Type</ins>: boolean, optional, immutable<br>
 <br>Enables Client ⇄ Node Encryption.<br><br>
@@ -109,12 +115,15 @@ List of data centre settings.<br>
 *___status___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Status of the Data Centre.<br><br>
+*___deleted_nodes___*<br>
+<ins>Type</ins>: repeatable nested block, read-only, see [deleted_nodes](#nested--deleted_nodes) for nested schema<br>
+<br>List of deleted nodes in the data centre<br><br>
 *___id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>ID of the Cluster Data Centre.<br><br>
 *___nodes___*<br>
 <ins>Type</ins>: repeatable nested block, read-only, see [nodes](#nested--nodes) for nested schema<br>
-<br>
+<br>List of non-deleted nodes in the data centre<br><br>
 <a id="nested--azure_settings"></a>
 ## Nested schema for `azure_settings`
 Azure specific settings for the Data Centre. Cannot be provided with AWS or GCP settings.<br>
@@ -122,6 +131,37 @@ Azure specific settings for the Data Centre. Cannot be provided with AWS or GCP 
 *___resource_group___*<br>
 <ins>Type</ins>: string, optional, immutable<br>
 <br>The name of the Azure Resource Group into which the Data Centre will be provisioned.<br><br>
+<a id="nested--deleted_nodes"></a>
+## Nested schema for `deleted_nodes`
+List of deleted nodes in the data centre<br>
+### Read-only attributes
+*___start_time___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Start time of the node as a UTC timestamp<br><br>
+*___status___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Provisioning status of the node.<br><br>
+*___deletion_time___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Deletion time of the node as a UTC timestamp<br><br>
+*___id___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>ID of the node.<br><br>
+*___rack___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Rack name in which the node is located.<br><br>
+*___node_size___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Size of the node.<br><br>
+*___private_address___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Private IP address of the node.<br><br>
+*___node_roles___*<br>
+<ins>Type</ins>: list of strings, read-only<br>
+<ins>Constraints</ins>: allowed values: [ `CASSANDRA`, `SPARK_MASTER`, `SPARK_JOBSERVER`, `KAFKA_BROKER`, `KAFKA_DEDICATED_ZOOKEEPER`, `KAFKA_ZOOKEEPER`, `KAFKA_SCHEMA_REGISTRY`, `KAFKA_REST_PROXY`, `APACHE_ZOOKEEPER`, `POSTGRESQL`, `PGBOUNCER`, `KAFKA_CONNECT`, `KAFKA_KARAPACE_SCHEMA_REGISTRY`, `KAFKA_KARAPACE_REST_PROXY`, `CADENCE`, `MONGODB`, `REDIS_MASTER`, `REDIS_REPLICA`, `OPENSEARCH_DASHBOARDS`, `OPENSEARCH_COORDINATOR`, `OPENSEARCH_MASTER`, `OPENSEARCH_DATA_AND_INGEST` ]<br><br>The roles or purposes of the node. Useful for filtering for nodes that have a specific role.<br><br>
+*___public_address___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Public IP address of the node.<br><br>
 <a id="nested--gcp_settings"></a>
 ## Nested schema for `gcp_settings`
 GCP specific settings for the Data Centre. Cannot be provided with AWS or Azure settings.<br>
@@ -141,11 +181,17 @@ List of tags to apply to the Data Centre. Tags are metadata labels which  allow 
 <br>Value of the tag to be added to the Data Centre.<br><br>
 <a id="nested--nodes"></a>
 ## Nested schema for `nodes`
-
+List of non-deleted nodes in the data centre<br>
 ### Read-only attributes
+*___start_time___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Start time of the node as a UTC timestamp<br><br>
 *___status___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Provisioning status of the node.<br><br>
+*___deletion_time___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Deletion time of the node as a UTC timestamp<br><br>
 *___id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>ID of the node.<br><br>

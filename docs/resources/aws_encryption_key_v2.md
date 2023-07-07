@@ -40,6 +40,16 @@ The following terms are used to describe attributes in the schema of this resour
 *___id___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
 <br>ID of the encryption key.<br><br>
+*___regions___*<br>
+<ins>Type</ins>: repeatable nested block, read-only, see [regions](#nested--regions) for nested schema<br>
+<br>Regions of the key<br><br>
+<a id="nested--regions"></a>
+## Nested schema for `regions`
+Regions of the key<br>
+### Input attributes - Optional
+*___name___*<br>
+<ins>Type</ins>: string, optional, immutable<br>
+<br>Name of the AWS Region<br><br>
 ## Import
 This resource can be imported using the `terraform import` command as follows:
 ```
