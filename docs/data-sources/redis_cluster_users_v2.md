@@ -1,15 +1,15 @@
 ---
-page_title: "instaclustr_redis_users_v2 Data Source - terraform-provider-instaclustr"
+page_title: "instaclustr_redis_cluster_users_v2 Data Source - terraform-provider-instaclustr"
 subcategory: ""
 description: |-
 ---
 
-# instaclustr_redis_users_v2 (Data Source)
+# instaclustr_redis_cluster_users_v2 (Data Source)
 A listable data source of all Redis users within a Redis Cluster.
 ## Example Usage
 ```
-data "instaclustr_redis_users_v2" "example" { 
-  redis_id = "<redis_id>" // the value of the `redis_id` attribute defined in the root schema below
+data "instaclustr_redis_cluster_users_v2" "example" { 
+  redis_cluster_id = "<redis_cluster_id>" // the value of the `redis_cluster_id` attribute defined in the root schema below
 }
 ```
 ## Glossary
@@ -19,7 +19,7 @@ The following terms are used to describe attributes in the schema of this data s
 - **_nested block_** - These attributes use the [Terraform block syntax](https://www.terraform.io/language/attr-as-blocks) when defined as an input in the Terraform code. Attributes with the type **_repeatable nested block_** are the same except that the nested block can be defined multiple times with varying nested attributes. When reading nested block attributes, an index must be provided when accessing the contents of the nested block, example - `my_resource.nested_block_attribute[0].nested_attribute`.
 ## Root Level Schema
 ### Input attributes - Required
-*___redis_id___*<br>
+*___redis_cluster_id___*<br>
 <ins>Type</ins>: string, required<br>
 <br>ID of the cluster.<br><br>
 ### Read-only attributes
