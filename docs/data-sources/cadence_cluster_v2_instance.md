@@ -40,6 +40,9 @@ The following terms are used to describe attributes in the schema of this data s
 *___cadence_version___*<br>
 <ins>Type</ins>: string, read-only<br>
 <ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Cadence to run on the cluster. Available versions: <ul> <li>`1.0.0`</li> </ul><br><br>
+*___resize_settings___*<br>
+<ins>Type</ins>: nested block, read-only, see [resize_settings](#nested--resize_settings) for nested schema<br>
+<br>Settings to determine how resize requests will be performed for the cluster.<br><br>
 *___target_secondary_cadence___*<br>
 <ins>Type</ins>: nested block, read-only, see [target_secondary_cadence](#nested--target_secondary_cadence) for nested schema<br>
 <br>Supporting Secondary Cadence info for Multi region Cadence.<br><br>
@@ -228,6 +231,16 @@ List of non-deleted nodes in the data centre<br>
 *___public_address___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Public IP address of the node.<br><br>
+<a id="nested--resize_settings"></a>
+## Nested schema for `resize_settings`
+Settings to determine how resize requests will be performed for the cluster.<br>
+### Read-only attributes
+*___concurrency___*<br>
+<ins>Type</ins>: integer, read-only<br>
+<br>Number of concurrent nodes to resize during a resize operation.<br><br>
+*___notify_support_contacts___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>Setting this property to `true` will notify the Instaclustr Account's designated support contacts on resize completion.<br><br>
 <a id="nested--advanced_visibility"></a>
 ## Nested schema for `advanced_visibility`
 Cadence advanced visibility settings<br>

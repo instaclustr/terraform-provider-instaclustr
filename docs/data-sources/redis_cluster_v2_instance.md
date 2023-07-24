@@ -40,6 +40,9 @@ The following terms are used to describe attributes in the schema of this data s
 *___client_to_node_encryption___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Enables Client ⇄ Node Encryption.<br><br>
+*___resize_settings___*<br>
+<ins>Type</ins>: nested block, read-only, see [resize_settings](#nested--resize_settings) for nested schema<br>
+<br>Settings to determine how resize requests will be performed for the cluster.<br><br>
 *___private_network_cluster___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Creates the cluster with private network only, see [Private Network Clusters](https://www.instaclustr.com/support/documentation/useful-information/private-network-clusters/).<br><br>
@@ -193,6 +196,16 @@ List of non-deleted nodes in the data centre<br>
 *___public_address___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Public IP address of the node.<br><br>
+<a id="nested--resize_settings"></a>
+## Nested schema for `resize_settings`
+Settings to determine how resize requests will be performed for the cluster.<br>
+### Read-only attributes
+*___concurrency___*<br>
+<ins>Type</ins>: integer, read-only<br>
+<br>Number of concurrent nodes to resize during a resize operation.<br><br>
+*___notify_support_contacts___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>Setting this property to `true` will notify the Instaclustr Account's designated support contacts on resize completion.<br><br>
 <a id="nested--aws_settings"></a>
 ## Nested schema for `aws_settings`
 AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure settings.<br>

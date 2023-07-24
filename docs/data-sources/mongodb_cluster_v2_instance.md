@@ -40,6 +40,9 @@ The following terms are used to describe attributes in the schema of this data s
 *___mongodb_configuration___*<br>
 <ins>Type</ins>: repeatable nested block, read-only, see [mongodb_configuration](#nested--mongodb_configuration) for nested schema<br>
 <br>Key/Value pairs of mongod configuration options to override from the platform defaults<br><br>
+*___resize_settings___*<br>
+<ins>Type</ins>: nested block, read-only, see [resize_settings](#nested--resize_settings) for nested schema<br>
+<br>Settings to determine how resize requests will be performed for the cluster.<br><br>
 *___mongodb_version___*<br>
 <ins>Type</ins>: string, read-only<br>
 <ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of MongoDB to run on the cluster. Available versions: <ul> <li>`6.0.6`</li> <li>`6.0.3`</li> </ul><br><br>
@@ -203,6 +206,16 @@ List of non-deleted nodes in the data centre<br>
 *___public_address___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Public IP address of the node.<br><br>
+<a id="nested--resize_settings"></a>
+## Nested schema for `resize_settings`
+Settings to determine how resize requests will be performed for the cluster.<br>
+### Read-only attributes
+*___concurrency___*<br>
+<ins>Type</ins>: integer, read-only<br>
+<br>Number of concurrent nodes to resize during a resize operation.<br><br>
+*___notify_support_contacts___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>Setting this property to `true` will notify the Instaclustr Account's designated support contacts on resize completion.<br><br>
 <a id="nested--aws_settings"></a>
 ## Nested schema for `aws_settings`
 AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure settings.<br>

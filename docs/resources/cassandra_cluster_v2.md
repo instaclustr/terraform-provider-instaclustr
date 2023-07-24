@@ -93,6 +93,9 @@ The following terms are used to describe attributes in the schema of this resour
 *___spark___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [spark](#nested--spark) for nested schema<br>
 <br>Adds the specified version of Apache Spark to the Cassandra cluster.<br><br>
+*___resize_settings___*<br>
+<ins>Type</ins>: nested block, optional, updatable, see [resize_settings](#nested--resize_settings) for nested schema<br>
+<br>Settings to determine how resize requests will be performed for the cluster.<br><br>
 *___two_factor_delete___*<br>
 <ins>Type</ins>: nested block, optional, updatable, see [two_factor_delete](#nested--two_factor_delete) for nested schema<br>
 <br>
@@ -268,6 +271,16 @@ Adds the specified version of Apache Spark to the Cassandra cluster.<br>
 *___version___*<br>
 <ins>Type</ins>: string, required, updatable<br>
 <ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Adds the specified version of Apache Spark to the Cassandra cluster. Available versions: <ul> </ul><br><br>
+<a id="nested--resize_settings"></a>
+## Nested schema for `resize_settings`
+Settings to determine how resize requests will be performed for the cluster.<br>
+### Input attributes - Optional
+*___concurrency___*<br>
+<ins>Type</ins>: integer, optional, updatable<br>
+<br>Number of concurrent nodes to resize during a resize operation.<br><br>
+*___notify_support_contacts___*<br>
+<ins>Type</ins>: boolean, optional, updatable<br>
+<br>Setting this property to `true` will notify the Instaclustr Account's designated support contacts on resize completion.<br><br>
 <a id="nested--aws_settings"></a>
 ## Nested schema for `aws_settings`
 AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure settings.<br>
