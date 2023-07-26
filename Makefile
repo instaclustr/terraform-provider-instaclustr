@@ -5,7 +5,7 @@ VERSION=2.0.57
 FULL_BIN_NAME="${BIN_NAME}_v${VERSION}"
 SHASUM_NAME="${BIN_NAME}_${VERSION}_SHA256SUMS"
 
-INSTALL_FOLDER=$(HOME)/.terraform.d/plugins/registry.terraform.io/instaclustr/instaclustr/$(VERSION)/darwin_amd64
+INSTALL_FOLDER=$(HOME)/.terraform.d/plugins/terraform.instaclustr.com/instaclustr/instaclustr/$(VERSION)/darwin_amd64
 
 .PHONY: local-build preprod-build build build-all install local-gen-docs gen-docs release_version
 
