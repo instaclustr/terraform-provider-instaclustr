@@ -31,6 +31,9 @@ The following terms are used to describe attributes in the schema of this data s
 *___default_user_password___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Password for the default Kafka user<br><br>
+*___description___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>A description of the cluster<br><br>
 *___sla_tier___*<br>
 <ins>Type</ins>: string, read-only<br>
 <ins>Constraints</ins>: allowed values: [ `PRODUCTION`, `NON_PRODUCTION` ]<br><br>SLA Tier of the cluster. Non-production clusters may receive lower priority support and reduced SLAs. Production tier is not available when using Developer class nodes. See [SLA Tier](https://www.instaclustr.com/support/documentation/useful-information/sla-tier/) for more information.<br><br>

@@ -51,6 +51,9 @@ The following terms are used to describe attributes in the schema of this resour
 <ins>Type</ins>: boolean, required, immutable<br>
 <br>Creates the cluster with private network only, see [Private Network Clusters](https://www.instaclustr.com/support/documentation/useful-information/private-network-clusters/).<br><br>
 ### Input attributes - Optional
+*___description___*<br>
+<ins>Type</ins>: string, optional, updatable<br>
+<br>A description of the cluster<br><br>
 *___two_factor_delete___*<br>
 <ins>Type</ins>: nested block, optional, updatable, see [two_factor_delete](#nested--two_factor_delete) for nested schema<br>
 <br>
@@ -225,11 +228,11 @@ AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure 
 
 ### Input attributes - Required
 *___confirmation_email___*<br>
-<ins>Type</ins>: string, required, immutable<br>
+<ins>Type</ins>: string, required, updatable<br>
 <br>The email address which will be contacted when the cluster is requested to be deleted.<br><br>
 ### Input attributes - Optional
 *___confirmation_phone_number___*<br>
-<ins>Type</ins>: string, optional, immutable<br>
+<ins>Type</ins>: string, optional, updatable<br>
 <br>The phone number which will be contacted when the cluster is requested to be delete.<br><br>
 ## Import
 This resource can be imported using the `terraform import` command as follows:
