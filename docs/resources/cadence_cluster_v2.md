@@ -80,6 +80,9 @@ The following terms are used to describe attributes in the schema of this resour
 <ins>Type</ins>: boolean, required, immutable<br>
 <br>Enable Authentication for Cadence Web<br><br>
 ### Input attributes - Optional
+*___description___*<br>
+<ins>Type</ins>: string, optional, updatable<br>
+<br>A description of the cluster<br><br>
 *___standard_provisioning___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [standard_provisioning](#nested--standard_provisioning) for nested schema<br>
 <br>Settings for STARDARD provisioning. Must not be defined with SHARED provisioning options.<br><br>
@@ -354,11 +357,11 @@ Create a PrivateLink enabled cluster, see [PrivateLink](https://www.instaclustr.
 
 ### Input attributes - Required
 *___confirmation_email___*<br>
-<ins>Type</ins>: string, required, immutable<br>
+<ins>Type</ins>: string, required, updatable<br>
 <br>The email address which will be contacted when the cluster is requested to be deleted.<br><br>
 ### Input attributes - Optional
 *___confirmation_phone_number___*<br>
-<ins>Type</ins>: string, optional, immutable<br>
+<ins>Type</ins>: string, optional, updatable<br>
 <br>The phone number which will be contacted when the cluster is requested to be delete.<br><br>
 <a id="nested--target_primary_cadence"></a>
 ## Nested schema for `target_primary_cadence`
