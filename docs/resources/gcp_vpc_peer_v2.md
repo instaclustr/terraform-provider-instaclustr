@@ -38,6 +38,9 @@ The following terms are used to describe attributes in the schema of this resour
 <ins>Type</ins>: string, required, immutable<br>
 <br>The project ID of the owner of the accepter VPC.<br><br>
 ### Read-only attributes
+*___data_centre_vpc_network_name___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Vpc Network Name of the Data Centre VPC.<br><br>
 *___status_code___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Status of the VPC Peering Connection. Values can be `GENESIS`, `PROVISIONING`, `FAILED`, `INACTIVE`, `ACTIVE` or `UNKNOWN`.<br><br>
@@ -47,6 +50,9 @@ The following terms are used to describe attributes in the schema of this resour
 *___name___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Name of the Peering Connection.<br><br>
+*___data_centre_project_id___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>GCP Project ID of the Data Centre.<br><br>
 *___failure_reason___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Reason for Peering Connection Failure.<br><br>

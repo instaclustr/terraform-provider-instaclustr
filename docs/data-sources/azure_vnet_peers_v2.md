@@ -39,6 +39,9 @@ The following terms are used to describe attributes in the schema of this data s
 *___name___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Name of the Vpc Peering Connection.<br><br>
+*___data_centre_resource_group___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Resource Group Name of the Data Centre Virtual Network.<br><br>
 *___peer_ad_object_id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>ID of the Active Directory Object to give peering permissions to, required for cross subscription peering.<br><br>
@@ -48,6 +51,12 @@ The following terms are used to describe attributes in the schema of this data s
 *___peer_virtual_network_name___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>The name of the VPC Network you wish to peer to.<br><br>
+*___data_centre_virtual_network_name___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>The name of the Data Centre Virtual Network.<br><br>
 *___peer_subscription_id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Subscription ID of the Virtual Network.<br><br>
+*___data_centre_subscription_id___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Subscription ID of the Data Centre Virtual Network.<br><br>
