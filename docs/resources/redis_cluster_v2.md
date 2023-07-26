@@ -63,6 +63,9 @@ The following terms are used to describe attributes in the schema of this resour
 <ins>Type</ins>: boolean, required, immutable<br>
 <br>Creates a PCI compliant cluster, see [PCI Compliance](https://www.instaclustr.com/support/documentation/useful-information/pci-compliance/).<br><br>
 ### Input attributes - Optional
+*___description___*<br>
+<ins>Type</ins>: string, optional, updatable<br>
+<br>A description of the cluster<br><br>
 *___resize_settings___*<br>
 <ins>Type</ins>: nested block, optional, updatable, see [resize_settings](#nested--resize_settings) for nested schema<br>
 <br>Settings to determine how resize requests will be performed for the cluster.<br><br>
@@ -244,11 +247,11 @@ AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure 
 
 ### Input attributes - Required
 *___confirmation_email___*<br>
-<ins>Type</ins>: string, required, immutable<br>
+<ins>Type</ins>: string, required, updatable<br>
 <br>The email address which will be contacted when the cluster is requested to be deleted.<br><br>
 ### Input attributes - Optional
 *___confirmation_phone_number___*<br>
-<ins>Type</ins>: string, optional, immutable<br>
+<ins>Type</ins>: string, optional, updatable<br>
 <br>The phone number which will be contacted when the cluster is requested to be delete.<br><br>
 ## Import
 This resource can be imported using the `terraform import` command as follows:

@@ -62,6 +62,9 @@ The following terms are used to describe attributes in the schema of this resour
 <ins>Type</ins>: nested block, required, immutable, see [target_cluster](#nested--target_cluster) for nested schema<br>
 <br>Details to connect to a target Kafka Cluster cluster.<br><br>
 ### Input attributes - Optional
+*___description___*<br>
+<ins>Type</ins>: string, optional, updatable<br>
+<br>A description of the cluster<br><br>
 *___custom_connectors___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [custom_connectors](#nested--custom_connectors) for nested schema<br>
 <br>Defines the location for custom connector storage and access info.<br><br>
@@ -336,11 +339,11 @@ Defines the information to access custom connectors located in a S3 bucket. Cann
 
 ### Input attributes - Required
 *___confirmation_email___*<br>
-<ins>Type</ins>: string, required, immutable<br>
+<ins>Type</ins>: string, required, updatable<br>
 <br>The email address which will be contacted when the cluster is requested to be deleted.<br><br>
 ### Input attributes - Optional
 *___confirmation_phone_number___*<br>
-<ins>Type</ins>: string, optional, immutable<br>
+<ins>Type</ins>: string, optional, updatable<br>
 <br>The phone number which will be contacted when the cluster is requested to be delete.<br><br>
 <a id="nested--target_cluster"></a>
 ## Nested schema for `target_cluster`
