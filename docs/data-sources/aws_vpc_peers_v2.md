@@ -39,6 +39,9 @@ The following terms are used to describe attributes in the schema of this data s
 *___peer_vpc_id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>ID of the VPC with which the peering connection is created.<br><br>
+*___data_centre_vpc_id___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>ID of the current data centre VPC.<br><br>
 *___id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>ID of the VPC peering connection.<br><br>

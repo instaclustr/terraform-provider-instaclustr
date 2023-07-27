@@ -27,6 +27,9 @@ The following terms are used to describe attributes in the schema of this data s
 ## Nested schema for `peering_requests`
 
 ### Read-only attributes
+*___data_centre_vpc_network_name___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Vpc Network Name of the Data Centre VPC.<br><br>
 *___peer_subnets___*<br>
 <ins>Type</ins>: list of strings, read-only<br>
 <br>The subnets for the peering VPC.<br><br>
@@ -45,3 +48,6 @@ The following terms are used to describe attributes in the schema of this data s
 *___name___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Name of the Peering Connection.<br><br>
+*___data_centre_project_id___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>GCP Project ID of the Data Centre.<br><br>
