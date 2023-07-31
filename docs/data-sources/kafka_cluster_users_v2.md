@@ -33,6 +33,9 @@ The following terms are used to describe attributes in the schema of this data s
 ## Nested schema for `kafka_users`
 List of all Kafka users in the cluster.<br>
 ### Read-only attributes
+*___auth_mechanism___*<br>
+<ins>Type</ins>: string, read-only<br>
+<ins>Constraints</ins>: allowed values: [ `SASL` ]<br><br>Authentication mechanisms supported for KafkaClusters.<br><br>
 *___username___*<br>
 <ins>Type</ins>: string, read-only<br>
 <ins>Constraints</ins>: pattern: `^(?![zZ][oO][oO][kK][eE][eE][pP][eE][rR]$)[a-zA-Z0-9][a-zA-Z0-9_-]*$`<br><br>Username of the Kafka user.<br><br>
