@@ -31,6 +31,9 @@ The following terms are used to describe attributes in the schema of this data s
 *___default_user_password___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Password for the default Kafka user<br><br>
+*___description___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>A description of the cluster<br><br>
 *___sla_tier___*<br>
 <ins>Type</ins>: string, read-only<br>
 <ins>Constraints</ins>: allowed values: [ `PRODUCTION`, `NON_PRODUCTION` ]<br><br>SLA Tier of the cluster. Non-production clusters may receive lower priority support and reduced SLAs. Production tier is not available when using Developer class nodes. See [SLA Tier](https://www.instaclustr.com/support/documentation/useful-information/sla-tier/) for more information.<br><br>
@@ -45,7 +48,7 @@ The following terms are used to describe attributes in the schema of this data s
 <br>Adds the specified version of Kafka Karapace REST Proxy to this Kafka cluster.<br><br>
 *___kafka_version___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Kafka to run on the cluster. Available versions: <ul> <li>`3.1.2`</li> <li>`3.3.1`</li> <li>`3.4.1`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Kafka to run on the cluster. Available versions: <ul> <li>`3.0.2`</li> <li>`3.1.2`</li> <li>`3.3.1`</li> <li>`3.4.1`</li> </ul><br><br>
 *___auto_create_topics___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Allows topics to be auto created by brokers when messages are published to a non-existent topic<br><br>
@@ -61,6 +64,9 @@ The following terms are used to describe attributes in the schema of this data s
 *___kraft___*<br>
 <ins>Type</ins>: nested block, read-only, see [kraft](#nested--kraft) for nested schema<br>
 <br>Create a KRaft Cluster<br><br>
+*___resize_settings___*<br>
+<ins>Type</ins>: nested block, read-only, see [resize_settings](#nested--resize_settings) for nested schema<br>
+<br>Settings to determine how resize requests will be performed for the cluster.<br><br>
 *___default_replication_factor___*<br>
 <ins>Type</ins>: integer, read-only<br>
 <br>Default Replication factor to use for new topic. Also represents the number of racks to use when allocating nodes.<br><br>
@@ -278,6 +284,16 @@ List of non-deleted nodes in the data centre<br>
 *___public_address___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Public IP address of the node.<br><br>
+<a id="nested--resize_settings"></a>
+## Nested schema for `resize_settings`
+Settings to determine how resize requests will be performed for the cluster.<br>
+### Read-only attributes
+*___concurrency___*<br>
+<ins>Type</ins>: integer, read-only<br>
+<br>Number of concurrent nodes to resize during a resize operation.<br><br>
+*___notify_support_contacts___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>Setting this property to `true` will notify the Instaclustr Account's designated support contacts on resize completion.<br><br>
 <a id="nested--aws_settings"></a>
 ## Nested schema for `aws_settings`
 AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure settings.<br>

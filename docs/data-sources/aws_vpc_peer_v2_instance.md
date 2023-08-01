@@ -34,6 +34,9 @@ The following terms are used to describe attributes in the schema of this data s
 *___status_code___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Status of the VPC Peering Connection. Values can be `pending-acceptance`, `failed`, `expired`, `provisioning`, `active`, `deleting`, `deleted` or `rejected`.<br><br>
+*___data_centre_vpc_id___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>ID of the current data centre VPC.<br><br>
 *___id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>ID of the VPC peering connection.<br><br>
