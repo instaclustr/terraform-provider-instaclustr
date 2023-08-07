@@ -48,7 +48,7 @@ The following terms are used to describe attributes in the schema of this data s
 <br>Adds the specified version of Kafka Karapace REST Proxy to this Kafka cluster.<br><br>
 *___kafka_version___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Kafka to run on the cluster. Available versions: <ul> <li>`3.4.1`</li> <li>`3.3.1`</li> <li>`3.1.2`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Kafka to run on the cluster. Available versions: <ul> <li>`3.1.2`</li> <li>`3.3.1`</li> <li>`3.4.1`</li> </ul><br><br>
 *___auto_create_topics___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Allows topics to be auto created by brokers when messages are published to a non-existent topic<br><br>
@@ -159,7 +159,7 @@ List of data centre settings.<br>
 <br>ID of the Cluster Data Centre.<br><br>
 *___tag___*<br>
 <ins>Type</ins>: repeatable nested block, read-only, see [tag](#nested--tag) for nested schema<br>
-<br>List of tags to apply to the Data Centre. Tags are metadata labels which  allow you to identify, categorize and filter clusters. This can be useful for grouping together clusters into applications, environments, or any category that you require.<br><br>
+<br>List of tags to apply to the Data Centre. Tags are metadata labels which  allow you to identify, categorize and filter clusters. This can be useful for grouping together clusters into applications, environments, or any category that you require. Note `tag` is not supported in terrform lifecycle `ignore_changes`. <br><br>
 *___name___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>A logical name for the data centre within a cluster. These names must be unique in the cluster.<br><br>
@@ -238,7 +238,7 @@ GCP specific settings for the Data Centre. Cannot be provided with AWS or Azure 
 <br>Network name or a relative Network or Subnetwork URI e.g. projects/my-project/regions/us-central1/subnetworks/my-subnet. The Data Centre's network allocation must match the IPv4 CIDR block of the specified subnet.<br><br>
 <a id="nested--tag"></a>
 ## Nested schema for `tag`
-List of tags to apply to the Data Centre. Tags are metadata labels which  allow you to identify, categorize and filter clusters. This can be useful for grouping together clusters into applications, environments, or any category that you require.<br>
+List of tags to apply to the Data Centre. Tags are metadata labels which  allow you to identify, categorize and filter clusters. This can be useful for grouping together clusters into applications, environments, or any category that you require. Note `tag` is not supported in terrform lifecycle `ignore_changes`. <br>
 ### Read-only attributes
 *___key___*<br>
 <ins>Type</ins>: string, read-only<br>
