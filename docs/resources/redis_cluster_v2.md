@@ -245,20 +245,6 @@ AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure 
 *___ebs_encryption_key___*<br>
 <ins>Type</ins>: string (uuid), optional, immutable<br>
 <br>ID of a KMS encryption key to encrypt data on nodes. KMS encryption key must be set in Cluster Resources through the Instaclustr Console before provisioning an encrypted Data Centre.<br><br>
-<a id="nested--private_link"></a>
-## Nested schema for `private_link`
-Create a PrivateLink enabled cluster, see [PrivateLink](https://www.instaclustr.com/support/documentation/useful-information/privatelink/).<br>
-### Input attributes - Required
-*___advertised_hostname___*<br>
-<ins>Type</ins>: string, required, immutable<br>
-<br>The hostname to be used to connect to the PrivateLink cluster.<br><br>
-### Read-only attributes
-*___end_point_service_id___*<br>
-<ins>Type</ins>: string, read-only<br>
-<br>The Instaclustr ID of the AWS endpoint service<br><br>
-*___end_point_service_name___*<br>
-<ins>Type</ins>: string, read-only<br>
-<br>Name of the created endpoint service<br><br>
 <a id="nested--two_factor_delete"></a>
 ## Nested schema for `two_factor_delete`
 
