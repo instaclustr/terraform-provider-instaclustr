@@ -68,6 +68,9 @@ List of data centre settings.<br>
 *___cloud_provider___*<br>
 <ins>Type</ins>: string, read-only<br>
 <ins>Constraints</ins>: allowed values: [ `AWS_VPC`, `GCP`, `AZURE`, `AZURE_AZ`, `ONPREMISES` ]<br><br>Name of a cloud provider service.<br><br>
+*___replication_factor___*<br>
+<ins>Type</ins>: integer, read-only<br>
+<ins>Constraints</ins>: minimum: 0, maximum: 5<br><br>The number of replica nodes that should be assigned for each master node.<br><br>
 *___region___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Region of the Data Centre. See the description for node size for a compatible Data Centre for a given node size.<br><br>
@@ -79,7 +82,7 @@ List of data centre settings.<br>
 <br>Azure specific settings for the Data Centre. Cannot be provided with AWS or GCP settings.<br><br>
 *___master_nodes___*<br>
 <ins>Type</ins>: integer, read-only<br>
-<ins>Constraints</ins>: minimum: 3, maximum: 1E+2<br><br>Total number of master nodes in the Data Centre.<br><br>
+<ins>Constraints</ins>: minimum: 3, maximum: 1E+2<br><br>Total number of master nodes in the Data Centre. In order to maintain quorum on the cluster, you must specify an odd number of master nodes.<br><br>
 *___deleted_nodes___*<br>
 <ins>Type</ins>: repeatable nested block, read-only, see [deleted_nodes](#nested--deleted_nodes) for nested schema<br>
 <br>List of deleted nodes in the data centre<br><br>
@@ -107,6 +110,9 @@ List of data centre settings.<br>
 *___aws_settings___*<br>
 <ins>Type</ins>: nested block, read-only, see [aws_settings](#nested--aws_settings) for nested schema<br>
 <br>AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure settings.<br><br>
+*___private_link___*<br>
+<ins>Type</ins>: repeatable nested block, read-only, see [private_link](#nested--private_link) for nested schema<br>
+<br>Create a PrivateLink enabled cluster, see [PrivateLink](https://www.instaclustr.com/support/documentation/useful-information/privatelink/).<br><br>
 *___network___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>The private network address block for the Data Centre specified using CIDR address notation. The network must have a prefix length between `/12` and `/22` and must be part of a private address space.<br><br>
@@ -219,6 +225,19 @@ AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure 
 *___ebs_encryption_key___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
 <br>ID of a KMS encryption key to encrypt data on nodes. KMS encryption key must be set in Cluster Resources through the Instaclustr Console before provisioning an encrypted Data Centre.<br><br>
+<a id="nested--private_link"></a>
+## Nested schema for `private_link`
+Create a PrivateLink enabled cluster, see [PrivateLink](https://www.instaclustr.com/support/documentation/useful-information/privatelink/).<br>
+### Read-only attributes
+*___end_point_service_id___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>The Instaclustr ID of the AWS endpoint service<br><br>
+*___advertised_hostname___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>The hostname to be used to connect to the PrivateLink cluster.<br><br>
+*___end_point_service_name___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Name of the created endpoint service<br><br>
 <a id="nested--two_factor_delete"></a>
 ## Nested schema for `two_factor_delete`
 
