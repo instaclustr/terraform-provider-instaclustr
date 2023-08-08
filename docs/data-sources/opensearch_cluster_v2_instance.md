@@ -28,9 +28,6 @@ The following terms are used to describe attributes in the schema of this data s
 *___data_centre___*<br>
 <ins>Type</ins>: nested block, read-only, see [data_centre](#nested--data_centre) for nested schema<br>
 <ins>Constraints</ins>: minimum items: 1<br><br>List of data centre settings.<br><br>
-*___default_user_password___*<br>
-<ins>Type</ins>: string, read-only<br>
-<br>Password of the default user created for the OpenSearch cluster.<br><br>
 *___description___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>A description of the cluster<br><br>
@@ -46,9 +43,6 @@ The following terms are used to describe attributes in the schema of this data s
 *___index_management_plugin___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Enable index management plugin<br><br>
-*___default_username___*<br>
-<ins>Type</ins>: string, read-only<br>
-<br>Username of the default user created for the OpenSearch cluster.<br><br>
 *___id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>ID of the cluster.<br><br>
@@ -69,7 +63,7 @@ The following terms are used to describe attributes in the schema of this data s
 <br>Enable reporting plugin<br><br>
 *___opensearch_version___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: pattern: `([0-9]+\.){2}[0-9]+`<br><br>Version of OpenSearch to run on the cluster. Available versions: <ul> <li>`1.3.11`</li> <li>`2.7.0`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `([0-9]+\.){2}[0-9]+`<br><br>Version of OpenSearch to run on the cluster. Available versions: <ul> <li>`1.3.9`</li> <li>`2.7.0`</li> </ul><br><br>
 *___private_network_cluster___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Creates the cluster with private network only, see [Private Network Clusters](https://www.instaclustr.com/support/documentation/useful-information/private-network-clusters/).<br><br>
