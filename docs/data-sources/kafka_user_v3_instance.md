@@ -1,14 +1,14 @@
 ---
-page_title: "instaclustr_kafka_user_v2_instance Data Source - terraform-provider-instaclustr"
+page_title: "instaclustr_kafka_user_v3_instance Data Source - terraform-provider-instaclustr"
 subcategory: ""
 description: |-
 ---
 
-# instaclustr_kafka_user_v2_instance (Data Source)
+# instaclustr_kafka_user_v3_instance (Data Source)
 Definition of a Kafka User to be applied to a Kafka cluster.
 ## Example Usage
 ```
-data "instaclustr_kafka_user_v2_instance" "example" { 
+data "instaclustr_kafka_user_v3_instance" "example" { 
   id = "<id>" // the value of the `id` attribute defined in the root schema below
 }
 ```
@@ -22,9 +22,9 @@ The following terms are used to describe attributes in the schema of this data s
 *___auth_mechanism___*<br>
 <ins>Type</ins>: string, read-only<br>
 <ins>Constraints</ins>: allowed values: [ `SASL` ]<br><br>Authentication mechanisms supported for KafkaClusters.<br><br>
-*___options___*<br>
-<ins>Type</ins>: nested object, read-only, see [options](#nested--options) for nested schema<br>
-<br>Initial options used when creating Kafka user<br><br>
+*___override_existing_user___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>Overwrite user if already exists.<br><br>
 *___username___*<br>
 <ins>Type</ins>: string, read-only<br>
 <ins>Constraints</ins>: pattern: `^(?![zZ][oO][oO][kK][eE][eE][pP][eE][rR]$)[a-zA-Z0-9][a-zA-Z0-9_-]*$`<br><br>Username of the Kafka user.<br><br>
@@ -34,19 +34,12 @@ The following terms are used to describe attributes in the schema of this data s
 *___cluster_id___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
 <br>ID of the Kafka cluster.<br><br>
+*___sasl_scram_mechanism___*<br>
+<ins>Type</ins>: string, read-only<br>
+<ins>Constraints</ins>: allowed values: [ `SCRAM-SHA-256`, `SCRAM-SHA-512` ]<br><br>SASL/SCRAM mechanism for user<br><br>
 *___password___*<br>
 <ins>Type</ins>: string (password), read-only<br>
 <br>Password for the Kafka user.<br><br>
 *___initial_permissions___*<br>
 <ins>Type</ins>: string, read-only<br>
 <ins>Constraints</ins>: allowed values: [ `standard`, `read-only`, `none` ]<br><br>Permissions initially granted to Kafka user upon creation.<br><br>
-<a id="nested--options"></a>
-## Nested schema for `options`
-Initial options used when creating Kafka user<br>
-### Read-only attributes
-*___override_existing_user___*<br>
-<ins>Type</ins>: boolean, read-only<br>
-<br>Overwrite user if already exists.<br><br>
-*___sasl_scram_mechanism___*<br>
-<ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: allowed values: [ `SCRAM-SHA-256`, `SCRAM-SHA-512` ]<br><br>SASL/SCRAM mechanism for user<br><br>
