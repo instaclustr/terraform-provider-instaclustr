@@ -68,6 +68,9 @@ List of data centre settings.<br>
 *___cloud_provider___*<br>
 <ins>Type</ins>: string, read-only<br>
 <ins>Constraints</ins>: allowed values: [ `AWS_VPC`, `GCP`, `AZURE`, `AZURE_AZ`, `ONPREMISES` ]<br><br>Name of a cloud provider service.<br><br>
+*___replication_factor___*<br>
+<ins>Type</ins>: integer, read-only<br>
+<ins>Constraints</ins>: minimum: 0, maximum: 5<br><br>The number of replica nodes that should be assigned for each master node.<br><br>
 *___region___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Region of the Data Centre. See the description for node size for a compatible Data Centre for a given node size.<br><br>
@@ -79,7 +82,7 @@ List of data centre settings.<br>
 <br>Azure specific settings for the Data Centre. Cannot be provided with AWS or GCP settings.<br><br>
 *___master_nodes___*<br>
 <ins>Type</ins>: integer, read-only<br>
-<ins>Constraints</ins>: minimum: 3, maximum: 1E+2<br><br>Total number of master nodes in the Data Centre.<br><br>
+<ins>Constraints</ins>: minimum: 3, maximum: 1E+2<br><br>Total number of master nodes in the Data Centre. In order to maintain quorum on the cluster, you must specify an odd number of master nodes.<br><br>
 *___deleted_nodes___*<br>
 <ins>Type</ins>: repeatable nested block, read-only, see [deleted_nodes](#nested--deleted_nodes) for nested schema<br>
 <br>List of deleted nodes in the data centre<br><br>
