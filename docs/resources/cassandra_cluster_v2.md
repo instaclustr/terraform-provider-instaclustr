@@ -73,7 +73,7 @@ The following terms are used to describe attributes in the schema of this resour
 <br>Adds Apache Lucene to the Cassandra cluster.<br><br>
 *___cassandra_version___*<br>
 <ins>Type</ins>: string, required, immutable<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Cassandra to run on the cluster. Available versions: <ul> <li>`3.11.15`</li> <li>`3.11.14`</li> <li>`4.0.10`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Cassandra to run on the cluster. Available versions: <ul> <li>`4.1.3`</li> <li>`3.11.15`</li> <li>`4.0.11`</li> <li>`3.11.14`</li> <li>`4.0.10`</li> </ul><br><br>
 *___name___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <ins>Constraints</ins>: pattern: `[a-zA-Z0-9][a-zA-Z0-9_-]*`<br><br>Name of the cluster.<br><br>
