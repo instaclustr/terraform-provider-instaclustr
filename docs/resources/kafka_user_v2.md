@@ -1,18 +1,20 @@
 ---
-page_title: "instaclustr_kafka_user_v3 Resource - terraform-provider-instaclustr"
+page_title: "instaclustr_kafka_user_v2 Resource - terraform-provider-instaclustr"
 subcategory: ""
 description: |-
 ---
 
-# instaclustr_kafka_user_v3 (Resource)
+# instaclustr_kafka_user_v2 (Resource)
 Definition of a Kafka User to be applied to a Kafka cluster.
 ## Example Usage
 ```
-resource "instaclustr_kafka_user_v3" "example" {
+resource "instaclustr_kafka_user_v2" "example" {
   password = "myPassword1."
-  override_existing_user = false
-  sasl_scram_mechanism = "SCRAM-SHA-256"
-  auth_mechanism = "SASL"
+  options {
+    override_existing_user = false
+    sasl_scram_mechanism = "SCRAM-SHA-256"
+  }
+
   cluster_id = "c1af59c6-ba0e-4cc2-a0f3-65cee17a5f37"
   initial_permissions = "standard"
   username = "myKafkaUser"
@@ -28,35 +30,43 @@ The following terms are used to describe attributes in the schema of this resour
 - **_nested block_** - These attributes use the [Terraform block syntax](https://www.terraform.io/language/attr-as-blocks) when defined as an input in the Terraform code. Attributes with the type **_repeatable nested block_** are the same except that the nested block can be defined multiple times with varying nested attributes. When reading nested block attributes, an index must be provided when accessing the contents of the nested block, example - `my_resource.nested_block_attribute[0].nested_attribute`.
 ## Root Level Schema
 ### Input attributes - Required
-*___auth_mechanism___*<br>
-<ins>Type</ins>: string, required, updatable<br>
-<ins>Constraints</ins>: allowed values: [ `SASL` ]<br><br>Authentication mechanisms supported for KafkaClusters.<br><br>
-*___override_existing_user___*<br>
-<ins>Type</ins>: boolean, required, immutable<br>
-<br>Overwrite user if already exists.<br><br>
+*___options___*<br>
+<ins>Type</ins>: nested object, required, immutable, see [options](#nested--options) for nested schema<br>
+<br>Initial options used when creating Kafka user<br><br>
 *___username___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <ins>Constraints</ins>: pattern: `^(?![zZ][oO][oO][kK][eE][eE][pP][eE][rR]$)[a-zA-Z0-9][a-zA-Z0-9_-]*$`<br><br>Username of the Kafka user.<br><br>
 *___cluster_id___*<br>
 <ins>Type</ins>: string (uuid), required, immutable<br>
 <br>ID of the Kafka cluster.<br><br>
+*___password___*<br>
+<ins>Type</ins>: string (password), required, updatable<br>
+<br>Password for the Kafka user.<br><br>
 *___initial_permissions___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <ins>Constraints</ins>: allowed values: [ `standard`, `read-only`, `none` ]<br><br>Permissions initially granted to Kafka user upon creation.<br><br>
 ### Input attributes - Optional
-*___sasl_scram_mechanism___*<br>
+*___auth_mechanism___*<br>
 <ins>Type</ins>: string, optional, updatable<br>
-<ins>Constraints</ins>: allowed values: [ `SCRAM-SHA-256`, `SCRAM-SHA-512` ]<br><br>SASL/SCRAM mechanism for user<br><br>
-*___password___*<br>
-<ins>Type</ins>: string (password), optional, updatable<br>
-<br>Password for the Kafka user.<br><br>
+<ins>Constraints</ins>: allowed values: [ `SASL` ]<br><br>Authentication mechanisms supported for KafkaClusters.<br><br>
 ### Read-only attributes
 *___id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Instaclustr identifier for the Kafka user. The value of this property has the form: [cluster-id]_[kafka-username]<br><br>
+<a id="nested--options"></a>
+## Nested schema for `options`
+Initial options used when creating Kafka user<br>
+### Input attributes - Required
+*___sasl_scram_mechanism___*<br>
+<ins>Type</ins>: string, required, updatable<br>
+<ins>Constraints</ins>: allowed values: [ `SCRAM-SHA-256`, `SCRAM-SHA-512` ]<br><br>SASL/SCRAM mechanism for user<br><br>
+### Input attributes - Optional
+*___override_existing_user___*<br>
+<ins>Type</ins>: boolean, optional, immutable<br>
+<br>Overwrite user if already exists.<br><br>
 ## Import
 This resource can be imported using the `terraform import` command as follows:
 ```
-terraform import instaclustr_kafka_user_v3.[resource-name] "[resource-id]"
+terraform import instaclustr_kafka_user_v2.[resource-name] "[resource-id]"
 ```
 `[resource-id]` is the unique identifier for this resource matching the value of the `id` attribute defined in the root schema above.
