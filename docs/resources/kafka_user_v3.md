@@ -30,7 +30,7 @@ The following terms are used to describe attributes in the schema of this resour
 ### Input attributes - Required
 *___auth_mechanism___*<br>
 <ins>Type</ins>: string, required, updatable<br>
-<ins>Constraints</ins>: allowed values: [ `SASL` ]<br><br>Authentication mechanisms supported for KafkaClusters.<br><br>
+<ins>Constraints</ins>: allowed values: [ `MTLS`, `SASL` ]<br><br>Authentication mechanisms supported for KafkaClusters.<br><br>
 *___username___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <ins>Constraints</ins>: pattern: `^(?![zZ][oO][oO][kK][eE][eE][pP][eE][rR]$)[a-zA-Z0-9][a-zA-Z0-9_-]*$`<br><br>Username of the Kafka user.<br><br>

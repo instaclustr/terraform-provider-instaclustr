@@ -21,7 +21,7 @@ The following terms are used to describe attributes in the schema of this data s
 ### Read-only attributes
 *___auth_mechanism___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: allowed values: [ `SASL` ]<br><br>Authentication mechanisms supported for KafkaClusters.<br><br>
+<ins>Constraints</ins>: allowed values: [ `MTLS`, `SASL` ]<br><br>Authentication mechanisms supported for KafkaClusters.<br><br>
 *___override_existing_user___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Overwrite user if already exists.<br><br>
