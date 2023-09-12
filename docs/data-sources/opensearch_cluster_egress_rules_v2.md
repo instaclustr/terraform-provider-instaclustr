@@ -44,7 +44,7 @@ List of OpenSearch egress rules<br>
 <br>Name of channel/desination assosciated with webhook<br><br>
 *___type___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: allowed values: [ `SLACK`, `WEBHOOK`, `CUSTOM_WEBHOOK`, `CHIME` ]<br><br>Type of the channel/destination<br><br>
+<ins>Constraints</ins>: allowed values: [ `SLACK`, `WEBHOOK`, `CUSTOM_WEBHOOK`, `CHIME`, `UNKNOWN` ]<br><br>Type of the channel/destination<br><br>
 *___cluster_id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>OpenSearch cluster Id<br><br>
