@@ -88,7 +88,7 @@ List of data centre settings.<br>
 <br>ID of the Cluster Data Centre.<br><br>
 *___tag___*<br>
 <ins>Type</ins>: repeatable nested block, read-only, see [tag](#nested--tag) for nested schema<br>
-<br>List of tags to apply to the Data Centre. Tags are metadata labels which  allow you to identify, categorize and filter clusters. This can be useful for grouping together clusters into applications, environments, or any category that you require. Note `tag` is not supported in terraform lifecycle `ignore_changes`. <br><br>
+<br>List of tags to apply to the Data Centre. Tags are metadata labels which  allow you to identify, categorize and filter clusters. This can be useful for grouping together clusters into applications, environments, or any category that you require. Note `tag` is not supported in terraform lifecycle `ignore_changes`.<br><br>
 *___name___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>A logical name for the data centre within a cluster. These names must be unique in the cluster.<br><br>
@@ -154,7 +154,7 @@ GCP specific settings for the Data Centre. Cannot be provided with AWS or Azure 
 <br>Network name or a relative Network or Subnetwork URI e.g. projects/my-project/regions/us-central1/subnetworks/my-subnet. The Data Centre's network allocation must match the IPv4 CIDR block of the specified subnet.<br><br>
 <a id="nested--tag"></a>
 ## Nested schema for `tag`
-List of tags to apply to the Data Centre. Tags are metadata labels which  allow you to identify, categorize and filter clusters. This can be useful for grouping together clusters into applications, environments, or any category that you require. Note `tag` is not supported in terraform lifecycle `ignore_changes`. <br>
+List of tags to apply to the Data Centre. Tags are metadata labels which  allow you to identify, categorize and filter clusters. This can be useful for grouping together clusters into applications, environments, or any category that you require. Note `tag` is not supported in terraform lifecycle `ignore_changes`.<br>
 ### Read-only attributes
 *___key___*<br>
 <ins>Type</ins>: string, read-only<br>

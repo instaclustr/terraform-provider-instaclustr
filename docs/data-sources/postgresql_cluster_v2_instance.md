@@ -45,7 +45,7 @@ The following terms are used to describe attributes in the schema of this data s
 <ins>Constraints</ins>: pattern: `[a-zA-Z0-9][a-zA-Z0-9_-]*`<br><br>Name of the cluster.<br><br>
 *___postgresql_version___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Postgresql to run on the cluster. Available versions: <ul> <li>`13.11.0`</li> <li>`13.10.0`</li> <li>`14.7.0`</li> <li>`14.8.0`</li> <li>`13.9.0`</li> <li>`14.6.0`</li> <li>`15.2.0`</li> <li>`15.3.0`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Postgresql to run on the cluster. Available versions: <ul> <li>`13.11.0`</li> <li>`13.12.0`</li> <li>`14.9.0`</li> <li>`13.10.0`</li> <li>`14.7.0`</li> <li>`14.8.0`</li> <li>`15.4.0`</li> <li>`15.2.0`</li> <li>`15.3.0`</li> </ul><br><br>
 *___resize_settings___*<br>
 <ins>Type</ins>: nested block, read-only, see [resize_settings](#nested--resize_settings) for nested schema<br>
 <br>Settings to determine how resize requests will be performed for the cluster.<br><br>
@@ -94,7 +94,7 @@ List of data centre settings.<br>
 <br>ID of the Cluster Data Centre.<br><br>
 *___tag___*<br>
 <ins>Type</ins>: repeatable nested block, read-only, see [tag](#nested--tag) for nested schema<br>
-<br>List of tags to apply to the Data Centre. Tags are metadata labels which  allow you to identify, categorize and filter clusters. This can be useful for grouping together clusters into applications, environments, or any category that you require. Note `tag` is not supported in terraform lifecycle `ignore_changes`. <br><br>
+<br>List of tags to apply to the Data Centre. Tags are metadata labels which  allow you to identify, categorize and filter clusters. This can be useful for grouping together clusters into applications, environments, or any category that you require. Note `tag` is not supported in terraform lifecycle `ignore_changes`.<br><br>
 *___name___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>A logical name for the data centre within a cluster. These names must be unique in the cluster.<br><br>
@@ -169,7 +169,7 @@ GCP specific settings for the Data Centre. Cannot be provided with AWS or Azure 
 <br>Network name or a relative Network or Subnetwork URI e.g. projects/my-project/regions/us-central1/subnetworks/my-subnet. The Data Centre's network allocation must match the IPv4 CIDR block of the specified subnet.<br><br>
 <a id="nested--tag"></a>
 ## Nested schema for `tag`
-List of tags to apply to the Data Centre. Tags are metadata labels which  allow you to identify, categorize and filter clusters. This can be useful for grouping together clusters into applications, environments, or any category that you require. Note `tag` is not supported in terraform lifecycle `ignore_changes`. <br>
+List of tags to apply to the Data Centre. Tags are metadata labels which  allow you to identify, categorize and filter clusters. This can be useful for grouping together clusters into applications, environments, or any category that you require. Note `tag` is not supported in terraform lifecycle `ignore_changes`.<br>
 ### Read-only attributes
 *___key___*<br>
 <ins>Type</ins>: string, read-only<br>
@@ -224,7 +224,7 @@ List of non-deleted nodes in the data centre<br>
 <ins>Constraints</ins>: allowed values: [ `TRANSACTION`, `SESSION`, `STATEMENT` ]<br><br>Creates PgBouncer with the selected mode, see [PgBouncer pool modes] (https://www.instaclustr.com/support/documentation/postgresql-add-ons/using-pgbouncer/)<br><br>
 *___pg_bouncer_version___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Pg Bouncer to run on the cluster. Available versions: <ul> <li>`1.19.0`</li> <li>`1.18.0`</li> <li>`1.17.0`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Pg Bouncer to run on the cluster. Available versions: <ul> <li>`1.19.0`</li> <li>`1.18.0`</li> <li>`1.20.0`</li> </ul><br><br>
 <a id="nested--resize_settings"></a>
 ## Nested schema for `resize_settings`
 Settings to determine how resize requests will be performed for the cluster.<br>
