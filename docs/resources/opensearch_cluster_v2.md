@@ -220,9 +220,6 @@ List of data centre settings.<br>
 ## Nested schema for `azure_settings`
 Azure specific settings for the Data Centre. Cannot be provided with AWS or GCP settings.<br>
 ### Input attributes - Optional
-*___storage_account___*<br>
-<ins>Type</ins>: string, optional, immutable<br>
-<br>Specify the Storage Account to use for storing backup data for the cluster data centre. Only available for customers running in their own cloud provider accounts.<br><br>
 *___resource_group___*<br>
 <ins>Type</ins>: string, optional, immutable<br>
 <br>The name of the Azure Resource Group into which the Data Centre will be provisioned.<br><br>
@@ -354,9 +351,6 @@ AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure 
 *___ebs_encryption_key___*<br>
 <ins>Type</ins>: string (uuid), optional, immutable<br>
 <br>ID of a KMS encryption key to encrypt data on nodes. KMS encryption key must be set in Cluster Resources through the Instaclustr Console before provisioning an encrypted Data Centre.<br><br>
-*___backup_bucket___*<br>
-<ins>Type</ins>: string, optional, immutable<br>
-<br>Specify the S3 bucket to use for storing backup data for the cluster data centre. Only available for customers running in their own cloud provider accounts.<br><br>
 <a id="nested--two_factor_delete"></a>
 ## Nested schema for `two_factor_delete`
 
