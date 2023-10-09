@@ -27,13 +27,6 @@ resource "instaclustr_cassandra_cluster_v2" "example" {
     client_to_cluster_encryption = true
     cloud_provider = "AWS_VPC"
     continuous_backup = true
-    debezium {
-      kafka_cdc_id = "d363b575-3d22-4235-80ad-7699bed3123c"
-      kafka_topic_prefix = "MyTopicPrefix"
-      kafka_vpc_type = "VPC_PEERED"
-      version = "[x.y.z]"
-    }
-
     name = "MyTestDataCentre2"
     network = "10.1.0.0/16"
     node_size = "CAS-PRD-m6g.large-120"
@@ -166,9 +159,6 @@ List of data centre settings.<br>
 *___tag___*<br>
 <ins>Type</ins>: repeatable nested block, optional, immutable, see [tag](#nested--tag) for nested schema<br>
 <br>List of tags to apply to the Data Centre. Tags are metadata labels which  allow you to identify, categorize and filter clusters. This can be useful for grouping together clusters into applications, environments, or any category that you require. Note `tag` is not supported in terraform lifecycle `ignore_changes`.<br><br>
-*___debezium___*<br>
-<ins>Type</ins>: nested block, optional, updatable, see [debezium](#nested--debezium) for nested schema<br>
-<br>Adds the specified version of Debezium Connector Cassandra to the Cassandra cluster, as well as the Kafka Cluster Data Centre ID, Kafka VPC Type, and Kafka Topic Prefix.<br><br>
 *___aws_settings___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [aws_settings](#nested--aws_settings) for nested schema<br>
 <br>AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure settings.<br><br>
@@ -294,22 +284,6 @@ Settings to determine how resize requests will be performed for the cluster.<br>
 *___notify_support_contacts___*<br>
 <ins>Type</ins>: boolean, optional, updatable<br>
 <br>Setting this property to `true` will notify the Instaclustr Account's designated support contacts on resize completion.<br><br>
-<a id="nested--debezium"></a>
-## Nested schema for `debezium`
-Adds the specified version of Debezium Connector Cassandra to the Cassandra cluster, as well as the Kafka Cluster Data Centre ID, Kafka VPC Type, and Kafka Topic Prefix.<br>
-### Input attributes - Required
-*___kafka_topic_prefix___*<br>
-<ins>Type</ins>: string, required, updatable<br>
-<br>Kafka Topic Prefix<br><br>
-*___kafka_cdc_id___*<br>
-<ins>Type</ins>: string (uuid), required, updatable<br>
-<br>Kafka Cluster Data Centre Id<br><br>
-*___version___*<br>
-<ins>Type</ins>: string, required, updatable<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Adds the specified version of Debezium Connector Cassandra to the Cassandra cluster. Available versions: <ul> <li>`2.0.1`</li> </ul><br><br>
-*___kafka_vpc_type___*<br>
-<ins>Type</ins>: string, required, updatable<br>
-<br>Kafka VPC Type with only VPC_PEERED supported.<br><br>
 <a id="nested--aws_settings"></a>
 ## Nested schema for `aws_settings`
 AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure settings.<br>
