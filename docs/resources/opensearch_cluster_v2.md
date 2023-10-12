@@ -75,7 +75,7 @@ The following terms are used to describe attributes in the schema of this resour
 <ins>Constraints</ins>: minimum items: 1<br><br>List of cluster managers node settings<br><br>
 *___opensearch_version___*<br>
 <ins>Type</ins>: string, required, immutable<br>
-<ins>Constraints</ins>: pattern: `([0-9]+\.){2}[0-9]+`<br><br>Version of OpenSearch to run on the cluster. Available versions: <ul> <li>`1.3.11`</li> <li>`1.3.13`</li> <li>`2.9.0`</li> <li>`2.7.0`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `([0-9]+\.){2}[0-9]+`<br><br>Version of OpenSearch to run on the cluster. Available versions: <ul> <li>`1.3.11`</li> <li>`2.9.0`</li> <li>`2.7.0`</li> <li>`1.3.13`</li> </ul><br><br>
 *___private_network_cluster___*<br>
 <ins>Type</ins>: boolean, required, immutable<br>
 <br>Creates the cluster with private network only, see [Private Network Clusters](https://www.instaclustr.com/support/documentation/useful-information/private-network-clusters/).<br><br>
@@ -94,7 +94,7 @@ The following terms are used to describe attributes in the schema of this resour
 <br>A description of the cluster<br><br>
 *___knn_plugin___*<br>
 <ins>Type</ins>: boolean, optional, immutable<br>
-<br>Enable knn plugin<br><br>
+<br>Enable the k-NN plugin<br><br>
 *___index_management_plugin___*<br>
 <ins>Type</ins>: boolean, optional, immutable<br>
 <br>Enable index management plugin<br><br>
