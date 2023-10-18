@@ -283,7 +283,7 @@ Adds the specified version of Apache Spark to the Cassandra cluster.<br>
 ### Input attributes - Required
 *___version___*<br>
 <ins>Type</ins>: string, required, updatable<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Adds the specified version of Apache Spark to the Cassandra cluster. Available versions: <ul> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Adds the specified version of Apache Spark to the Cassandra cluster. Available versions: <ul> <li>`3.3.2`</li> </ul><br><br>
 <a id="nested--resize_settings"></a>
 ## Nested schema for `resize_settings`
 Settings to determine how resize requests will be performed for the cluster.<br>

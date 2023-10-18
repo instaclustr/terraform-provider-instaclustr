@@ -1,17 +1,27 @@
 ---
-page_title: "instaclustr_cluster_network_firewall_rule_v2 Resource - terraform-provider-instaclustr"
+page_title: "instaclustr_cluster_network_firewall_rules_v2 Resource - terraform-provider-instaclustr"
 subcategory: ""
 description: |-
 ---
 
-# instaclustr_cluster_network_firewall_rule_v2 (Resource)
-Definition of an CIDR based firewall rule to be applied to a cluster.
+# instaclustr_cluster_network_firewall_rules_v2 (Resource)
+A listable data source of all CIDR based firewall rules in an Instaclustr managed cluster.
 ## Example Usage
 ```
-resource "instaclustr_cluster_network_firewall_rule_v2" "example" {
+resource "instaclustr_cluster_network_firewall_rules_v2" "example" {
   cluster_id = "91346037-b969-4c4d-8112-59e1d2aa67e9"
-  type = "CASSANDRA_CQL"
-  network = "127.0.0.3/32"
+  firewall_rules {
+    cluster_id = "91346037-b969-4c4d-8112-59e1d2aa67e9"
+    network = "127.0.0.4/32"
+    type = "CASSANDRA_CQL"
+  }
+
+  firewall_rules {
+    cluster_id = "91346037-b969-4c4d-8112-59e1d2aa67e9"
+    network = "127.0.0.3/32"
+    type = "CASSANDRA_CQL"
+  }
+
 }
 ```
 ## Glossary
@@ -23,6 +33,20 @@ The following terms are used to describe attributes in the schema of this resour
 - **_updatable_** - These input attributes can be updated to a different value if needed, and doing so will trigger an update operation.
 - **_nested block_** - These attributes use the [Terraform block syntax](https://www.terraform.io/language/attr-as-blocks) when defined as an input in the Terraform code. Attributes with the type **_repeatable nested block_** are the same except that the nested block can be defined multiple times with varying nested attributes. When reading nested block attributes, an index must be provided when accessing the contents of the nested block, example - `my_resource.nested_block_attribute[0].nested_attribute`.
 ## Root Level Schema
+### Input attributes - Optional
+*___firewall_rules___*<br>
+<ins>Type</ins>: repeatable nested block, optional, updatable, see [firewall_rules](#nested--firewall_rules) for nested schema<br>
+<br>
+*___cluster_id___*<br>
+<ins>Type</ins>: string, optional, updatable<br>
+<br>
+### Read-only attributes
+*___status___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>The status of the cluster<br><br>
+<a id="nested--firewall_rules"></a>
+## Nested schema for `firewall_rules`
+
 ### Input attributes - Required
 *___type___*<br>
 <ins>Type</ins>: string, required, immutable<br>
@@ -46,6 +70,6 @@ The following terms are used to describe attributes in the schema of this resour
 ## Import
 This resource can be imported using the `terraform import` command as follows:
 ```
-terraform import instaclustr_cluster_network_firewall_rule_v2.[resource-name] "[resource-id]"
+terraform import instaclustr_cluster_network_firewall_rules_v2.[resource-name] "[resource-id]"
 ```
-`[resource-id]` is the unique identifier for this resource matching the value of the `id` attribute defined in the root schema above.
+`[resource-id]` is the unique identifier for this resource matching the value of the `cluster_id` attribute defined in the root schema above.

@@ -26,6 +26,9 @@ The following terms are used to describe attributes in the schema of this data s
 *___firewall_rules___*<br>
 <ins>Type</ins>: repeatable nested block, read-only, see [firewall_rules](#nested--firewall_rules) for nested schema<br>
 <br>
+*___status___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>The status of the cluster<br><br>
 *___cluster_id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>
