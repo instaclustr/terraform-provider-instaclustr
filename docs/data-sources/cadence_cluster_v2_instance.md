@@ -31,6 +31,9 @@ The following terms are used to describe attributes in the schema of this data s
 *___standard_provisioning___*<br>
 <ins>Type</ins>: nested block, read-only, see [standard_provisioning](#nested--standard_provisioning) for nested schema<br>
 <br>Settings for STARDARD provisioning. Must not be defined with SHARED provisioning options.<br><br>
+*___use_http_api___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>Enable Cadence HTTP API<br><br>
 *___status___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Status of the cluster.<br><br>

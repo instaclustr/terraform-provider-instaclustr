@@ -21,7 +21,7 @@ resource "instaclustr_cadence_cluster_v2" "example" {
     region = "US_EAST_1"
   }
 
-  cadence_version = "0.22.4"
+  cadence_version = "1.2.2"
   standard_provisioning {
     advanced_visibility {
       target_kafka {
@@ -43,6 +43,7 @@ resource "instaclustr_cadence_cluster_v2" "example" {
 
   }
 
+  use_http_api = false
   private_network_cluster = false
   name = "MyCadenceCluster"
   sla_tier = "PRODUCTION"
@@ -64,6 +65,9 @@ The following terms are used to describe attributes in the schema of this resour
 *___sla_tier___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <ins>Constraints</ins>: allowed values: [ `PRODUCTION`, `NON_PRODUCTION` ]<br><br>SLA Tier of the cluster. Non-production clusters may receive lower priority support and reduced SLAs. Production tier is not available when using Developer class nodes. See [SLA Tier](https://www.instaclustr.com/support/documentation/useful-information/sla-tier/) for more information.<br><br>
+*___use_http_api___*<br>
+<ins>Type</ins>: boolean, required, immutable<br>
+<br>Enable Cadence HTTP API<br><br>
 *___name___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <ins>Constraints</ins>: pattern: `[a-zA-Z0-9][a-zA-Z0-9_-]*`<br><br>Name of the cluster.<br><br>
