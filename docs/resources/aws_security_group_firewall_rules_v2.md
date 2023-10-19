@@ -10,13 +10,13 @@ A listable data source of all AWS Security Group based firewall rules in an Inst
 ```
 resource "instaclustr_aws_security_group_firewall_rules_v2" "example" {
   cluster_id = "91346037-b969-4c4d-8112-59e1d2aa67e9"
-  firewall_rules {
+  firewall_rule {
     cluster_id = "91346037-b969-4c4d-8112-59e1d2aa67e9"
     security_group_id = "sg-903004f0"
     type = "CASSANDRA_CQL"
   }
 
-  firewall_rules {
+  firewall_rule {
     cluster_id = "91346037-b969-4c4d-8112-59e1d2aa67e9"
     security_group_id = "sg-903004f6"
     type = "CASSANDRA_CQL"
@@ -34,18 +34,18 @@ The following terms are used to describe attributes in the schema of this resour
 - **_nested block_** - These attributes use the [Terraform block syntax](https://www.terraform.io/language/attr-as-blocks) when defined as an input in the Terraform code. Attributes with the type **_repeatable nested block_** are the same except that the nested block can be defined multiple times with varying nested attributes. When reading nested block attributes, an index must be provided when accessing the contents of the nested block, example - `my_resource.nested_block_attribute[0].nested_attribute`.
 ## Root Level Schema
 ### Input attributes - Optional
-*___firewall_rules___*<br>
-<ins>Type</ins>: repeatable nested block, optional, updatable, see [firewall_rules](#nested--firewall_rules) for nested schema<br>
-<br>
 *___cluster_id___*<br>
 <ins>Type</ins>: string, optional, updatable<br>
+<br>
+*___firewall_rule___*<br>
+<ins>Type</ins>: repeatable nested block, optional, updatable, see [firewall_rule](#nested--firewall_rule) for nested schema<br>
 <br>
 ### Read-only attributes
 *___status___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>The status of the cluster<br><br>
-<a id="nested--firewall_rules"></a>
-## Nested schema for `firewall_rules`
+<a id="nested--firewall_rule"></a>
+## Nested schema for `firewall_rule`
 
 ### Input attributes - Required
 *___security_group_id___*<br>
