@@ -41,10 +41,6 @@ resource "instaclustr_cassandra_cluster_v2" "example" {
     private_ip_broadcast_for_discovery = true
     region = "US_EAST_2"
     replication_factor = 3
-    shotover_proxy {
-      node_size = "CSO-PRD-c6g.xlarge-20"
-    }
-
   }
 
   private_network_cluster = false
