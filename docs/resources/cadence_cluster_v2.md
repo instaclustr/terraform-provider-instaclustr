@@ -65,9 +65,6 @@ The following terms are used to describe attributes in the schema of this resour
 *___sla_tier___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <ins>Constraints</ins>: allowed values: [ `PRODUCTION`, `NON_PRODUCTION` ]<br><br>SLA Tier of the cluster. Non-production clusters may receive lower priority support and reduced SLAs. Production tier is not available when using Developer class nodes. See [SLA Tier](https://www.instaclustr.com/support/documentation/useful-information/sla-tier/) for more information.<br><br>
-*___use_http_api___*<br>
-<ins>Type</ins>: boolean, required, immutable<br>
-<br>Enable Cadence HTTP API<br><br>
 *___name___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <ins>Constraints</ins>: pattern: `[a-zA-Z0-9][a-zA-Z0-9_-]*`<br><br>Name of the cluster.<br><br>
@@ -90,6 +87,9 @@ The following terms are used to describe attributes in the schema of this resour
 *___standard_provisioning___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [standard_provisioning](#nested--standard_provisioning) for nested schema<br>
 <br>Settings for STARDARD provisioning. Must not be defined with SHARED provisioning options.<br><br>
+*___use_http_api___*<br>
+<ins>Type</ins>: boolean, optional, immutable<br>
+<br>Enable Cadence HTTP API<br><br>
 *___resize_settings___*<br>
 <ins>Type</ins>: nested block, optional, updatable, see [resize_settings](#nested--resize_settings) for nested schema<br>
 <br>Settings to determine how resize requests will be performed for the cluster.<br><br>
