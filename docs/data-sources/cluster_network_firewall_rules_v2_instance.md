@@ -24,13 +24,13 @@ The following terms are used to describe attributes in the schema of this data s
 <br>The status of the cluster<br><br>
 *___cluster_id___*<br>
 <ins>Type</ins>: string, read-only<br>
-<br>
+<br>ID of the cluster<br><br>
 *___firewall_rule___*<br>
 <ins>Type</ins>: repeatable nested block, read-only, see [firewall_rule](#nested--firewall_rule) for nested schema<br>
-<br>
+<br>Firewall rules<br><br>
 <a id="nested--firewall_rule"></a>
 ## Nested schema for `firewall_rule`
-
+Firewall rules<br>
 ### Read-only attributes
 *___status___*<br>
 <ins>Type</ins>: string, read-only<br>
@@ -44,9 +44,6 @@ The following terms are used to describe attributes in the schema of this data s
 *___type___*<br>
 <ins>Type</ins>: string, read-only<br>
 <ins>Constraints</ins>: allowed values: [ `APACHE_ZOOKEEPER`, `CADENCE`, `CADENCE_GRPC`, `CADENCE_WEB`, `CASSANDRA`, `CASSANDRA_CQL`, `ELASTICSEARCH`, `KAFKA`, `KAFKA_CONNECT`, `KAFKA_ENCRYPTION`, `KAFKA_MTLS`, `KAFKA_NO_ENCRYPTION`, `KAFKA_PRIVATE_SASL_PLAINTEXT_LISTENER`, `KAFKA_PUBLIC_SASL_PLAINTEXT_LISTENER`, `KAFKA_PRIVATE_PLAINTEXT_LISTENER`, `KAFKA_PUBLIC_PLAINTEXT_LISTENER`, `KAFKA_PRIVATE_SSL_LISTENER`, `KAFKA_PUBLIC_SSL_LISTENER`, `KAFKA_REST_PROXY`, `KAFKA_SCHEMA_REGISTRY`, `KARAPACE_REST_PROXY`, `KARAPACE_SCHEMA_REGISTRY`, `MONGODB`, `OPENSEARCH`, `OPENSEARCH_DASHBOARDS`, `PGBOUNCER`, `POSTGRESQL`, `REDIS`, `SEARCH_DASHBOARDS`, `SECURE_APACHE_ZOOKEEPER`, `SPARK`, `SPARK_JOBSERVER`, `SHOTOVER_PROXY`, `DEBEZIUM_CONNECTOR_CASSANDRA_KAFKA`, `DEBEZIUM_CONNECTOR_CASSANDRA_SCHEMA` ]<br><br>The type of firewall rule.<br><br>
-*___cluster_id___*<br>
-<ins>Type</ins>: string (uuid), read-only<br>
-<br>ID of the cluster for the cluster network firewall rule.<br><br>
 *___network___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>The network of the cluster network firewall rule.<br><br>
