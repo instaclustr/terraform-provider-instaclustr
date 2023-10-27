@@ -33,7 +33,7 @@ The following terms are used to describe attributes in the schema of this resour
 ## Root Level Schema
 ### Input attributes - Required
 *___cluster_id___*<br>
-<ins>Type</ins>: string, required, updatable<br>
+<ins>Type</ins>: string (uuid), required, updatable<br>
 <br>
 *___firewall_rule___*<br>
 <ins>Type</ins>: repeatable nested block, required, updatable, see [firewall_rule](#nested--firewall_rule) for nested schema<br>
@@ -53,9 +53,6 @@ The following terms are used to describe attributes in the schema of this resour
 <ins>Type</ins>: string, required, immutable<br>
 <ins>Constraints</ins>: allowed values: [ `APACHE_ZOOKEEPER`, `CADENCE`, `CADENCE_GRPC`, `CADENCE_WEB`, `CASSANDRA`, `CASSANDRA_CQL`, `ELASTICSEARCH`, `KAFKA`, `KAFKA_CONNECT`, `KAFKA_ENCRYPTION`, `KAFKA_MTLS`, `KAFKA_NO_ENCRYPTION`, `KAFKA_PRIVATE_SASL_PLAINTEXT_LISTENER`, `KAFKA_PUBLIC_SASL_PLAINTEXT_LISTENER`, `KAFKA_PRIVATE_PLAINTEXT_LISTENER`, `KAFKA_PUBLIC_PLAINTEXT_LISTENER`, `KAFKA_PRIVATE_SSL_LISTENER`, `KAFKA_PUBLIC_SSL_LISTENER`, `KAFKA_REST_PROXY`, `KAFKA_SCHEMA_REGISTRY`, `KARAPACE_REST_PROXY`, `KARAPACE_SCHEMA_REGISTRY`, `MONGODB`, `OPENSEARCH`, `OPENSEARCH_DASHBOARDS`, `PGBOUNCER`, `POSTGRESQL`, `REDIS`, `SEARCH_DASHBOARDS`, `SECURE_APACHE_ZOOKEEPER`, `SPARK`, `SPARK_JOBSERVER`, `SHOTOVER_PROXY`, `DEBEZIUM_CONNECTOR_CASSANDRA_KAFKA`, `DEBEZIUM_CONNECTOR_CASSANDRA_SCHEMA` ]<br><br>The type of firewall rule.<br><br>
 ### Read-only attributes
-*___status___*<br>
-<ins>Type</ins>: string, read-only<br>
-<br>The status of the AWS security group firewall rule.<br><br>
 *___deferred_reason___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>The reason (if needed) for the deferred status of the AWS security group firewall rule.<br><br>

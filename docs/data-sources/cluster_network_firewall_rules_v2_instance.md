@@ -23,7 +23,7 @@ The following terms are used to describe attributes in the schema of this data s
 <ins>Type</ins>: string, read-only<br>
 <br>The status of the cluster<br><br>
 *___cluster_id___*<br>
-<ins>Type</ins>: string, read-only<br>
+<ins>Type</ins>: string (uuid), read-only<br>
 <br>ID of the cluster<br><br>
 *___firewall_rule___*<br>
 <ins>Type</ins>: repeatable nested block, read-only, see [firewall_rule](#nested--firewall_rule) for nested schema<br>
@@ -32,9 +32,6 @@ The following terms are used to describe attributes in the schema of this data s
 ## Nested schema for `firewall_rule`
 Firewall rules<br>
 ### Read-only attributes
-*___status___*<br>
-<ins>Type</ins>: string, read-only<br>
-<br>The status of the cluster network firewall rule.<br><br>
 *___deferred_reason___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>The reason (if needed) for the deferred status of the cluster network firewall rule.<br><br>
