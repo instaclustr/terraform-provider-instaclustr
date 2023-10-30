@@ -47,7 +47,7 @@ The following terms are used to describe attributes in the schema of this resour
 
 ### Input attributes - Required
 *___security_group_id___*<br>
-<ins>Type</ins>: string, required, immutable<br>
+<ins>Type</ins>: string, required, updatable<br>
 <br>The security group ID of the AWS security group firewall rule.<br><br>
 *___type___*<br>
 <ins>Type</ins>: string, required, immutable<br>
