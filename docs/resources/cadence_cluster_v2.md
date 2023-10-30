@@ -21,7 +21,7 @@ resource "instaclustr_cadence_cluster_v2" "example" {
     region = "US_EAST_1"
   }
 
-  cadence_version = "0.22.4"
+  cadence_version = "1.2.2"
   standard_provisioning {
     advanced_visibility {
       target_kafka {
@@ -43,6 +43,7 @@ resource "instaclustr_cadence_cluster_v2" "example" {
 
   }
 
+  use_http_api = false
   private_network_cluster = false
   name = "MyCadenceCluster"
   sla_tier = "PRODUCTION"
@@ -86,6 +87,9 @@ The following terms are used to describe attributes in the schema of this resour
 *___standard_provisioning___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [standard_provisioning](#nested--standard_provisioning) for nested schema<br>
 <br>Settings for STARDARD provisioning. Must not be defined with SHARED provisioning options.<br><br>
+*___use_http_api___*<br>
+<ins>Type</ins>: boolean, optional, immutable<br>
+<br>Enable Cadence HTTP API<br><br>
 *___resize_settings___*<br>
 <ins>Type</ins>: nested block, optional, updatable, see [resize_settings](#nested--resize_settings) for nested schema<br>
 <br>Settings to determine how resize requests will be performed for the cluster.<br><br>
@@ -272,7 +276,15 @@ GCP specific settings for the Data Centre. Cannot be provided with AWS or Azure 
 ### Input attributes - Optional
 *___custom_virtual_network_id___*<br>
 <ins>Type</ins>: string, optional, immutable<br>
-<br>Network name or a relative Network or Subnetwork URI e.g. projects/my-project/regions/us-central1/subnetworks/my-subnet. The Data Centre's network allocation must match the IPv4 CIDR block of the specified subnet.<br><br>
+<br>Network name or a relative Network or Subnetwork URI.
+The Data Centre's network allocation must match the IPv4 CIDR block of the specified subnet.
+
+Examples:
+- Network URI: <code>projects/{riyoa-gcp-project-name}/global/networks/{network-name}</code>.
+- Network name: <code>{network-name}</code>, equivalent to <code>projects/{riyoa-gcp-project-name}/global/networks/{network-name}</code>.
+- Same-project subnetwork URI: <code>projects/{riyoa-gcp-project-name}/regions/{region-id}/subnetworks/{subnetwork-name}</code>.
+- Shared VPC subnetwork URI: <code>projects/{riyoa-gcp-host-project-name}/regions/{region-id}/subnetworks/{subnetwork-name}</code>.
+<br><br>
 <a id="nested--target_kafka"></a>
 ## Nested schema for `target_kafka`
 
