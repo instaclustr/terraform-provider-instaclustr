@@ -9,7 +9,7 @@ A listable data source of all AWS Security Group based firewall rules in an Inst
 ## Example Usage
 ```
 data "instaclustr_aws_security_group_firewall_rules_v2_instance" "example" { 
-  cluster_id = "<cluster_id>" // the value of the `cluster_id` attribute defined in the root schema below
+  id = "<id>" // the value of the `id` attribute defined in the root schema below
 }
 ```
 ## Glossary
@@ -22,15 +22,18 @@ The following terms are used to describe attributes in the schema of this data s
 *___status___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>The status of the cluster<br><br>
+*___id___*<br>
+<ins>Type</ins>: string (uuid), read-only<br>
+<br>ID of the cluster security group firewall rules resource<br><br>
 *___cluster_id___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
-<br>
+<br>ID of the cluster<br><br>
 *___firewall_rule___*<br>
 <ins>Type</ins>: repeatable nested block, read-only, see [firewall_rule](#nested--firewall_rule) for nested schema<br>
-<br>
+<br>Cluster AWS Security Group firewall rules<br><br>
 <a id="nested--firewall_rule"></a>
 ## Nested schema for `firewall_rule`
-
+Cluster AWS Security Group firewall rules<br>
 ### Read-only attributes
 *___security_group_id___*<br>
 <ins>Type</ins>: string, read-only<br>

@@ -42,6 +42,9 @@ The following terms are used to describe attributes in the schema of this resour
 *___status___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>The status of the cluster<br><br>
+*___id___*<br>
+<ins>Type</ins>: string (uuid), read-only<br>
+<br>ID of the cluster network firewall rules resource<br><br>
 <a id="nested--firewall_rule"></a>
 ## Nested schema for `firewall_rule`
 Firewall rules<br>
@@ -64,4 +67,4 @@ This resource can be imported using the `terraform import` command as follows:
 ```
 terraform import instaclustr_cluster_network_firewall_rules_v2.[resource-name] "[resource-id]"
 ```
-`[resource-id]` is the unique identifier for this resource matching the value of the `cluster_id` attribute defined in the root schema above.
+`[resource-id]` is the unique identifier for this resource matching the value of the `id` attribute defined in the root schema above.

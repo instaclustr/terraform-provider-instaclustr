@@ -9,7 +9,7 @@ A listable data source of all CIDR based firewall rules in an Instaclustr manage
 ## Example Usage
 ```
 data "instaclustr_cluster_network_firewall_rules_v2_instance" "example" { 
-  cluster_id = "<cluster_id>" // the value of the `cluster_id` attribute defined in the root schema below
+  id = "<id>" // the value of the `id` attribute defined in the root schema below
 }
 ```
 ## Glossary
@@ -22,6 +22,9 @@ The following terms are used to describe attributes in the schema of this data s
 *___status___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>The status of the cluster<br><br>
+*___id___*<br>
+<ins>Type</ins>: string (uuid), read-only<br>
+<br>ID of the cluster network firewall rules resource<br><br>
 *___cluster_id___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
 <br>ID of the cluster<br><br>

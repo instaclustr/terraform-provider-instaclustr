@@ -34,17 +34,20 @@ The following terms are used to describe attributes in the schema of this resour
 ### Input attributes - Required
 *___cluster_id___*<br>
 <ins>Type</ins>: string (uuid), required, updatable<br>
-<br>
+<br>ID of the cluster<br><br>
 *___firewall_rule___*<br>
 <ins>Type</ins>: repeatable nested block, required, updatable, see [firewall_rule](#nested--firewall_rule) for nested schema<br>
-<br>
+<br>Cluster AWS Security Group firewall rules<br><br>
 ### Read-only attributes
 *___status___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>The status of the cluster<br><br>
+*___id___*<br>
+<ins>Type</ins>: string (uuid), read-only<br>
+<br>ID of the cluster security group firewall rules resource<br><br>
 <a id="nested--firewall_rule"></a>
 ## Nested schema for `firewall_rule`
-
+Cluster AWS Security Group firewall rules<br>
 ### Input attributes - Required
 *___security_group_id___*<br>
 <ins>Type</ins>: string, required, updatable<br>
@@ -64,4 +67,4 @@ This resource can be imported using the `terraform import` command as follows:
 ```
 terraform import instaclustr_aws_security_group_firewall_rules_v2.[resource-name] "[resource-id]"
 ```
-`[resource-id]` is the unique identifier for this resource matching the value of the `cluster_id` attribute defined in the root schema above.
+`[resource-id]` is the unique identifier for this resource matching the value of the `id` attribute defined in the root schema above.
