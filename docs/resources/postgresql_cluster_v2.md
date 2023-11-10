@@ -257,7 +257,7 @@ List of non-deleted nodes in the data centre<br>
 <ins>Constraints</ins>: allowed values: [ `TRANSACTION`, `SESSION`, `STATEMENT` ]<br><br>Creates PgBouncer with the selected mode, see [PgBouncer pool modes] (https://www.instaclustr.com/support/documentation/postgresql-add-ons/using-pgbouncer/)<br><br>
 *___pg_bouncer_version___*<br>
 <ins>Type</ins>: string, required, immutable<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Pg Bouncer to run on the cluster. Available versions: <ul> <li>`1.19.0`</li> <li>`1.20.0`</li> <li>`1.18.0`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Pg Bouncer to run on the cluster. Available versions: <ul> <li>`1.19.0`</li> <li>`1.20.0`</li> <li>`1.18.0`</li> <li>`1.16.1`</li> </ul><br><br>
 <a id="nested--resize_settings"></a>
 ## Nested schema for `resize_settings`
 Settings to determine how resize requests will be performed for the cluster.<br>
