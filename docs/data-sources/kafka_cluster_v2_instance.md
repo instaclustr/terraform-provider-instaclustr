@@ -48,7 +48,7 @@ The following terms are used to describe attributes in the schema of this data s
 <br>Adds the specified version of Kafka Karapace REST Proxy to this Kafka cluster.<br><br>
 *___kafka_version___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Kafka to run on the cluster. Available versions: <ul> <li>`3.1.2`</li> <li>`3.5.1`</li> <li>`3.3.1`</li> <li>`3.4.1`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Kafka to run on the cluster. Available versions: <ul> <li>`3.5.1`</li> <li>`3.3.1`</li> <li>`3.4.1`</li> </ul><br><br>
 *___auto_create_topics___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Allows topics to be auto created by brokers when messages are published to a non-existent topic<br><br>
@@ -119,7 +119,7 @@ Adds the specified version of Kafka REST Proxy to this Kafka cluster.<br>
 <br>Integrates the REST proxy with the Schema registry attached to this cluster. Requires 'integrateRestProxyWithSchemaRegistry' to be 'true'.<br><br>
 *___version___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Adds the specified version of Kafka REST Proxy to the Kafka cluster. Available versions: <ul> <li>`5.0.4`</li> <li>`5.0.0`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Adds the specified version of Kafka REST Proxy to the Kafka cluster. Available versions: <ul> </ul><br><br>
 *___schema_registry_username___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Username to use when connecting to the Kafka schema registry. Requires 'integrateRestProxyWithSchemaRegistry' to be 'true' and useLocalSchemaRegistry to be 'false'.<br><br>
@@ -197,7 +197,7 @@ Adds the specified version of Kafka Karapace REST Proxy to this Kafka cluster.<b
 <br>Enables Integration of the Karapace REST proxy with the local Karapace Schema registry.<br><br>
 *___version___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Adds the specified version of Kafka REST Proxy to the Kafka cluster. Available versions: <ul> <li>`3.6.2`</li> <li>`3.4.3`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Adds the specified version of Kafka REST Proxy to the Kafka cluster. Available versions: <ul> <li>`3.6.2`</li> </ul><br><br>
 <a id="nested--deleted_nodes"></a>
 ## Nested schema for `deleted_nodes`
 List of deleted nodes in the data centre<br>
@@ -341,11 +341,11 @@ Adds the specified version of Kafka Karapace Schema Registry to this Kafka clust
 ### Read-only attributes
 *___version___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Adds the specified version of Kafka Schema Registry to the Kafka cluster. Available versions: <ul> <li>`3.4.3`</li> <li>`3.6.2`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Adds the specified version of Kafka Schema Registry to the Kafka cluster. Available versions: <ul> <li>`3.6.2`</li> </ul><br><br>
 <a id="nested--schema_registry"></a>
 ## Nested schema for `schema_registry`
 Adds the specified version of Kafka Schema Registry to this Kafka cluster.<br>
 ### Read-only attributes
 *___version___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Adds the specified version of Kafka Schema Registry to the Kafka cluster. Available versions: <ul> <li>`5.0.0`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Adds the specified version of Kafka Schema Registry to the Kafka cluster. Available versions: <ul> </ul><br><br>
