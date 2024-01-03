@@ -36,10 +36,10 @@ The following terms are used to describe attributes in the schema of this data s
 <br>ID of the Kafka cluster<br><br>
 *___configs___*<br>
 <ins>Type</ins>: repeatable nested block, read-only, see [configs](#nested--configs) for nested schema<br>
-<br>List of the the Kafka cluster configs<br><br>
+<br>List of Kafka topic configs which have non-default values. These could be set by terraform or other methods like kafka cli etc.<br><br>
 <a id="nested--configs"></a>
 ## Nested schema for `configs`
-List of the the Kafka cluster configs<br>
+List of Kafka topic configs which have non-default values. These could be set by terraform or other methods like kafka cli etc.<br>
 ### Read-only attributes
 *___key___*<br>
 <ins>Type</ins>: string, read-only<br>

@@ -170,14 +170,14 @@ The following terms are used to describe attributes in the schema of this resour
 ### Input attributes - Optional
 *___configs___*<br>
 <ins>Type</ins>: repeatable nested block, optional, updatable, see [configs](#nested--configs) for nested schema<br>
-<br>List of the the Kafka cluster configs<br><br>
+<br>List of Kafka topic configs which have non-default values. These could be set by terraform or other methods like kafka cli etc.<br><br>
 ### Read-only attributes
 *___id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Instaclustr identifier for the Kafka topic. The value of this property has the form: [cluster-id]_[kafka-topic]<br><br>
 <a id="nested--configs"></a>
 ## Nested schema for `configs`
-List of the the Kafka cluster configs<br>
+List of Kafka topic configs which have non-default values. These could be set by terraform or other methods like kafka cli etc.<br>
 ### Input attributes - Required
 *___key___*<br>
 <ins>Type</ins>: string, required, updatable<br>
