@@ -197,11 +197,17 @@ The version of Shotover Proxy running on the Cluster.<br>
 ### Read-only attributes
 *___version___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>The version of Shotover Proxy running on the Cluster.Available versions: <ul> <li>`0.1.10`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>The version of Shotover Proxy running on the Cluster.Available versions: <ul> <li>`0.2.0`</li> </ul><br><br>
 <a id="nested--azure_settings"></a>
 ## Nested schema for `azure_settings`
 Azure specific settings for the Data Centre. Cannot be provided with AWS or GCP settings.<br>
 ### Input attributes - Optional
+*___storage_network___*<br>
+<ins>Type</ins>: string, optional, immutable<br>
+<br>The private network address block to be used for the storage network. This is only used for certain node sizes, currently limited to those which use Azure NetApp Files: for all other node sizes, this field should not be provided. The network must have a prefix length between /16 and /28, and must be part of a private address range.<br><br>
+*___custom_virtual_network_id___*<br>
+<ins>Type</ins>: string, optional, immutable<br>
+<br>VNet ID into which the Data Centre will be provisioned. The VNet must have an available address space for the Data Centre's network allocation to be appended to the VNet. Currently supported for PostgreSQL clusters only.<br><br>
 *___resource_group___*<br>
 <ins>Type</ins>: string, optional, immutable<br>
 <br>The name of the Azure Resource Group into which the Data Centre will be provisioned.<br><br>
