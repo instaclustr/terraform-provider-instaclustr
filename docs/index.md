@@ -49,11 +49,12 @@ With the v2 version of the Instaclustr Terraform Provider, new resources have be
 
 ### Ignore_changes lifecycle feature inconsistency
 
-The ‘ignore_changes’ feature in Terraform does not work as expected in the Instaclustr Terraform Provider:
+The ‘ignore_changes’ feature in Terraform does not work as expected in the Instaclustr Terraform Provider.
 
-When all changes in the Terraform configuration file (.tf) are ignored using 'ignore_changes', 'ignore_changes' works correctly. The plan stage shows no changes and the apply stage is not triggered.
+**Case 1**When all changes in the Terraform configuration file (.tf) are ignored using 'ignore_changes', 'ignore_changes' works correctly. The plan stage shows no changes and the apply stage is not triggered.
 #### Example
 Initial Terraform Configuration
+
 ```terraform
 resource "project" "foo" {
   name = "foo"
@@ -82,9 +83,9 @@ resource "project" "foo" {
 ```
 Terraform plan won’t show any changes and apply won’t be triggered.
 
-If only certain changes in the Terraform configuration are meant to be ignored using 'ignore_changes', the functionality does not work as expected. During the plan stage, the plan show changes are ignored as expected. However, during the apply stage, the changes that should be ignored according to 'ignore_changes' are not actually ignored due to a custom method implemented in our provider.
+**Case 2**If only certain changes in the Terraform configuration are meant to be ignored using 'ignore_changes', the functionality does not work as expected. During the plan stage, the plan show changes are ignored as expected. However, during the apply stage, the changes that should be ignored according to 'ignore_changes' are not actually ignored due to a custom method implemented in our provider.
 #### Example:
-Initial Terraform Configuration
+Initial Terraform Configuration:
 ```terraform
 resource "project" "foo" {
   name = "foo"
@@ -96,7 +97,7 @@ resource "project" "foo" {
   }
 }
 ```
-Updated Terraform Configuration
+Updated Terraform Configuration:
 ```terraform
 resource "project" "foo" {
   name = "foo"
@@ -111,7 +112,7 @@ resource "project" "foo" {
   }
 }
 ```
-Terraform plan will show
+Terraform plan will show:
 ```terraform
 ~resource "project" "foo" {
   ~role {
@@ -119,4 +120,4 @@ Terraform plan will show
   }
 }
 ```
-
+In apply stage, the PUT API request will include a payload that both roles are shown updated.
