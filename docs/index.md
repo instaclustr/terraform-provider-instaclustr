@@ -45,15 +45,14 @@ provider "instaclustr" {
 
 With the v2 version of the Instaclustr Terraform Provider, new resources have been introduced and schemas of existing resources have been changed. While the [Terraform Registry](https://registry.terraform.io/providers/instaclustr/instaclustr/latest/docs) contains the schema definitions of each resource, for a tool assisted approach of migrating to the v2 version of the Terraform Provider, see our support article on [importing Terraform resources](https://www.instaclustr.com/support/api-integrations/integrations/terraform-code-generation/).
 
-## Limitations
+## Known Limitations
 
-### Limitation 1
-
-Ignore_changes lifecycle feature inconsistency.
+### Ignore_changes lifecycle feature inconsistency
 
 The ‘ignore_changes’ feature in Terraform does not work as expected in the Instaclustr Terraform Provider:
-1. When all changes in the Terraform configuration file (.tf) are ignored using 'ignore_changes', 'ignore_changes' works correctly. The plan stage shows no changes and the apply stage is not triggered.
-Example:
+
+When all changes in the Terraform configuration file (.tf) are ignored using 'ignore_changes', 'ignore_changes' works correctly. The plan stage shows no changes and the apply stage is not triggered.
+#### Example
 Initial Terraform Configuration
 ```terraform
 resource "project" "foo" {
@@ -66,8 +65,8 @@ resource "project" "foo" {
   }
 }
 ```
-```terraform
 Updated Terraform Configuration
+```terraform
 resource "project" "foo" {
   name = "foo"
   role {
@@ -82,9 +81,10 @@ resource "project" "foo" {
 }
 ```
 Terraform plan won’t show any changes and apply won’t be triggered.
-2. If only certain changes in the Terraform configuration are meant to be ignored using 'ignore_changes', the functionality does not work as expected. During the plan stage, the plan show changes are ignored as expected. However, during the apply stage, the changes that should be ignored according to 'ignore_changes' are not actually ignored due to a custom method implemented in our provider.
-Example:
-Initial Terraform Configuration:
+
+If only certain changes in the Terraform configuration are meant to be ignored using 'ignore_changes', the functionality does not work as expected. During the plan stage, the plan show changes are ignored as expected. However, during the apply stage, the changes that should be ignored according to 'ignore_changes' are not actually ignored due to a custom method implemented in our provider.
+#### Example:
+Initial Terraform Configuration
 ```terraform
 resource "project" "foo" {
   name = "foo"
