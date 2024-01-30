@@ -53,9 +53,10 @@ The ‘ignore_changes’ feature in Terraform does not work as expected in the I
 
 #### Case 1
 When all changes in the Terraform configuration file (.tf) are ignored using 'ignore_changes', 'ignore_changes' works correctly. The plan stage shows no changes and the apply stage is not triggered.
-** Example **
-Initial Terraform Configuration
 
+** Example **
+
+Initial Terraform Configuration:
 ```terraform
 resource "project" "foo" {
   name = "foo"
@@ -86,7 +87,9 @@ Terraform plan won’t show any changes and apply won’t be triggered.
 
 #### Case 2
 If only certain changes in the Terraform configuration are meant to be ignored using 'ignore_changes', the functionality does not work as expected. During the plan stage, the plan show changes are ignored as expected. However, during the apply stage, the changes that should be ignored according to 'ignore_changes' are not actually ignored due to a custom method implemented in our provider.
+
 ** Example **
+
 Initial Terraform Configuration:
 ```terraform
 resource "project" "foo" {
