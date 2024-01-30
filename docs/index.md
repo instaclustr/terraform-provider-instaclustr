@@ -85,10 +85,10 @@ resource "project" "foo" {
 ```
 Terraform plan won’t show any changes and apply won’t be triggered.
 
-Please carefully review Terraform plans and outputs and avoid using ignore_changes if possible.
+Please carefully review Terraform plans and outputs and avoid using `ignore_changes` if possible.
 
 #### Case 2
-If only certain changes in the Terraform configuration are meant to be ignored using 'ignore_changes', the functionality does not work as expected. During the plan stage, the plan show changes are ignored as expected. However, during the apply stage, the changes that should be ignored according to 'ignore_changes' are not actually ignored due to a custom method implemented in our provider.
+If only certain changes in the Terraform configuration are meant to be ignored using `ignore_changes`, the functionality does not work as expected. During the plan stage, the plan show changes are ignored as expected. However, during the apply stage, the changes that should be ignored according to `ignore_changes` are not actually ignored due to a custom method implemented in our provider.
 
 **Example**
 
