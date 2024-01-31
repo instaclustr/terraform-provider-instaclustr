@@ -177,4 +177,4 @@ Terraform plan will show:
 However, the apply won’t cause any actual resource changes.
 We advise users to review their Terraform plans and outputs. If possible, avoid reordering data centers and tags to prevent these inconsistencies.
 
-We are currently exploring options to address these limitations, which includes updates to our Terraform Provider. We understand that the limitations can pose a challenge, and we are committed to resolving it. If you are facing these issues or have any further questions, please contact our friendly team at any time. Your input is invaluable in helping us improve.
+We are currently exploring options to address these limitations, which includes updates to our Terraform Provider with [latest SDK](https://github.com/hashicorp/terraform-plugin-framework). We understand that the limitations can pose a challenge, and we are committed to resolving it. If you are facing these issues or have any further questions, please contact [our friendly team](mailto:support@instaclustr.com) at any time. Your input is invaluable in helping us improve.
