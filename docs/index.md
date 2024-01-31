@@ -135,6 +135,7 @@ However, in apply stage, the PUT API request will include a payload that both ro
 Altering the order of repeatable nested block types in the Terraform configuration can lead to discrepancies between the Terraform plan and the subsequent apply phase. This problem arises due to our use of Terraform's SDK `TypeList` for an array of objects, where the order of resources is maintained, so naturally the resources in an array cannot reorder.
 
 To overcome this, we did some customize implementation on terraform provider. Our terraform apply/plan adjust the order of entries in TF state to match order in TF configuration without changing the actual resource.
+
 **Example**
 
 Initial Terraform Configuration:
