@@ -90,6 +90,7 @@ Please carefully review Terraform plans and outputs and avoid using `ignore_chan
 #### Case 2
 If only certain changes in the Terraform configuration are meant to be ignored using `ignore_changes`, the functionality does not work as expected. During the plan stage, the plan show changes are ignored as expected. However, during the apply stage, the changes that should be ignored according to `ignore_changes` are not actually ignored due to a custom method implemented in our provider.
 
+
 **Example**
 
 Initial Terraform Configuration:
@@ -131,7 +132,7 @@ However, in apply stage, the PUT API request will include a payload that both ro
 
 ### Ordering of nested block types
 
-Altering the order of repeatable nested block types in the Terraform configuration can lead to discrepancies between the Terraform plan and the subsequent apply phase. This problem arises due to our use of Terraform's SDK TypeList for an array of objects, where the order of resources is maintained, so naturally the resources in an array cannot reorder.
+Altering the order of repeatable nested block types in the Terraform configuration can lead to discrepancies between the Terraform plan and the subsequent apply phase. This problem arises due to our use of Terraform's SDK `TypeList` for an array of objects, where the order of resources is maintained, so naturally the resources in an array cannot reorder.
 
 To overcome this, we did some customize implementation on terraform provider. Our terraform apply/plan adjust the order of entries in TF state to match order in TF configuration without changing the actual resource.
 **Example**
@@ -174,3 +175,5 @@ Terraform plan will show:
 ```
 However, the apply won’t cause any actual resource changes.
 We advise users to review their Terraform plans and outputs. If possible, avoid reordering data centers and tags to prevent these inconsistencies.
+
+We are currently exploring options to address these limitations, which includes updates to our Terraform Provider. We understand that the limitations can pose a challenge, and we are committed to resolving it. If you are facing these issues or have any further questions, please contact our friendly team at any time. Your input is invaluable in helping us improve.
