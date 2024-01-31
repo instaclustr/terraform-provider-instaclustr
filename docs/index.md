@@ -128,7 +128,7 @@ Terraform plan will show:
 ```
 However, in apply stage, the PUT API request will include a payload that both roles are updated.
 
-Please carefully review Terraform plans and outputs and avoid using `ignore_changes` if possible.
+Please carefully review Terraform outputs and avoid using `ignore_changes` if possible.
 
 ### Ordering of nested block types
 
