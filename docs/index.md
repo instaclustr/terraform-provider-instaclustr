@@ -49,10 +49,10 @@ With the v2 version of the Instaclustr Terraform Provider, new resources have be
 
 ### Ignore_changes lifecycle feature inconsistency
 
-The ‘ignore_changes’ feature in Terraform does not work as expected in the Instaclustr Terraform Provider.
+The `ignore_changes` feature in Terraform does not work as expected in the Instaclustr Terraform Provider.
 
 #### Case 1
-When all changes in the Terraform configuration file (.tf) are ignored using 'ignore_changes', 'ignore_changes' works correctly. The plan stage shows no changes and the apply stage is not triggered.
+When all changes in the Terraform configuration file (.tf) are ignored using `ignore_changes`, `ignore_changes` works correctly. The plan stage shows no changes and the apply stage is not triggered.
 
 **Example**
 
