@@ -96,7 +96,7 @@ The following terms are used to describe attributes in the schema of this resour
 <br>Provision this cluster for [Bundled Use only](https://www.instaclustr.com/support/documentation/cadence/getting-started-with-cadence/bundled-use-only-cluster-deployments/).<br><br>
 *___kraft___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [kraft](#nested--kraft) for nested schema<br>
-<br>Create a KRaft Cluster<br><br>
+<br>Create a KRaft Cluster. If specified, this will take precedence over 'collocatedZookeeper'. This is also the default mode for kafka versions >= 3.6.1. <br><br>
 *___resize_settings___*<br>
 <ins>Type</ins>: nested block, optional, updatable, see [resize_settings](#nested--resize_settings) for nested schema<br>
 <br>Settings to determine how resize requests will be performed for the cluster.<br><br>
@@ -293,7 +293,7 @@ List of tags to apply to the Data Centre. Tags are metadata labels which  allow 
 <br>Value of the tag to be added to the Data Centre.<br><br>
 <a id="nested--kraft"></a>
 ## Nested schema for `kraft`
-Create a KRaft Cluster<br>
+Create a KRaft Cluster. If specified, this will take precedence over 'collocatedZookeeper'. This is also the default mode for kafka versions >= 3.6.1. <br>
 ### Input attributes - Required
 *___controller_node_count___*<br>
 <ins>Type</ins>: integer, required, immutable<br>
