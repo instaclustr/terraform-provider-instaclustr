@@ -9,11 +9,7 @@ Definition of a managed Postgresql cluster that can be provisioned in Instaclust
 ## Example Usage
 ```
 resource "instaclustr_postgresql_cluster_v2" "example" {
-  extension {
-    extension_enabled = false
-    extension_name = "PgVector"
-  }
-
+  extensions = [ "PG_VECTOR" ]
   data_centre {
     client_to_cluster_encryption = true
     cloud_provider = "AWS_VPC"
@@ -64,12 +60,12 @@ The following terms are used to describe attributes in the schema of this resour
 <ins>Type</ins>: boolean, required, immutable<br>
 <br>Creates the cluster with private network only, see [Private Network Clusters](https://www.instaclustr.com/support/documentation/useful-information/private-network-clusters/).<br><br>
 ### Input attributes - Optional
+*___extensions___*<br>
+<ins>Type</ins>: list of strings, optional, updatable<br>
+<ins>Constraints</ins>: allowed values: [ `PG_VECTOR` ]<br><br>List of PostgreSQL extensions.<br><br>
 *___description___*<br>
 <ins>Type</ins>: string, optional, updatable<br>
 <br>A description of the cluster<br><br>
-*___extension___*<br>
-<ins>Type</ins>: repeatable nested block, optional, immutable, see [extension](#nested--extension) for nested schema<br>
-<br>List of PostgreSQL extensions.<br><br>
 *___resize_settings___*<br>
 <ins>Type</ins>: nested block, optional, updatable, see [resize_settings](#nested--resize_settings) for nested schema<br>
 <br>Settings to determine how resize requests will be performed for the cluster.<br><br>
@@ -168,16 +164,6 @@ Azure specific settings for the Data Centre. Cannot be provided with AWS or GCP 
 *___resource_group___*<br>
 <ins>Type</ins>: string, optional, immutable<br>
 <br>The name of the Azure Resource Group into which the Data Centre will be provisioned.<br><br>
-<a id="nested--extension"></a>
-## Nested schema for `extension`
-List of PostgreSQL extensions.<br>
-### Input attributes - Required
-*___extension_name___*<br>
-<ins>Type</ins>: string, required, immutable<br>
-<br>PostgreSQL extension name.<br><br>
-*___extension_enabled___*<br>
-<ins>Type</ins>: boolean, required, immutable<br>
-<br>
 <a id="nested--deleted_nodes"></a>
 ## Nested schema for `deleted_nodes`
 List of deleted nodes in the data centre<br>
@@ -205,7 +191,7 @@ List of deleted nodes in the data centre<br>
 <br>Private IP address of the node.<br><br>
 *___node_roles___*<br>
 <ins>Type</ins>: list of strings, read-only<br>
-<ins>Constraints</ins>: allowed values: [ `CASSANDRA`, `SPARK_MASTER`, `SPARK_JOBSERVER`, `KAFKA_BROKER`, `KAFKA_DEDICATED_ZOOKEEPER`, `KAFKA_ZOOKEEPER`, `KAFKA_SCHEMA_REGISTRY`, `KAFKA_REST_PROXY`, `APACHE_ZOOKEEPER`, `POSTGRESQL`, `PGBOUNCER`, `KAFKA_CONNECT`, `KAFKA_KARAPACE_SCHEMA_REGISTRY`, `KAFKA_KARAPACE_REST_PROXY`, `CADENCE`, `COUCHBASE_DATA`, `COUCHBASE_INDEX`, `COUCHBASE_QUERY`, `COUCHBASE_SEARCH`, `COUCHBASE_EVENTING`, `COUCHBASE_ANALYTICS`, `MONGODB`, `REDIS_MASTER`, `REDIS_REPLICA`, `OPENSEARCH_DASHBOARDS`, `OPENSEARCH_COORDINATOR`, `OPENSEARCH_MASTER`, `OPENSEARCH_DATA`, `OPENSEARCH_INGEST`, `OPENSEARCH_DATA_AND_INGEST` ]<br><br>The roles or purposes of the node. Useful for filtering for nodes that have a specific role.<br><br>
+<ins>Constraints</ins>: allowed values: [ `CASSANDRA`, `SPARK_MASTER`, `SPARK_JOBSERVER`, `KAFKA_BROKER`, `KAFKA_DEDICATED_ZOOKEEPER`, `KAFKA_DEDICATED_KRAFT_CONTROLLER`, `KAFKA_ZOOKEEPER`, `KAFKA_SCHEMA_REGISTRY`, `KAFKA_REST_PROXY`, `APACHE_ZOOKEEPER`, `POSTGRESQL`, `PGBOUNCER`, `KAFKA_CONNECT`, `KAFKA_KARAPACE_SCHEMA_REGISTRY`, `KAFKA_KARAPACE_REST_PROXY`, `CADENCE`, `COUCHBASE_DATA`, `COUCHBASE_INDEX`, `COUCHBASE_QUERY`, `COUCHBASE_SEARCH`, `COUCHBASE_EVENTING`, `COUCHBASE_ANALYTICS`, `MONGODB`, `REDIS_MASTER`, `REDIS_REPLICA`, `OPENSEARCH_DASHBOARDS`, `OPENSEARCH_COORDINATOR`, `OPENSEARCH_MASTER`, `OPENSEARCH_DATA`, `OPENSEARCH_INGEST`, `OPENSEARCH_DATA_AND_INGEST` ]<br><br>The roles or purposes of the node. Useful for filtering for nodes that have a specific role.<br><br>
 *___public_address___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Public IP address of the node.<br><br>
@@ -261,7 +247,7 @@ List of non-deleted nodes in the data centre<br>
 <br>Private IP address of the node.<br><br>
 *___node_roles___*<br>
 <ins>Type</ins>: list of strings, read-only<br>
-<ins>Constraints</ins>: allowed values: [ `CASSANDRA`, `SPARK_MASTER`, `SPARK_JOBSERVER`, `KAFKA_BROKER`, `KAFKA_DEDICATED_ZOOKEEPER`, `KAFKA_ZOOKEEPER`, `KAFKA_SCHEMA_REGISTRY`, `KAFKA_REST_PROXY`, `APACHE_ZOOKEEPER`, `POSTGRESQL`, `PGBOUNCER`, `KAFKA_CONNECT`, `KAFKA_KARAPACE_SCHEMA_REGISTRY`, `KAFKA_KARAPACE_REST_PROXY`, `CADENCE`, `COUCHBASE_DATA`, `COUCHBASE_INDEX`, `COUCHBASE_QUERY`, `COUCHBASE_SEARCH`, `COUCHBASE_EVENTING`, `COUCHBASE_ANALYTICS`, `MONGODB`, `REDIS_MASTER`, `REDIS_REPLICA`, `OPENSEARCH_DASHBOARDS`, `OPENSEARCH_COORDINATOR`, `OPENSEARCH_MASTER`, `OPENSEARCH_DATA`, `OPENSEARCH_INGEST`, `OPENSEARCH_DATA_AND_INGEST` ]<br><br>The roles or purposes of the node. Useful for filtering for nodes that have a specific role.<br><br>
+<ins>Constraints</ins>: allowed values: [ `CASSANDRA`, `SPARK_MASTER`, `SPARK_JOBSERVER`, `KAFKA_BROKER`, `KAFKA_DEDICATED_ZOOKEEPER`, `KAFKA_DEDICATED_KRAFT_CONTROLLER`, `KAFKA_ZOOKEEPER`, `KAFKA_SCHEMA_REGISTRY`, `KAFKA_REST_PROXY`, `APACHE_ZOOKEEPER`, `POSTGRESQL`, `PGBOUNCER`, `KAFKA_CONNECT`, `KAFKA_KARAPACE_SCHEMA_REGISTRY`, `KAFKA_KARAPACE_REST_PROXY`, `CADENCE`, `COUCHBASE_DATA`, `COUCHBASE_INDEX`, `COUCHBASE_QUERY`, `COUCHBASE_SEARCH`, `COUCHBASE_EVENTING`, `COUCHBASE_ANALYTICS`, `MONGODB`, `REDIS_MASTER`, `REDIS_REPLICA`, `OPENSEARCH_DASHBOARDS`, `OPENSEARCH_COORDINATOR`, `OPENSEARCH_MASTER`, `OPENSEARCH_DATA`, `OPENSEARCH_INGEST`, `OPENSEARCH_DATA_AND_INGEST` ]<br><br>The roles or purposes of the node. Useful for filtering for nodes that have a specific role.<br><br>
 *___public_address___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Public IP address of the node.<br><br>
