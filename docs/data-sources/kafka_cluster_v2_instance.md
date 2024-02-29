@@ -48,7 +48,7 @@ The following terms are used to describe attributes in the schema of this data s
 <br>Adds the specified version of Kafka Karapace REST Proxy to this Kafka cluster.<br><br>
 *___kafka_version___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Kafka to run on the cluster. Available versions: <ul> <li>`3.5.1`</li> <li>`3.3.1`</li> <li>`3.4.1`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Kafka to run on the cluster. Available versions: <ul> <li>`3.6.1`</li> <li>`3.5.1`</li> <li>`3.3.1`</li> <li>`3.4.1`</li> </ul><br><br>
 *___auto_create_topics___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Allows topics to be auto created by brokers when messages are published to a non-existent topic<br><br>
@@ -63,13 +63,29 @@ The following terms are used to describe attributes in the schema of this data s
 <br>Provision this cluster for [Bundled Use only](https://www.instaclustr.com/support/documentation/cadence/getting-started-with-cadence/bundled-use-only-cluster-deployments/).<br><br>
 *___kraft___*<br>
 <ins>Type</ins>: nested block, read-only, see [kraft](#nested--kraft) for nested schema<br>
-<br>Create a KRaft Cluster<br><br>
+<br>Create a collocated KRaft Cluster.
+
+Note that this is the default behaviour for Kafka clusters provisioned using Kafka 3.6.1 and later.
+Kafka clusters provisioned with earlier Kafka versions will use a collocated Zookeeper cluster instead.
+<br><br>
 *___resize_settings___*<br>
 <ins>Type</ins>: nested block, read-only, see [resize_settings](#nested--resize_settings) for nested schema<br>
 <br>Settings to determine how resize requests will be performed for the cluster.<br><br>
 *___default_replication_factor___*<br>
 <ins>Type</ins>: integer, read-only<br>
 <br>Default Replication factor to use for new topic. Also represents the number of racks to use when allocating nodes.<br><br>
+*___collocated_zookeeper___*<br>
+<ins>Type</ins>: nested block, read-only, see [collocated_zookeeper](#nested--collocated_zookeeper) for nested schema<br>
+<br>Create a Collocated Zookeeper Cluster - use this to create
+a collocated zookeeper based Kafka cluster for kafka versions >= 3.6.1.
+
+Note that collocated KRaft mode is the default mode for Kafka clusters using versions older than 3.6.1.
+Kafka 3.6.1 and later will use KRaft instead of Zookeeper unless this is specified.
+<br><br>
+*___dedicated_kraft_controller___*<br>
+<ins>Type</ins>: nested block, read-only, see [dedicated_kraft_controller](#nested--dedicated_kraft_controller) for nested schema<br>
+<br>Provision additional dedicated nodes for KRaft Controllers. If this is not provided, some Kafka brokers will be required to act as KRaft controllers.
+<br><br>
 *___private_network_cluster___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Creates the cluster with private network only, see [Private Network Clusters](https://www.instaclustr.com/support/documentation/useful-information/private-network-clusters/).<br><br>
@@ -231,7 +247,7 @@ List of deleted nodes in the data centre<br>
 <br>Private IP address of the node.<br><br>
 *___node_roles___*<br>
 <ins>Type</ins>: list of strings, read-only<br>
-<ins>Constraints</ins>: allowed values: [ `CASSANDRA`, `SPARK_MASTER`, `SPARK_JOBSERVER`, `KAFKA_BROKER`, `KAFKA_DEDICATED_ZOOKEEPER`, `KAFKA_ZOOKEEPER`, `KAFKA_SCHEMA_REGISTRY`, `KAFKA_REST_PROXY`, `APACHE_ZOOKEEPER`, `POSTGRESQL`, `PGBOUNCER`, `KAFKA_CONNECT`, `KAFKA_KARAPACE_SCHEMA_REGISTRY`, `KAFKA_KARAPACE_REST_PROXY`, `CADENCE`, `COUCHBASE_DATA`, `COUCHBASE_INDEX`, `COUCHBASE_QUERY`, `COUCHBASE_SEARCH`, `COUCHBASE_EVENTING`, `COUCHBASE_ANALYTICS`, `MONGODB`, `REDIS_MASTER`, `REDIS_REPLICA`, `OPENSEARCH_DASHBOARDS`, `OPENSEARCH_COORDINATOR`, `OPENSEARCH_MASTER`, `OPENSEARCH_DATA`, `OPENSEARCH_INGEST`, `OPENSEARCH_DATA_AND_INGEST` ]<br><br>The roles or purposes of the node. Useful for filtering for nodes that have a specific role.<br><br>
+<ins>Constraints</ins>: allowed values: [ `CASSANDRA`, `SPARK_MASTER`, `SPARK_JOBSERVER`, `KAFKA_BROKER`, `KAFKA_DEDICATED_ZOOKEEPER`, `KAFKA_DEDICATED_KRAFT_CONTROLLER`, `KAFKA_ZOOKEEPER`, `KAFKA_SCHEMA_REGISTRY`, `KAFKA_REST_PROXY`, `APACHE_ZOOKEEPER`, `POSTGRESQL`, `PGBOUNCER`, `KAFKA_CONNECT`, `KAFKA_KARAPACE_SCHEMA_REGISTRY`, `KAFKA_KARAPACE_REST_PROXY`, `CADENCE`, `COUCHBASE_DATA`, `COUCHBASE_INDEX`, `COUCHBASE_QUERY`, `COUCHBASE_SEARCH`, `COUCHBASE_EVENTING`, `COUCHBASE_ANALYTICS`, `MONGODB`, `REDIS_MASTER`, `REDIS_REPLICA`, `OPENSEARCH_DASHBOARDS`, `OPENSEARCH_COORDINATOR`, `OPENSEARCH_MASTER`, `OPENSEARCH_DATA`, `OPENSEARCH_INGEST`, `OPENSEARCH_DATA_AND_INGEST` ]<br><br>The roles or purposes of the node. Useful for filtering for nodes that have a specific role.<br><br>
 *___public_address___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Public IP address of the node.<br><br>
@@ -262,7 +278,11 @@ List of tags to apply to the Data Centre. Tags are metadata labels which  allow 
 <br>Value of the tag to be added to the Data Centre.<br><br>
 <a id="nested--kraft"></a>
 ## Nested schema for `kraft`
-Create a KRaft Cluster<br>
+Create a collocated KRaft Cluster.
+
+Note that this is the default behaviour for Kafka clusters provisioned using Kafka 3.6.1 and later.
+Kafka clusters provisioned with earlier Kafka versions will use a collocated Zookeeper cluster instead.
+<br>
 ### Read-only attributes
 *___controller_node_count___*<br>
 <ins>Type</ins>: integer, read-only<br>
@@ -294,7 +314,7 @@ List of non-deleted nodes in the data centre<br>
 <br>Private IP address of the node.<br><br>
 *___node_roles___*<br>
 <ins>Type</ins>: list of strings, read-only<br>
-<ins>Constraints</ins>: allowed values: [ `CASSANDRA`, `SPARK_MASTER`, `SPARK_JOBSERVER`, `KAFKA_BROKER`, `KAFKA_DEDICATED_ZOOKEEPER`, `KAFKA_ZOOKEEPER`, `KAFKA_SCHEMA_REGISTRY`, `KAFKA_REST_PROXY`, `APACHE_ZOOKEEPER`, `POSTGRESQL`, `PGBOUNCER`, `KAFKA_CONNECT`, `KAFKA_KARAPACE_SCHEMA_REGISTRY`, `KAFKA_KARAPACE_REST_PROXY`, `CADENCE`, `COUCHBASE_DATA`, `COUCHBASE_INDEX`, `COUCHBASE_QUERY`, `COUCHBASE_SEARCH`, `COUCHBASE_EVENTING`, `COUCHBASE_ANALYTICS`, `MONGODB`, `REDIS_MASTER`, `REDIS_REPLICA`, `OPENSEARCH_DASHBOARDS`, `OPENSEARCH_COORDINATOR`, `OPENSEARCH_MASTER`, `OPENSEARCH_DATA`, `OPENSEARCH_INGEST`, `OPENSEARCH_DATA_AND_INGEST` ]<br><br>The roles or purposes of the node. Useful for filtering for nodes that have a specific role.<br><br>
+<ins>Constraints</ins>: allowed values: [ `CASSANDRA`, `SPARK_MASTER`, `SPARK_JOBSERVER`, `KAFKA_BROKER`, `KAFKA_DEDICATED_ZOOKEEPER`, `KAFKA_DEDICATED_KRAFT_CONTROLLER`, `KAFKA_ZOOKEEPER`, `KAFKA_SCHEMA_REGISTRY`, `KAFKA_REST_PROXY`, `APACHE_ZOOKEEPER`, `POSTGRESQL`, `PGBOUNCER`, `KAFKA_CONNECT`, `KAFKA_KARAPACE_SCHEMA_REGISTRY`, `KAFKA_KARAPACE_REST_PROXY`, `CADENCE`, `COUCHBASE_DATA`, `COUCHBASE_INDEX`, `COUCHBASE_QUERY`, `COUCHBASE_SEARCH`, `COUCHBASE_EVENTING`, `COUCHBASE_ANALYTICS`, `MONGODB`, `REDIS_MASTER`, `REDIS_REPLICA`, `OPENSEARCH_DASHBOARDS`, `OPENSEARCH_COORDINATOR`, `OPENSEARCH_MASTER`, `OPENSEARCH_DATA`, `OPENSEARCH_INGEST`, `OPENSEARCH_DATA_AND_INGEST` ]<br><br>The roles or purposes of the node. Useful for filtering for nodes that have a specific role.<br><br>
 *___public_address___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Public IP address of the node.<br><br>
@@ -308,6 +328,29 @@ Settings to determine how resize requests will be performed for the cluster.<br>
 *___notify_support_contacts___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Setting this property to `true` will notify the Instaclustr Account's designated support contacts on resize completion.<br><br>
+<a id="nested--collocated_zookeeper"></a>
+## Nested schema for `collocated_zookeeper`
+Create a Collocated Zookeeper Cluster - use this to create
+a collocated zookeeper based Kafka cluster for kafka versions >= 3.6.1.
+
+Note that collocated KRaft mode is the default mode for Kafka clusters using versions older than 3.6.1.
+Kafka 3.6.1 and later will use KRaft instead of Zookeeper unless this is specified.
+<br>
+### Read-only attributes
+*___node_count___*<br>
+<ins>Type</ins>: integer, read-only<br>
+<br>Number of Zookeeper nodes.<br><br>
+<a id="nested--dedicated_kraft_controller"></a>
+## Nested schema for `dedicated_kraft_controller`
+Provision additional dedicated nodes for KRaft Controllers. If this is not provided, some Kafka brokers will be required to act as KRaft controllers.
+<br>
+### Read-only attributes
+*___controller_node_count___*<br>
+<ins>Type</ins>: integer, read-only<br>
+<br>Number of dedicated KRaft Controller nodes. Must be 3 or 5.<br><br>
+*___controller_node_size___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Size of the nodes provisioned as dedicated KRaftController nodes.<br><br>
 <a id="nested--aws_settings"></a>
 ## Nested schema for `aws_settings`
 AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure settings.<br>
