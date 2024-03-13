@@ -1,11 +1,13 @@
 BIN_NAME=terraform-provider-instaclustr
 
-VERSION=2.0.99
+VERSION=2.0.100
 
 FULL_BIN_NAME="${BIN_NAME}_v${VERSION}"
 SHASUM_NAME="${BIN_NAME}_${VERSION}_SHA256SUMS"
+GOOS="darwin"
+GOARCH="amd64"
 
-INSTALL_FOLDER=$(HOME)/.terraform.d/plugins/terraform.instaclustr.com/instaclustr/instaclustr/$(VERSION)/darwin_amd64
+INSTALL_FOLDER=$(HOME)/.terraform.d/plugins/terraform.instaclustr.com/instaclustr/instaclustr/$(VERSION)/$(GOOS)_$(GOARCH)
 
 .PHONY: local-build preprod-build build build-all install local-gen-docs gen-docs release_version
 

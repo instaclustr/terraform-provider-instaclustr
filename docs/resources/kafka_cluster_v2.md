@@ -212,6 +212,9 @@ List of data centre settings.<br>
 *___private_link___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [private_link](#nested--private_link) for nested schema<br>
 <br>Create a PrivateLink enabled cluster, see [PrivateLink](https://www.instaclustr.com/support/documentation/useful-information/privatelink/).<br><br>
+*___custom_subject_alternate_names___*<br>
+<ins>Type</ins>: list of strings, optional, updatable<br>
+<br>List of SANs that are present in the certificates in keystores that maybe in use by the bundles on the nodes of the CDC<br><br>
 *___provider_account_name___*<br>
 <ins>Type</ins>: string, optional, immutable<br>
 <br>For customers running in their own account. Your provider account can be found on the Create Cluster page on the Instaclustr Console, or the "Provider Account" property on any existing cluster. For customers provisioning on Instaclustr's cloud provider accounts, this property may be omitted.<br><br>

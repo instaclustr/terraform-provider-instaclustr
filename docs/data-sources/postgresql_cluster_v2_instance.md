@@ -119,6 +119,9 @@ List of data centre settings.<br>
 *___intra_data_centre_replication___*<br>
 <ins>Type</ins>: nested block, read-only, see [intra_data_centre_replication](#nested--intra_data_centre_replication) for nested schema<br>
 <ins>Constraints</ins>: minimum items: 1<br><br>
+*___custom_subject_alternate_names___*<br>
+<ins>Type</ins>: list of strings, read-only<br>
+<br>List of SANs that are present in the certificates in keystores that maybe in use by the bundles on the nodes of the CDC<br><br>
 *___network___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>The private network address block for the Data Centre specified using CIDR address notation. The network must have a prefix length between `/12` and `/22` and must be part of a private address space.<br><br>
