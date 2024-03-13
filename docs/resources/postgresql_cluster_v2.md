@@ -9,11 +9,7 @@ Definition of a managed Postgresql cluster that can be provisioned in Instaclust
 ## Example Usage
 ```
 resource "instaclustr_postgresql_cluster_v2" "example" {
-  extension {
-    extension_enabled = false
-    extension_name = "PgVector"
-  }
-
+  extensions = [ "PG_VECTOR" ]
   data_centre {
     client_to_cluster_encryption = true
     cloud_provider = "AWS_VPC"
@@ -64,12 +60,12 @@ The following terms are used to describe attributes in the schema of this resour
 <ins>Type</ins>: boolean, required, immutable<br>
 <br>Creates the cluster with private network only, see [Private Network Clusters](https://www.instaclustr.com/support/documentation/useful-information/private-network-clusters/).<br><br>
 ### Input attributes - Optional
+*___extensions___*<br>
+<ins>Type</ins>: list of strings, optional, updatable<br>
+<ins>Constraints</ins>: allowed values: [ `PG_VECTOR` ]<br><br>List of PostgreSQL extensions.<br><br>
 *___description___*<br>
 <ins>Type</ins>: string, optional, updatable<br>
 <br>A description of the cluster<br><br>
-*___extension___*<br>
-<ins>Type</ins>: repeatable nested block, optional, immutable, see [extension](#nested--extension) for nested schema<br>
-<br>List of PostgreSQL extensions.<br><br>
 *___resize_settings___*<br>
 <ins>Type</ins>: nested block, optional, updatable, see [resize_settings](#nested--resize_settings) for nested schema<br>
 <br>Settings to determine how resize requests will be performed for the cluster.<br><br>
@@ -168,16 +164,6 @@ Azure specific settings for the Data Centre. Cannot be provided with AWS or GCP 
 *___resource_group___*<br>
 <ins>Type</ins>: string, optional, immutable<br>
 <br>The name of the Azure Resource Group into which the Data Centre will be provisioned.<br><br>
-<a id="nested--extension"></a>
-## Nested schema for `extension`
-List of PostgreSQL extensions.<br>
-### Input attributes - Required
-*___extension_name___*<br>
-<ins>Type</ins>: string, required, immutable<br>
-<br>PostgreSQL extension name.<br><br>
-*___extension_enabled___*<br>
-<ins>Type</ins>: boolean, required, immutable<br>
-<br>
 <a id="nested--deleted_nodes"></a>
 ## Nested schema for `deleted_nodes`
 List of deleted nodes in the data centre<br>

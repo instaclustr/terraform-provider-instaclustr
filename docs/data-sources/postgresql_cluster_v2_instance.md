@@ -19,6 +19,9 @@ The following terms are used to describe attributes in the schema of this data s
 - **_nested block_** - These attributes use the [Terraform block syntax](https://www.terraform.io/language/attr-as-blocks) when defined as an input in the Terraform code. Attributes with the type **_repeatable nested block_** are the same except that the nested block can be defined multiple times with varying nested attributes. When reading nested block attributes, an index must be provided when accessing the contents of the nested block, example - `my_resource.nested_block_attribute[0].nested_attribute`.
 ## Root Level Schema
 ### Read-only attributes
+*___extensions___*<br>
+<ins>Type</ins>: list of strings, read-only<br>
+<ins>Constraints</ins>: allowed values: [ `PG_VECTOR` ]<br><br>List of PostgreSQL extensions.<br><br>
 *___data_centre___*<br>
 <ins>Type</ins>: repeatable nested block, read-only, see [data_centre](#nested--data_centre) for nested schema<br>
 <ins>Constraints</ins>: minimum items: 1, maximum items: 2<br><br>List of data centre settings.<br><br>
@@ -37,9 +40,6 @@ The following terms are used to describe attributes in the schema of this data s
 *___status___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Status of the cluster.<br><br>
-*___extension___*<br>
-<ins>Type</ins>: repeatable nested block, read-only, see [extension](#nested--extension) for nested schema<br>
-<br>List of PostgreSQL extensions.<br><br>
 *___id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>ID of the cluster.<br><br>
@@ -138,16 +138,6 @@ Azure specific settings for the Data Centre. Cannot be provided with AWS or GCP 
 *___resource_group___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>The name of the Azure Resource Group into which the Data Centre will be provisioned.<br><br>
-<a id="nested--extension"></a>
-## Nested schema for `extension`
-List of PostgreSQL extensions.<br>
-### Read-only attributes
-*___extension_name___*<br>
-<ins>Type</ins>: string, read-only<br>
-<br>PostgreSQL extension name.<br><br>
-*___extension_enabled___*<br>
-<ins>Type</ins>: boolean, read-only<br>
-<br>
 <a id="nested--deleted_nodes"></a>
 ## Nested schema for `deleted_nodes`
 List of deleted nodes in the data centre<br>
