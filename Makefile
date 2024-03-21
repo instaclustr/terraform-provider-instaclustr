@@ -46,7 +46,7 @@ install:
 	cp ./bin/$(BIN_NAME)_v$(VERSION) $(INSTALL_FOLDER)
 
 local-gen-docs:
-	IC_API_URL=http://localhost:8090 ./scripts/instaclustr-terraform-registry-documentation-update.sh
+	IC_API_URL=https://api.instaclustr.com ./scripts/instaclustr-terraform-registry-documentation-update.sh
 
 gen-docs:
 	./scripts/instaclustr-terraform-registry-documentation-update.sh
