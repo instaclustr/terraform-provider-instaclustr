@@ -1,19 +1,20 @@
 ---
-page_title: "instaclustr_kafka_user_v4 Resource - terraform-provider-instaclustr"
+page_title: "instaclustr_kafka_user_v3 Resource - terraform-provider-instaclustr"
 subcategory: ""
 description: |-
 ---
 
-# instaclustr_kafka_user_v4 (Resource)
+# instaclustr_kafka_user_v3 (Resource)
 Definition of a Kafka User to be applied to a Kafka cluster.
 ## Example Usage
 ```
-resource "instaclustr_kafka_user_v4" "example" {
+resource "instaclustr_kafka_user_v3" "example" {
   password = "myPassword1."
   override_existing_user = false
   sasl_scram_mechanism = "SCRAM-SHA-256"
   auth_mechanism = "SASL"
   cluster_id = "c1af59c6-ba0e-4cc2-a0f3-65cee17a5f37"
+  initial_permissions = "standard"
   username = "myKafkaUser"
 }
 ```
@@ -36,6 +37,9 @@ The following terms are used to describe attributes in the schema of this resour
 *___cluster_id___*<br>
 <ins>Type</ins>: string (uuid), required, immutable<br>
 <br>ID of the Kafka cluster.<br><br>
+*___initial_permissions___*<br>
+<ins>Type</ins>: string, required, immutable<br>
+<ins>Constraints</ins>: allowed values: [ `standard`, `read-only`, `none` ]<br><br>Permissions initially granted to Kafka user upon creation.<br><br>
 ### Input attributes - Optional
 *___override_existing_user___*<br>
 <ins>Type</ins>: boolean, optional, immutable<br>
@@ -53,6 +57,6 @@ The following terms are used to describe attributes in the schema of this resour
 ## Import
 This resource can be imported using the `terraform import` command as follows:
 ```
-terraform import instaclustr_kafka_user_v4.[resource-name] "[resource-id]"
+terraform import instaclustr_kafka_user_v3.[resource-name] "[resource-id]"
 ```
 `[resource-id]` is the unique identifier for this resource matching the value of the `id` attribute defined in the root schema above.
