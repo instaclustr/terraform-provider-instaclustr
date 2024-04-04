@@ -33,7 +33,7 @@ The following terms are used to describe attributes in the schema of this data s
 <br>Status of the cluster.<br><br>
 *___zookeeper_version___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Apache Zookeeper to run on the cluster. Available versions: <ul> <li>`3.8.2`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Apache Zookeeper to run on the cluster. Available versions: <ul> <li>`3.7.2`</li> <li>`3.8.4`</li> <li>`3.8.2`</li> </ul><br><br>
 *___id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>ID of the cluster.<br><br>
@@ -53,6 +53,9 @@ The following terms are used to describe attributes in the schema of this data s
 ## Nested schema for `data_centre`
 List of data centre settings.<br>
 ### Read-only attributes
+*___custom_subject_alternative_names___*<br>
+<ins>Type</ins>: list of strings, read-only<br>
+<br>List of Subject Alternative Names FQDNs as per RFC 1035.  Used by the applications with self signed certificates in keystores of nodes in the datacenter.<br><br>
 *___cloud_provider___*<br>
 <ins>Type</ins>: string, read-only<br>
 <ins>Constraints</ins>: allowed values: [ `AWS_VPC`, `GCP`, `AZURE`, `AZURE_AZ`, `ONPREMISES` ]<br><br>Name of a cloud provider service.<br><br>
@@ -101,9 +104,6 @@ List of data centre settings.<br>
 *___aws_settings___*<br>
 <ins>Type</ins>: nested block, read-only, see [aws_settings](#nested--aws_settings) for nested schema<br>
 <br>AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure settings.<br><br>
-*___custom_subject_alternate_names___*<br>
-<ins>Type</ins>: list of strings, read-only<br>
-<br>List of Subject Alternate Names FQDNs as per RFC 1035.  Used by the applications with self signed certificates in keystores of nodes in the datacenter.<br><br>
 *___network___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>The private network address block for the Data Centre specified using CIDR address notation. The network must have a prefix length between `/12` and `/22` and must be part of a private address space.<br><br>

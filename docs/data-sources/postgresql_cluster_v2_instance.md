@@ -48,7 +48,7 @@ The following terms are used to describe attributes in the schema of this data s
 <ins>Constraints</ins>: pattern: `[a-zA-Z0-9][a-zA-Z0-9_-]*`<br><br>Name of the cluster.<br><br>
 *___postgresql_version___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Postgresql to run on the cluster. Available versions: <ul> <li>`13.12.0`</li> <li>`14.9.0`</li> <li>`14.8.0`</li> <li>`15.4.0`</li> <li>`15.5.0`</li> <li>`13.13.0`</li> <li>`16.1.0`</li> <li>`15.3.0`</li> <li>`16.0.0`</li> <li>`14.10.0`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Postgresql to run on the cluster. Available versions: <ul> <li>`14.9.0`</li> <li>`13.14.0`</li> <li>`16.1.0`</li> <li>`16.2.0`</li> <li>`15.6.0`</li> <li>`15.5.0`</li> <li>`14.11.0`</li> <li>`14.10.0`</li> </ul><br><br>
 *___resize_settings___*<br>
 <ins>Type</ins>: nested block, read-only, see [resize_settings](#nested--resize_settings) for nested schema<br>
 <br>Settings to determine how resize requests will be performed for the cluster.<br><br>
@@ -68,6 +68,9 @@ The following terms are used to describe attributes in the schema of this data s
 ## Nested schema for `data_centre`
 List of data centre settings.<br>
 ### Read-only attributes
+*___custom_subject_alternative_names___*<br>
+<ins>Type</ins>: list of strings, read-only<br>
+<br>List of Subject Alternative Names FQDNs as per RFC 1035.  Used by the applications with self signed certificates in keystores of nodes in the datacenter.<br><br>
 *___cloud_provider___*<br>
 <ins>Type</ins>: string, read-only<br>
 <ins>Constraints</ins>: allowed values: [ `AWS_VPC`, `GCP`, `AZURE`, `AZURE_AZ`, `ONPREMISES` ]<br><br>Name of a cloud provider service.<br><br>
@@ -119,9 +122,6 @@ List of data centre settings.<br>
 *___intra_data_centre_replication___*<br>
 <ins>Type</ins>: nested block, read-only, see [intra_data_centre_replication](#nested--intra_data_centre_replication) for nested schema<br>
 <ins>Constraints</ins>: minimum items: 1<br><br>
-*___custom_subject_alternate_names___*<br>
-<ins>Type</ins>: list of strings, read-only<br>
-<br>List of Subject Alternate Names FQDNs as per RFC 1035.  Used by the applications with self signed certificates in keystores of nodes in the datacenter.<br><br>
 *___network___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>The private network address block for the Data Centre specified using CIDR address notation. The network must have a prefix length between `/12` and `/22` and must be part of a private address space.<br><br>
@@ -244,7 +244,7 @@ List of non-deleted nodes in the data centre<br>
 <ins>Constraints</ins>: allowed values: [ `TRANSACTION`, `SESSION`, `STATEMENT` ]<br><br>Creates PgBouncer with the selected mode, see [PgBouncer pool modes] (https://www.instaclustr.com/support/documentation/postgresql-add-ons/using-pgbouncer/)<br><br>
 *___pg_bouncer_version___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Pg Bouncer to run on the cluster. Available versions: <ul> <li>`1.19.0`</li> <li>`1.18.0`</li> <li>`1.20.0`</li> <li>`1.21.0`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Pg Bouncer to run on the cluster. Available versions: <ul> <li>`1.19.0`</li> <li>`1.20.0`</li> <li>`1.22.0`</li> <li>`1.18.0`</li> <li>`1.21.0`</li> </ul><br><br>
 <a id="nested--resize_settings"></a>
 ## Nested schema for `resize_settings`
 Settings to determine how resize requests will be performed for the cluster.<br>

@@ -56,7 +56,7 @@ The following terms are used to describe attributes in the schema of this resour
 <br>Enables Client ⇄ Cluster Encryption.<br><br>
 *___kafka_version___*<br>
 <ins>Type</ins>: string, required, immutable<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Kafka to run on the cluster. Available versions: <ul> <li>`3.6.1`</li> <li>`3.5.1`</li> <li>`3.3.1`</li> <li>`3.4.1`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Kafka to run on the cluster. Available versions: <ul> <li>`3.5.1`</li> <li>`3.3.1`</li> <li>`3.6.1`</li> <li>`3.4.1`</li> </ul><br><br>
 *___auto_create_topics___*<br>
 <ins>Type</ins>: boolean, required, immutable<br>
 <br>Allows topics to be auto created by brokers when messages are published to a non-existent topic<br><br>
@@ -197,6 +197,9 @@ List of data centre settings.<br>
 <ins>Type</ins>: string, required, immutable<br>
 <br>The private network address block for the Data Centre specified using CIDR address notation. The network must have a prefix length between `/12` and `/22` and must be part of a private address space.<br><br>
 ### Input attributes - Optional
+*___custom_subject_alternative_names___*<br>
+<ins>Type</ins>: list of strings, optional, updatable<br>
+<br>List of Subject Alternative Names FQDNs as per RFC 1035.  Used by the applications with self signed certificates in keystores of nodes in the datacenter. NOTE: No private link cluster support.<br><br>
 *___azure_settings___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [azure_settings](#nested--azure_settings) for nested schema<br>
 <br>Azure specific settings for the Data Centre. Cannot be provided with AWS or GCP settings.<br><br>
@@ -212,9 +215,6 @@ List of data centre settings.<br>
 *___private_link___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [private_link](#nested--private_link) for nested schema<br>
 <br>Create a PrivateLink enabled cluster, see [PrivateLink](https://www.instaclustr.com/support/documentation/useful-information/privatelink/).<br><br>
-*___custom_subject_alternate_names___*<br>
-<ins>Type</ins>: list of strings, optional, updatable<br>
-<br>List of Subject Alternate Names FQDNs as per RFC 1035.  Used by the applications with self signed certificates in keystores of nodes in the datacenter.<br><br>
 *___provider_account_name___*<br>
 <ins>Type</ins>: string, optional, immutable<br>
 <br>For customers running in their own account. Your provider account can be found on the Create Cluster page on the Instaclustr Console, or the "Provider Account" property on any existing cluster. For customers provisioning on Instaclustr's cloud provider accounts, this property may be omitted.<br><br>
