@@ -43,7 +43,7 @@ The following terms are used to describe attributes in the schema of this resour
 <ins>Constraints</ins>: allowed values: [ `PRODUCTION`, `NON_PRODUCTION` ]<br><br>SLA Tier of the cluster. Non-production clusters may receive lower priority support and reduced SLAs. Production tier is not available when using Developer class nodes. See [SLA Tier](https://www.instaclustr.com/support/documentation/useful-information/sla-tier/) for more information.<br><br>
 *___zookeeper_version___*<br>
 <ins>Type</ins>: string, required, immutable<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Apache Zookeeper to run on the cluster. Available versions: <ul> <li>`3.8.2`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Apache Zookeeper to run on the cluster. Available versions: <ul> <li>`3.7.2`</li> <li>`3.8.4`</li> <li>`3.8.2`</li> </ul><br><br>
 *___name___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <ins>Constraints</ins>: pattern: `[a-zA-Z0-9][a-zA-Z0-9_-]*`<br><br>Name of the cluster.<br><br>
@@ -90,6 +90,9 @@ List of data centre settings.<br>
 <ins>Type</ins>: string, required, immutable<br>
 <br>The private network address block for the Data Centre specified using CIDR address notation. The network must have a prefix length between `/12` and `/22` and must be part of a private address space.<br><br>
 ### Input attributes - Optional
+*___custom_subject_alternative_names___*<br>
+<ins>Type</ins>: list of strings, optional, updatable<br>
+<br>List of Subject Alternative Names FQDNs as per RFC 1035.  Used by the applications with self signed certificates in keystores of nodes in the datacenter.<br><br>
 *___enforce_auth_schemes___*<br>
 <ins>Type</ins>: list of strings, optional, immutable<br>
 <ins>Constraints</ins>: allowed values: [ `NONE`, `SASL` ]<br><br>A list of authentication schemes to enforce when enforce.auth.enabled=true.<br><br>
@@ -111,9 +114,6 @@ List of data centre settings.<br>
 *___aws_settings___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [aws_settings](#nested--aws_settings) for nested schema<br>
 <br>AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure settings.<br><br>
-*___custom_subject_alternate_names___*<br>
-<ins>Type</ins>: list of strings, optional, updatable<br>
-<br>List of Subject Alternate Names FQDNs as per RFC 1035.  Used by the applications with self signed certificates in keystores of nodes in the datacenter.<br><br>
 *___provider_account_name___*<br>
 <ins>Type</ins>: string, optional, immutable<br>
 <br>For customers running in their own account. Your provider account can be found on the Create Cluster page on the Instaclustr Console, or the "Provider Account" property on any existing cluster. For customers provisioning on Instaclustr's cloud provider accounts, this property may be omitted.<br><br>
