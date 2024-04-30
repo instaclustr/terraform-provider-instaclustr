@@ -117,6 +117,9 @@ List of data centre settings.<br>
 <ins>Type</ins>: string, required, immutable<br>
 <br>The private network address block for the Data Centre specified using CIDR address notation. The network must have a prefix length between `/12` and `/22` and must be part of a private address space.<br><br>
 ### Input attributes - Optional
+*___custom_subject_alternative_names___*<br>
+<ins>Type</ins>: list of strings, optional, updatable<br>
+<br>List of Subject Alternative Names FQDNs as per RFC 1035.  Used by the applications with self signed certificates in keystores of nodes in the datacenter.<br><br>
 *___azure_settings___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [azure_settings](#nested--azure_settings) for nested schema<br>
 <br>Azure specific settings for the Data Centre. Cannot be provided with AWS or GCP settings.<br><br>
@@ -135,9 +138,6 @@ List of data centre settings.<br>
 *___aws_settings___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [aws_settings](#nested--aws_settings) for nested schema<br>
 <br>AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure settings.<br><br>
-*___custom_subject_alternate_names___*<br>
-<ins>Type</ins>: list of strings, optional, updatable<br>
-<br>List of Subject Alternate Names FQDNs as per RFC 1035.  Used by the applications with self signed certificates in keystores of nodes in the datacenter.<br><br>
 *___provider_account_name___*<br>
 <ins>Type</ins>: string, optional, immutable<br>
 <br>For customers running in their own account. Your provider account can be found on the Create Cluster page on the Instaclustr Console, or the "Provider Account" property on any existing cluster. For customers provisioning on Instaclustr's cloud provider accounts, this property may be omitted.<br><br>
@@ -270,7 +270,7 @@ List of non-deleted nodes in the data centre<br>
 <ins>Constraints</ins>: allowed values: [ `TRANSACTION`, `SESSION`, `STATEMENT` ]<br><br>Creates PgBouncer with the selected mode, see [PgBouncer pool modes] (https://www.instaclustr.com/support/documentation/postgresql-add-ons/using-pgbouncer/)<br><br>
 *___pg_bouncer_version___*<br>
 <ins>Type</ins>: string, required, immutable<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Pg Bouncer to run on the cluster. Available versions: <ul> <li>`1.19.0`</li> <li>`1.18.0`</li> <li>`1.20.0`</li> <li>`1.21.0`</li> <li>`1.22.0`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Pg Bouncer to run on the cluster. Available versions: <ul> <li>`1.21.0`</li> <li>`1.22.0`</li> </ul><br><br>
 <a id="nested--resize_settings"></a>
 ## Nested schema for `resize_settings`
 Settings to determine how resize requests will be performed for the cluster.<br>
