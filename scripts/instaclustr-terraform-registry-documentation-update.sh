@@ -6,7 +6,7 @@ INSTACLUSTR_API_URL="$IC_API_URL"
 
 if [ -z "$INSTACLUSTR_API_URL" ]
 then
-  INSTACLUSTR_API_URL="https://api.instaclustr.com"
+  INSTACLUSTR_API_URL="https://api.dev.instaclustr.com"
 fi
 
 ZIP_FILE_NAME="terraform-registry-documentation.zip"
