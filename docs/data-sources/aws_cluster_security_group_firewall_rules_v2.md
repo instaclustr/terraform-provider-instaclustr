@@ -41,7 +41,7 @@ The following terms are used to describe attributes in the schema of this data s
 <br>The status of the AWS security group firewall rule.<br><br>
 *___deferred_reason___*<br>
 <ins>Type</ins>: string, read-only<br>
-<br>The reason (if needed) for the deferred status of the AWS security group firewall rule.<br><br>
+<br>The reason (if needed) for the deferred status of the AWS security group firewall rule<br><br>
 *___id___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
 <br>ID of the AWS security group firewall rule.<br><br>
