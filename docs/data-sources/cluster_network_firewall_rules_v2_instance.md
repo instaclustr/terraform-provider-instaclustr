@@ -5,7 +5,7 @@ description: |-
 ---
 
 # instaclustr_cluster_network_firewall_rules_v2_instance (Data Source)
-A listable data source of all CIDR based firewall rules in an Instaclustr managed cluster
+A listable data source of all CIDR based firewall rules in an Instaclustr managed cluster.
 ## Example Usage
 ```
 data "instaclustr_cluster_network_firewall_rules_v2_instance" "example" { 
