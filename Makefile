@@ -16,7 +16,6 @@ release_version:
 build:
 	go build $(FLAGS) -o bin/${FULL_BIN_NAME} main.go
 
-
 build-all-platforms:
 	rm -f bin/${BIN_NAME}*.zip
 	rm -f bin/${SHASUM_NAME}
