@@ -10,6 +10,136 @@ Definition of a Kafka Topic to be applied to a Kafka cluster.
 ```
 resource "instaclustr_kafka_topic_v2" "example" {
   partitions = 3
+  configs {
+    key = "compression.type"
+    value = "producer"
+  }
+
+  configs {
+    key = "leader.replication.throttled.replicas"
+    value = ""
+  }
+
+  configs {
+    key = "message.downconversion.enable"
+    value = "false"
+  }
+
+  configs {
+    key = "min.insync.replicas"
+    value = "1"
+  }
+
+  configs {
+    key = "segment.jitter.ms"
+    value = "0"
+  }
+
+  configs {
+    key = "cleanup.policy"
+    value = "delete"
+  }
+
+  configs {
+    key = "flush.ms"
+    value = "9223372036854775807"
+  }
+
+  configs {
+    key = "follower.replication.throttled.replicas"
+    value = ""
+  }
+
+  configs {
+    key = "segment.bytes"
+    value = "1073741824"
+  }
+
+  configs {
+    key = "retention.ms"
+    value = "604800000"
+  }
+
+  configs {
+    key = "flush.messages"
+    value = "9223372036854775807"
+  }
+
+  configs {
+    key = "message.format.version"
+    value = "3.0-IV1"
+  }
+
+  configs {
+    key = "max.compaction.lag.ms"
+    value = "9223372036854775807"
+  }
+
+  configs {
+    key = "file.delete.delay.ms"
+    value = "60000"
+  }
+
+  configs {
+    key = "max.message.bytes"
+    value = "1048588"
+  }
+
+  configs {
+    key = "min.compaction.lag.ms"
+    value = "0"
+  }
+
+  configs {
+    key = "message.timestamp.type"
+    value = "CreateTime"
+  }
+
+  configs {
+    key = "preallocate"
+    value = "false"
+  }
+
+  configs {
+    key = "min.cleanable.dirty.ratio"
+    value = "0.5"
+  }
+
+  configs {
+    key = "index.interval.bytes"
+    value = "4096"
+  }
+
+  configs {
+    key = "unclean.leader.election.enable"
+    value = "false"
+  }
+
+  configs {
+    key = "retention.bytes"
+    value = "-1"
+  }
+
+  configs {
+    key = "delete.retention.ms"
+    value = "86400000"
+  }
+
+  configs {
+    key = "segment.ms"
+    value = "604800000"
+  }
+
+  configs {
+    key = "message.timestamp.difference.max.ms"
+    value = "9223372036854775807"
+  }
+
+  configs {
+    key = "segment.index.bytes"
+    value = "10485760"
+  }
+
   replication_factor = 3
   topic = "topic-test"
   cluster_id = "c1af59c6-ba0e-4cc2-a0f3-65cee17a5f37"
@@ -37,16 +167,17 @@ The following terms are used to describe attributes in the schema of this resour
 *___cluster_id___*<br>
 <ins>Type</ins>: string (uuid), required, immutable<br>
 <br>ID of the Kafka cluster<br><br>
+### Input attributes - Optional
+*___configs___*<br>
+<ins>Type</ins>: repeatable nested block, optional, updatable, see [configs](#nested--configs) for nested schema<br>
+<br>List of Kafka topic configs which have non-default values. These could be set by terraform or other methods like kafka cli etc.<br><br>
 ### Read-only attributes
 *___id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Instaclustr identifier for the Kafka topic. The value of this property has the form: [cluster-id]_[kafka-topic]<br><br>
-*___configs___*<br>
-<ins>Type</ins>: repeatable nested block, read-only, see [configs](#nested--configs) for nested schema<br>
-<br>List of the the Kafka cluster configs<br><br>
 <a id="nested--configs"></a>
 ## Nested schema for `configs`
-List of the the Kafka cluster configs<br>
+List of Kafka topic configs which have non-default values. These could be set by terraform or other methods like kafka cli etc.<br>
 ### Input attributes - Required
 *___key___*<br>
 <ins>Type</ins>: string, required, updatable<br>
