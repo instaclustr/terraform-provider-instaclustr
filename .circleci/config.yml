@@ -6,22 +6,6 @@ commands:
       - run:
           name: "Build provider to binary"
           command: make build
-  run-unit-tests:
-    steps:
-      - run:
-          name: "Run unit tests"
-          command: make test
-  run-acceptance-tests:
-    steps:
-      - run:
-          name: "Run acceptance tests"
-          command: |
-            export IC_USERNAME=${IC_TEST_USERNAME}
-            export IC_API_KEY=${IC_TEST_API_KEY}
-            export KMS_ARN=${IC_TEST_KMS_ARN}
-            export IC_PROV_ACC_NAME=${IC_TEST_PROV_ACC_NAME}
-            export IC_PROV_VPC_ID=${IC_TEST_PROV_VPC_ID}
-            make testacc
   configure-gpg-key:
     steps:
       - run:
@@ -52,6 +36,8 @@ commands:
             SHASUM_NAME="${BIN_NAME}_${RELEASE_TAG:1}"
             env GOOS=darwin GOARCH=amd64 make build
             zip -j bin/${FULL_BIN_NAME}_darwin_amd64.zip bin/${FULL_BIN_NAME}
+            env GOOS=darwin GOARCH=arm64 make build
+            zip -j bin/${FULL_BIN_NAME}_darwin_arm64.zip bin/${FULL_BIN_NAME}
             env GOOS=linux GOARCH=amd64 CGO_ENABLED=0 make build FLAGS="-ldflags '-w -s -extldflags \"-static\"' -tags netgo -a -v"
             zip -j bin/${FULL_BIN_NAME}_linux_amd64.zip bin/${FULL_BIN_NAME}
             env GOOS=linux GOARCH=arm64 make build
@@ -86,7 +72,7 @@ commands:
       - run:
           name: "Publish Release on GitHub"
           command: |
-            go get github.com/tcnksm/ghr@v0.15.0
+            go get github.com/tcnksm/ghr
             ghr -t ${GITHUB_TOKEN} \
             -u ${CIRCLE_PROJECT_USERNAME} \
             -r ${CIRCLE_PROJECT_REPONAME} \
@@ -98,51 +84,17 @@ commands:
 jobs:
   build:
     docker:
-      - image: circleci/golang:1.14
+      - image: circleci/golang:1.17.5
     working_directory: /go/src/github.com/arjunrajshekhar/terraform-provider-instaclustr
     steps:
       - checkout
       - run: go get -v -t -d ./...
       - configure-gpg-key
-      - run-unit-tests
       - build-provider
       - package-all-platforms
       - sign-builds
       - clean-gpg-keys
       - create-github-release
-  commit-build-test:
-    docker:
-      - image: circleci/golang:1.14
-    working_directory: /go/src/github.com/arjunrajshekhar/terraform-provider-instaclustr
-    steps:
-      - checkout
-      - run: go get -v -t -d ./...
-      - build-provider
-      - run-unit-tests
-  on-provider-v1-build-test:
-    docker:
-      - image: circleci/golang:1.14
-    working_directory: /go/src/github.com/arjunrajshekhar/terraform-provider-instaclustr
-    environment:
-      CIRCLE_PULL_REQUEST: ""
-      CIRCLE_PULL_REQUESTS: ""
-      CI_PULL_REQUEST: ""
-      CI_PULL_REQUESTS: ""
-    steps:
-      - checkout
-      - run: go get -v -t -d ./...
-      - build-provider
-      - run-unit-tests
-  pr-build-test:
-    docker:
-      - image: circleci/golang:1.14
-    working_directory: /go/src/github.com/arjunrajshekhar/terraform-provider-instaclustr
-    steps:
-      - checkout
-      - run: go get -v -t -d ./...
-      - run-acceptance-tests
-      - build-provider
-      - package-all-platforms
 workflows:
   build-and-deploy:
     jobs:
@@ -152,25 +104,4 @@ workflows:
             tags:
               only: /^v.*/
             branches:
-              ignore: /.*/
-  unit-test-workflow:
-    jobs:
-      - commit-build-test:
-          filters:
-            branches:
-              ignore: provider-v1
-      - on-provider-v1-build-test:
-          filters:
-            branches:
-              only: provider-v1
-#  acceptance-test-workflow:
-#    jobs:
-#      - hold:
-#          type: approval
-#          filters:
-#            branches:
-#              ignore: provider-v1
-#      - pr-build-test:
-#          context: terraform provider preprod
-#          requires:
-#            - hold
+              only: master

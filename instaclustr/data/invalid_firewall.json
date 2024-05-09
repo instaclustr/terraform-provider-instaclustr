@@ -1,9 +1,0 @@
-{
-    "securityGroupId":"sg-0123abcde456ffabc",
-    "rule_cidr": "10.1.0.0/16",
-    "rules":[
-      {
-        "type":"CASSANDRA"
-      }
-    ]
-  }
