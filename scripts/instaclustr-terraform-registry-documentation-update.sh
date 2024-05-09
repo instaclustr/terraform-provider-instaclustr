@@ -18,7 +18,7 @@ rm -rf "$DEST_FOLDER_NAME/docs"
 
 mkdir -p "$DEST_FOLDER_NAME/docs"
 
-tar xvf "$ZIP_FILE_NAME" -C "$DEST_FOLDER_NAME"
+unzip "$ZIP_FILE_NAME" -d "$DEST_FOLDER_NAME"
 
 cp -a docs-base/. docs/
 
