@@ -5,6 +5,8 @@ description: |-
 ---
 
 # instaclustr_aws_security_group_firewall_rule_v2_instance (Data Source)
+Deprecated. Use <a href="https://registry.terraform.io/providers/instaclustr/instaclustr/latest/docs/resources/aws_security_group_firewall_rules_v2"> instaclustr_cluster_network_firewall_rules_v2</a> instead.
+
 Definition of an AWS Security Group based firewall rule to be applied to a cluster.
 ## Example Usage
 ```
