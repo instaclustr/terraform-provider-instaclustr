@@ -5,7 +5,9 @@ description: |-
 ---
 
 # instaclustr_cluster_network_firewall_rule_v2_instance (Data Source)
-Definition of an CIDR based firewall rule to be applied to a cluster.
+Deprecated. Use <a href="https://registry.terraform.io/providers/instaclustr/instaclustr/latest/docs/resources/cluster_network_firewall_rules_v2"> instaclustr_cluster_network_firewall_rules_v2</a> instead.
+
+Definition of a CIDR based firewall rule to be applied to a cluster.
 ## Example Usage
 ```
 data "instaclustr_cluster_network_firewall_rule_v2_instance" "example" { 
