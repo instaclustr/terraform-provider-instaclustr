@@ -91,7 +91,7 @@ List of data centre settings.<br>
 <br>The private network address block for the Data Centre specified using CIDR address notation. The network must have a prefix length between `/12` and `/22` and must be part of a private address space.<br><br>
 ### Input attributes - Optional
 *___custom_subject_alternative_names___*<br>
-<ins>Type</ins>: list of strings, optional, updatable<br>
+<ins>Type</ins>: list of strings, optional, immutable<br>
 <br>List of Subject Alternative Names FQDNs as per RFC 1035.  Used by the applications with self signed certificates in keystores of nodes in the datacenter.<br><br>
 *___enforce_auth_schemes___*<br>
 <ins>Type</ins>: list of strings, optional, immutable<br>
