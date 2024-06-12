@@ -26,6 +26,7 @@ resource "instaclustr_opensearch_cluster_v2" "example" {
   }
 
   reporting_plugin = false
+  cross_cluster_replication_plugin = true
   sql_plugin = false
   notifications_plugin = false
   data_centre {
@@ -125,6 +126,9 @@ The following terms are used to describe attributes in the schema of this resour
 *___data_nodes___*<br>
 <ins>Type</ins>: nested block, optional, updatable, see [data_nodes](#nested--data_nodes) for nested schema<br>
 <br>List of data node settings.<br><br>
+*___cross_cluster_replication_plugin___*<br>
+<ins>Type</ins>: boolean, optional, immutable<br>
+<br>Enable cross cluster replication plugin<br><br>
 *___anomaly_detection_plugin___*<br>
 <ins>Type</ins>: boolean, optional, immutable<br>
 <br>Enable anomaly detection plugin<br><br>
