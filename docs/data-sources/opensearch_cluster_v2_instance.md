@@ -106,6 +106,9 @@ The following terms are used to describe attributes in the schema of this data s
 *___data_nodes___*<br>
 <ins>Type</ins>: nested block, read-only, see [data_nodes](#nested--data_nodes) for nested schema<br>
 <br>List of data node settings.<br><br>
+*___cross_cluster_replication_plugin___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>Enable cross cluster replication plugin<br><br>
 *___anomaly_detection_plugin___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Enable anomaly detection plugin<br><br>
