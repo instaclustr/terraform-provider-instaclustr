@@ -5,6 +5,8 @@ description: |-
 ---
 
 # instaclustr_kafka_user_v3 (Resource)
+Deprecated. Use <a href="https://registry.terraform.io/providers/instaclustr/instaclustr/latest/docs/resources/kafka_user_v4"> instaclustr_kafka_user_v4</a> instead.
+
 Definition of a Kafka User to be applied to a Kafka cluster.
 ## Example Usage
 ```
