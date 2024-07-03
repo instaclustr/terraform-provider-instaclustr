@@ -52,6 +52,9 @@ The following terms are used to describe attributes in the schema of this data s
 *___auto_create_topics___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Allows topics to be auto created by brokers when messages are published to a non-existent topic<br><br>
+*___tiered_storage___*<br>
+<ins>Type</ins>: nested block, read-only, see [tiered_storage](#nested--tiered_storage) for nested schema<br>
+<br>Enable Tiered Storage for Kafka<br><br>
 *___id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>ID of the cluster.<br><br>
@@ -269,6 +272,23 @@ Examples:
 - Same-project subnetwork URI: <code>projects/{riyoa-gcp-project-name}/regions/{region-id}/subnetworks/{subnetwork-name}</code>.
 - Shared VPC subnetwork URI: <code>projects/{riyoa-gcp-host-project-name}/regions/{region-id}/subnetworks/{subnetwork-name}</code>.
 <br><br>
+<a id="nested--s3_settings"></a>
+## Nested schema for `s3_settings`
+Defines the information to access S3 bucket used for remote storage.   Access could be provided via Access and Secret key pair or IAM Role ARN. If neither is provided, access policy is defaulted to be provided later.<br>
+### Read-only attributes
+*___prefix___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>S3 prefix to store the remote data in the S3 bucket, by default the prefix format is `<cluster_id>-data/`<br><br>
+*___s3_bucket_name___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>S3 bucket name for Kafka remote storage<br><br>
+<a id="nested--tiered_storage"></a>
+## Nested schema for `tiered_storage`
+Enable Tiered Storage for Kafka<br>
+### Read-only attributes
+*___s3_settings___*<br>
+<ins>Type</ins>: nested block, read-only, see [s3_settings](#nested--s3_settings) for nested schema<br>
+<br>Defines the information to access S3 bucket used for remote storage.   Access could be provided via Access and Secret key pair or IAM Role ARN. If neither is provided, access policy is defaulted to be provided later.<br><br>
 <a id="nested--tag"></a>
 ## Nested schema for `tag`
 List of tags to apply to the Data Centre. Tags are metadata labels which  allow you to identify, categorize and filter clusters. This can be useful for grouping together clusters into applications, environments, or any category that you require. Note `tag` is not supported in terraform lifecycle `ignore_changes`.<br>
