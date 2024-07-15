@@ -21,7 +21,7 @@ The following terms are used to describe attributes in the schema of this data s
 ### Read-only attributes
 *___extensions___*<br>
 <ins>Type</ins>: list of strings, read-only<br>
-<ins>Constraints</ins>: allowed values: [ `PG_VECTOR` ]<br><br>List of PostgreSQL extensions.<br><br>
+<ins>Constraints</ins>: allowed values: [ `PG_CRON` ]<br><br>List of PostgreSQL extensions.<br><br>
 *___data_centre___*<br>
 <ins>Type</ins>: repeatable nested block, read-only, see [data_centre](#nested--data_centre) for nested schema<br>
 <ins>Constraints</ins>: minimum items: 1, maximum items: 2<br><br>List of data centre settings.<br><br>
