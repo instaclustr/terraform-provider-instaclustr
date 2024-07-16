@@ -74,9 +74,6 @@ The following terms are used to describe attributes in the schema of this resour
 *___cluster_manager_nodes___*<br>
 <ins>Type</ins>: nested block, required, updatable, see [cluster_manager_nodes](#nested--cluster_manager_nodes) for nested schema<br>
 <ins>Constraints</ins>: minimum items: 1<br><br>List of cluster managers node settings<br><br>
-*___opensearch_version___*<br>
-<ins>Type</ins>: string, required, immutable<br>
-<ins>Constraints</ins>: pattern: `([0-9]+\.){2}[0-9]+`<br><br>Version of OpenSearch to run on the cluster. Available versions: <ul> <li>`2.12.0`</li> <li>`1.3.15`</li> <li>`2.14.0`</li> <li>`1.3.17`</li> </ul><br><br>
 *___private_network_cluster___*<br>
 <ins>Type</ins>: boolean, required, immutable<br>
 <br>Creates the cluster with private network only, see [Private Network Clusters](https://www.instaclustr.com/support/documentation/useful-information/private-network-clusters/).<br><br>
@@ -105,6 +102,9 @@ The following terms are used to describe attributes in the schema of this resour
 *___bundled_use_only___*<br>
 <ins>Type</ins>: boolean, optional, immutable<br>
 <br>Provision this cluster for [Bundled Use only](https://www.instaclustr.com/support/documentation/cadence/getting-started-with-cadence/bundled-use-only-cluster-deployments/).<br><br>
+*___opensearch_major_version___*<br>
+<ins>Type</ins>: integer, optional, immutable<br>
+<ins>Constraints</ins>: minimum: 1, maximum: 2<br><br>Major version of OpenSearch to run on the cluster. Must be provided if `opensearchVersion` is not provided.<br><br>
 *___resize_settings___*<br>
 <ins>Type</ins>: nested block, optional, updatable, see [resize_settings](#nested--resize_settings) for nested schema<br>
 <br>Settings to determine how resize requests will be performed for the cluster.<br><br>
@@ -114,6 +114,9 @@ The following terms are used to describe attributes in the schema of this resour
 *___ingest_nodes___*<br>
 <ins>Type</ins>: nested block, optional, updatable, see [ingest_nodes](#nested--ingest_nodes) for nested schema<br>
 <br>Ingest nodes settings.<br><br>
+*___opensearch_version___*<br>
+<ins>Type</ins>: string, optional, immutable<br>
+<ins>Constraints</ins>: pattern: `([0-9]+\.){2}[0-9]+`<br><br>Version of OpenSearch to run on the cluster.  Must be provided if `opensearchMajorVersion` is not provided. Available versions: <ul> <li>`2.12.0`</li> <li>`1.3.15`</li> <li>`2.14.0`</li> <li>`1.3.17`</li> </ul><br><br>
 *___two_factor_delete___*<br>
 <ins>Type</ins>: nested block, optional, updatable, see [two_factor_delete](#nested--two_factor_delete) for nested schema<br>
 <br>
