@@ -70,6 +70,9 @@ The following terms are used to describe attributes in the schema of this data s
 *___load_balancer_connection_url___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>URL of the Network Load Balancer if a load balancer is enabled for the cluster. Balances request loads against all nodes in the cluster except for ingest nodes.<br><br>
+*___opensearch_major_version___*<br>
+<ins>Type</ins>: integer, read-only<br>
+<ins>Constraints</ins>: minimum: 1, maximum: 2<br><br>Major version of OpenSearch to run on the cluster. Must be provided if `opensearchVersion` is not provided.<br><br>
 *___resize_settings___*<br>
 <ins>Type</ins>: nested block, read-only, see [resize_settings](#nested--resize_settings) for nested schema<br>
 <br>Settings to determine how resize requests will be performed for the cluster.<br><br>
@@ -84,7 +87,7 @@ The following terms are used to describe attributes in the schema of this data s
 <br>Ingest nodes settings.<br><br>
 *___opensearch_version___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: pattern: `([0-9]+\.){2}[0-9]+`<br><br>Version of OpenSearch to run on the cluster. Available versions: <ul> <li>`2.12.0`</li> <li>`1.3.15`</li> <li>`2.14.0`</li> <li>`1.3.17`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `([0-9]+\.){2}[0-9]+`<br><br>Version of OpenSearch to run on the cluster.  Must be provided if `opensearchMajorVersion` is not provided. Available versions: <ul> <li>`2.12.0`</li> <li>`1.3.15`</li> <li>`2.14.0`</li> <li>`1.3.17`</li> </ul><br><br>
 *___private_network_cluster___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Creates the cluster with private network only, see [Private Network Clusters](https://www.instaclustr.com/support/documentation/useful-information/private-network-clusters/).<br><br>
