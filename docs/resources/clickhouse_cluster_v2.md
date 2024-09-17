@@ -56,7 +56,7 @@ The following terms are used to describe attributes in the schema of this resour
 <ins>Constraints</ins>: allowed values: [ `PRODUCTION`, `NON_PRODUCTION` ]<br><br>SLA Tier of the cluster. Non-production clusters may receive lower priority support and reduced SLAs. Production tier is not available when using Developer class nodes. See [SLA Tier](https://www.instaclustr.com/support/documentation/useful-information/sla-tier/) for more information.<br><br>
 *___clickhouse_version___*<br>
 <ins>Type</ins>: string, required, immutable<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of ClickHouse to run on the cluster. Available versions: <ul> <li>`23.8.14`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of ClickHouse to run on the cluster. Available versions: <ul> <li>`23.8.16`</li> <li>`24.8.2`</li> </ul><br><br>
 *___name___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <ins>Constraints</ins>: pattern: `[a-zA-Z0-9][a-zA-Z0-9_-]*`<br><br>Name of the cluster.<br><br>
@@ -218,7 +218,7 @@ Defines information about the S3 bucket to be used for remote storage.<br>
 ### Input attributes - Optional
 *___prefix___*<br>
 <ins>Type</ins>: string, optional, immutable<br>
-<br>S3 prefix to use when storing data in the S3 bucket. The default prefix format is `<cluster_id>-data/`<br><br>
+<ins>Constraints</ins>: pattern: `^[a-zA-Z\d\-_]{1,100}$`<br><br>By default data in the S3 bucket will be stored in a folder named after the cluster's ID. If a prefix is provided, data will be stored in `<prefix>/<cluster_id>` instead<br><br>
 <a id="nested--tiered_storage"></a>
 ## Nested schema for `tiered_storage`
 Enable Tiered Storage for ClickHouse<br>
