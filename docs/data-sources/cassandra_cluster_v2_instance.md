@@ -39,7 +39,7 @@ The following terms are used to describe attributes in the schema of this data s
 <br>Status of the cluster.<br><br>
 *___cassandra_version___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Cassandra to run on the cluster. Available versions: <ul> <li>`4.1.5`</li> <li>`4.1.4`</li> <li>`5.0.0`</li> <li>`3.11.17`</li> <li>`4.0.13`</li> <li>`4.0.12`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Cassandra to run on the cluster. Available versions: <ul> <li>`4.1.5`</li> <li>`4.1.6`</li> <li>`5.0.0`</li> <li>`3.11.17`</li> <li>`4.0.13`</li> <li>`4.0.12`</li> </ul><br><br>
 *___id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>ID of the cluster.<br><br>
