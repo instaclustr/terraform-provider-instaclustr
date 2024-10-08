@@ -218,7 +218,7 @@ Defines information about the S3 bucket to be used for remote storage.<br>
 ### Input attributes - Optional
 *___prefix___*<br>
 <ins>Type</ins>: string, optional, immutable<br>
-<ins>Constraints</ins>: pattern: `^[a-zA-Z\d\-_]{1,100}$`<br><br>By default data in the S3 bucket will be stored in a folder named after the cluster's ID. If a prefix is provided, data will be stored in `<prefix>/<cluster_id>` instead<br><br>
+<ins>Constraints</ins>: pattern: `^[a-zA-Z\d\-_]{0,100}$`<br><br>By default data in the S3 bucket will be stored in a folder named after the cluster's ID. If a prefix is provided, data will be stored in `<prefix>/<cluster_id>` instead<br><br>
 <a id="nested--tiered_storage"></a>
 ## Nested schema for `tiered_storage`
 Enable Tiered Storage for ClickHouse<br>
