@@ -331,6 +331,10 @@ Create a PrivateLink/Private Service Connect enabled cluster, see [PrivateLink](
 *___gcp_private_service_connect_rack___*<br>
 <ins>Type</ins>: repeatable nested block, required, immutable, see [gcp_private_service_connect_rack](#nested--gcp_private_service_connect_rack) for nested schema<br>
 <ins>Constraints</ins>: minimum items: 3<br><br>The settings required for a Private Service Connect rack.<br><br>
+### Input attributes - Optional
+*___network___*<br>
+<ins>Type</ins>: string, optional, immutable<br>
+<br>The private network address block for the Service Attachment Network with Private Service Connect specified using CIDR address notation. The network must have a prefix length between `/12` and `/22` and must be part of a private address space. If not provided, then the next available network will be used.<br><br>
 <a id="nested--tag"></a>
 ## Nested schema for `tag`
 List of tags to apply to the Data Centre. Tags are metadata labels which  allow you to identify, categorize and filter clusters. This can be useful for grouping together clusters into applications, environments, or any category that you require. Note `tag` is not supported in terraform lifecycle `ignore_changes`.<br>
@@ -430,6 +434,9 @@ The settings required for a Private Service Connect rack.<br>
 *___rack_name___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Name of the rack<br><br>
+*___service_attachment_network___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Network of the service attachment<br><br>
 *___service_attachment_id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Id of the service attachment<br><br>
