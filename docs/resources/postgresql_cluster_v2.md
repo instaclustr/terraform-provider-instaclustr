@@ -126,6 +126,9 @@ List of data centre settings.<br>
 *___gcp_settings___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [gcp_settings](#nested--gcp_settings) for nested schema<br>
 <br>GCP specific settings for the Data Centre. Cannot be provided with AWS or Azure settings.<br><br>
+*___private_connectivity___*<br>
+<ins>Type</ins>: nested block, optional, immutable, see [private_connectivity](#nested--private_connectivity) for nested schema<br>
+<br>Create a Private Connectivity enabled cluster<br><br>
 *___tag___*<br>
 <ins>Type</ins>: repeatable nested block, optional, immutable, see [tag](#nested--tag) for nested schema<br>
 <br>List of tags to apply to the Data Centre. Tags are metadata labels which  allow you to identify, categorize and filter clusters. This can be useful for grouping together clusters into applications, environments, or any category that you require. Note `tag` is not supported in terraform lifecycle `ignore_changes`.<br><br>
@@ -167,6 +170,17 @@ Azure specific settings for the Data Centre. Cannot be provided with AWS or GCP 
 *___resource_group___*<br>
 <ins>Type</ins>: string, optional, immutable<br>
 <br>The name of the Azure Resource Group into which the Data Centre will be provisioned.<br><br>
+<a id="nested--azure_private_link"></a>
+## Nested schema for `azure_private_link`
+
+### Input attributes - Optional
+*___use_azure_private_link___*<br>
+<ins>Type</ins>: boolean, optional, immutable<br>
+<br>Flag to indicate that Azure Private Link is to be used for this cluster data Centre<br><br>
+### Read-only attributes
+*___alias___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>The alias for the private link service<br><br>
 <a id="nested--deleted_nodes"></a>
 ## Nested schema for `deleted_nodes`
 List of deleted nodes in the data centre<br>
@@ -213,6 +227,13 @@ Examples:
 - Same-project subnetwork URI: <code>projects/{riyoa-gcp-project-name}/regions/{region-id}/subnetworks/{subnetwork-name}</code>.
 - Shared VPC subnetwork URI: <code>projects/{riyoa-gcp-host-project-name}/regions/{region-id}/subnetworks/{subnetwork-name}</code>.
 <br><br>
+<a id="nested--private_connectivity"></a>
+## Nested schema for `private_connectivity`
+Create a Private Connectivity enabled cluster<br>
+### Input attributes - Optional
+*___azure_private_link___*<br>
+<ins>Type</ins>: nested block, optional, immutable, see [azure_private_link](#nested--azure_private_link) for nested schema<br>
+<br>
 <a id="nested--tag"></a>
 ## Nested schema for `tag`
 List of tags to apply to the Data Centre. Tags are metadata labels which  allow you to identify, categorize and filter clusters. This can be useful for grouping together clusters into applications, environments, or any category that you require. Note `tag` is not supported in terraform lifecycle `ignore_changes`.<br>
