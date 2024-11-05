@@ -241,7 +241,7 @@ The version of Shotover Proxy running on the Cluster.<br>
 ### Read-only attributes
 *___version___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>The version of Shotover Proxy running on the Cluster.Available versions: <ul> <li>`0.4.1`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>The version of Shotover Proxy running on the Cluster.Available versions: <ul> <li>`0.5.2`</li> </ul><br><br>
 <a id="nested--azure_settings"></a>
 ## Nested schema for `azure_settings`
 Azure specific settings for the Data Centre. Cannot be provided with AWS or GCP settings.<br>
