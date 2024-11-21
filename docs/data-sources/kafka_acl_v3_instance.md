@@ -41,7 +41,7 @@ List of ACLs for the given principal.<br>
 ### Read-only attributes
 *___principal___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: pattern: `^User:.*$`<br><br>Specifies the users(s) for which this ACL applies and can include the wildcard `*`. Valid values must start with "User:" including the wildcard.<br><br>
+<ins>Constraints</ins>: pattern: `^User:[a-zA-Z0-9][a-zA-Z0-9_-]*$`<br><br>Specifies the users(s) for which this ACL applies and can include the wildcard `*`. Valid values must start with "User:" including the wildcard.<br><br>
 *___permission_type___*<br>
 <ins>Type</ins>: string, read-only<br>
 <ins>Constraints</ins>: allowed values: [ `ALLOW`, `DENY` ]<br><br>Specifies whether to allow or deny the operation.<br><br>
