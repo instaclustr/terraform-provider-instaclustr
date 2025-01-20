@@ -159,7 +159,7 @@ The following terms are used to describe attributes in the schema of this resour
 <ins>Type</ins>: integer, required, immutable<br>
 <br>Replication factor for Topic<br><br>
 *___partitions___*<br>
-<ins>Type</ins>: integer, required, immutable<br>
+<ins>Type</ins>: integer, required, updatable<br>
 <br>Topic partition count<br><br>
 *___topic___*<br>
 <ins>Type</ins>: string, required, immutable<br>
