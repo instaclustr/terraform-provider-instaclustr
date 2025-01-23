@@ -49,6 +49,9 @@ The following terms are used to describe attributes in the schema of this data s
 *___index_management_plugin___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Enable index management plugin<br><br>
+*___observability_plugin___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>Enable observability plugin<br><br>
 *___default_username___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Username of the default user created for the OpenSearch cluster.<br><br>

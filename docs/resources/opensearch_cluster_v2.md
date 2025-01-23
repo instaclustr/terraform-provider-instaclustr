@@ -93,6 +93,9 @@ The following terms are used to describe attributes in the schema of this resour
 *___index_management_plugin___*<br>
 <ins>Type</ins>: boolean, optional, immutable<br>
 <br>Enable index management plugin<br><br>
+*___observability_plugin___*<br>
+<ins>Type</ins>: boolean, optional, immutable<br>
+<br>Enable observability plugin<br><br>
 *___searchable_snapshots___*<br>
 <ins>Type</ins>: boolean, optional, immutable<br>
 <br>Enable searchable snapshots. Available only for OpenSearch versions 2.7.0 or higher.<br><br>
