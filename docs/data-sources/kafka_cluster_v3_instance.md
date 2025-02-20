@@ -48,10 +48,13 @@ The following terms are used to describe attributes in the schema of this data s
 <br>Adds the specified version of Kafka Karapace REST Proxy to this Kafka cluster.<br><br>
 *___kafka_version___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Kafka to run on the cluster. Available versions: <ul> <li>`3.6.1`</li> <li>`3.8.1`</li> <li>`3.7.1`</li> <li>`3.6.2`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Kafka to run on the cluster. Available versions: <ul> <li>`3.6.1`</li> <li>`3.9.0`</li> <li>`3.8.1`</li> <li>`3.7.1`</li> <li>`3.6.2`</li> </ul><br><br>
 *___auto_create_topics___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Allows topics to be auto created by brokers when messages are published to a non-existent topic<br><br>
+*___tiered_storage___*<br>
+<ins>Type</ins>: nested block, read-only, see [tiered_storage](#nested--tiered_storage) for nested schema<br>
+<br>Enable Tiered Storage for Kafka<br><br>
 *___id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>ID of the cluster.<br><br>
@@ -279,6 +282,23 @@ Examples:
 - Same-project subnetwork URI: <code>projects/{riyoa-gcp-project-name}/regions/{region-id}/subnetworks/{subnetwork-name}</code>.
 - Shared VPC subnetwork URI: <code>projects/{riyoa-gcp-host-project-name}/regions/{region-id}/subnetworks/{subnetwork-name}</code>.
 <br><br>
+<a id="nested--s3_settings"></a>
+## Nested schema for `s3_settings`
+Defines the information to access S3 bucket used for remote storage.   Access could be provided via Access and Secret key pair or IAM Role ARN. If neither is provided, access policy is defaulted to be provided later.<br>
+### Read-only attributes
+*___prefix___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>S3 prefix to store the remote data in the S3 bucket, by default the prefix format is `<cluster_id>-data/`<br><br>
+*___s3_bucket_name___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>S3 bucket name for Kafka remote storage<br><br>
+<a id="nested--tiered_storage"></a>
+## Nested schema for `tiered_storage`
+Enable Tiered Storage for Kafka<br>
+### Read-only attributes
+*___s3_settings___*<br>
+<ins>Type</ins>: nested block, read-only, see [s3_settings](#nested--s3_settings) for nested schema<br>
+<br>Defines the information to access S3 bucket used for remote storage.   Access could be provided via Access and Secret key pair or IAM Role ARN. If neither is provided, access policy is defaulted to be provided later.<br><br>
 <a id="nested--private_connectivity"></a>
 ## Nested schema for `private_connectivity`
 Create a PrivateLink/Private Service Connect enabled cluster, see [PrivateLink](https://www.instaclustr.com/support/documentation/useful-information/privatelink/).<br>
