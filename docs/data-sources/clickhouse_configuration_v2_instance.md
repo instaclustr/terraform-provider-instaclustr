@@ -34,7 +34,7 @@ List of configuration overrides<br>
 ### Read-only attributes
 *___name___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: allowed values: [ `max_threads`, `max_insert_threads`, `use_skip_indexes`, `insert_quorum`, `insert_quorum_timeout`, `insert_quorum_parallel`, `distributed_ddl_task_timeout`, `log_queries`, `max_execution_time`, `max_bytes_before_external_group_by`, `max_bytes_before_external_sort`, `optimize_on_insert`, `max_partition_size_to_drop` ]<br><br>Name of the configuration property.<br><br>
+<ins>Constraints</ins>: allowed values: [ `max_threads`, `max_insert_threads`, `use_skip_indexes`, `insert_quorum`, `insert_quorum_timeout`, `insert_quorum_parallel`, `distributed_ddl_task_timeout`, `log_queries`, `max_execution_time`, `max_bytes_before_external_group_by`, `max_bytes_before_external_sort`, `optimize_on_insert`, `max_partition_size_to_drop`, `allow_experimental_json_type` ]<br><br>Name of the configuration property.<br><br>
 *___value___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Override value for the configuration property.<br><br>

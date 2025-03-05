@@ -56,7 +56,7 @@ The following terms are used to describe attributes in the schema of this resour
 <br>Enables Client ⇄ Cluster Encryption.<br><br>
 *___kafka_version___*<br>
 <ins>Type</ins>: string, required, immutable<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Kafka to run on the cluster. Available versions: <ul> <li>`3.6.1`</li> <li>`3.9.0`</li> <li>`3.8.1`</li> <li>`3.7.1`</li> <li>`3.6.2`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Kafka to run on the cluster. Available versions: <ul> <li>`3.6.1`</li> <li>`3.9.0`</li> <li>`3.7.1`</li> <li>`3.6.2`</li> </ul><br><br>
 *___auto_create_topics___*<br>
 <ins>Type</ins>: boolean, required, immutable<br>
 <br>Allows topics to be auto created by brokers when messages are published to a non-existent topic<br><br>
