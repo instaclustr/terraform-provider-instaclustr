@@ -36,6 +36,20 @@ then
   INSTACLUSTR_API_URL="https://api.instaclustr.com"
 fi
 
-curl $INSTACLUSTR_API_URL/cluster-management/v2/operations/generate-terraform-code/v2 -u "$INSTACLUSTR_USERNAME:$INSTACLUSTR_API_KEY" --output "$DEST_FILE_NAME" --fail
+HTTP_CODE=$(curl -s -w "%{http_code}" \
+  -u "$INSTACLUSTR_USERNAME:$INSTACLUSTR_API_KEY" \
+  "$INSTACLUSTR_API_URL/cluster-management/v2/operations/generate-terraform-code/v2" \
+  -o "$DEST_FILE_NAME")
 
-echo "Terraform files downloaded to '$DEST_FILE_NAME'"
+if [ "$HTTP_CODE" != "200" ];
+then
+  echo "Error: Received HTTP code $HTTP_CODE"
+  echo "Response from server:"
+  cat "$DEST_FILE_NAME"
+  echo
+  echo "For more information on how to resolve this issue, try to generate the Terraform configuration from the Instaclustr Console under Settings > Cluster Resources > Terraform > Download."
+  echo
+  exit 1
+else
+  echo "Terraform files downloaded to '$DEST_FILE_NAME'"
+fi
