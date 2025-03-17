@@ -43,12 +43,14 @@ HTTP_CODE=$(curl -s -w "%{http_code}" \
 
 if [ "$HTTP_CODE" != "200" ];
 then
+  echo
   echo "Error: Received HTTP code $HTTP_CODE"
   echo "Response from server:"
   cat "$DEST_FILE_NAME"
   echo
   echo "For more information on how to resolve this issue, try to generate the Terraform configuration from the Instaclustr Console under Settings > Cluster Resources > Terraform > Download."
   echo
+  rm "$DEST_FILE_NAME"
   exit 1
 else
   echo "Terraform files downloaded to '$DEST_FILE_NAME'"

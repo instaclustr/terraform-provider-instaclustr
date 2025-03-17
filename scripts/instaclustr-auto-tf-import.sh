@@ -52,20 +52,35 @@ then
   fi
 fi
 
-curl $INSTACLUSTR_API_URL/cluster-management/v2/operations/generate-terraform-code/v2 -u "$INSTACLUSTR_USERNAME:$INSTACLUSTR_API_KEY" --output "$ZIP_FILE_NAME" --fail
+HTTP_CODE=$(curl -s -w "%{http_code}" \
+  -u "$INSTACLUSTR_USERNAME:$INSTACLUSTR_API_KEY" \
+  "$INSTACLUSTR_API_URL/cluster-management/v2/operations/generate-terraform-code/v2" \
+  -o "$ZIP_FILE_NAME")
 
-rm -rf "$DEST_FOLDER_NAME"
+if [ "$HTTP_CODE" != "200" ];
+then
+  echo "Error: Received HTTP code $HTTP_CODE"
+  echo "Response from server:"
+  cat "$ZIP_FILE_NAME"
+  echo
+  echo "For more information on how to resolve this issue, try to generate the Terraform configuration from the Instaclustr Console under Settings > Cluster Resources > Terraform > Download."
+  echo
+  rm "$ZIP_FILE_NAME"
+  exit 1
+else
+  rm -rf "$DEST_FOLDER_NAME"
 
-mkdir -p "$DEST_FOLDER_NAME"
+  mkdir -p "$DEST_FOLDER_NAME"
 
-tar xvf "$ZIP_FILE_NAME" -C "$DEST_FOLDER_NAME"
+  tar xvf "$ZIP_FILE_NAME" -C "$DEST_FOLDER_NAME"
 
-rm "$ZIP_FILE_NAME"
+  rm "$ZIP_FILE_NAME"
 
-cd "$DEST_FOLDER_NAME"
+  cd "$DEST_FOLDER_NAME"
 
-terraform init
+  terraform init
 
-sh import-all.sh
+  sh import-all.sh
 
-echo "Script execution completed."
+  echo "Script execution completed."
+fi
