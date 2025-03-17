@@ -27,6 +27,31 @@ if ($DEST_FILE_NAME -eq $null -Or $INSTACLUSTR_USERNAME -eq $null -Or $INSTACLUS
 }
 
 $basicAuthHeaderValue = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("${INSTACLUSTR_USERNAME}:$INSTACLUSTR_API_KEY"))
-Invoke-WebRequest https://api.instaclustr.com/cluster-management/v2/operations/generate-terraform-code/v2 -Headers @{Authorization="Basic $basicAuthHeaderValue"} -OutFile "$DEST_FILE_NAME"
+$apiUrl = "https://api.instaclustr.com/cluster-management/v2/operations/generate-terraform-code/v2"
 
-Write-Host "Terraform files downloaded to '$DEST_FILE_NAME'"
+try {
+    Invoke-WebRequest $apiUrl `
+        -Headers @{ Authorization = "Basic $basicAuthHeaderValue" } `
+        -OutFile "$DEST_FILE_NAME" `
+        -ErrorAction Stop
+
+    Write-Host "Terraform files downloaded to '$DEST_FILE_NAME'"
+}
+catch {
+    Write-Host "Error occurred while calling the endpoint:" -ForegroundColor Red
+    if ($_.Exception.Response) {
+        $stream   = $_.Exception.Response.GetResponseStream()
+        $reader   = New-Object System.IO.StreamReader($stream)
+        $response = $reader.ReadToEnd()
+
+        Write-Host "Server response:"
+        Write-Host $response
+        Write-Host ""
+        Write-Host "For more information on how to resolve this issue, try to generate the Terraform configuration from the Instaclustr Console under Settings > Cluster Resources > Terraform > Download."
+    }
+    else {
+        Write-Host $_.Exception.Message -ForegroundColor Red
+    }
+    exit 1
+}
+
