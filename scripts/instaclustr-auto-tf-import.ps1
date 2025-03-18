@@ -37,36 +37,48 @@ if ($args[1] -ne "auto-approve") {
     }
 }
 
-$basicAuthHeaderValue = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("${INSTACLUSTR_USERNAME}:$INSTACLUSTR_API_KEY"))
 $apiUrl = "https://api.instaclustr.com/cluster-management/v2/operations/generate-terraform-code/v2"
+$basicAuthHeaderValue = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("${INSTACLUSTR_USERNAME}:$INSTACLUSTR_API_KEY"))
 
 try {
-    Invoke-WebRequest $apiUrl `
-        -Headers @{ Authorization = "Basic $basicAuthHeaderValue" } `
-        -OutFile "$ZIP_FILE_NAME" `
-        -ErrorAction Stop
+    $handler = New-Object System.Net.Http.HttpClientHandler
+    $handler.AutomaticDecompression = [System.Net.DecompressionMethods]::None
 
-    Write-Host "Terraform files downloaded to '$ZIP_FILE_NAME'"
-}
-catch {
-    Write-Host "Error occurred while calling the endpoint:" -ForegroundColor Red
-    if ($_.Exception.Response) {
-        $stream   = $_.Exception.Response.GetResponseStream()
-        $reader   = New-Object System.IO.StreamReader($stream)
-        $response = $reader.ReadToEnd()
+    $client = New-Object System.Net.Http.HttpClient($handler)
 
-        Write-Host "Server response:"
-        Write-Host $response
+    $client.DefaultRequestHeaders.Authorization = 
+        [System.Net.Http.Headers.AuthenticationHeaderValue]::new("Basic", $basicAuthHeaderValue)
+
+    $response = $client.GetAsync($apiUrl).Result
+
+    if ($response.IsSuccessStatusCode) {
+        $zipBytes = $response.Content.ReadAsByteArrayAsync().Result
+        [System.IO.File]::WriteAllBytes($DEST_FILE_NAME, $zipBytes)
         Write-Host ""
-        Write-Host "For more information on how to resolve this issue, try to generate the Terraform configuration from the Instaclustr Console under Settings > Cluster Resources > Terraform > Download."
-        Remove-Item "$ZIP_FILE_NAME"
+        Write-Host "Terraform files downloaded to '$DEST_FILE_NAME'"
+        Write-Host ""
     }
     else {
-        Write-Host $_.Exception.Message -ForegroundColor Red
+        $jsonString = $response.Content.ReadAsStringAsync().Result
+        Write-Host ""
+        Write-Host "Error occurred while calling the endpoint:" -ForegroundColor Red
+        Write-Host "Server response (JSON):"
+        Write-Host $jsonString
+        Write-Host ""
+        Write-Host "For more information on how to resolve this issue, try generating the Terraform configuration from the Instaclustr Console under Settings > Cluster Resources > Terraform > Download."
+        Write-Host ""
+        exit 1
     }
+}
+catch {
+    Write-Host "Exception: $($_.Exception.Message)" -ForegroundColor Red
     exit 1
 }
-
+finally {
+    # Dispose of the client and handler if they were created.
+    if ($client) { $client.Dispose() }
+    if ($handler) { $handler.Dispose() }
+}
 
 cmd /c rmdir /s /q "$DEST_FOLDER_NAME" #need to do this instead of Remove-Item or other methods to deal with symlinks to terraform provider
 
