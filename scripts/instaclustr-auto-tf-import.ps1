@@ -77,7 +77,7 @@ finally {
     if ($handler) { $handler.Dispose() }
 }
 
-# cmd /c rmdir /s /q "$DEST_FOLDER_NAME" #need to do this instead of Remove-Item or other methods to deal with symlinks to terraform provider
+cmd /c rmdir /s /q "$DEST_FOLDER_NAME" #need to do this instead of Remove-Item or other methods to deal with symlinks to terraform provider
 
 Expand-Archive -Path "$ZIP_FILE_NAME" -DestinationPath "$DEST_FOLDER_NAME"
 
