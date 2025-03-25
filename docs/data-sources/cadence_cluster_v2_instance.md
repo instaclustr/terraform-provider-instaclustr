@@ -480,4 +480,4 @@ Cadence AWS Archival settings<br>
 <br>AWS secret access key<br><br>
 *___archival_s3_uri___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: pattern: `^s3:\/\/[a-zA-Z0-9_-]+[^\/]$`<br><br>S3 resource URI<br><br>
+<ins>Constraints</ins>: pattern: `^s3://[a-z0-9.-]+(/\S+[^\s/])?$`<br><br>S3 resource URI<br><br>
