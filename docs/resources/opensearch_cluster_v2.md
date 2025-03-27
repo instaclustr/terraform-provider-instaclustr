@@ -190,7 +190,7 @@ List of data centre settings.<br>
 <br>A logical name for the data centre within a cluster. These names must be unique in the cluster.<br><br>
 *___network___*<br>
 <ins>Type</ins>: string, required, immutable<br>
-<br>The private network address block for the Data Centre specified using CIDR address notation. The network must have a prefix length between `/12` and `/22` and must be part of a private address space.<br><br>
+<br>The private network address block for the Data Centre specified using CIDR address notation. The network must have a prefix length between `/16` and `/26` and must be part of a private address space.<br><br>
 ### Input attributes - Optional
 *___azure_settings___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [azure_settings](#nested--azure_settings) for nested schema<br>

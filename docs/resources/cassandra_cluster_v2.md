@@ -148,7 +148,7 @@ List of data centre settings.<br>
 <br>Enables broadcast of private IPs for auto-discovery.<br><br>
 *___network___*<br>
 <ins>Type</ins>: string, required, immutable<br>
-<br>The private network address block for the Data Centre specified using CIDR address notation. The network must have a prefix length between `/12` and `/22` and must be part of a private address space.<br><br>
+<br>The private network address block for the Data Centre specified using CIDR address notation. The network must have a prefix length between `/16` and `/26` and must be part of a private address space.<br><br>
 ### Input attributes - Optional
 *___custom_subject_alternative_names___*<br>
 <ins>Type</ins>: list of strings, optional, updatable<br>
