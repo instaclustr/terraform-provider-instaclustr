@@ -112,7 +112,7 @@ List of data centre settings.<br>
 <br>AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure settings.<br><br>
 *___network___*<br>
 <ins>Type</ins>: string, read-only<br>
-<br>The private network address block for the Data Centre specified using CIDR address notation. The network must have a prefix length between `/12` and `/22` and must be part of a private address space.<br><br>
+<br>The private network address block for the Data Centre specified using CIDR address notation. The network must have a prefix length between `/16` and `/26` and must be part of a private address space.<br><br>
 *___dedicated_click_house_keeper___*<br>
 <ins>Type</ins>: nested block, read-only, see [dedicated_click_house_keeper](#nested--dedicated_click_house_keeper) for nested schema<br>
 <br>Provision additional dedicated nodes for ClickHouse Keeper to run on. ClickHouse Keeper will be co-located with ClickHouse Server if this is not provided<br><br>
