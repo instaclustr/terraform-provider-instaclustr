@@ -298,10 +298,11 @@ List of tags to apply to the Data Centre. Tags are metadata labels which  allow 
 ### Input attributes - Required
 *___key___*<br>
 <ins>Type</ins>: string, required, immutable<br>
-<br>Key of the tag to be added to the Data Centre.<br><br>
+<br>Key of the tag for the Data Centre.<br><br>
+### Input attributes - Optional
 *___value___*<br>
-<ins>Type</ins>: string, required, immutable<br>
-<br>Value of the tag to be added to the Data Centre.<br><br>
+<ins>Type</ins>: string, optional, updatable<br>
+<br>Value of the tag for the Data Centre.<br><br>
 <a id="nested--operations"></a>
 ## Nested schema for `operations`
 
