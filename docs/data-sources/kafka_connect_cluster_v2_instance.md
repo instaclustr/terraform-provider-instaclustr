@@ -248,10 +248,10 @@ List of tags to apply to the Data Centre. Tags are metadata labels which  allow 
 ### Read-only attributes
 *___key___*<br>
 <ins>Type</ins>: string, read-only<br>
-<br>Key of the tag to be added to the Data Centre.<br><br>
+<br>Key of the tag for the Data Centre.<br><br>
 *___value___*<br>
 <ins>Type</ins>: string, read-only<br>
-<br>Value of the tag to be added to the Data Centre.<br><br>
+<br>Value of the tag for the Data Centre.<br><br>
 <a id="nested--nodes"></a>
 ## Nested schema for `nodes`
 List of non-deleted nodes in the data centre<br>
