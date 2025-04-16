@@ -175,7 +175,7 @@ Azure specific settings for the Data Centre. Cannot be provided with AWS or GCP 
 
 ### Input attributes - Optional
 *___use_azure_private_link___*<br>
-<ins>Type</ins>: boolean, optional, immutable<br>
+<ins>Type</ins>: boolean, optional, updatable<br>
 <br>Flag to indicate that Azure Private Link is to be used for this cluster data Centre<br><br>
 ### Read-only attributes
 *___alias___*<br>
