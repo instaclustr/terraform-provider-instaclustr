@@ -9,7 +9,7 @@ Definition of a managed Postgresql cluster that can be provisioned in Instaclust
 ## Example Usage
 ```
 resource "instaclustr_postgresql_cluster_v2" "example" {
-  extensions = [ "PG_CRON" ]
+  extensions = [ "PG_CRON", "PG_PARTMAN" ]
   data_centre {
     client_to_cluster_encryption = true
     cloud_provider = "AWS_VPC"
@@ -62,7 +62,7 @@ The following terms are used to describe attributes in the schema of this resour
 ### Input attributes - Optional
 *___extensions___*<br>
 <ins>Type</ins>: list of strings, optional, updatable<br>
-<ins>Constraints</ins>: allowed values: [ `PG_CRON` ]<br><br>List of PostgreSQL extensions.<br><br>
+<ins>Constraints</ins>: allowed values: [ `PG_CRON`, `PG_PARTMAN` ]<br><br>List of PostgreSQL extensions.<br><br>
 *___description___*<br>
 <ins>Type</ins>: string, optional, updatable<br>
 <br>A description of the cluster<br><br>
