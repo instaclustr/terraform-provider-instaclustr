@@ -43,6 +43,9 @@ The following terms are used to describe attributes in the schema of this data s
 *___status___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Status of the cluster.<br><br>
+*___restore_settings___*<br>
+<ins>Type</ins>: nested block, read-only, see [restore_settings](#nested--restore_settings) for nested schema<br>
+<br>Triggers a restore operation when provided during cluster creation. Contains the settings for the restore request.<br><br>
 *___knn_plugin___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Enable the k-NN plugin<br><br>
@@ -198,6 +201,33 @@ Azure specific settings for the Data Centre. Cannot be provided with AWS or GCP 
 *___resource_group___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>The name of the Azure Resource Group into which the Data Centre will be provisioned.<br><br>
+<a id="nested--restore_settings"></a>
+## Nested schema for `restore_settings`
+Triggers a restore operation when provided during cluster creation. Contains the settings for the restore request.<br>
+### Read-only attributes
+*___point_in_time___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Timestamp in milliseconds since epoch or ISO formatted date and time (example - 2023-11-05T13:15:30Z). All backed up data will be restored for this point in time.
+
+Defaults to the current date and time.<br><br>
+*___cluster_id___*<br>
+<ins>Type</ins>: string (uuid), read-only<br>
+<br>ID of the target cluster used for the restore operation.<br><br>
+*___restore_mode___*<br>
+<ins>Type</ins>: string, read-only<br>
+<ins>Constraints</ins>: allowed values: [ `NEW_VPC`, `SAME_VPC`, `CUSTOM_VPC` ]<br><br>Determines the target VPC for restored cluster. Accepted values are:
+<ul>
+<li>NEW_VPC - restores the cluster to a new VPC.</li>
+<li>SAME_VPC - restores the cluster to the same VPC as the original cluster, for customers running in their own account.</li>
+<li>CUSTOM_VPC - restores the cluster to a custom VPC for customers running in their own account.</li>
+</ul>
+
+CUSTOM_VPC and SAME_VPC options are available only for customers running in their own account.<br><br>
+*___index_names___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>A comma separated list of index names which follows the format `index1,index2`
+
+If provided, only data for the specified indices will be restored, for the point in time. If not provided, all indices will be restored for the point in time.<br><br>
 <a id="nested--deleted_nodes"></a>
 ## Nested schema for `deleted_nodes`
 List of deleted nodes in the data centre<br>
