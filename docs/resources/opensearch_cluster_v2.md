@@ -119,7 +119,7 @@ The following terms are used to describe attributes in the schema of this resour
 <br>Ingest nodes settings.<br><br>
 *___opensearch_version___*<br>
 <ins>Type</ins>: string, optional, immutable<br>
-<ins>Constraints</ins>: pattern: `([0-9]+\.){2}[0-9]+`<br><br>Version of OpenSearch to run on the cluster.  Must be provided if `opensearchMajorVersion` is not provided. Available versions: <ul> <li>`1.3.20`</li> <li>`1.3.19`</li> <li>`2.18.0`</li> <li>`2.19.1`</li> <li>`3.0.0`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `([0-9]+\.){2}[0-9]+`<br><br>Version of OpenSearch to run on the cluster.  Must be provided if `opensearchMajorVersion` is not provided. Available versions: <ul> <li>`2.19.2`</li> <li>`1.3.20`</li> <li>`2.19.1`</li> <li>`3.0.0`</li> </ul><br><br>
 *___two_factor_delete___*<br>
 <ins>Type</ins>: nested block, optional, updatable, see [two_factor_delete](#nested--two_factor_delete) for nested schema<br>
 <br>
@@ -440,7 +440,7 @@ List of openSearch dashboards settings<br>
 <br>OIDC provider<br><br>
 *___version___*<br>
 <ins>Type</ins>: string, optional, immutable<br>
-<ins>Constraints</ins>: pattern: `(^$|opensearch-dashboards:[0-9]+\.[0-9]+\.[0-9]+)`<br><br>Version of dashboard to run on the cluster. Available versions: <ul> <li>`1.3.20`</li> <li>`2.19.1`</li> <li>`3.0.0`</li> <li>`2.18.0`</li> <li>`1.3.19`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `(^$|opensearch-dashboards:[0-9]+\.[0-9]+\.[0-9]+)`<br><br>Version of dashboard to run on the cluster. Available versions: <ul> <li>`1.3.20`</li> <li>`2.19.2`</li> <li>`2.19.1`</li> <li>`3.0.0`</li> </ul><br><br>
 ### Read-only attributes
 *___url___*<br>
 <ins>Type</ins>: string, read-only<br>
