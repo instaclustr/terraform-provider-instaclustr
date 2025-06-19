@@ -107,7 +107,7 @@ The following terms are used to describe attributes in the schema of this resour
 <br>Provision this cluster for [Bundled Use only](https://www.instaclustr.com/support/documentation/cadence/getting-started-with-cadence/bundled-use-only-cluster-deployments/).<br><br>
 *___opensearch_major_version___*<br>
 <ins>Type</ins>: integer, optional, immutable<br>
-<ins>Constraints</ins>: minimum: 1, maximum: 2<br><br>Major version of OpenSearch to run on the cluster. Must be provided if `opensearchVersion` is not provided.<br><br>
+<ins>Constraints</ins>: minimum: 1, maximum: 3<br><br>Major version of OpenSearch to run on the cluster. Must be provided if `opensearchVersion` is not provided.<br><br>
 *___resize_settings___*<br>
 <ins>Type</ins>: nested block, optional, updatable, see [resize_settings](#nested--resize_settings) for nested schema<br>
 <br>Settings to determine how resize requests will be performed for the cluster.<br><br>
