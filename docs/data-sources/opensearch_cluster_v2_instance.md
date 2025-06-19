@@ -81,7 +81,7 @@ The following terms are used to describe attributes in the schema of this data s
 <br>URL of the Network Load Balancer if a load balancer is enabled for the cluster. Balances request loads against all nodes in the cluster except for ingest nodes.<br><br>
 *___opensearch_major_version___*<br>
 <ins>Type</ins>: integer, read-only<br>
-<ins>Constraints</ins>: minimum: 1, maximum: 2<br><br>Major version of OpenSearch to run on the cluster. Must be provided if `opensearchVersion` is not provided.<br><br>
+<ins>Constraints</ins>: minimum: 1, maximum: 3<br><br>Major version of OpenSearch to run on the cluster. Must be provided if `opensearchVersion` is not provided.<br><br>
 *___resize_settings___*<br>
 <ins>Type</ins>: nested block, read-only, see [resize_settings](#nested--resize_settings) for nested schema<br>
 <br>Settings to determine how resize requests will be performed for the cluster.<br><br>
