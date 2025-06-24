@@ -9,6 +9,12 @@ List of accepted consumer projects or networks for a Cluster Data Center
 ## Example Usage
 ```
 resource "instaclustr_gcp_service_attachments_accept_list_v2" "example" {
+  consumer_accept_list {
+    accept_network_name = "network-1"
+    accept_project_id = "project-1"
+    connection_limit = 10
+  }
+
   cdc_id = "ddf992f6-96fb-4cce-b87c-f225df7f1745"
 }
 ```
