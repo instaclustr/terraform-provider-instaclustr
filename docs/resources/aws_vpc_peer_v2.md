@@ -11,7 +11,7 @@ Definition of an AWS VPC Peering request to allow privately routed connections t
 resource "instaclustr_aws_vpc_peer_v2" "example" {
   peer_aws_account_id = "123456789123"
   peer_subnets = [ "10.129.0.0/16" ]
-  peer_vpc_id = "vpc-123abc456"
+  peer_vpc_id = "vpc-123abc45"
   peer_region = "US_EAST_1"
   cdc_id = "f3eab841-6952-430d-ba90-1bfc3f15da10"
 }
