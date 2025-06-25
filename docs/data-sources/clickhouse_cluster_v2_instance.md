@@ -237,6 +237,9 @@ Enable Tiered Storage for ClickHouse<br>
 *___s3_settings___*<br>
 <ins>Type</ins>: nested block, read-only, see [s3_settings](#nested--s3_settings) for nested schema<br>
 <br>Defines information about the S3 bucket to be used for remote storage.<br><br>
+*___azure_blob_storage_settings___*<br>
+<ins>Type</ins>: nested block, read-only, see [azure_blob_storage_settings](#nested--azure_blob_storage_settings) for nested schema<br>
+<br>Defines information about the blob storage container to be used for remote storage.<br><br>
 <a id="nested--delete_node_operations"></a>
 ## Nested schema for `delete_node_operations`
 
@@ -347,6 +350,13 @@ List of non-deleted nodes in the data centre<br>
 *___node_id___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
 <br>ID of the node being replaced.<br><br>
+<a id="nested--azure_blob_storage_settings"></a>
+## Nested schema for `azure_blob_storage_settings`
+Defines information about the blob storage container to be used for remote storage.<br>
+### Read-only attributes
+*___container_name___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Blob storage container name for ClickHouse remote storage<br><br>
 <a id="nested--resize_settings"></a>
 ## Nested schema for `resize_settings`
 Settings to determine how resize requests will be performed for the cluster.<br>
