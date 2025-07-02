@@ -159,6 +159,9 @@ List of data centre settings.<br>
 *___azure_settings___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [azure_settings](#nested--azure_settings) for nested schema<br>
 <br>Azure specific settings for the Data Centre. Cannot be provided with AWS or GCP settings.<br><br>
+*___private_service_connect___*<br>
+<ins>Type</ins>: nested block, optional, immutable, see [private_service_connect](#nested--private_service_connect) for nested schema<br>
+<br>
 *___gcp_settings___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [gcp_settings](#nested--gcp_settings) for nested schema<br>
 <br>GCP specific settings for the Data Centre. Cannot be provided with AWS or Azure settings.<br><br>
@@ -234,6 +237,13 @@ Azure specific settings for the Data Centre. Cannot be provided with AWS or GCP 
 *___resource_group___*<br>
 <ins>Type</ins>: string, optional, immutable<br>
 <br>The name of the Azure Resource Group into which the Data Centre will be provisioned.<br><br>
+<a id="nested--private_service_connect"></a>
+## Nested schema for `private_service_connect`
+
+### Input attributes - Optional
+*___advertised_ips___*<br>
+<ins>Type</ins>: list of strings, optional, immutable<br>
+<ins>Constraints</ins>: minimum items: 3<br><br>Advertise these IPs<br><br>
 <a id="nested--deleted_nodes"></a>
 ## Nested schema for `deleted_nodes`
 List of deleted nodes in the data centre<br>
