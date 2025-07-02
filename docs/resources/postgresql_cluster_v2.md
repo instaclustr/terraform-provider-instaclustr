@@ -10,6 +10,7 @@ Definition of a managed Postgresql cluster that can be provisioned in Instaclust
 ```
 resource "instaclustr_postgresql_cluster_v2" "example" {
   extensions = [ "PG_CRON", "PG_PARTMAN" ]
+  pci_compliance_mode = false
   data_centre {
     client_to_cluster_encryption = true
     cloud_provider = "AWS_VPC"
@@ -59,6 +60,9 @@ The following terms are used to describe attributes in the schema of this resour
 *___private_network_cluster___*<br>
 <ins>Type</ins>: boolean, required, immutable<br>
 <br>Creates the cluster with private network only, see [Private Network Clusters](https://www.instaclustr.com/support/documentation/useful-information/private-network-clusters/).<br><br>
+*___pci_compliance_mode___*<br>
+<ins>Type</ins>: boolean, required, immutable<br>
+<br>Creates a PCI compliant cluster, see [PCI Compliance](https://www.instaclustr.com/support/documentation/useful-information/pci-compliance/).<br><br>
 ### Input attributes - Optional
 *___extensions___*<br>
 <ins>Type</ins>: list of strings, optional, updatable<br>
@@ -85,9 +89,6 @@ The following terms are used to describe attributes in the schema of this resour
 *___current_cluster_operation_status___*<br>
 <ins>Type</ins>: string, read-only<br>
 <ins>Constraints</ins>: allowed values: [ `NO_OPERATION`, `OPERATION_IN_PROGRESS`, `OPERATION_FAILED` ]<br><br>Indicates if the cluster is currently performing any restructuring operation such as being created or resized<br><br>
-*___pci_compliance_mode___*<br>
-<ins>Type</ins>: boolean, read-only<br>
-<br>Creates a PCI compliant cluster, see [PCI Compliance](https://www.instaclustr.com/support/documentation/useful-information/pci-compliance/).<br><br>
 <a id="nested--data_centre"></a>
 ## Nested schema for `data_centre`
 List of data centre settings.<br>

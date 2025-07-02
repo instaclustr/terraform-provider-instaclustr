@@ -104,6 +104,9 @@ List of data centre settings.<br>
 *___azure_settings___*<br>
 <ins>Type</ins>: nested block, read-only, see [azure_settings](#nested--azure_settings) for nested schema<br>
 <br>Azure specific settings for the Data Centre. Cannot be provided with AWS or GCP settings.<br><br>
+*___private_service_connect___*<br>
+<ins>Type</ins>: nested block, read-only, see [private_service_connect](#nested--private_service_connect) for nested schema<br>
+<br>
 *___deleted_nodes___*<br>
 <ins>Type</ins>: repeatable nested block, read-only, see [deleted_nodes](#nested--deleted_nodes) for nested schema<br>
 <br>List of deleted nodes in the data centre<br><br>
@@ -183,6 +186,13 @@ Azure specific settings for the Data Centre. Cannot be provided with AWS or GCP 
 *___resource_group___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>The name of the Azure Resource Group into which the Data Centre will be provisioned.<br><br>
+<a id="nested--private_service_connect"></a>
+## Nested schema for `private_service_connect`
+
+### Read-only attributes
+*___advertised_ips___*<br>
+<ins>Type</ins>: list of strings, read-only<br>
+<ins>Constraints</ins>: minimum items: 3<br><br>Advertise these IPs<br><br>
 <a id="nested--deleted_nodes"></a>
 ## Nested schema for `deleted_nodes`
 List of deleted nodes in the data centre<br>
