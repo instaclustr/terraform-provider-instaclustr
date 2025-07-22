@@ -102,9 +102,7 @@ jobs:
     steps:
       - checkout
       - run: go get -v -t -d ./...
-      - configure-gpg-key
       - build-provider
-      - clean-gpg-keys
 workflows:
   build-and-deploy:
     jobs:
@@ -119,4 +117,3 @@ workflows:
             branches:
               only:
                 - master
-                - INS-35375-fix-circle-ci-build
