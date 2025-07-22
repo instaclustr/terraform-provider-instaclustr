@@ -84,7 +84,7 @@ commands:
 jobs:
   build:
     docker:
-      - image: cimg/golang:1.22
+      - image: cimg/go:1.22
     working_directory: /go/src/github.com/arjunrajshekhar/terraform-provider-instaclustr
     steps:
       - checkout
@@ -97,7 +97,7 @@ jobs:
       - create-github-release
   build-master-branch:
     docker:
-      - image: cimg/golang:1.22
+      - image: cimg/go:1.22
     working_directory: /go/src/github.com/arjunrajshekhar/terraform-provider-instaclustr
     steps:
       - checkout
