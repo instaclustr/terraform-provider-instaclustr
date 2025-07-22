@@ -85,7 +85,7 @@ jobs:
   build:
     docker:
       - image: cimg/go:1.22
-    working_directory: /go/src/github.com/arjunrajshekhar/terraform-provider-instaclustr
+    working_directory: /home/circleci/go/src/github.com/arjunrajshekhar/terraform-provider-instaclustr
     steps:
       - checkout
       - run: go get -v -t -d ./...
