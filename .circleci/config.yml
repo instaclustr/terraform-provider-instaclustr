@@ -72,7 +72,7 @@ commands:
       - run:
           name: "Publish Release on GitHub"
           command: |
-            go get github.com/tcnksm/ghr
+            go install github.com/tcnksm/ghr@latest
             ghr -t ${GITHUB_TOKEN} \
             -u ${CIRCLE_PROJECT_USERNAME} \
             -r ${CIRCLE_PROJECT_REPONAME} \
@@ -84,7 +84,7 @@ commands:
 jobs:
   build:
     docker:
-      - image: circleci/golang:1.17.5
+      - image: cimg/golang:1.22
     working_directory: /go/src/github.com/arjunrajshekhar/terraform-provider-instaclustr
     steps:
       - checkout
@@ -97,7 +97,7 @@ jobs:
       - create-github-release
   build-master-branch:
     docker:
-      - image: circleci/golang:1.17.5
+      - image: cimg/golang:1.22
     working_directory: /go/src/github.com/arjunrajshekhar/terraform-provider-instaclustr
     steps:
       - checkout
