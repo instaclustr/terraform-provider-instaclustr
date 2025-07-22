@@ -95,6 +95,16 @@ jobs:
       - sign-builds
       - clean-gpg-keys
       - create-github-release
+  build-master-branch:
+    docker:
+      - image: circleci/golang:1.17.5
+    working_directory: /go/src/github.com/arjunrajshekhar/terraform-provider-instaclustr
+    steps:
+      - checkout
+      - run: go get -v -t -d ./...
+      - configure-gpg-key
+      - build-provider
+      - clean-gpg-keys
 workflows:
   build-and-deploy:
     jobs:
@@ -103,5 +113,10 @@ workflows:
           filters:
             tags:
               only: /^v.*/
+      - build-master-branch:
+          context: terraform provider
+          filters:
             branches:
-              only: master
+              only:
+                - master
+                - INS-35375-fix-circle-ci-build
