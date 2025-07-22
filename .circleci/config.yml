@@ -111,6 +111,9 @@ workflows:
           filters:
             tags:
               only: /^v.*/
+              branches:
+                ignore:
+                  - /.*/
       - build-master-branch:
           context: terraform provider
           filters:
