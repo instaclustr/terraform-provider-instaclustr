@@ -113,7 +113,7 @@ workflows:
               only: /^v.*/
             branches:
               ignore: /.*/
-      - build-master-branch:
+      - build-branches:
           context: terraform provider
           filters:
             branches:
