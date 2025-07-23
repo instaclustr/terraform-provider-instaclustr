@@ -95,7 +95,7 @@ jobs:
       - sign-builds
       - clean-gpg-keys
       - create-github-release
-  build-master-branch:
+  build-branches:
     docker:
       - image: cimg/go:1.22
     working_directory: /home/circleci/go/src/github.com/projects/terraform-provider-instaclustr
