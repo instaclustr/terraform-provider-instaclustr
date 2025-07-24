@@ -5,6 +5,8 @@ description: |-
 ---
 
 # instaclustr_kafka_user_v2 (Resource)
+!> **Deprecated:** This resource is deprecated and will be removed in the next major version. Use <a href="https://registry.terraform.io/providers/instaclustr/instaclustr/latest/docs/resources/kafka_user_v4"> instaclustr_kafka_user_v4</a> instead.
+
 Definition of a Kafka User to be applied to a Kafka cluster.
 ## Example Usage
 ```
@@ -45,6 +47,10 @@ The following terms are used to describe attributes in the schema of this resour
 *___initial_permissions___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <ins>Constraints</ins>: allowed values: [ `standard`, `read-only`, `none` ]<br><br>Permissions initially granted to Kafka user upon creation.<br><br>
+### Input attributes - Optional
+*___auth_mechanism___*<br>
+<ins>Type</ins>: string, optional, updatable<br>
+<ins>Constraints</ins>: allowed values: [ `MTLS`, `SASL` ]<br><br>Authentication mechanisms supported for KafkaClusters.<br><br>
 ### Read-only attributes
 *___id___*<br>
 <ins>Type</ins>: string, read-only<br>
@@ -55,7 +61,7 @@ Initial options used when creating Kafka user<br>
 ### Input attributes - Required
 *___sasl_scram_mechanism___*<br>
 <ins>Type</ins>: string, required, updatable<br>
-<ins>Constraints</ins>: allowed values: [ `SCRAM-SHA-256`, `SCRAM-SHA-512` ]<br><br>SASL/SCRAM mechanism for user<br><br>
+<br>Scram Mechanism for SASL authentication. Valid values: SCRAM-SHA-256, SCRAM-SHA-512<br><br>
 ### Input attributes - Optional
 *___override_existing_user___*<br>
 <ins>Type</ins>: boolean, optional, immutable<br>

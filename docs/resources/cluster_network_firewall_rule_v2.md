@@ -5,13 +5,15 @@ description: |-
 ---
 
 # instaclustr_cluster_network_firewall_rule_v2 (Resource)
-Definition of an CIDR based firewall rule to be applied to a cluster.
+!> **Deprecated:** This resource is deprecated and will be removed in the next major version. Use <a href="https://registry.terraform.io/providers/instaclustr/instaclustr/latest/docs/resources/cluster_network_firewall_rules_v2"> instaclustr_cluster_network_firewall_rules_v2</a> instead.
+
+Definition of a CIDR based firewall rule to be applied to a cluster.
 ## Example Usage
 ```
 resource "instaclustr_cluster_network_firewall_rule_v2" "example" {
-  cluster_id = "c1af59c6-ba0e-4cc2-a0f3-65cee17a5f37"
-  type = "CASSANDRA"
-  network = "219.90.173.177/32"
+  cluster_id = "91346037-b969-4c4d-8112-59e1d2aa67e9"
+  type = "CASSANDRA_CQL"
+  network = "127.0.0.3/32"
 }
 ```
 ## Glossary
@@ -26,7 +28,7 @@ The following terms are used to describe attributes in the schema of this resour
 ### Input attributes - Required
 *___type___*<br>
 <ins>Type</ins>: string, required, immutable<br>
-<ins>Constraints</ins>: allowed values: [ `APACHE_ZOOKEEPER`, `CADENCE`, `CADENCE_GRPC`, `CADENCE_WEB`, `CASSANDRA`, `CASSANDRA_CQL`, `ELASTICSEARCH`, `KAFKA`, `KAFKA_CONNECT`, `KAFKA_ENCRYPTION`, `KAFKA_MTLS`, `KAFKA_NO_ENCRYPTION`, `KAFKA_REST_PROXY`, `KAFKA_SCHEMA_REGISTRY`, `KARAPACE_REST_PROXY`, `KARAPACE_SCHEMA_REGISTRY`, `MONGODB`, `OPENSEARCH`, `OPENSEARCH_DASHBOARDS`, `PGBOUNCER`, `POSTGRESQL`, `REDIS`, `SEARCH_DASHBOARDS`, `SECURE_APACHE_ZOOKEEPER`, `SPARK`, `SPARK_JOBSERVER`, `SHOTOVER_PROXY` ]<br><br>The type of firewall rule.<br><br>
+<ins>Constraints</ins>: allowed values: [ `APACHE_ZOOKEEPER`, `CADENCE`, `CADENCE_GRPC`, `CADENCE_HTTP_API`, `CADENCE_WEB`, `CASSANDRA`, `CASSANDRA_CQL`, `CLICKHOUSE`, `CLICKHOUSE_WEB`, `ELASTICSEARCH`, `KAFKA`, `KAFKA_CONNECT`, `KAFKA_ENCRYPTION`, `KAFKA_MTLS`, `KAFKA_NO_ENCRYPTION`, `KAFKA_PRIVATE_SASL_PLAINTEXT_LISTENER`, `KAFKA_PUBLIC_SASL_PLAINTEXT_LISTENER`, `KAFKA_PRIVATE_PLAINTEXT_LISTENER`, `KAFKA_PUBLIC_PLAINTEXT_LISTENER`, `KAFKA_PRIVATE_SSL_LISTENER`, `KAFKA_PUBLIC_SSL_LISTENER`, `KAFKA_REST_PROXY`, `KAFKA_SCHEMA_REGISTRY`, `KARAPACE_REST_PROXY`, `KARAPACE_SCHEMA_REGISTRY`, `OPENSEARCH`, `OPENSEARCH_DASHBOARDS`, `PGBOUNCER`, `POSTGRESQL`, `REDIS`, `VALKEY`, `SEARCH_DASHBOARDS`, `SECURE_APACHE_ZOOKEEPER`, `SPARK`, `SPARK_JOBSERVER`, `SHOTOVER_PROXY` ]<br><br>The type of firewall rule.<br><br>
 *___cluster_id___*<br>
 <ins>Type</ins>: string (uuid), required, immutable<br>
 <br>ID of the cluster for the cluster network firewall rule.<br><br>

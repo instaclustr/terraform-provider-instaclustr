@@ -56,9 +56,18 @@ The following terms are used to describe attributes in the schema of this resour
 *___name___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Name of the Vpc Peering Connection.<br><br>
+*___data_centre_resource_group___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Resource Group Name of the Data Centre Virtual Network.<br><br>
+*___data_centre_virtual_network_name___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>The name of the Data Centre Virtual Network.<br><br>
 *___failure_reason___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Reason for Peering Connection Failure.<br><br>
+*___data_centre_subscription_id___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Subscription ID of the Data Centre Virtual Network.<br><br>
 ## Import
 This resource can be imported using the `terraform import` command as follows:
 ```

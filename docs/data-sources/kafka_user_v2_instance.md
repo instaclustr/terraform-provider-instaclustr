@@ -5,6 +5,8 @@ description: |-
 ---
 
 # instaclustr_kafka_user_v2_instance (Data Source)
+!> **Deprecated:** This resource is deprecated and will be removed in the next major version. Use <a href="https://registry.terraform.io/providers/instaclustr/instaclustr/latest/docs/resources/kafka_user_v4"> instaclustr_kafka_user_v4</a> instead.
+
 Definition of a Kafka User to be applied to a Kafka cluster.
 ## Example Usage
 ```
@@ -19,6 +21,9 @@ The following terms are used to describe attributes in the schema of this data s
 - **_nested block_** - These attributes use the [Terraform block syntax](https://www.terraform.io/language/attr-as-blocks) when defined as an input in the Terraform code. Attributes with the type **_repeatable nested block_** are the same except that the nested block can be defined multiple times with varying nested attributes. When reading nested block attributes, an index must be provided when accessing the contents of the nested block, example - `my_resource.nested_block_attribute[0].nested_attribute`.
 ## Root Level Schema
 ### Read-only attributes
+*___auth_mechanism___*<br>
+<ins>Type</ins>: string, read-only<br>
+<ins>Constraints</ins>: allowed values: [ `MTLS`, `SASL` ]<br><br>Authentication mechanisms supported for KafkaClusters.<br><br>
 *___options___*<br>
 <ins>Type</ins>: nested object, read-only, see [options](#nested--options) for nested schema<br>
 <br>Initial options used when creating Kafka user<br><br>
@@ -46,4 +51,4 @@ Initial options used when creating Kafka user<br>
 <br>Overwrite user if already exists.<br><br>
 *___sasl_scram_mechanism___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: allowed values: [ `SCRAM-SHA-256`, `SCRAM-SHA-512` ]<br><br>SASL/SCRAM mechanism for user<br><br>
+<br>Scram Mechanism for SASL authentication. Valid values: SCRAM-SHA-256, SCRAM-SHA-512<br><br>

@@ -5,6 +5,8 @@ description: |-
 ---
 
 # instaclustr_aws_security_group_firewall_rule_v2 (Resource)
+!> **Deprecated:** This resource is deprecated and will be removed in the next major version. Use <a href="https://registry.terraform.io/providers/instaclustr/instaclustr/latest/docs/resources/aws_security_group_firewall_rules_v2"> instaclustr_cluster_network_firewall_rules_v2</a> instead.
+
 Definition of an AWS Security Group based firewall rule to be applied to a cluster.
 ## Example Usage
 ```
@@ -29,7 +31,7 @@ The following terms are used to describe attributes in the schema of this resour
 <br>The security group ID of the AWS security group firewall rule.<br><br>
 *___type___*<br>
 <ins>Type</ins>: string, required, immutable<br>
-<ins>Constraints</ins>: allowed values: [ `APACHE_ZOOKEEPER`, `CADENCE`, `CADENCE_GRPC`, `CADENCE_WEB`, `CASSANDRA`, `CASSANDRA_CQL`, `ELASTICSEARCH`, `KAFKA`, `KAFKA_CONNECT`, `KAFKA_ENCRYPTION`, `KAFKA_MTLS`, `KAFKA_NO_ENCRYPTION`, `KAFKA_REST_PROXY`, `KAFKA_SCHEMA_REGISTRY`, `KARAPACE_REST_PROXY`, `KARAPACE_SCHEMA_REGISTRY`, `MONGODB`, `OPENSEARCH`, `OPENSEARCH_DASHBOARDS`, `PGBOUNCER`, `POSTGRESQL`, `REDIS`, `SEARCH_DASHBOARDS`, `SECURE_APACHE_ZOOKEEPER`, `SPARK`, `SPARK_JOBSERVER`, `SHOTOVER_PROXY` ]<br><br>The type of firewall rule.<br><br>
+<ins>Constraints</ins>: allowed values: [ `APACHE_ZOOKEEPER`, `CADENCE`, `CADENCE_GRPC`, `CADENCE_HTTP_API`, `CADENCE_WEB`, `CASSANDRA`, `CASSANDRA_CQL`, `CLICKHOUSE`, `CLICKHOUSE_WEB`, `ELASTICSEARCH`, `KAFKA`, `KAFKA_CONNECT`, `KAFKA_ENCRYPTION`, `KAFKA_MTLS`, `KAFKA_NO_ENCRYPTION`, `KAFKA_PRIVATE_SASL_PLAINTEXT_LISTENER`, `KAFKA_PUBLIC_SASL_PLAINTEXT_LISTENER`, `KAFKA_PRIVATE_PLAINTEXT_LISTENER`, `KAFKA_PUBLIC_PLAINTEXT_LISTENER`, `KAFKA_PRIVATE_SSL_LISTENER`, `KAFKA_PUBLIC_SSL_LISTENER`, `KAFKA_REST_PROXY`, `KAFKA_SCHEMA_REGISTRY`, `KARAPACE_REST_PROXY`, `KARAPACE_SCHEMA_REGISTRY`, `OPENSEARCH`, `OPENSEARCH_DASHBOARDS`, `PGBOUNCER`, `POSTGRESQL`, `REDIS`, `VALKEY`, `SEARCH_DASHBOARDS`, `SECURE_APACHE_ZOOKEEPER`, `SPARK`, `SPARK_JOBSERVER`, `SHOTOVER_PROXY` ]<br><br>The type of firewall rule.<br><br>
 *___cluster_id___*<br>
 <ins>Type</ins>: string (uuid), required, immutable<br>
 <br>ID of the cluster for the AWS security group firewall rule.<br><br>
@@ -39,7 +41,7 @@ The following terms are used to describe attributes in the schema of this resour
 <br>The status of the AWS security group firewall rule.<br><br>
 *___deferred_reason___*<br>
 <ins>Type</ins>: string, read-only<br>
-<br>The reason (if needed) for the deferred status of the AWS security group firewall rule.<br><br>
+<br>The reason (if needed) for the deferred status of the AWS security group firewall rule<br><br>
 *___id___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
 <br>ID of the AWS security group firewall rule.<br><br>
