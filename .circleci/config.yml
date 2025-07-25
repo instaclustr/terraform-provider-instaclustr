@@ -72,7 +72,7 @@ commands:
       - run:
           name: "Publish Release on GitHub"
           command: |
-            go get github.com/tcnksm/ghr@v0.16.2
+            go install github.com/tcnksm/ghr@0.17.0
             ghr -t ${GITHUB_TOKEN} \
             -u ${CIRCLE_PROJECT_USERNAME} \
             -r ${CIRCLE_PROJECT_REPONAME} \
@@ -84,8 +84,8 @@ commands:
 jobs:
   build:
     docker:
-      - image: circleci/golang:1.17.5
-    working_directory: /go/src/github.com/arjunrajshekhar/terraform-provider-instaclustr
+      - image: cimg/go:1.22
+    working_directory: /home/circleci/go/src/github.com/projects/terraform-provider-instaclustr
     steps:
       - checkout
       - run: go get -v -t -d ./...
@@ -95,6 +95,14 @@ jobs:
       - sign-builds
       - clean-gpg-keys
       - create-github-release
+  build-branches:
+    docker:
+      - image: cimg/go:1.22
+    working_directory: /home/circleci/go/src/github.com/projects/terraform-provider-instaclustr
+    steps:
+      - checkout
+      - run: go get -v -t -d ./...
+      - build-provider
 workflows:
   build-and-deploy:
     jobs:
@@ -104,4 +112,9 @@ workflows:
             tags:
               only: /^v.*/
             branches:
-              only: master
+              ignore: /.*/
+      - build-branches:
+          context: terraform provider
+          filters:
+            branches:
+              only: /.*/
