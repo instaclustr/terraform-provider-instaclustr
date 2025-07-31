@@ -105,14 +105,17 @@ List of data centre settings.<br>
 <ins>Type</ins>: nested block, read-only, see [azure_settings](#nested--azure_settings) for nested schema<br>
 <br>Azure specific settings for the Data Centre. Cannot be provided with AWS or GCP settings.<br><br>
 *___private_service_connect___*<br>
-<ins>Type</ins>: nested block, read-only, see [private_service_connect](#nested--private_service_connect) for nested schema<br>
-<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>Create a Private Service Connect enabled cluster.<br><br>
 *___deleted_nodes___*<br>
 <ins>Type</ins>: repeatable nested block, read-only, see [deleted_nodes](#nested--deleted_nodes) for nested schema<br>
 <br>List of deleted nodes in the data centre<br><br>
 *___gcp_settings___*<br>
 <ins>Type</ins>: nested block, read-only, see [gcp_settings](#nested--gcp_settings) for nested schema<br>
 <br>GCP specific settings for the Data Centre. Cannot be provided with AWS or Azure settings.<br><br>
+*___private_connectivity___*<br>
+<ins>Type</ins>: nested block, read-only, see [private_connectivity](#nested--private_connectivity) for nested schema<br>
+<br>Configuration required for connecting to a PrivateLink or Private Service Connect enabled cluster.<br><br>
 *___id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>ID of the Cluster Data Centre.<br><br>
@@ -186,13 +189,6 @@ Azure specific settings for the Data Centre. Cannot be provided with AWS or GCP 
 *___resource_group___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>The name of the Azure Resource Group into which the Data Centre will be provisioned.<br><br>
-<a id="nested--private_service_connect"></a>
-## Nested schema for `private_service_connect`
-
-### Read-only attributes
-*___advertised_ips___*<br>
-<ins>Type</ins>: list of strings, read-only<br>
-<ins>Constraints</ins>: minimum items: 3<br><br>Advertise these IPs<br><br>
 <a id="nested--deleted_nodes"></a>
 ## Nested schema for `deleted_nodes`
 List of deleted nodes in the data centre<br>
@@ -263,6 +259,7 @@ Examples:
 - Network name: <code>{network-name}</code>, equivalent to <code>projects/{riyoa-gcp-project-name}/global/networks/{network-name}</code>.
 - Same-project subnetwork URI: <code>projects/{riyoa-gcp-project-name}/regions/{region-id}/subnetworks/{subnetwork-name}</code>.
 - Shared VPC subnetwork URI: <code>projects/{riyoa-gcp-host-project-name}/regions/{region-id}/subnetworks/{subnetwork-name}</code>.
+
 <br><br>
 <a id="nested--delete_node_operations"></a>
 ## Nested schema for `delete_node_operations`
@@ -283,6 +280,13 @@ Examples:
 *___node_id___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
 <br>ID of the node being replaced.<br><br>
+<a id="nested--private_connectivity"></a>
+## Nested schema for `private_connectivity`
+Configuration required for connecting to a PrivateLink or Private Service Connect enabled cluster.<br>
+### Read-only attributes
+*___endpoint_addresses___*<br>
+<ins>Type</ins>: repeatable nested block, read-only, see [endpoint_addresses](#nested--endpoint_addresses) for nested schema<br>
+<br>Private Link / Private Service Connect endpoint addresses<br><br>
 <a id="nested--tag"></a>
 ## Nested schema for `tag`
 List of tags to apply to the Data Centre. Tags are metadata labels which  allow you to identify, categorize and filter clusters. This can be useful for grouping together clusters into applications, environments, or any category that you require. Note `tag` is not supported in terraform lifecycle `ignore_changes`.<br>
@@ -355,6 +359,16 @@ List of non-deleted nodes in the data centre<br>
 *___public_address___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Public IP address of the node.<br><br>
+<a id="nested--endpoint_addresses"></a>
+## Nested schema for `endpoint_addresses`
+Private Link / Private Service Connect endpoint addresses<br>
+### Read-only attributes
+*___address___*<br>
+<ins>Type</ins>: list of strings, read-only<br>
+<br>The ip address of the endpoint<br><br>
+*___rack___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>The rack the endpoint is in<br><br>
 <a id="nested--replace_operations"></a>
 ## Nested schema for `replace_operations`
 
