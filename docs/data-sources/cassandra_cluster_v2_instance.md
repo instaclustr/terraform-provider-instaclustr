@@ -77,6 +77,9 @@ List of data centre settings.<br>
 *___cloud_provider___*<br>
 <ins>Type</ins>: string, read-only<br>
 <ins>Constraints</ins>: allowed values: [ `AWS_VPC`, `GCP`, `AZURE`, `AZURE_AZ`, `ONPREMISES` ]<br><br>Name of a cloud provider service.<br><br>
+*___private_service_connect_v2___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>Create a Private Service Connect enabled cluster.<br><br>
 *___shotover_proxy___*<br>
 <ins>Type</ins>: nested block, read-only, see [shotover_proxy](#nested--shotover_proxy) for nested schema<br>
 <br>The version of Shotover Proxy running on the Cluster.<br><br>
@@ -104,9 +107,6 @@ List of data centre settings.<br>
 *___azure_settings___*<br>
 <ins>Type</ins>: nested block, read-only, see [azure_settings](#nested--azure_settings) for nested schema<br>
 <br>Azure specific settings for the Data Centre. Cannot be provided with AWS or GCP settings.<br><br>
-*___private_service_connect___*<br>
-<ins>Type</ins>: boolean, read-only<br>
-<br>Create a Private Service Connect enabled cluster.<br><br>
 *___deleted_nodes___*<br>
 <ins>Type</ins>: repeatable nested block, read-only, see [deleted_nodes](#nested--deleted_nodes) for nested schema<br>
 <br>List of deleted nodes in the data centre<br><br>
