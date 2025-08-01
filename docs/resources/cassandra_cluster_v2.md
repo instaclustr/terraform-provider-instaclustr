@@ -153,15 +153,15 @@ List of data centre settings.<br>
 *___custom_subject_alternative_names___*<br>
 <ins>Type</ins>: list of strings, optional, updatable<br>
 <br>List of Subject Alternate Names FQDNs as per RFC 1035.  Used by the applications with self signed certificates in keystores of nodes in the datacenter.<br><br>
+*___private_service_connect_v2___*<br>
+<ins>Type</ins>: boolean, optional, immutable<br>
+<br>Create a Private Service Connect enabled cluster.<br><br>
 *___shotover_proxy___*<br>
 <ins>Type</ins>: nested block, optional, updatable, see [shotover_proxy](#nested--shotover_proxy) for nested schema<br>
 <br>The version of Shotover Proxy running on the Cluster.<br><br>
 *___azure_settings___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [azure_settings](#nested--azure_settings) for nested schema<br>
 <br>Azure specific settings for the Data Centre. Cannot be provided with AWS or GCP settings.<br><br>
-*___private_service_connect___*<br>
-<ins>Type</ins>: boolean, optional, immutable<br>
-<br>Create a Private Service Connect enabled cluster.<br><br>
 *___gcp_settings___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [gcp_settings](#nested--gcp_settings) for nested schema<br>
 <br>GCP specific settings for the Data Centre. Cannot be provided with AWS or Azure settings.<br><br>
