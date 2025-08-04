@@ -109,6 +109,9 @@ List of data centre settings.<br>
 <ins>Type</ins>: string, required, immutable<br>
 <br>The private network address block for the Data Centre specified using CIDR address notation. The network must have a prefix length between `/16` and `/26` and must be part of a private address space.<br><br>
 ### Input attributes - Optional
+*___zero_inbound_access___*<br>
+<ins>Type</ins>: boolean, optional, immutable<br>
+<br>Zero Inbound Access gateways eliminate the requirement for any public IP addresses in cluster deployment.<br><br>
 *___azure_settings___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [azure_settings](#nested--azure_settings) for nested schema<br>
 <br>Azure specific settings for the Data Centre. Cannot be provided with AWS or GCP settings.<br><br>

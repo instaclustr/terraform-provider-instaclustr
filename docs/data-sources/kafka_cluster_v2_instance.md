@@ -152,6 +152,9 @@ Adds the specified version of Kafka REST Proxy to this Kafka cluster.<br>
 ## Nested schema for `data_centre`
 List of data centre settings.<br>
 ### Read-only attributes
+*___zero_inbound_access___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>Zero Inbound Access gateways eliminate the requirement for any public IP addresses in cluster deployment.<br><br>
 *___custom_subject_alternative_names___*<br>
 <ins>Type</ins>: list of strings, read-only<br>
 <br>List of Subject Alternative Names FQDNs as per RFC 1035.  Used by the applications with self signed certificates in keystores of nodes in the datacenter. NOTE: No private link cluster support.<br><br>
