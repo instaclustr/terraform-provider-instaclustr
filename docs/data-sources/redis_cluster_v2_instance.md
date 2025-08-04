@@ -65,6 +65,9 @@ The following terms are used to describe attributes in the schema of this data s
 ## Nested schema for `data_centre`
 List of data centre settings.<br>
 ### Read-only attributes
+*___zero_inbound_access___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>Zero Inbound Access gateways eliminate the requirement for any public IP addresses in cluster deployment.<br><br>
 *___cloud_provider___*<br>
 <ins>Type</ins>: string, read-only<br>
 <ins>Constraints</ins>: allowed values: [ `AWS_VPC`, `GCP`, `AZURE`, `AZURE_AZ`, `ONPREMISES` ]<br><br>Name of a cloud provider service.<br><br>

@@ -105,6 +105,9 @@ List of data centre settings.<br>
 <ins>Type</ins>: string, required, immutable<br>
 <br>The private network address block for the Data Centre specified using CIDR address notation. The network must have a prefix length between `/16` and `/26` and must be part of a private address space.<br><br>
 ### Input attributes - Optional
+*___zero_inbound_access___*<br>
+<ins>Type</ins>: boolean, optional, immutable<br>
+<br>Zero Inbound Access gateways eliminate the requirement for any public IP addresses in cluster deployment.<br><br>
 *___replication_factor___*<br>
 <ins>Type</ins>: integer, optional, updatable<br>
 <ins>Constraints</ins>: minimum: 0, maximum: 5<br><br>The number of replica nodes that should be assigned for each master node.<br><br>

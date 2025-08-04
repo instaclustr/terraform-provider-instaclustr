@@ -90,6 +90,9 @@ List of data centre settings.<br>
 <ins>Type</ins>: string, required, immutable<br>
 <br>The private network address block for the Data Centre specified using CIDR address notation. The network must have a prefix length between `/16` and `/26` and must be part of a private address space.<br><br>
 ### Input attributes - Optional
+*___zero_inbound_access___*<br>
+<ins>Type</ins>: boolean, optional, immutable<br>
+<br>Zero Inbound Access gateways eliminate the requirement for any public IP addresses in cluster deployment.<br><br>
 *___custom_subject_alternative_names___*<br>
 <ins>Type</ins>: list of strings, optional, immutable<br>
 <br>List of Subject Alternative Names FQDNs as per RFC 1035.  Used by the applications with self signed certificates in keystores of nodes in the datacenter.<br><br>
