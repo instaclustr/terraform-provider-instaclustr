@@ -2,8 +2,6 @@ module github.com/instaclustr/terraform-provider-instaclustr
 
 go 1.23.0
 
-toolchain go1.24.4
-
 require (
 	github.com/dikhan/terraform-provider-openapi/v3 v3.0.0
 	github.com/hashicorp/terraform-plugin-sdk/v2 v2.16.0
