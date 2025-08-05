@@ -88,7 +88,7 @@ List of data centre settings.<br>
 <br>The version of Shotover Proxy running on the Cluster.<br><br>
 *___number_of_nodes___*<br>
 <ins>Type</ins>: integer, read-only<br>
-<br>Total number of nodes in the Data Centre. Must be a multiple of `replicationFactor`.<br><br>
+<br>Total number of nodes in the Data Centre. Includes only Cassandra nodes, other node types in the cluster such as shotover nodes are excluded from this count. Must be a multiple of `replicationFactor`.<br><br>
 *___replication_factor___*<br>
 <ins>Type</ins>: integer, read-only<br>
 <br>Number of racks to use when allocating nodes.<br><br>
