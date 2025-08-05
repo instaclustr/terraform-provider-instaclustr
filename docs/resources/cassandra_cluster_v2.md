@@ -124,7 +124,7 @@ List of data centre settings.<br>
 <ins>Constraints</ins>: allowed values: [ `AWS_VPC`, `GCP`, `AZURE`, `AZURE_AZ`, `ONPREMISES` ]<br><br>Name of a cloud provider service.<br><br>
 *___number_of_nodes___*<br>
 <ins>Type</ins>: integer, required, updatable<br>
-<br>Total number of nodes in the Data Centre. Must be a multiple of `replicationFactor`.<br><br>
+<br>Total number of nodes in the Data Centre. Includes only Cassandra nodes, other node types in the cluster such as shotover nodes are excluded from this count. Must be a multiple of `replicationFactor`.<br><br>
 *___replication_factor___*<br>
 <ins>Type</ins>: integer, required, immutable<br>
 <br>Number of racks to use when allocating nodes.<br><br>
