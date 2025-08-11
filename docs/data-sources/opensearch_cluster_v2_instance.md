@@ -219,13 +219,12 @@ Defaults to the current date and time.<br><br>
 *___restore_mode___*<br>
 <ins>Type</ins>: string, read-only<br>
 <ins>Constraints</ins>: allowed values: [ `NEW_VPC`, `SAME_VPC`, `CUSTOM_VPC` ]<br><br>Determines the target VPC for restored cluster. Accepted values are:
-<ul>
-<li>NEW_VPC - restores the cluster to a new VPC.</li>
+<ul> 
+<li>NEW_VPC - restores the cluster to a new VPC.</li> 
 <li>SAME_VPC - restores the cluster to the same VPC as the original cluster, for customers running in their own account.</li>
-<li>CUSTOM_VPC - restores the cluster to a custom VPC for customers running in their own account.</li>
-</ul>
-
-CUSTOM_VPC and SAME_VPC options are available only for customers running in their own account.<br><br>
+  <ul><li>AWS - restore to a new Cidr within the CDC's network</li> <li>GCP - For customer-managed network, if the source cluster specifies a host project, it will be restored to that project.  If the source cluster specifies a custom subnet, it will be restored to that custom subnet. If nothing is specified, it will restore to a new Cidr within the CDC network.</li> <li>Azure - currently not supported.</li></ul> <li>CUSTOM_VPC - restores the cluster to a custom VPC for customers running in their own account. Customers need to specify the customVpcSettings including network and vpcId.</li>
+  <ul><li>AWS - restores the cluster to the network Cidr and vpc specified by the customer</li> <li>GCP - For customer-managed network, if the vpcId field contains the projects/ pattern, it will be restored to that project.  If the vpcId field contains the subnetworks/ pattern, it will be restored to that custom subnet. If nothing is specified, it will restore to a new Cidr within the CDC network.</li> <li>Azure - restores the cluster to the network Cidr and VNet specified by the customer.</li></ul>
+ CUSTOM_VPC and SAME_VPC options are available only for customers running in their own account.<br><br>
 *___index_names___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>A comma separated list of index names which follows the format `index1,index2`
