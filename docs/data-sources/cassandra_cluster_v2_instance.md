@@ -413,7 +413,7 @@ Adds the specified version of Debezium Connector Cassandra to the Cassandra clus
 <br>Kafka Cluster Data Centre Id<br><br>
 *___version___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Adds the specified version of Debezium Connector Cassandra to the Cassandra cluster. Available versions: <ul> <li>`2.0.1`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Adds the specified version of Debezium Connector Cassandra to the Cassandra cluster. Available versions: <ul> </ul><br><br>
 *___kafka_vpc_type___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Kafka VPC Type with only VPC_PEERED supported.<br><br>
