@@ -40,15 +40,8 @@ The following terms are used to describe attributes in the schema of this data s
 <ins>Type</ins>: string, read-only<br>
 <ins>Constraints</ins>: pattern: `^[a-zA-Z0-9_-]{1}[a-zA-Z0-9 _-]*$`<br><br>Encryption key alias for display purposes.<br><br>
 *___regions___*<br>
-<ins>Type</ins>: repeatable nested block, read-only, see [regions](#nested--regions) for nested schema<br>
+<ins>Type</ins>: list of strings, read-only<br>
 <br>Regions of the key<br><br>
 *___provider_account_name___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>For customers running in their own account. Your provider account can be found on the Create Cluster page on the Instaclustr Console, or the "Provider Account" property on any existing cluster. For customers provisioning on Instaclustr's cloud provider accounts, this property may be omitted.<br><br>
-<a id="nested--regions"></a>
-## Nested schema for `regions`
-Regions of the key<br>
-### Read-only attributes
-*___name___*<br>
-<ins>Type</ins>: string, read-only<br>
-<br>Name of the AWS Region<br><br>
