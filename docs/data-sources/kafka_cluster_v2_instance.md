@@ -280,6 +280,9 @@ Examples:
 ## Nested schema for `s3_settings`
 Defines the information to access S3 bucket used for remote storage.   Access could be provided via Access and Secret key pair or IAM Role ARN. If neither is provided, access policy is defaulted to be provided later.<br>
 ### Read-only attributes
+*___use_custom_bucket___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>Use custom provided S3 bucket<br><br>
 *___prefix___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>S3 prefix to store the remote data in the S3 bucket, by default the prefix format is `<cluster_id>-data/`<br><br>

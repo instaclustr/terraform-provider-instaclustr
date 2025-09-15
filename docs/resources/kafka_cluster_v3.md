@@ -325,6 +325,10 @@ Defines the information to access S3 bucket used for remote storage.   Access co
 *___s3_bucket_name___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <br>S3 bucket name for Kafka remote storage<br><br>
+### Input attributes - Optional
+*___use_custom_bucket___*<br>
+<ins>Type</ins>: boolean, optional, immutable<br>
+<br>Use custom provided S3 bucket<br><br>
 ### Read-only attributes
 *___prefix___*<br>
 <ins>Type</ins>: string, read-only<br>
