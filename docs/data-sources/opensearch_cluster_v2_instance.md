@@ -61,6 +61,9 @@ The following terms are used to describe attributes in the schema of this data s
 *___searchable_snapshots___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Enable searchable snapshots. Available only for OpenSearch versions 2.7.0 or higher.<br><br>
+*___ml_commons_plugin___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>Enable ML Commons plugin (currently in public preview)<br><br>
 *___id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>ID of the cluster.<br><br>
