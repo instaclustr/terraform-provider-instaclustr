@@ -5,7 +5,7 @@ description: |-
 ---
 
 # instaclustr_clickhouse_integration_kafka_v2 (Resource)
-ClickHouse Integration with Kafka Clusters - Enables Access
+ClickHouse Integration with Kafka clusters - enables access.
 ## Example Usage
 ```
 resource "instaclustr_clickhouse_integration_kafka_v2" "example" {
@@ -30,14 +30,14 @@ The following terms are used to describe attributes in the schema of this resour
 ### Input attributes - Required
 *___kafka_cluster___*<br>
 <ins>Type</ins>: object, required, updatable<br>
-<br>Kafka cluster for the Kafka Integration<br><br>
+<br>Kafka cluster for the Kafka Integration.<br><br>
 *___cluster_id___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <br>ID of the ClickHouse cluster<br><br>
 ### Read-only attributes
 *___status___*<br>
 <ins>Type</ins>: string, read-only<br>
-<br>Status of the Kafka Integration<br><br>
+<br>Status of the Kafka Integration.<br><br>
 *___id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>ID of the Kafka Integration.<br><br>
