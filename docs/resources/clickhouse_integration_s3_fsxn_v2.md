@@ -28,7 +28,7 @@ The following terms are used to describe attributes in the schema of this resour
 ## Root Level Schema
 ### Input attributes - Required
 *___cluster_id___*<br>
-<ins>Type</ins>: string, required, immutable<br>
+<ins>Type</ins>: string (uuid), required, immutable<br>
 <br>ID of the ClickHouse cluster.<br><br>
 *___fsxn_filesystem___*<br>
 <ins>Type</ins>: object, required, updatable<br>
@@ -38,7 +38,7 @@ The following terms are used to describe attributes in the schema of this resour
 <ins>Type</ins>: string, read-only<br>
 <br>Status of the S3 FSxN Integration.<br><br>
 *___id___*<br>
-<ins>Type</ins>: string, read-only<br>
+<ins>Type</ins>: string (uuid), read-only<br>
 <br>ID of the S3 FSxN integration.<br><br>
 *___named_collection___*<br>
 <ins>Type</ins>: string, read-only<br>

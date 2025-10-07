@@ -5,7 +5,7 @@ description: |-
 ---
 
 # instaclustr_clickhouse_integration_private_s3_v2_instance (Data Source)
-ClickHouse Integration With Private S3 Buckets - Enables Access
+ClickHouse integration with Private S3 buckets - enables access.
 ## Example Usage
 ```
 data "instaclustr_clickhouse_integration_private_s3_v2_instance" "example" { 
@@ -21,26 +21,26 @@ The following terms are used to describe attributes in the schema of this data s
 ### Read-only attributes
 *___status___*<br>
 <ins>Type</ins>: string, read-only<br>
-<br>Status of the private S3 Integration<br><br>
+<br>Status of the Private S3 integration.<br><br>
 *___id___*<br>
 <ins>Type</ins>: string, read-only<br>
-<br>ID of the Private S3 Integration<br><br>
+<br>ID of the Private S3 Integration.<br><br>
 *___buckets___*<br>
 <ins>Type</ins>: list of objects, read-only<br>
-<ins>Constraints</ins>: minimum items: 1<br><br>S3 buckets for the Private S3 Integration<br><br>
+<ins>Constraints</ins>: minimum items: 1<br><br>S3 buckets for the Private S3 Integration.<br><br>
 *___cluster_id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>ID of the ClickHouse cluster<br><br>
 *___kms_key_arns___*<br>
 <ins>Type</ins>: list of strings, read-only<br>
-<ins>Constraints</ins>: minimum items: 0<br><br>List of KMS key ARNs<br><br>
+<ins>Constraints</ins>: minimum items: 0<br><br>List of KMS key ARNs.<br><br>
 <a id="nested--buckets"></a>
 ## Nested schema for `buckets`
-S3 buckets for the Private S3 Integration<br>
+S3 buckets for the Private S3 Integration.<br>
 ### Read-only attributes
 *___read_only___*<br>
 <ins>Type</ins>: boolean, read-only<br>
-<br>Boolean recording whether the S3 bucket is read-only<br><br>
+<br>Boolean recording whether the S3 bucket is read-only.<br><br>
 *___arn___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>ARN for the S3 bucket<br><br>

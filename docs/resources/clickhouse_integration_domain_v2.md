@@ -5,7 +5,7 @@ description: |-
 ---
 
 # instaclustr_clickhouse_integration_domain_v2 (Resource)
-ClickHouse Integration With Domain - Enables Access
+ClickHouse integration with Domain - enables access.
 ## Example Usage
 ```
 resource "instaclustr_clickhouse_integration_domain_v2" "example" {
@@ -32,25 +32,25 @@ The following terms are used to describe attributes in the schema of this resour
 ### Input attributes - Optional
 *___domain___*<br>
 <ins>Type</ins>: list of objects, optional, updatable<br>
-<br>List of domains to integrate with<br><br>
+<br>List of domains to integrate with.<br><br>
 *___cluster_id___*<br>
 <ins>Type</ins>: string, optional, immutable<br>
 <br>ID of the ClickHouse cluster<br><br>
 ### Read-only attributes
 *___id___*<br>
 <ins>Type</ins>: string, read-only<br>
-<br>ID of the Domain Integration<br><br>
+<br>ID of the Domain Integration.<br><br>
 <a id="nested--domain"></a>
 ## Nested schema for `domain`
-List of domains to integrate with<br>
+List of domains to integrate with.<br>
 ### Input attributes - Required
 *___target___*<br>
 <ins>Type</ins>: string, required, updatable<br>
-<br>Target for the Domain Integration<br><br>
+<br>Target for the Domain Integration.<br><br>
 ### Read-only attributes
 *___status___*<br>
 <ins>Type</ins>: string, read-only<br>
-<br>Status of the Domain Integration<br><br>
+<br>Status of the Domain Integration.<br><br>
 ## Import
 This resource can be imported using the `terraform import` command as follows:
 ```

@@ -5,7 +5,7 @@ description: |-
 ---
 
 # instaclustr_clickhouse_integration_domain_v2_instance (Data Source)
-ClickHouse Integration With Domain - Enables Access
+ClickHouse integration with Domain - enables access.
 ## Example Usage
 ```
 data "instaclustr_clickhouse_integration_domain_v2_instance" "example" { 
@@ -21,20 +21,20 @@ The following terms are used to describe attributes in the schema of this data s
 ### Read-only attributes
 *___domain___*<br>
 <ins>Type</ins>: list of objects, read-only<br>
-<br>List of domains to integrate with<br><br>
+<br>List of domains to integrate with.<br><br>
 *___id___*<br>
 <ins>Type</ins>: string, read-only<br>
-<br>ID of the Domain Integration<br><br>
+<br>ID of the Domain Integration.<br><br>
 *___cluster_id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>ID of the ClickHouse cluster<br><br>
 <a id="nested--domain"></a>
 ## Nested schema for `domain`
-List of domains to integrate with<br>
+List of domains to integrate with.<br>
 ### Read-only attributes
 *___status___*<br>
 <ins>Type</ins>: string, read-only<br>
-<br>Status of the Domain Integration<br><br>
+<br>Status of the Domain Integration.<br><br>
 *___target___*<br>
 <ins>Type</ins>: string, read-only<br>
-<br>Target for the Domain Integration<br><br>
+<br>Target for the Domain Integration.<br><br>

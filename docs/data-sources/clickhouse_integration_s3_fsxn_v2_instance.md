@@ -23,10 +23,10 @@ The following terms are used to describe attributes in the schema of this data s
 <ins>Type</ins>: string, read-only<br>
 <br>Status of the S3 FSxN Integration.<br><br>
 *___id___*<br>
-<ins>Type</ins>: string, read-only<br>
+<ins>Type</ins>: string (uuid), read-only<br>
 <br>ID of the S3 FSxN integration.<br><br>
 *___cluster_id___*<br>
-<ins>Type</ins>: string, read-only<br>
+<ins>Type</ins>: string (uuid), read-only<br>
 <br>ID of the ClickHouse cluster.<br><br>
 *___named_collection___*<br>
 <ins>Type</ins>: string, read-only<br>

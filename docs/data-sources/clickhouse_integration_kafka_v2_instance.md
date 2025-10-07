@@ -5,7 +5,7 @@ description: |-
 ---
 
 # instaclustr_clickhouse_integration_kafka_v2_instance (Data Source)
-ClickHouse Integration with Kafka Clusters - Enables Access
+ClickHouse Integration with Kafka clusters - enables access.
 ## Example Usage
 ```
 data "instaclustr_clickhouse_integration_kafka_v2_instance" "example" { 
@@ -21,10 +21,10 @@ The following terms are used to describe attributes in the schema of this data s
 ### Read-only attributes
 *___status___*<br>
 <ins>Type</ins>: string, read-only<br>
-<br>Status of the Kafka Integration<br><br>
+<br>Status of the Kafka Integration.<br><br>
 *___kafka_cluster___*<br>
 <ins>Type</ins>: object, read-only<br>
-<br>Kafka cluster for the Kafka Integration<br><br>
+<br>Kafka cluster for the Kafka Integration.<br><br>
 *___id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>ID of the Kafka Integration.<br><br>

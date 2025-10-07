@@ -5,7 +5,7 @@ description: |-
 ---
 
 # instaclustr_clickhouse_integration_s3_v2_instance (Data Source)
-ClickHouse Integration With S3 - Enables Access
+ClickHouse integration with S3 Region - enables access
 ## Example Usage
 ```
 data "instaclustr_clickhouse_integration_s3_v2_instance" "example" { 
@@ -21,20 +21,20 @@ The following terms are used to describe attributes in the schema of this data s
 ### Read-only attributes
 *___region___*<br>
 <ins>Type</ins>: list of objects, read-only<br>
-<ins>Constraints</ins>: minimum items: 1<br><br>List of S3 regions to integrate with<br><br>
+<ins>Constraints</ins>: minimum items: 1<br><br>List of S3 Regions to integrate with.<br><br>
 *___id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>ID of the S3 Integration<br><br>
 *___cluster_id___*<br>
 <ins>Type</ins>: string, read-only<br>
-<br>ID of the ClickHouse cluster<br><br>
+<br>ID of the ClickHouse cluster.<br><br>
 <a id="nested--region"></a>
 ## Nested schema for `region`
-List of S3 regions to integrate with<br>
+List of S3 Regions to integrate with.<br>
 ### Read-only attributes
 *___status___*<br>
 <ins>Type</ins>: string, read-only<br>
-<br>Status of the S3 Integration<br><br>
+<br>Status of the S3 Region Integration.<br><br>
 *___target___*<br>
 <ins>Type</ins>: string, read-only<br>
-<br>Target region for the S3 Integration (or 'ALL_REGIONS' for all regions)<br><br>
+<br>Target S3 Region for the integration (or 'ALL_REGIONS' for all regions).<br><br>
