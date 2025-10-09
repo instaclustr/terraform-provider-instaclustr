@@ -61,9 +61,6 @@ The following terms are used to describe attributes in the schema of this data s
 *___searchable_snapshots___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Enable searchable snapshots. Available only for OpenSearch versions 2.7.0 or higher.<br><br>
-*___ml_commons_plugin___*<br>
-<ins>Type</ins>: boolean, read-only<br>
-<br>Enable ML Commons plugin (currently in public preview)<br><br>
 *___id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>ID of the cluster.<br><br>
@@ -133,6 +130,9 @@ The following terms are used to describe attributes in the schema of this data s
 *___alerting_plugin___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Enable alerting plugin<br><br>
+*___ai_search_plugin___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>Enable AI Search plugin (currently in public preview)<br><br>
 *___private_endpoint___*<br>
 <ins>Type</ins>: string, read-only<br>
 <ins>Constraints</ins>: pattern: `private-search.ae9ea530db48478cbc42bdac51075179.cu.dev.instaclustr.com`<br><br>Private endpoint to connect clients to the cluster.<br><br>

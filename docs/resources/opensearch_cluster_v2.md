@@ -102,9 +102,6 @@ The following terms are used to describe attributes in the schema of this resour
 *___searchable_snapshots___*<br>
 <ins>Type</ins>: boolean, optional, immutable<br>
 <br>Enable searchable snapshots. Available only for OpenSearch versions 2.7.0 or higher.<br><br>
-*___ml_commons_plugin___*<br>
-<ins>Type</ins>: boolean, optional, immutable<br>
-<br>Enable ML Commons plugin (currently in public preview)<br><br>
 *___bundled_use_only___*<br>
 <ins>Type</ins>: boolean, optional, immutable<br>
 <br>Provision this cluster for [Bundled Use only](https://www.instaclustr.com/support/documentation/cadence/getting-started-with-cadence/bundled-use-only-cluster-deployments/).<br><br>
@@ -147,6 +144,9 @@ The following terms are used to describe attributes in the schema of this resour
 *___alerting_plugin___*<br>
 <ins>Type</ins>: boolean, optional, immutable<br>
 <br>Enable alerting plugin<br><br>
+*___ai_search_plugin___*<br>
+<ins>Type</ins>: boolean, optional, immutable<br>
+<br>Enable AI Search plugin (currently in public preview)<br><br>
 ### Read-only attributes
 *___mapper_size_plugin___*<br>
 <ins>Type</ins>: boolean, read-only<br>
