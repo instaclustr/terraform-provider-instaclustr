@@ -56,7 +56,7 @@ The following terms are used to describe attributes in the schema of this resour
 <ins>Constraints</ins>: pattern: `[a-zA-Z0-9][a-zA-Z0-9_-]*`<br><br>Name of the cluster.<br><br>
 *___postgresql_version___*<br>
 <ins>Type</ins>: string, required, immutable<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Postgresql to run on the cluster. Available versions: <ul> <li>`17.6.0`</li> <li>`16.10.0`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Postgresql to run on the cluster. Available versions: <ul> <li>`17.6.0`</li> <li>`18.0.0`</li> <li>`16.10.0`</li> </ul><br><br>
 *___private_network_cluster___*<br>
 <ins>Type</ins>: boolean, required, immutable<br>
 <br>Creates the cluster with private network only, see [Private Network Clusters](https://www.instaclustr.com/support/documentation/useful-information/private-network-clusters/).<br><br>
