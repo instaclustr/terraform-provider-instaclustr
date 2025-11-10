@@ -74,6 +74,9 @@ List of data centre settings.<br>
 *___custom_subject_alternative_names___*<br>
 <ins>Type</ins>: list of strings, read-only<br>
 <br>List of Subject Alternative Names FQDNs as per RFC 1035.  Used by the applications with self signed certificates in keystores of nodes in the datacenter.<br><br>
+*___load_balancer_endpoint___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>DNS name of the Network Load Balancer if a load balancer is enabled for the cluster.<br><br>
 *___cloud_provider___*<br>
 <ins>Type</ins>: string, read-only<br>
 <ins>Constraints</ins>: allowed values: [ `AWS_VPC`, `GCP`, `AZURE`, `AZURE_AZ`, `ONPREMISES` ]<br><br>Name of a cloud provider service.<br><br>
@@ -128,6 +131,9 @@ List of data centre settings.<br>
 *___intra_data_centre_replication___*<br>
 <ins>Type</ins>: nested block, read-only, see [intra_data_centre_replication](#nested--intra_data_centre_replication) for nested schema<br>
 <ins>Constraints</ins>: minimum items: 1<br><br>
+*___load_balancer___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>Enable Load Balancer for PostgreSQL<br><br>
 *___network___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>The private network address block for the Data Centre specified using CIDR address notation. The network must have a prefix length between `/16` and `/26` and must be part of a private address space.<br><br>
@@ -210,6 +216,9 @@ Create a Private Connectivity enabled cluster<br>
 ### Read-only attributes
 *___azure_private_link___*<br>
 <ins>Type</ins>: nested block, read-only, see [azure_private_link](#nested--azure_private_link) for nested schema<br>
+<br>
+*___aws_private_link___*<br>
+<ins>Type</ins>: nested block, read-only, see [aws_private_link](#nested--aws_private_link) for nested schema<br>
 <br>
 <a id="nested--tag"></a>
 ## Nested schema for `tag`
@@ -306,3 +315,13 @@ AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure 
 *___replication_mode___*<br>
 <ins>Type</ins>: string, read-only<br>
 <ins>Constraints</ins>: allowed values: [ `ASYNCHRONOUS`, `SYNCHRONOUS` ]<br><br>Create the PostgreSQL cluster with the selected replication mode, see [PostgreSQL replication mode] (https://www.instaclustr.com/support/documentation/postgresql/options/replication-mode/).<br><br>
+<a id="nested--aws_private_link"></a>
+## Nested schema for `aws_private_link`
+
+### Read-only attributes
+*___endpoint_service_name___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>The endpoint service name for the private link<br><br>
+*___use_aws_private_link___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>Create a PrivateLink enabled cluster, see [PrivateLink](https://www.instaclustr.com/support/documentation/useful-information/privatelink/).<br><br>

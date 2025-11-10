@@ -145,10 +145,16 @@ List of data centre settings.<br>
 *___aws_settings___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [aws_settings](#nested--aws_settings) for nested schema<br>
 <br>AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure settings.<br><br>
+*___load_balancer___*<br>
+<ins>Type</ins>: boolean, optional, immutable<br>
+<br>Enable Load Balancer for PostgreSQL<br><br>
 *___provider_account_name___*<br>
 <ins>Type</ins>: string, optional, immutable<br>
 <br>For customers running in their own account. Your provider account can be found on the Create Cluster page on the Instaclustr Console, or the "Provider Account" property on any existing cluster. For customers provisioning on Instaclustr's cloud provider accounts, this property may be omitted.<br><br>
 ### Read-only attributes
+*___load_balancer_endpoint___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>DNS name of the Network Load Balancer if a load balancer is enabled for the cluster.<br><br>
 *___status___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Status of the Data Centre.<br><br>
@@ -238,6 +244,9 @@ Create a Private Connectivity enabled cluster<br>
 ### Input attributes - Optional
 *___azure_private_link___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [azure_private_link](#nested--azure_private_link) for nested schema<br>
+<br>
+*___aws_private_link___*<br>
+<ins>Type</ins>: nested block, optional, immutable, see [aws_private_link](#nested--aws_private_link) for nested schema<br>
 <br>
 <a id="nested--tag"></a>
 ## Nested schema for `tag`
@@ -336,6 +345,17 @@ AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure 
 *___replication_mode___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <ins>Constraints</ins>: allowed values: [ `ASYNCHRONOUS`, `SYNCHRONOUS` ]<br><br>Create the PostgreSQL cluster with the selected replication mode, see [PostgreSQL replication mode] (https://www.instaclustr.com/support/documentation/postgresql/options/replication-mode/).<br><br>
+<a id="nested--aws_private_link"></a>
+## Nested schema for `aws_private_link`
+
+### Input attributes - Optional
+*___use_aws_private_link___*<br>
+<ins>Type</ins>: boolean, optional, updatable<br>
+<br>Create a PrivateLink enabled cluster, see [PrivateLink](https://www.instaclustr.com/support/documentation/useful-information/privatelink/).<br><br>
+### Read-only attributes
+*___endpoint_service_name___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>The endpoint service name for the private link<br><br>
 ## Import
 This resource can be imported using the `terraform import` command as follows:
 ```
