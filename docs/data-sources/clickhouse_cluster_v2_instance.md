@@ -85,16 +85,19 @@ List of data centre settings.<br>
 <br>List of deleted nodes in the data centre<br><br>
 *___replicas___*<br>
 <ins>Type</ins>: integer, read-only<br>
-<ins>Constraints</ins>: minimum: 1, maximum: 3<br><br>Total number of replicas of data in the Data Centre<br><br>
+<ins>Constraints</ins>: minimum: 1, maximum: 3<br><br>Total number of replicas of data in the Data Centre.<br><br>
 *___gcp_settings___*<br>
 <ins>Type</ins>: nested block, read-only, see [gcp_settings](#nested--gcp_settings) for nested schema<br>
 <br>GCP specific settings for the Data Centre. Cannot be provided with AWS or Azure settings.<br><br>
 *___tiered_storage___*<br>
 <ins>Type</ins>: nested block, read-only, see [tiered_storage](#nested--tiered_storage) for nested schema<br>
-<br>Enable Tiered Storage for ClickHouse<br><br>
+<br>Enable Tiered Storage for ClickHouse.<br><br>
 *___load_balancer_enabled___*<br>
 <ins>Type</ins>: boolean, read-only<br>
-<br>Enable Load Balancer for ClickHouse<br><br>
+<br>Enable Load Balancer for ClickHouse.<br><br>
+*___private_connectivity___*<br>
+<ins>Type</ins>: nested block, read-only, see [private_connectivity](#nested--private_connectivity) for nested schema<br>
+<br>Create a Private Connectivity enabled cluster.<br><br>
 *___id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>ID of the Cluster Data Centre.<br><br>
@@ -118,7 +121,7 @@ List of data centre settings.<br>
 <br>The private network address block for the Data Centre specified using CIDR address notation. The network must have a prefix length between `/16` and `/26` and must be part of a private address space.<br><br>
 *___dedicated_click_house_keeper___*<br>
 <ins>Type</ins>: nested block, read-only, see [dedicated_click_house_keeper](#nested--dedicated_click_house_keeper) for nested schema<br>
-<br>Provision additional dedicated nodes for ClickHouse Keeper to run on. ClickHouse Keeper will be co-located with ClickHouse Server if this is not provided<br><br>
+<br>Provision additional dedicated nodes for ClickHouse Keeper to run on. ClickHouse Keeper will be co-located with ClickHouse Server if this is not provided.<br><br>
 *___provider_account_name___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>For customers running in their own account. Your provider account can be found on the Create Cluster page on the Instaclustr Console, or the "Provider Account" property on any existing cluster. For customers provisioning on Instaclustr's cloud provider accounts, this property may be omitted.<br><br>
@@ -236,7 +239,7 @@ Defines information about the S3 bucket to be used for remote storage.<br>
 <br>S3 bucket name for ClickHouse remote storage<br><br>
 <a id="nested--tiered_storage"></a>
 ## Nested schema for `tiered_storage`
-Enable Tiered Storage for ClickHouse<br>
+Enable Tiered Storage for ClickHouse.<br>
 ### Read-only attributes
 *___s3_settings___*<br>
 <ins>Type</ins>: nested block, read-only, see [s3_settings](#nested--s3_settings) for nested schema<br>
@@ -263,6 +266,9 @@ Enable Tiered Storage for ClickHouse<br>
 *___node_id___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
 <br>ID of the node being replaced.<br><br>
+<a id="nested--private_connectivity"></a>
+## Nested schema for `private_connectivity`
+Create a Private Connectivity enabled cluster.<br>
 <a id="nested--tag"></a>
 ## Nested schema for `tag`
 List of tags to apply to the Data Centre. Tags are metadata labels which  allow you to identify, categorize and filter clusters. This can be useful for grouping together clusters into applications, environments, or any category that you require. Note `tag` is not supported in terraform lifecycle `ignore_changes`.<br>
@@ -393,7 +399,7 @@ AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure 
 <br>The email address which will be contacted when the cluster is requested to be deleted.<br><br>
 <a id="nested--dedicated_click_house_keeper"></a>
 ## Nested schema for `dedicated_click_house_keeper`
-Provision additional dedicated nodes for ClickHouse Keeper to run on. ClickHouse Keeper will be co-located with ClickHouse Server if this is not provided<br>
+Provision additional dedicated nodes for ClickHouse Keeper to run on. ClickHouse Keeper will be co-located with ClickHouse Server if this is not provided.<br>
 ### Read-only attributes
 *___node_size___*<br>
 <ins>Type</ins>: string, read-only<br>
