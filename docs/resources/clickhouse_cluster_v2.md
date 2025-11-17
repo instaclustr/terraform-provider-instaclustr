@@ -98,7 +98,7 @@ List of data centre settings.<br>
 <ins>Constraints</ins>: minimum: 1, maximum: 1E+2<br><br>Total number of shards in the Data Centre.<br><br>
 *___replicas___*<br>
 <ins>Type</ins>: integer, required, updatable<br>
-<ins>Constraints</ins>: minimum: 1, maximum: 3<br><br>Total number of replicas of data in the Data Centre<br><br>
+<ins>Constraints</ins>: minimum: 1, maximum: 3<br><br>Total number of replicas of data in the Data Centre.<br><br>
 *___name___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <br>A logical name for the data centre within a cluster. These names must be unique in the cluster.<br><br>
@@ -120,10 +120,13 @@ List of data centre settings.<br>
 <br>GCP specific settings for the Data Centre. Cannot be provided with AWS or Azure settings.<br><br>
 *___tiered_storage___*<br>
 <ins>Type</ins>: nested block, optional, updatable, see [tiered_storage](#nested--tiered_storage) for nested schema<br>
-<br>Enable Tiered Storage for ClickHouse<br><br>
+<br>Enable Tiered Storage for ClickHouse.<br><br>
 *___load_balancer_enabled___*<br>
 <ins>Type</ins>: boolean, optional, immutable<br>
-<br>Enable Load Balancer for ClickHouse<br><br>
+<br>Enable Load Balancer for ClickHouse.<br><br>
+*___private_connectivity___*<br>
+<ins>Type</ins>: nested block, optional, immutable, see [private_connectivity](#nested--private_connectivity) for nested schema<br>
+<br>Create a Private Connectivity enabled cluster.<br><br>
 *___tag___*<br>
 <ins>Type</ins>: repeatable nested block, optional, immutable, see [tag](#nested--tag) for nested schema<br>
 <br>List of tags to apply to the Data Centre. Tags are metadata labels which  allow you to identify, categorize and filter clusters. This can be useful for grouping together clusters into applications, environments, or any category that you require. Note `tag` is not supported in terraform lifecycle `ignore_changes`.<br><br>
@@ -132,7 +135,7 @@ List of data centre settings.<br>
 <br>AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure settings.<br><br>
 *___dedicated_click_house_keeper___*<br>
 <ins>Type</ins>: nested block, optional, updatable, see [dedicated_click_house_keeper](#nested--dedicated_click_house_keeper) for nested schema<br>
-<br>Provision additional dedicated nodes for ClickHouse Keeper to run on. ClickHouse Keeper will be co-located with ClickHouse Server if this is not provided<br><br>
+<br>Provision additional dedicated nodes for ClickHouse Keeper to run on. ClickHouse Keeper will be co-located with ClickHouse Server if this is not provided.<br><br>
 *___provider_account_name___*<br>
 <ins>Type</ins>: string, optional, immutable<br>
 <br>For customers running in their own account. Your provider account can be found on the Create Cluster page on the Instaclustr Console, or the "Provider Account" property on any existing cluster. For customers provisioning on Instaclustr's cloud provider accounts, this property may be omitted.<br><br>
@@ -271,7 +274,7 @@ Defines information about the S3 bucket to be used for remote storage.<br>
 <ins>Constraints</ins>: pattern: `^[a-zA-Z\d\-_]{0,100}$`<br><br>By default data in the S3 bucket will be stored in a folder named after the cluster's ID. If a prefix is provided, data will be stored in `<prefix>/<cluster_id>` instead<br><br>
 <a id="nested--tiered_storage"></a>
 ## Nested schema for `tiered_storage`
-Enable Tiered Storage for ClickHouse<br>
+Enable Tiered Storage for ClickHouse.<br>
 ### Input attributes - Optional
 *___s3_settings___*<br>
 <ins>Type</ins>: nested block, optional, updatable, see [s3_settings](#nested--s3_settings) for nested schema<br>
@@ -299,6 +302,9 @@ Enable Tiered Storage for ClickHouse<br>
 *___node_id___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
 <br>ID of the node being replaced.<br><br>
+<a id="nested--private_connectivity"></a>
+## Nested schema for `private_connectivity`
+Create a Private Connectivity enabled cluster.<br>
 <a id="nested--tag"></a>
 ## Nested schema for `tag`
 List of tags to apply to the Data Centre. Tags are metadata labels which  allow you to identify, categorize and filter clusters. This can be useful for grouping together clusters into applications, environments, or any category that you require. Note `tag` is not supported in terraform lifecycle `ignore_changes`.<br>
@@ -431,7 +437,7 @@ AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure 
 <br>The phone number which will be contacted when the cluster is requested to be delete.<br><br>
 <a id="nested--dedicated_click_house_keeper"></a>
 ## Nested schema for `dedicated_click_house_keeper`
-Provision additional dedicated nodes for ClickHouse Keeper to run on. ClickHouse Keeper will be co-located with ClickHouse Server if this is not provided<br>
+Provision additional dedicated nodes for ClickHouse Keeper to run on. ClickHouse Keeper will be co-located with ClickHouse Server if this is not provided.<br>
 ### Input attributes - Required
 *___node_size___*<br>
 <ins>Type</ins>: string, required, updatable<br>
