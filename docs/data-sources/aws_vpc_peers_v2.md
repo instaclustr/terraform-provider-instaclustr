@@ -48,3 +48,6 @@ The following terms are used to describe attributes in the schema of this data s
 *___peer_aws_account_id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>The AWS account ID of the owner of the accepter VPC.<br><br>
+*___is_managed_by_instaclustr___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>Whether the VPC peering connection is managed by Instaclustr.<br><br>

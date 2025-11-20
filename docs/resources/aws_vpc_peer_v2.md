@@ -25,21 +25,21 @@ The following terms are used to describe attributes in the schema of this resour
 - **_updatable_** - These input attributes can be updated to a different value if needed, and doing so will trigger an update operation.
 - **_nested block_** - These attributes use the [Terraform block syntax](https://www.terraform.io/language/attr-as-blocks) when defined as an input in the Terraform code. Attributes with the type **_repeatable nested block_** are the same except that the nested block can be defined multiple times with varying nested attributes. When reading nested block attributes, an index must be provided when accessing the contents of the nested block, example - `my_resource.nested_block_attribute[0].nested_attribute`.
 ## Root Level Schema
-### Input attributes - Required
+### Input attributes - Optional
 *___peer_subnets___*<br>
-<ins>Type</ins>: list of strings, required, updatable<br>
+<ins>Type</ins>: list of strings, optional, updatable<br>
 <br>The subnets for the peering VPC.<br><br>
 *___cdc_id___*<br>
-<ins>Type</ins>: string (uuid), required, immutable<br>
+<ins>Type</ins>: string (uuid), optional, immutable<br>
 <br>ID of the Cluster Data Centre<br><br>
 *___peer_region___*<br>
-<ins>Type</ins>: string, required, immutable<br>
+<ins>Type</ins>: string, optional, immutable<br>
 <br>Region code for the accepter VPC.<br><br>
 *___peer_vpc_id___*<br>
-<ins>Type</ins>: string, required, immutable<br>
+<ins>Type</ins>: string, optional, immutable<br>
 <br>ID of the VPC with which the peering connection is created.<br><br>
 *___peer_aws_account_id___*<br>
-<ins>Type</ins>: string, required, immutable<br>
+<ins>Type</ins>: string, optional, immutable<br>
 <br>The AWS account ID of the owner of the accepter VPC.<br><br>
 ### Read-only attributes
 *___status_code___*<br>
