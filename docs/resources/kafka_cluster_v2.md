@@ -237,6 +237,17 @@ List of data centre settings.<br>
 *___nodes___*<br>
 <ins>Type</ins>: repeatable nested block, read-only, see [nodes](#nested--nodes) for nested schema<br>
 <br>List of non-deleted nodes in the data centre<br><br>
+<a id="nested--gcs_settings"></a>
+## Nested schema for `gcs_settings`
+Defines the GCS bucket that will be used to store remote objects for GCP tiered storage.<br>
+### Input attributes - Required
+*___gcs_bucket_name___*<br>
+<ins>Type</ins>: string, required, immutable<br>
+<br>GCS bucket name for Kafka remote storage<br><br>
+### Read-only attributes
+*___prefix___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>GCS prefix to store the remote data in the GCS bucket, by default the prefix format is `<cluster_id>-data/`<br><br>
 <a id="nested--azure_settings"></a>
 ## Nested schema for `azure_settings`
 Azure specific settings for the Data Centre. Cannot be provided with AWS or GCP settings.<br>
@@ -326,6 +337,9 @@ Defines the information to access S3 bucket used for remote storage.   Access co
 ## Nested schema for `tiered_storage`
 Enable Tiered Storage for Kafka<br>
 ### Input attributes - Optional
+*___gcs_settings___*<br>
+<ins>Type</ins>: nested block, optional, immutable, see [gcs_settings](#nested--gcs_settings) for nested schema<br>
+<br>Defines the GCS bucket that will be used to store remote objects for GCP tiered storage.<br><br>
 *___s3_settings___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [s3_settings](#nested--s3_settings) for nested schema<br>
 <br>Defines the information to access S3 bucket used for remote storage.   Access could be provided via Access and Secret key pair or IAM Role ARN. If neither is provided, access policy is defaulted to be provided later.<br><br>
