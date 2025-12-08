@@ -99,6 +99,9 @@ List of data centre settings.<br>
 *___enforce_auth_schemes___*<br>
 <ins>Type</ins>: list of strings, optional, immutable<br>
 <ins>Constraints</ins>: allowed values: [ `NONE`, `SASL` ]<br><br>A list of authentication schemes to enforce when enforce.auth.enabled=true.<br><br>
+*___tag_management_enabled___*<br>
+<ins>Type</ins>: boolean, optional, updatable<br>
+<br>(Optional) Enable tag management for the data centre, allowing you to create, update and delete custom tags on the data centre via Instaclustr Terraform Provider v2, Cluster Management API or Management Console. Tag management is only available for RIYOA clusters and cannot be disabled once enabled. If not specified, the current value will remain unchanged.<br><br>
 *___azure_settings___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [azure_settings](#nested--azure_settings) for nested schema<br>
 <br>Azure specific settings for the Data Centre. Cannot be provided with AWS or GCP settings.<br><br>
@@ -112,8 +115,8 @@ List of data centre settings.<br>
 <ins>Type</ins>: boolean, optional, immutable<br>
 <br>Enables Client ⇄ Node Encryption.<br><br>
 *___tag___*<br>
-<ins>Type</ins>: repeatable nested block, optional, immutable, see [tag](#nested--tag) for nested schema<br>
-<br>List of tags to apply to the Data Centre. Tags are metadata labels which  allow you to identify, categorize and filter clusters. This can be useful for grouping together clusters into applications, environments, or any category that you require. Note `tag` is not supported in terraform lifecycle `ignore_changes`.<br><br>
+<ins>Type</ins>: repeatable nested block, optional, updatable, see [tag](#nested--tag) for nested schema<br>
+<br>List of tags to apply to the Data Centre. Tags are metadata labels which allow you to identify, categorize and filter clusters. This can be useful for grouping together clusters into applications, environments, or any category that you require. Note: Tags will be returned sorted by key in alphabetical order regardless of input order. Terraform users: `tag` is not supported in terraform lifecycle `ignore_changes`.<br><br>
 *___aws_settings___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [aws_settings](#nested--aws_settings) for nested schema<br>
 <br>AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure settings.<br><br>
@@ -195,15 +198,15 @@ Examples:
 <br><br>
 <a id="nested--tag"></a>
 ## Nested schema for `tag`
-List of tags to apply to the Data Centre. Tags are metadata labels which  allow you to identify, categorize and filter clusters. This can be useful for grouping together clusters into applications, environments, or any category that you require. Note `tag` is not supported in terraform lifecycle `ignore_changes`.<br>
+List of tags to apply to the Data Centre. Tags are metadata labels which allow you to identify, categorize and filter clusters. This can be useful for grouping together clusters into applications, environments, or any category that you require. Note: Tags will be returned sorted by key in alphabetical order regardless of input order. Terraform users: `tag` is not supported in terraform lifecycle `ignore_changes`.<br>
 ### Input attributes - Required
 *___key___*<br>
 <ins>Type</ins>: string, required, immutable<br>
-<br>Key of the tag for the Data Centre.<br><br>
+<br>Key of the custom tag.<br><br>
 ### Input attributes - Optional
 *___value___*<br>
 <ins>Type</ins>: string, optional, updatable<br>
-<br>Value of the tag for the Data Centre.<br><br>
+<br>Value of the custom tag.<br><br>
 <a id="nested--nodes"></a>
 ## Nested schema for `nodes`
 List of non-deleted nodes in the data centre<br>

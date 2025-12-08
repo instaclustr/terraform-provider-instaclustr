@@ -80,6 +80,9 @@ List of data centre settings.<br>
 *___status___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Status of the Data Centre.<br><br>
+*___tag_management_enabled___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>(Optional) Enable tag management for the data centre, allowing you to create, update and delete custom tags on the data centre via Instaclustr Terraform Provider v2, Cluster Management API or Management Console. Tag management is only available for RIYOA clusters and cannot be disabled once enabled. If not specified, the current value will remain unchanged.<br><br>
 *___azure_settings___*<br>
 <ins>Type</ins>: nested block, read-only, see [azure_settings](#nested--azure_settings) for nested schema<br>
 <br>Azure specific settings for the Data Centre. Cannot be provided with AWS or GCP settings.<br><br>
@@ -97,7 +100,7 @@ List of data centre settings.<br>
 <br>ID of the Cluster Data Centre.<br><br>
 *___tag___*<br>
 <ins>Type</ins>: repeatable nested block, read-only, see [tag](#nested--tag) for nested schema<br>
-<br>List of tags to apply to the Data Centre. Tags are metadata labels which  allow you to identify, categorize and filter clusters. This can be useful for grouping together clusters into applications, environments, or any category that you require. Note `tag` is not supported in terraform lifecycle `ignore_changes`.<br><br>
+<br>List of tags to apply to the Data Centre. Tags are metadata labels which allow you to identify, categorize and filter clusters. This can be useful for grouping together clusters into applications, environments, or any category that you require. Note: Tags will be returned sorted by key in alphabetical order regardless of input order. Terraform users: `tag` is not supported in terraform lifecycle `ignore_changes`.<br><br>
 *___name___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>A logical name for the data centre within a cluster. These names must be unique in the cluster.<br><br>
@@ -184,14 +187,14 @@ Examples:
 <br><br>
 <a id="nested--tag"></a>
 ## Nested schema for `tag`
-List of tags to apply to the Data Centre. Tags are metadata labels which  allow you to identify, categorize and filter clusters. This can be useful for grouping together clusters into applications, environments, or any category that you require. Note `tag` is not supported in terraform lifecycle `ignore_changes`.<br>
+List of tags to apply to the Data Centre. Tags are metadata labels which allow you to identify, categorize and filter clusters. This can be useful for grouping together clusters into applications, environments, or any category that you require. Note: Tags will be returned sorted by key in alphabetical order regardless of input order. Terraform users: `tag` is not supported in terraform lifecycle `ignore_changes`.<br>
 ### Read-only attributes
 *___key___*<br>
 <ins>Type</ins>: string, read-only<br>
-<br>Key of the tag for the Data Centre.<br><br>
+<br>Key of the custom tag.<br><br>
 *___value___*<br>
 <ins>Type</ins>: string, read-only<br>
-<br>Value of the tag for the Data Centre.<br><br>
+<br>Value of the custom tag.<br><br>
 <a id="nested--nodes"></a>
 ## Nested schema for `nodes`
 List of non-deleted nodes in the data centre<br>
