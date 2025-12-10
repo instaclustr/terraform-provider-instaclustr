@@ -119,7 +119,7 @@ The following terms are used to describe attributes in the schema of this resour
 <br>Ingest nodes settings.<br><br>
 *___opensearch_version___*<br>
 <ins>Type</ins>: string, optional, immutable<br>
-<ins>Constraints</ins>: pattern: `([0-9]+\.){2}[0-9]+`<br><br>Version of OpenSearch to run on the cluster.  Must be provided if `opensearchMajorVersion` is not provided. Available versions: <ul> <li>`2.19.2`</li> <li>`2.19.3`</li> <li>`3.2.0`</li> <li>`3.0.0`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `([0-9]+\.){2}[0-9]+`<br><br>Version of OpenSearch to run on the cluster.  Must be provided if `opensearchMajorVersion` is not provided. Available versions: <ul> <li>`2.19.3`</li> <li>`2.19.4`</li> <li>`3.2.0`</li> <li>`3.0.0`</li> </ul><br><br>
 *___two_factor_delete___*<br>
 <ins>Type</ins>: nested block, optional, updatable, see [two_factor_delete](#nested--two_factor_delete) for nested schema<br>
 <br>
@@ -308,7 +308,7 @@ List of deleted nodes in the data centre<br>
 <br>Private IP address of the node.<br><br>
 *___node_roles___*<br>
 <ins>Type</ins>: list of strings, read-only<br>
-<ins>Constraints</ins>: allowed values: [ `CASSANDRA`, `SPARK_MASTER`, `SPARK_JOBSERVER`, `KAFKA_BROKER`, `KAFKA_DEDICATED_ZOOKEEPER`, `KAFKA_DEDICATED_KRAFT_CONTROLLER`, `KAFKA_ZOOKEEPER`, `KAFKA_SCHEMA_REGISTRY`, `KAFKA_REST_PROXY`, `APACHE_ZOOKEEPER`, `POSTGRESQL`, `PGBOUNCER`, `KAFKA_CONNECT`, `KAFKA_KARAPACE_SCHEMA_REGISTRY`, `KAFKA_KARAPACE_REST_PROXY`, `CADENCE`, `CLICKHOUSE_SERVER`, `CLICKHOUSE_KEEPER`, `CLICKHOUSE_SERVER_AND_KEEPER`, `REDIS_MASTER`, `REDIS_REPLICA`, `VALKEY_MASTER`, `VALKEY_REPLICA`, `OPENSEARCH_DASHBOARDS`, `OPENSEARCH_COORDINATOR`, `OPENSEARCH_MASTER`, `OPENSEARCH_DATA`, `OPENSEARCH_INGEST`, `OPENSEARCH_DATA_AND_INGEST`, `KAFKA_SHOTOVER_PROXY` ]<br><br>The roles or purposes of the node. Useful for filtering for nodes that have a specific role.<br><br>
+<ins>Constraints</ins>: allowed values: [ `CASSANDRA`, `SPARK_MASTER`, `SPARK_JOBSERVER`, `KAFKA_BROKER`, `KAFKA_DEDICATED_ZOOKEEPER`, `KAFKA_DEDICATED_KRAFT_CONTROLLER`, `KAFKA_ZOOKEEPER`, `KAFKA_SCHEMA_REGISTRY`, `KAFKA_REST_PROXY`, `APACHE_ZOOKEEPER`, `POSTGRESQL`, `PGBOUNCER`, `KAFKA_CONNECT`, `KAFKA_KARAPACE_SCHEMA_REGISTRY`, `KAFKA_KARAPACE_REST_PROXY`, `CADENCE`, `CLICKHOUSE_SERVER`, `CLICKHOUSE_KEEPER`, `CLICKHOUSE_SERVER_AND_KEEPER`, `REDIS_MASTER`, `REDIS_REPLICA`, `VALKEY_MASTER`, `VALKEY_REPLICA`, `OPENSEARCH_DASHBOARDS`, `OPENSEARCH_COORDINATOR`, `OPENSEARCH_MASTER`, `OPENSEARCH_DATA`, `OPENSEARCH_INGEST`, `OPENSEARCH_DATA_AND_INGEST`, `KAFKA_SHOTOVER_PROXY`, `MCP_GATEWAY` ]<br><br>The roles or purposes of the node. Useful for filtering for nodes that have a specific role.<br><br>
 *___public_address___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Public IP address of the node.<br><br>
@@ -375,7 +375,7 @@ List of non-deleted nodes in the data centre<br>
 <br>PrivateLink URL to connect clients to the node if PrivateLink is enabled on the cluster.<br><br>
 *___node_roles___*<br>
 <ins>Type</ins>: list of strings, read-only<br>
-<ins>Constraints</ins>: allowed values: [ `CASSANDRA`, `SPARK_MASTER`, `SPARK_JOBSERVER`, `KAFKA_BROKER`, `KAFKA_DEDICATED_ZOOKEEPER`, `KAFKA_DEDICATED_KRAFT_CONTROLLER`, `KAFKA_ZOOKEEPER`, `KAFKA_SCHEMA_REGISTRY`, `KAFKA_REST_PROXY`, `APACHE_ZOOKEEPER`, `POSTGRESQL`, `PGBOUNCER`, `KAFKA_CONNECT`, `KAFKA_KARAPACE_SCHEMA_REGISTRY`, `KAFKA_KARAPACE_REST_PROXY`, `CADENCE`, `CLICKHOUSE_SERVER`, `CLICKHOUSE_KEEPER`, `CLICKHOUSE_SERVER_AND_KEEPER`, `REDIS_MASTER`, `REDIS_REPLICA`, `VALKEY_MASTER`, `VALKEY_REPLICA`, `OPENSEARCH_DASHBOARDS`, `OPENSEARCH_COORDINATOR`, `OPENSEARCH_MASTER`, `OPENSEARCH_DATA`, `OPENSEARCH_INGEST`, `OPENSEARCH_DATA_AND_INGEST`, `KAFKA_SHOTOVER_PROXY` ]<br><br>The roles or purposes of the node. Useful for filtering for nodes that have a specific role.<br><br>
+<ins>Constraints</ins>: allowed values: [ `CASSANDRA`, `SPARK_MASTER`, `SPARK_JOBSERVER`, `KAFKA_BROKER`, `KAFKA_DEDICATED_ZOOKEEPER`, `KAFKA_DEDICATED_KRAFT_CONTROLLER`, `KAFKA_ZOOKEEPER`, `KAFKA_SCHEMA_REGISTRY`, `KAFKA_REST_PROXY`, `APACHE_ZOOKEEPER`, `POSTGRESQL`, `PGBOUNCER`, `KAFKA_CONNECT`, `KAFKA_KARAPACE_SCHEMA_REGISTRY`, `KAFKA_KARAPACE_REST_PROXY`, `CADENCE`, `CLICKHOUSE_SERVER`, `CLICKHOUSE_KEEPER`, `CLICKHOUSE_SERVER_AND_KEEPER`, `REDIS_MASTER`, `REDIS_REPLICA`, `VALKEY_MASTER`, `VALKEY_REPLICA`, `OPENSEARCH_DASHBOARDS`, `OPENSEARCH_COORDINATOR`, `OPENSEARCH_MASTER`, `OPENSEARCH_DATA`, `OPENSEARCH_INGEST`, `OPENSEARCH_DATA_AND_INGEST`, `KAFKA_SHOTOVER_PROXY`, `MCP_GATEWAY` ]<br><br>The roles or purposes of the node. Useful for filtering for nodes that have a specific role.<br><br>
 *___public_address___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Public IP address of the node.<br><br>
@@ -449,7 +449,7 @@ List of openSearch dashboards settings<br>
 <br>OIDC provider<br><br>
 *___version___*<br>
 <ins>Type</ins>: string, optional, immutable<br>
-<ins>Constraints</ins>: pattern: `(^$|opensearch-dashboards:[0-9]+\.[0-9]+\.[0-9]+)`<br><br>Version of dashboard to run on the cluster. Available versions: <ul> <li>`2.19.3`</li> <li>`2.19.2`</li> <li>`3.2.0`</li> <li>`3.0.0`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `(^$|opensearch-dashboards:[0-9]+\.[0-9]+\.[0-9]+)`<br><br>Version of dashboard to run on the cluster. Available versions: <ul> <li>`2.19.4`</li> <li>`2.19.3`</li> <li>`3.2.0`</li> <li>`3.0.0`</li> </ul><br><br>
 ### Read-only attributes
 *___url___*<br>
 <ins>Type</ins>: string, read-only<br>
