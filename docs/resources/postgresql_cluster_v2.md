@@ -56,7 +56,7 @@ The following terms are used to describe attributes in the schema of this resour
 <ins>Constraints</ins>: pattern: `[a-zA-Z0-9][a-zA-Z0-9_-]*`<br><br>Name of the cluster.<br><br>
 *___postgresql_version___*<br>
 <ins>Type</ins>: string, required, immutable<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Postgresql to run on the cluster. Available versions: <ul> <li>`17.6.0`</li> <li>`18.0.0`</li> <li>`16.10.0`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Postgresql to run on the cluster. Available versions: <ul> <li>`17.6.0`</li> <li>`17.7.0`</li> <li>`18.1.0`</li> <li>`18.0.0`</li> <li>`16.11.0`</li> <li>`16.10.0`</li> </ul><br><br>
 *___private_network_cluster___*<br>
 <ins>Type</ins>: boolean, required, immutable<br>
 <br>Creates the cluster with private network only, see [Private Network Clusters](https://www.instaclustr.com/support/documentation/useful-information/private-network-clusters/).<br><br>
@@ -309,7 +309,7 @@ List of non-deleted nodes in the data centre<br>
 <ins>Constraints</ins>: allowed values: [ `TRANSACTION`, `SESSION`, `STATEMENT` ]<br><br>Creates PgBouncer with the selected mode, see [PgBouncer pool modes] (https://www.instaclustr.com/support/documentation/postgresql-add-ons/using-pgbouncer/)<br><br>
 *___pg_bouncer_version___*<br>
 <ins>Type</ins>: string, required, immutable<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Pg Bouncer to run on the cluster. Available versions: <ul> <li>`1.24.1`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Pg Bouncer to run on the cluster. Available versions: <ul> <li>`1.24.1`</li> <li>`1.25.0`</li> </ul><br><br>
 <a id="nested--resize_settings"></a>
 ## Nested schema for `resize_settings`
 Settings to determine how resize requests will be performed for the cluster.<br>
