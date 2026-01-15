@@ -233,7 +233,7 @@ AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure 
 ### Read-only attributes
 *___confirmation_phone_number___*<br>
 <ins>Type</ins>: string, read-only<br>
-<br>The phone number which will be contacted when the cluster is requested to be delete.<br><br>
+<ins>Constraints</ins>: pattern: `^(?![\s])[\-\s\(\)\+0-9]*$`<br><br>The phone number which will be contacted when the cluster is requested to be delete.<br><br>
 *___confirmation_email___*<br>
 <ins>Type</ins>: string, read-only<br>
-<br>The email address which will be contacted when the cluster is requested to be deleted.<br><br>
+<ins>Constraints</ins>: pattern: `^(([\s]*[^<>()\[\]\\.,;:@\s"]+(\.[^<>()\[\]\\.,;:\s@"]+)*))@((\[\d{1,3}(\.\d{1,3}){3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}[\s]*))$`<br><br>The email address which will be contacted when the cluster is requested to be deleted.<br><br>
