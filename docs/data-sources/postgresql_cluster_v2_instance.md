@@ -36,7 +36,7 @@ The following terms are used to describe attributes in the schema of this data s
 <ins>Constraints</ins>: allowed values: [ `PRODUCTION`, `NON_PRODUCTION` ]<br><br>SLA Tier of the cluster. Non-production clusters may receive lower priority support and reduced SLAs. Production tier is not available when using Developer class nodes. See [SLA Tier](https://www.instaclustr.com/support/documentation/useful-information/sla-tier/) for more information.<br><br>
 *___synchronous_mode_strict___*<br>
 <ins>Type</ins>: boolean, read-only<br>
-<br>Create the PostgreSQL cluster with the selected replication mode, see [PostgreSQL replication mode] (https://www.instaclustr.com/support/documentation/postgresql/options/replication-mode/).<br><br>
+<br>Create the PostgreSQL cluster with the selected replication mode, see [PostgreSQL replication mode](https://www.instaclustr.com/support/documentation/postgresql/options/replication-mode/).<br><br>
 *___status___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Status of the cluster.<br><br>
