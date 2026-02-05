@@ -10,6 +10,8 @@ ClickHouse integration with FSx ONTAP file system.
 ```
 resource "instaclustr_clickhouse_integration_s3_fsxn_v2" "example" {
   fsxn_filesystem {
+    access_key_id = "AKIAIOSFODNN7EXAMPLE"
+    secret_access_key = "wJalrXUtnFEMI_K7MDENG_bPxRfiCYEXAMPLEKEY"
     endpoint_address = "svm-07efef4ffe0d242f5.fs-028e3bb45a3c6bbab.fsx.us-east-1.amazonaws.com"
     fsxn_id = "fs-0c315066d18074b67"
   }
