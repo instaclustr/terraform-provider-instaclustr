@@ -94,7 +94,7 @@ List of data centre settings.<br>
 <br>Region of the Data Centre. See the description for node size for a compatible Data Centre for a given node size.<br><br>
 *___master_nodes___*<br>
 <ins>Type</ins>: integer, required, updatable<br>
-<ins>Constraints</ins>: minimum: 3, maximum: 1E+2<br><br>Total number of master nodes in the Data Centre. In order to maintain quorum on the cluster, you must specify an odd number of master nodes.<br><br>
+<ins>Constraints</ins>: minimum: 3, maximum: 5E+2<br><br>Total number of master nodes in the Data Centre. In order to maintain quorum on the cluster, you must specify an odd number of master nodes.<br><br>
 *___name___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <br>A logical name for the data centre within a cluster. These names must be unique in the cluster.<br><br>
@@ -125,7 +125,7 @@ List of data centre settings.<br>
 <br>List of tags to apply to the Data Centre. Tags are metadata labels which allow you to identify, categorize and filter clusters. This can be useful for grouping together clusters into applications, environments, or any category that you require. Note: Tags will be returned sorted by key in alphabetical order regardless of input order. Terraform users: `tag` is not supported in terraform lifecycle `ignore_changes`.<br><br>
 *___replica_nodes___*<br>
 <ins>Type</ins>: integer, optional, updatable<br>
-<ins>Constraints</ins>: minimum: 0, maximum: 1E+2<br><br>Total number of replica nodes in the Data Centre.<br><br>
+<ins>Constraints</ins>: minimum: 0, maximum: 1E+3<br><br>Total number of replica nodes in the Data Centre.<br><br>
 *___aws_settings___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [aws_settings](#nested--aws_settings) for nested schema<br>
 <br>AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure settings.<br><br>
