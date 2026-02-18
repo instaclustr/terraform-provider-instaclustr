@@ -266,7 +266,7 @@ Examples:
 <br><br>
 <a id="nested--s3_settings"></a>
 ## Nested schema for `s3_settings`
-Defines information about the S3 bucket to be used for remote storage.<br>
+Defines information about the S3 bucket to be used as remote storage.<br>
 ### Input attributes - Required
 *___s3_bucket_name___*<br>
 <ins>Type</ins>: string, required, immutable<br>
@@ -281,10 +281,13 @@ Enable Tiered Storage for ClickHouse.<br>
 ### Input attributes - Optional
 *___s3_settings___*<br>
 <ins>Type</ins>: nested block, optional, updatable, see [s3_settings](#nested--s3_settings) for nested schema<br>
-<br>Defines information about the S3 bucket to be used for remote storage.<br><br>
+<br>Defines information about the S3 bucket to be used as remote storage.<br><br>
 *___azure_blob_storage_settings___*<br>
 <ins>Type</ins>: nested block, optional, updatable, see [azure_blob_storage_settings](#nested--azure_blob_storage_settings) for nested schema<br>
-<br>Defines information about the blob storage container to be used for remote storage.<br><br>
+<br>Defines information about the blob storage container to be used as remote storage.<br><br>
+*___storage_grid_s3_settings___*<br>
+<ins>Type</ins>: nested block, optional, updatable, see [storage_grid_s3_settings](#nested--storage_grid_s3_settings) for nested schema<br>
+<br>Defines information about the StorageGRID S3 bucket to be used as remote storage.<br><br>
 <a id="nested--delete_node_operations"></a>
 ## Nested schema for `delete_node_operations`
 
@@ -402,11 +405,31 @@ List of non-deleted nodes in the data centre<br>
 <br>ID of the node being replaced.<br><br>
 <a id="nested--azure_blob_storage_settings"></a>
 ## Nested schema for `azure_blob_storage_settings`
-Defines information about the blob storage container to be used for remote storage.<br>
+Defines information about the blob storage container to be used as remote storage.<br>
 ### Input attributes - Required
 *___container_name___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <br>Blob storage container name for ClickHouse remote storage<br><br>
+<a id="nested--storage_grid_s3_settings"></a>
+## Nested schema for `storage_grid_s3_settings`
+Defines information about the StorageGRID S3 bucket to be used as remote storage.<br>
+### Input attributes - Required
+*___s3_bucket_name___*<br>
+<ins>Type</ins>: string, required, immutable<br>
+<br>StorageGRID S3 bucket name for ClickHouse remote storage.<br><br>
+*___access_key_id___*<br>
+<ins>Type</ins>: string, required, immutable<br>
+<br>StorageGRID S3 access key ID.<br><br>
+*___secret_access_key___*<br>
+<ins>Type</ins>: string (password), required, immutable<br>
+<br>StorageGRID S3 secret access key.<br><br>
+### Input attributes - Optional
+*___prefix___*<br>
+<ins>Type</ins>: string, optional, immutable<br>
+<ins>Constraints</ins>: pattern: `^[a-zA-Z\d\-_]{0,100}$`<br><br>By default data in the StorageGRID S3 bucket will be stored in a folder named after the cluster's ID. If a prefix is provided, data will be stored in `<prefix>/<cluster_id>` instead.<br><br>
+*___s3_endpoint___*<br>
+<ins>Type</ins>: string, optional, immutable<br>
+<br>StorageGRID S3 endpoint URL.<br><br>
 <a id="nested--resize_settings"></a>
 ## Nested schema for `resize_settings`
 Settings to determine how resize requests will be performed for the cluster.<br>
