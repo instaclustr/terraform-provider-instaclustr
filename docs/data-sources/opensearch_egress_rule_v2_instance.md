@@ -21,16 +21,19 @@ The following terms are used to describe attributes in the schema of this data s
 ### Read-only attributes
 *___source___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: allowed values: [ `ALERTING`, `NOTIFICATIONS` ]<br><br>Source OpenSearch plugin that manages the channel/destination<br><br>
+<ins>Constraints</ins>: allowed values: [ `ALERTING`, `NOTIFICATIONS`, `AI_CONNECTOR`, `AI_MODEL` ]<br><br>Source OpenSearch plugin that manages the channel/destination<br><br>
 *___id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <ins>Constraints</ins>: pattern: `[a-zA-Z\d-]+~\w+~[\w-]+`<br><br>Instaclustr id of the egress rule in the format `{clusterId}~{source}~{bindingId}`<br><br>
+*___host___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Host associated with the webhook<br><br>
 *___name___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Name of channel/desination assosciated with webhook<br><br>
 *___type___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: allowed values: [ `SLACK`, `WEBHOOK`, `CUSTOM_WEBHOOK`, `CHIME`, `UNKNOWN` ]<br><br>Type of the channel/destination<br><br>
+<ins>Constraints</ins>: allowed values: [ `SLACK`, `WEBHOOK`, `CUSTOM_WEBHOOK`, `CHIME`, `HTTPS`, `UNKNOWN` ]<br><br>Type of the channel/destination<br><br>
 *___cluster_id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>OpenSearch cluster Id<br><br>

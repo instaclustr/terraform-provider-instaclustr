@@ -146,7 +146,7 @@ The following terms are used to describe attributes in the schema of this resour
 <br>Enable alerting plugin<br><br>
 *___ai_search_plugin___*<br>
 <ins>Type</ins>: boolean, optional, immutable<br>
-<br>Enable AI Search plugin (currently in public preview)<br><br>
+<br>Enable AI Search plugin<br><br>
 ### Read-only attributes
 *___mapper_size_plugin___*<br>
 <ins>Type</ins>: boolean, read-only<br>
