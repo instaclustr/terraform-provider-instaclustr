@@ -12,8 +12,12 @@ resource "instaclustr_clickhouse_integration_s3_fsxn_v2" "example" {
   fsxn_filesystem {
     access_key_id = "AKIAIOSFODNN7EXAMPLE"
     secret_access_key = "wJalrXUtnFEMI_K7MDENG_bPxRfiCYEXAMPLEKEY"
-    endpoint_address = "svm-07efef4ffe0d242f5.fs-028e3bb45a3c6bbab.fsx.us-east-1.amazonaws.com"
+    endpoint_address = "10.9.3.145"
     fsxn_id = "fs-0c315066d18074b67"
+    vpc_id = "vpc-07efef4ffe0d242f5"
+    endpoint_dns = "svm-07efef4ffe0d242f5.fs-028e3bb45a3c6bbab.fsx.us-east-1.amazonaws.com"
+    region = "US_EAST_1"
+    provider_account_name = "AWS-RIYOA"
   }
 
   cluster_id = "12aq0751-a169-8732-287a-21aedc6d23fd"
