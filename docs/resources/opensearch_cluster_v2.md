@@ -318,7 +318,7 @@ GCP specific settings for the Data Centre. Cannot be provided with AWS or Azure 
 ### Input attributes - Optional
 *___disable_snapshot_auto_expiry___*<br>
 <ins>Type</ins>: boolean, optional, immutable<br>
-<br>Specify whether the GCS backup bucket should automatically expire data after 7 days or not. Setting this to true will disable automatic expiry and will allow for creation of custom snapshot repositories with customisable retention using the Index Management Plugin. The storage will have to be manually cleared after the cluster is deleted. Only available for customers running in their own cloud provider accounts.<br><br>
+<br>This field is accepted but ignored. All GCP OpenSearch clusters now use backup buckets with no expiry policy regardless of this setting. Previously controlled whether the GCS backup bucket should automatically expire data after 7 days.<br><br>
 *___custom_virtual_network_id___*<br>
 <ins>Type</ins>: string, optional, immutable<br>
 <br>Network name or a relative Network or Subnetwork URI.
