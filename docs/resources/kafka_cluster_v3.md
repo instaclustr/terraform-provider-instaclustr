@@ -250,7 +250,7 @@ The version of Shotover Proxy running on the Cluster.<br>
 ### Read-only attributes
 *___version___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>The version of Shotover Proxy running on the Cluster.Available versions: <ul> <li>`0.6.0`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>The version of Shotover Proxy running on the Cluster.Available versions: <ul> <li>`0.7.2`</li> </ul><br><br>
 <a id="nested--gcs_settings"></a>
 ## Nested schema for `gcs_settings`
 Defines the GCS bucket that will be used to store remote objects for GCP tiered storage.<br>
