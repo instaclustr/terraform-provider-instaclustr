@@ -161,7 +161,7 @@ List of data centre settings.<br>
 <br>Create a Private Service Connect enabled cluster.<br><br>
 *___shotover_proxy___*<br>
 <ins>Type</ins>: nested block, optional, updatable, see [shotover_proxy](#nested--shotover_proxy) for nested schema<br>
-<br>The version of Shotover Proxy running on the Cluster.<br><br>
+<br>Details of the Shotover Proxy nodes provisioned for Private Link.<br><br>
 *___tag_management_enabled___*<br>
 <ins>Type</ins>: boolean, optional, updatable<br>
 <br>(Optional) Enable tag management for the data centre, allowing you to create, update and delete custom tags on the data centre via Instaclustr Terraform Provider v2, Cluster Management API or Management Console. Tag management is only available for RIYOA clusters and cannot be disabled once enabled. If not specified, the current value will remain unchanged.<br><br>
@@ -207,7 +207,7 @@ List of data centre settings.<br>
 <br>List of non-deleted nodes in the data centre<br><br>
 <a id="nested--shotover_proxy"></a>
 ## Nested schema for `shotover_proxy`
-The version of Shotover Proxy running on the Cluster.<br>
+Details of the Shotover Proxy nodes provisioned for Private Link.<br>
 ### Input attributes - Required
 *___node_size___*<br>
 <ins>Type</ins>: string, required, updatable<br>
