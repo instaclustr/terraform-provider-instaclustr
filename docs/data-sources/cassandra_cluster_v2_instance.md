@@ -85,7 +85,7 @@ List of data centre settings.<br>
 <br>Create a Private Service Connect enabled cluster.<br><br>
 *___shotover_proxy___*<br>
 <ins>Type</ins>: nested block, read-only, see [shotover_proxy](#nested--shotover_proxy) for nested schema<br>
-<br>The version of Shotover Proxy running on the Cluster.<br><br>
+<br>Details of the Shotover Proxy nodes provisioned for Private Link.<br><br>
 *___number_of_nodes___*<br>
 <ins>Type</ins>: integer, read-only<br>
 <br>Total number of nodes in the Data Centre. Includes only Cassandra nodes, other node types in the cluster such as shotover nodes are excluded from this count. Must be a multiple of `replicationFactor`.<br><br>
@@ -157,7 +157,7 @@ List of data centre settings.<br>
 <br>For customers running in their own account. Your provider account can be found on the Create Cluster page on the Instaclustr Console, or the "Provider Account" property on any existing cluster. For customers provisioning on Instaclustr's cloud provider accounts, this property may be omitted.<br><br>
 <a id="nested--shotover_proxy"></a>
 ## Nested schema for `shotover_proxy`
-The version of Shotover Proxy running on the Cluster.<br>
+Details of the Shotover Proxy nodes provisioned for Private Link.<br>
 ### Read-only attributes
 *___version___*<br>
 <ins>Type</ins>: string, read-only<br>
