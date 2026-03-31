@@ -48,7 +48,7 @@ The following terms are used to describe attributes in the schema of this data s
 <br>Adds the specified version of Kafka Karapace REST Proxy to this Kafka cluster.<br><br>
 *___kafka_version___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Kafka to run on the cluster. Available versions: <ul> <li>`3.9.1`</li> <li>`4.1.1`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Kafka to run on the cluster. Available versions: <ul> <li>`3.9.2`</li> <li>`3.9.1`</li> <li>`4.1.1`</li> </ul><br><br>
 *___auto_create_topics___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Allows topics to be auto created by brokers when messages are published to a non-existent topic<br><br>
@@ -116,6 +116,9 @@ Kafka 3.6.1 and later will use KRaft instead of Zookeeper unless this is specifi
 *___schema_registry___*<br>
 <ins>Type</ins>: nested block, read-only, see [schema_registry](#nested--schema_registry) for nested schema<br>
 <br>Adds the specified version of Kafka Schema Registry to this Kafka cluster.<br><br>
+*___client_telemetry___*<br>
+<ins>Type</ins>: nested block, read-only, see [client_telemetry](#nested--client_telemetry) for nested schema<br>
+<br>Enable Client Telemetry for Kafka<br><br>
 <a id="nested--dedicated_zookeeper"></a>
 ## Nested schema for `dedicated_zookeeper`
 Provision additional dedicated nodes for Apache Zookeeper to run on. Zookeeper nodes will be co-located with Kafka if this is not provided<br>
@@ -215,10 +218,20 @@ Details of the Shotover Proxy nodes provisioned for Private Service Connect.<br>
 ### Read-only attributes
 *___version___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>The version of Shotover Proxy running on the Cluster.Available versions: <ul> <li>`0.6.0`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>The version of Shotover Proxy running on the Cluster.Available versions: <ul> <li>`0.7.2`</li> <li>`0.6.0`</li> </ul><br><br>
 *___node_size___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Size of the nodes provisioned as Shotover Proxy nodes in a Private Service Connect Kafka Cluster. --AVAILABLE_NODE_SIZES_MARKER_V2_KAFKA_SHOTOVER_PROXY_NODES--<br><br>
+<a id="nested--basic_authentication"></a>
+## Nested schema for `basic_authentication`
+Basic authentication settings for Client Telemetry endpoint.<br>
+### Read-only attributes
+*___username___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Username for basic authentication when shipping client telemetry.<br><br>
+*___password___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Password for basic authentication when shipping client telemetry.<br><br>
 <a id="nested--gcs_settings"></a>
 ## Nested schema for `gcs_settings`
 Defines the GCS bucket that will be used to store remote objects for GCP tiered storage.<br>
@@ -499,3 +512,16 @@ Adds the specified version of Kafka Schema Registry to this Kafka cluster.<br>
 *___version___*<br>
 <ins>Type</ins>: string, read-only<br>
 <ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Adds the specified version of Kafka Schema Registry to the Kafka cluster. Available versions: <ul> </ul><br><br>
+<a id="nested--client_telemetry"></a>
+## Nested schema for `client_telemetry`
+Enable Client Telemetry for Kafka<br>
+### Read-only attributes
+*___enabled___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>Toggle to enable or disable Client Telemetry for Kafka.<br><br>
+*___basic_authentication___*<br>
+<ins>Type</ins>: nested block, read-only, see [basic_authentication](#nested--basic_authentication) for nested schema<br>
+<br>Basic authentication settings for Client Telemetry endpoint.<br><br>
+*___endpoint_url___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>URL to which the client telemetry will be sent.<br><br>
