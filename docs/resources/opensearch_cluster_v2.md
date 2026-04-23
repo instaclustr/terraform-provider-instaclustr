@@ -80,7 +80,7 @@ The following terms are used to describe attributes in the schema of this resour
 ### Input attributes - Optional
 *___notifications_plugin___*<br>
 <ins>Type</ins>: boolean, optional, immutable<br>
-<br>Enable notifications plugin<br><br>
+<br>Enables notifications plugin. For OpenSearch 2.x and later, if you want to enable this plugin you must also enable the Alerting plugin.<br><br>
 *___asynchronous_search_plugin___*<br>
 <ins>Type</ins>: boolean, optional, immutable<br>
 <br>Enable asynchronous search plugin<br><br>
@@ -143,7 +143,7 @@ The following terms are used to describe attributes in the schema of this resour
 <br>Enable icu plugin<br><br>
 *___alerting_plugin___*<br>
 <ins>Type</ins>: boolean, optional, immutable<br>
-<br>Enable alerting plugin<br><br>
+<br>Enables alerting plugin. For OpenSearch 2.x and later, if you want to enable this plugin you must also enable the Notifications plugin.<br><br>
 *___ai_search_plugin___*<br>
 <ins>Type</ins>: boolean, optional, immutable<br>
 <br>Enable AI Search plugin<br><br>
