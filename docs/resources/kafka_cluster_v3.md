@@ -480,6 +480,16 @@ Provision additional dedicated nodes for KRaft Controllers. If this is not provi
 *___controller_node_size___*<br>
 <ins>Type</ins>: string, required, updatable<br>
 <br>Size of the nodes provisioned as dedicated KRaftController nodes.<br><br>
+<a id="nested--authentication_headers"></a>
+## Nested schema for `authentication_headers`
+Optional HTTP headers for the client telemetry endpoint (for example API key or custom authentication headers). When any entry is provided, each must include a non-empty key and value. Duplicate header names are not permitted.<br>
+### Input attributes - Required
+*___key___*<br>
+<ins>Type</ins>: string, required, updatable<br>
+<ins>Constraints</ins>: pattern: `^.*\S.*$`<br><br>Header name.<br><br>
+*___value___*<br>
+<ins>Type</ins>: string, required, updatable<br>
+<ins>Constraints</ins>: pattern: `^.*\S.*$`<br><br>Header value.<br><br>
 <a id="nested--gcp_private_service_connect_rack"></a>
 ## Nested schema for `gcp_private_service_connect_rack`
 The settings required for a Private Service Connect rack.<br>
@@ -565,6 +575,9 @@ Enable Client Telemetry for Kafka<br>
 *___endpoint_url___*<br>
 <ins>Type</ins>: string, optional, updatable<br>
 <br>URL to which the client telemetry will be sent.<br><br>
+*___authentication_headers___*<br>
+<ins>Type</ins>: repeatable nested block, optional, updatable, see [authentication_headers](#nested--authentication_headers) for nested schema<br>
+<br>Optional HTTP headers for the client telemetry endpoint (for example API key or custom authentication headers). When any entry is provided, each must include a non-empty key and value. Duplicate header names are not permitted.<br><br>
 ## Import
 This resource can be imported using the `terraform import` command as follows:
 ```

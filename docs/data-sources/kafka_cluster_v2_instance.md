@@ -410,6 +410,16 @@ Provision additional dedicated nodes for KRaft Controllers. If this is not provi
 *___controller_node_size___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Size of the nodes provisioned as dedicated KRaftController nodes.<br><br>
+<a id="nested--authentication_headers"></a>
+## Nested schema for `authentication_headers`
+Optional HTTP headers for the client telemetry endpoint (for example API key or custom authentication headers). When any entry is provided, each must include a non-empty key and value. Duplicate header names are not permitted.<br>
+### Read-only attributes
+*___key___*<br>
+<ins>Type</ins>: string, read-only<br>
+<ins>Constraints</ins>: pattern: `^.*\S.*$`<br><br>Header name.<br><br>
+*___value___*<br>
+<ins>Type</ins>: string, read-only<br>
+<ins>Constraints</ins>: pattern: `^.*\S.*$`<br><br>Header value.<br><br>
 <a id="nested--aws_settings"></a>
 ## Nested schema for `aws_settings`
 AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure settings.<br>
@@ -473,3 +483,6 @@ Enable Client Telemetry for Kafka<br>
 *___endpoint_url___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>URL to which the client telemetry will be sent.<br><br>
+*___authentication_headers___*<br>
+<ins>Type</ins>: repeatable nested block, read-only, see [authentication_headers](#nested--authentication_headers) for nested schema<br>
+<br>Optional HTTP headers for the client telemetry endpoint (for example API key or custom authentication headers). When any entry is provided, each must include a non-empty key and value. Duplicate header names are not permitted.<br><br>
