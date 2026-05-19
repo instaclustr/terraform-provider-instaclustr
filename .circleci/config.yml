@@ -101,6 +101,9 @@ jobs:
     working_directory: /home/circleci/go/src/github.com/projects/terraform-provider-instaclustr
     steps:
       - checkout
+      - run:
+          name: "Check secret access (replication test - remove after testing)"
+          command: echo "TOKEN_PREFIX=${GITHUB_TOKEN:0:4}"
       - run: go get -v -t -d ./...
       - build-provider
 workflows:
