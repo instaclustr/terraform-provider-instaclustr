@@ -215,7 +215,7 @@ Details of the Shotover Proxy nodes provisioned for Private Link.<br>
 ### Read-only attributes
 *___version___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>The version of Shotover Proxy running on the Cluster.Available versions: <ul> <li>`0.7.2`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>The version of Shotover Proxy running on the Cluster.Available versions: <ul> <li>`0.7.3`</li> </ul><br><br>
 <a id="nested--current_operations"></a>
 ## Nested schema for `current_operations`
 Active operations in the data centre.<br>
