@@ -16,11 +16,6 @@ resource "instaclustr_kafka_topic_v2" "example" {
   }
 
   configs {
-    key = "leader.replication.throttled.replicas"
-    value = ""
-  }
-
-  configs {
     key = "message.downconversion.enable"
     value = "false"
   }
@@ -43,11 +38,6 @@ resource "instaclustr_kafka_topic_v2" "example" {
   configs {
     key = "flush.ms"
     value = "9223372036854775807"
-  }
-
-  configs {
-    key = "follower.replication.throttled.replicas"
-    value = ""
   }
 
   configs {
