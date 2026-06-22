@@ -109,6 +109,9 @@ The following terms are used to describe attributes in the schema of this data s
 *___opensearch_dashboards___*<br>
 <ins>Type</ins>: nested block, read-only, see [opensearch_dashboards](#nested--opensearch_dashboards) for nested schema<br>
 <br>List of openSearch dashboards settings<br><br>
+*___anonymous_auth_enabled___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>Enable anonymous authentication. Allows unauthenticated requests with restricted  permissions. Requires Private Network Cluster. Not available when PCI compliance mode is enabled.<br><br>
 *___pci_compliance_mode___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Creates a PCI compliant cluster, see [PCI Compliance](https://www.instaclustr.com/support/documentation/useful-information/pci-compliance/).<br><br>
