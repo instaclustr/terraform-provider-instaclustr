@@ -320,10 +320,23 @@ Settings to determine how resize requests will be performed for the cluster.<br>
 *___notify_support_contacts___*<br>
 <ins>Type</ins>: boolean, optional, updatable<br>
 <br>Setting this property to `true` will notify the Instaclustr Account's designated support contacts on resize completion.<br><br>
+<a id="nested--fsx_file_system_mappings"></a>
+## Nested schema for `fsx_file_system_mappings`
+Mapping of rack names to FSx File System IDs for BYO FSx provisioning. Only applicable for PostgreSQL clusters.<br>
+### Input attributes - Required
+*___rack_name___*<br>
+<ins>Type</ins>: string, required, updatable<br>
+<br>The rack/availability zone name (e.g., 'us-east-1a').<br><br>
+*___fsx_file_system_id___*<br>
+<ins>Type</ins>: string, required, updatable<br>
+<br>The FSx File System ID (e.g., 'fs-0123456789abcdef0').<br><br>
 <a id="nested--aws_settings"></a>
 ## Nested schema for `aws_settings`
 AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure settings.<br>
 ### Input attributes - Optional
+*___add_secondary_cidr_to_vpc___*<br>
+<ins>Type</ins>: boolean, optional, immutable<br>
+<br>When true and a custom VPC is specified, the Data Centre's network will be associated as a secondary CIDR block to the VPC. The association will be removed when the Data Centre is deleted. Only valid when customVirtualNetworkId is set and fsxFileSystemMappings are provided for BYO FSx provisioning. Only applicable for PostgreSQL clusters.<br><br>
 *___storage_network___*<br>
 <ins>Type</ins>: string, optional, immutable<br>
 <br>The private network address block to be used for the storage network. This is only used for certain node sizes, currently limited to those which use AWS FSx ONTAP: for all other node sizes, this field should not be provided. The network must have a prefix length between /16 and /28, and must be part of a private address range.<br><br>
@@ -333,6 +346,9 @@ AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure 
 *___ebs_encryption_key___*<br>
 <ins>Type</ins>: string (uuid), optional, immutable<br>
 <br>ID of a KMS encryption key to encrypt data on nodes. KMS encryption key must be set in Cluster Resources through the Instaclustr Console before provisioning an encrypted Data Centre.<br><br>
+*___fsx_file_system_mappings___*<br>
+<ins>Type</ins>: repeatable nested block, optional, immutable, see [fsx_file_system_mappings](#nested--fsx_file_system_mappings) for nested schema<br>
+<br>Mapping of rack names to FSx File System IDs for BYO FSx provisioning. Only applicable for PostgreSQL clusters.<br><br>
 <a id="nested--two_factor_delete"></a>
 ## Nested schema for `two_factor_delete`
 

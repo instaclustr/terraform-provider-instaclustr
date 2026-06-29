@@ -140,6 +140,9 @@ List of data centre settings.<br>
 *___debezium___*<br>
 <ins>Type</ins>: nested block, read-only, see [debezium](#nested--debezium) for nested schema<br>
 <br>Adds the specified version of Debezium Connector Cassandra to the Cassandra cluster, as well as the Kafka Cluster Data Centre ID, Kafka VPC Type, and Kafka Topic Prefix.<br><br>
+*___psc_network___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>The private network address block for PSC subnets, specified as a CIDR. Prefix length must be between /12 and /22 and must be a private address space. If not provided, the next available network will be used.<br><br>
 *___aws_settings___*<br>
 <ins>Type</ins>: nested block, read-only, see [aws_settings](#nested--aws_settings) for nested schema<br>
 <br>AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure settings.<br><br>
