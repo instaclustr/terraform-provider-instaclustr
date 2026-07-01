@@ -42,7 +42,7 @@ The following terms are used to describe attributes in the schema of this resour
 <ins>Constraints</ins>: allowed values: [ `PRODUCTION`, `NON_PRODUCTION` ]<br><br>SLA Tier of the cluster. Non-production clusters may receive lower priority support and reduced SLAs. Production tier is not available when using Developer class nodes. See [SLA Tier](https://www.instaclustr.com/support/documentation/useful-information/sla-tier/) for more information.<br><br>
 *___mcp_gateway_version___*<br>
 <ins>Type</ins>: string, required, immutable<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of MCP Gateway to run on the cluster. Available versions: <ul> <li>`1.0.0`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of MCP Gateway to run on the cluster. Available versions: <ul> <li>`1.0.1`</li> </ul><br><br>
 *___name___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <ins>Constraints</ins>: pattern: `[a-zA-Z0-9][a-zA-Z0-9_-]*`<br><br>Name of the cluster.<br><br>
@@ -87,7 +87,7 @@ List of data centre settings.<br>
 <br>A logical name for the data centre within a cluster. These names must be unique in the cluster.<br><br>
 *___node_size___*<br>
 <ins>Type</ins>: string, required, updatable<br>
-<br>Size of the nodes provisioned in the Data Centre. Available versions: <ul> <li>`1.0.0`</li> </ul><br><br>
+<br>Size of the nodes provisioned in the Data Centre. Available versions: <ul> <li>`1.0.1`</li> </ul><br><br>
 *___network___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <br>The private network address block for the Data Centre specified using CIDR address notation. The network must have a prefix length between `/16` and `/26` and must be part of a private address space.<br><br>

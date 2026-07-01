@@ -33,7 +33,7 @@ The following terms are used to describe attributes in the schema of this data s
 <br>Status of the cluster.<br><br>
 *___mcp_gateway_version___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of MCP Gateway to run on the cluster. Available versions: <ul> <li>`1.0.0`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of MCP Gateway to run on the cluster. Available versions: <ul> <li>`1.0.1`</li> </ul><br><br>
 *___id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>ID of the cluster.<br><br>
@@ -103,7 +103,7 @@ List of data centre settings.<br>
 <br>List of non-deleted nodes in the data centre<br><br>
 *___node_size___*<br>
 <ins>Type</ins>: string, read-only<br>
-<br>Size of the nodes provisioned in the Data Centre. Available versions: <ul> <li>`1.0.0`</li> </ul><br><br>
+<br>Size of the nodes provisioned in the Data Centre. Available versions: <ul> <li>`1.0.1`</li> </ul><br><br>
 *___aws_settings___*<br>
 <ins>Type</ins>: nested block, read-only, see [aws_settings](#nested--aws_settings) for nested schema<br>
 <br>AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure settings.<br><br>
