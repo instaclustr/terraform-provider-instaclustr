@@ -334,7 +334,7 @@ List of non-deleted nodes in the data centre<br>
 ### Read-only attributes
 *___status___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: allowed values: [ `GENESIS`, `RESIZING_DISK`, `RESIZED_DISK`, `EXPANDED_FILESYSTEM`, `GRACEFULLY_SHUTTING_DOWN`, `CREATING_REPLACEMENT`, `PROVISIONING`, `PROVISIONED`, `BACKEDUP`, `RESTORING`, `FLUSHING`, `FLUSHED`, `SWAPPING`, `SWAPPED`, `CLEARING_INSTALLED_BUNDLES`, `CLEARED_INSTALLED_BUNDLES`, `POST_BUNDLE_PROCESSING`, `RESTARTING`, `REPLACED`, `CANCELLED`, `FAILED`, `UNKNOWN` ]<br><br>Status of the node replacement operation.<br><br>
+<ins>Constraints</ins>: allowed values: [ `GENESIS`, `RESIZING_DISK`, `RESIZED_DISK`, `EXPANDED_FILESYSTEM`, `GRACEFULLY_SHUTTING_DOWN`, `CREATING_REPLACEMENT`, `PROVISIONING`, `PROVISIONED`, `BACKEDUP`, `RESTORING`, `FLUSHING`, `FLUSHED`, `SWAPPING`, `SWAPPED`, `CLEARING_INSTALLED_BUNDLES`, `CLEARED_INSTALLED_BUNDLES`, `POST_BUNDLE_PROCESSING`, `RESTARTING`, `REPLACED`, `CANCELLING`, `CANCELLED`, `FAILED`, `UNKNOWN` ]<br><br>Status of the node replacement operation.<br><br>
 *___id___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
 <br>ID of the node replacement operation.<br><br>
