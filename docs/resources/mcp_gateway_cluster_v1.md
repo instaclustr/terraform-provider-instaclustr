@@ -93,7 +93,7 @@ List of data centre settings.<br>
 <br>The private network address block for the Data Centre specified using CIDR address notation. The network must have a prefix length between `/16` and `/26` and must be part of a private address space.<br><br>
 ### Input attributes - Optional
 *___zero_inbound_access___*<br>
-<ins>Type</ins>: boolean, optional, immutable<br>
+<ins>Type</ins>: boolean, optional, updatable<br>
 <br>Zero Inbound Access gateways eliminate the requirement for any public IP addresses in cluster deployment.<br><br>
 *___tag_management_enabled___*<br>
 <ins>Type</ins>: boolean, optional, updatable<br>

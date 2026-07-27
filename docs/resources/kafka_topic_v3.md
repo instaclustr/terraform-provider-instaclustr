@@ -16,11 +16,6 @@ resource "instaclustr_kafka_topic_v3" "example" {
   }
 
   configs {
-    key = "message.downconversion.enable"
-    value = "false"
-  }
-
-  configs {
     key = "min.insync.replicas"
     value = "1"
   }
@@ -53,11 +48,6 @@ resource "instaclustr_kafka_topic_v3" "example" {
   configs {
     key = "flush.messages"
     value = "9223372036854775807"
-  }
-
-  configs {
-    key = "message.format.version"
-    value = "3.0-IV1"
   }
 
   configs {
@@ -118,11 +108,6 @@ resource "instaclustr_kafka_topic_v3" "example" {
   configs {
     key = "segment.ms"
     value = "604800000"
-  }
-
-  configs {
-    key = "message.timestamp.difference.max.ms"
-    value = "9223372036854775807"
   }
 
   configs {
