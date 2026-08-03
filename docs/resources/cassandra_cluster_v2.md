@@ -115,6 +115,19 @@ The following terms are used to describe attributes in the schema of this resour
 *___current_cluster_operation_status___*<br>
 <ins>Type</ins>: string, read-only<br>
 <ins>Constraints</ins>: allowed values: [ `NO_OPERATION`, `OPERATION_IN_PROGRESS`, `OPERATION_FAILED` ]<br><br>Indicates if the cluster is currently performing any restructuring operation such as being created or resized<br><br>
+<a id="nested--vpc_associations"></a>
+## Nested schema for `vpc_associations`
+VPCs associated with this zone for private DNS resolution.<br>
+### Read-only attributes
+*___status___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Association status in Instaclustr's records.<br><br>
+*___vpc_id___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>AWS VPC id.<br><br>
+*___vpc_region___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>AWS region for the VPC.<br><br>
 <a id="nested--data_centre"></a>
 ## Nested schema for `data_centre`
 List of data centre settings.<br>
@@ -205,12 +218,18 @@ List of data centre settings.<br>
 *___deleted_nodes___*<br>
 <ins>Type</ins>: repeatable nested block, read-only, see [deleted_nodes](#nested--deleted_nodes) for nested schema<br>
 <br>List of deleted nodes in the data centre<br><br>
+*___cluster_dns_zones___*<br>
+<ins>Type</ins>: repeatable nested block, read-only, see [cluster_dns_zones](#nested--cluster_dns_zones) for nested schema<br>
+<br>Cluster DNS hosted zones for this data centre: each entry is a DNS domain with the VPCs associated for private zone resolution.<br><br>
 *___id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>ID of the Cluster Data Centre.<br><br>
 *___nodes___*<br>
 <ins>Type</ins>: repeatable nested block, read-only, see [nodes](#nested--nodes) for nested schema<br>
 <br>List of non-deleted nodes in the data centre<br><br>
+*___networks___*<br>
+<ins>Type</ins>: repeatable nested block, read-only, see [networks](#nested--networks) for nested schema<br>
+<br>All network CIDR blocks for this data centre, including the primary network and any expanded secondary CIDRs.<br><br>
 <a id="nested--shotover_proxy"></a>
 ## Nested schema for `shotover_proxy`
 Details of the Shotover Proxy nodes provisioned for Private Link.<br>
@@ -325,6 +344,19 @@ Examples:
 - Shared VPC subnetwork URI: <code>projects/{riyoa-gcp-host-project-name}/regions/{region-id}/subnetworks/{subnetwork-name}</code>.
 
 <br><br>
+<a id="nested--cluster_dns_zones"></a>
+## Nested schema for `cluster_dns_zones`
+Cluster DNS hosted zones for this data centre: each entry is a DNS domain with the VPCs associated for private zone resolution.<br>
+### Read-only attributes
+*___vpc_associations___*<br>
+<ins>Type</ins>: repeatable nested block, read-only, see [vpc_associations](#nested--vpc_associations) for nested schema<br>
+<br>VPCs associated with this zone for private DNS resolution.<br><br>
+*___domain___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>DNS zone domain name when provisioned (Route53 hosted zone).<br><br>
+*___hosted_zone_id___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>AWS Route 53 hosted zone ID for this zone (e.g. Z123...), when provisioned.<br><br>
 <a id="nested--delete_node_operations"></a>
 ## Nested schema for `delete_node_operations`
 
@@ -458,6 +490,9 @@ Private Link / Private Service Connect endpoint addresses<br>
 ## Nested schema for `resize_settings`
 Settings to determine how resize requests will be performed for the cluster.<br>
 ### Input attributes - Optional
+*___downsize_acknowledged___*<br>
+<ins>Type</ins>: boolean, optional, updatable<br>
+<br>Set to `true` when the user has acknowledged that this resize reduces resource capacity and may cause node instability.<br><br>
 *___concurrency___*<br>
 <ins>Type</ins>: integer, optional, updatable<br>
 <br>Number of concurrent nodes to resize during a resize operation.<br><br>
@@ -504,6 +539,19 @@ AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure 
 *___confirmation_phone_number___*<br>
 <ins>Type</ins>: string, optional, updatable<br>
 <ins>Constraints</ins>: pattern: `^(?![\s])[\-\s\(\)\+0-9]*$`<br><br>The phone number which will be contacted when the cluster is requested to be delete.<br><br>
+<a id="nested--networks"></a>
+## Nested schema for `networks`
+All network CIDR blocks for this data centre, including the primary network and any expanded secondary CIDRs.<br>
+### Read-only attributes
+*___status___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Provisioning status of the network registration.<br><br>
+*___primary___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>True when this entry is the data centre primary network.<br><br>
+*___cidr___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Network CIDR in notation, for example 10.0.0.0/16.<br><br>
 ## Import
 This resource can be imported using the `terraform import` command as follows:
 ```

@@ -40,6 +40,12 @@ The following terms are used to describe attributes in the schema of this data s
 *___sla_tier___*<br>
 <ins>Type</ins>: string, read-only<br>
 <ins>Constraints</ins>: allowed values: [ `PRODUCTION`, `NON_PRODUCTION` ]<br><br>SLA Tier of the cluster. Non-production clusters may receive lower priority support and reduced SLAs. Production tier is not available when using Developer class nodes. See [SLA Tier](https://www.instaclustr.com/support/documentation/useful-information/sla-tier/) for more information.<br><br>
+*___leader_cluster_account___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>The leader cluster account ID for a Cross Cluster Replication enabled follower cluster. This requires crossClusterReplicationPlugin to be set to true.<br><br>
+*___portal26_plugin___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>Whether or not the Portal26 plugin is enabled for this cluster.<br><br>
 *___status___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Status of the cluster.<br><br>
@@ -91,6 +97,9 @@ The following terms are used to describe attributes in the schema of this data s
 *___reporting_plugin___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Enable reporting plugin<br><br>
+*___leader_cluster_id___*<br>
+<ins>Type</ins>: string (uuid), read-only<br>
+<br>Specifies the leader cluster ID for a Cross Cluster Replication enabled follower cluster. This requires crossClusterReplicationPlugin to be set to true. Not defining this will make the cluster a leader cluster if crossClusterReplicationPlugin is set to true.<br><br>
 *___ingest_nodes___*<br>
 <ins>Type</ins>: nested block, read-only, see [ingest_nodes](#nested--ingest_nodes) for nested schema<br>
 <br>Ingest nodes settings.<br><br>
@@ -121,6 +130,9 @@ The following terms are used to describe attributes in the schema of this data s
 *___data_nodes___*<br>
 <ins>Type</ins>: nested block, read-only, see [data_nodes](#nested--data_nodes) for nested schema<br>
 <br>List of data node settings.<br><br>
+*___cross_cluster_replication_plugin___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>Enable cross cluster replication plugin<br><br>
 *___anomaly_detection_plugin___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Enable anomaly detection plugin<br><br>
@@ -194,6 +206,9 @@ List of data centre settings.<br>
 *___private_link___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Create a PrivateLink enabled cluster, see [PrivateLink](https://www.instaclustr.com/support/documentation/useful-information/privatelink/).<br><br>
+*___networks___*<br>
+<ins>Type</ins>: repeatable nested block, read-only, see [networks](#nested--networks) for nested schema<br>
+<br>All network CIDR blocks for this data centre, including the primary network and any expanded secondary CIDRs.<br><br>
 *___network___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>The private network address block for the Data Centre specified using CIDR address notation. The network must have a prefix length between `/16` and `/26` and must be part of a private address space.<br><br>
@@ -204,6 +219,9 @@ List of data centre settings.<br>
 ## Nested schema for `azure_settings`
 Azure specific settings for the Data Centre. Cannot be provided with AWS or GCP settings.<br>
 ### Read-only attributes
+*___backup_storage_account___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Specify the Storage Account to use for storing backup data for the cluster data centre. Only available for customers running in their own cloud provider accounts.<br><br>
 *___storage_network___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>The private network address block to be used for the storage network. This is only used for certain node sizes, currently limited to those which use Azure NetApp Files: for all other node sizes, this field should not be provided. The network must have a prefix length between /16 and /28, and must be part of a private address range.<br><br>
@@ -343,6 +361,9 @@ List of non-deleted nodes in the data centre<br>
 ## Nested schema for `resize_settings`
 Settings to determine how resize requests will be performed for the cluster.<br>
 ### Read-only attributes
+*___downsize_acknowledged___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>Set to `true` when the user has acknowledged that this resize reduces resource capacity and may cause node instability.<br><br>
 *___concurrency___*<br>
 <ins>Type</ins>: integer, read-only<br>
 <br>Number of concurrent nodes to resize during a resize operation.<br><br>
@@ -395,6 +416,19 @@ AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure 
 *___confirmation_email___*<br>
 <ins>Type</ins>: string, read-only<br>
 <ins>Constraints</ins>: pattern: `^(([\s]*[^<>()\[\]\\.,;:@\s"]+(\.[^<>()\[\]\\.,;:\s@"]+)*))@((\[\d{1,3}(\.\d{1,3}){3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}[\s]*))$`<br><br>The email address which will be contacted when the cluster is requested to be deleted.<br><br>
+<a id="nested--networks"></a>
+## Nested schema for `networks`
+All network CIDR blocks for this data centre, including the primary network and any expanded secondary CIDRs.<br>
+### Read-only attributes
+*___status___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Provisioning status of the network registration.<br><br>
+*___primary___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>True when this entry is the data centre primary network.<br><br>
+*___cidr___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Network CIDR in notation, for example 10.0.0.0/16.<br><br>
 <a id="nested--opensearch_dashboards"></a>
 ## Nested schema for `opensearch_dashboards`
 List of openSearch dashboards settings<br>

@@ -119,6 +119,9 @@ List of data centre settings.<br>
 *___aws_settings___*<br>
 <ins>Type</ins>: nested block, read-only, see [aws_settings](#nested--aws_settings) for nested schema<br>
 <br>AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure settings.<br><br>
+*___networks___*<br>
+<ins>Type</ins>: repeatable nested block, read-only, see [networks](#nested--networks) for nested schema<br>
+<br>All network CIDR blocks for this data centre, including the primary network and any expanded secondary CIDRs.<br><br>
 *___network___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>The private network address block for the Data Centre specified using CIDR address notation. The network must have a prefix length between `/16` and `/26` and must be part of a private address space.<br><br>
@@ -275,6 +278,10 @@ Enable Tiered Storage for ClickHouse.<br>
 <a id="nested--private_connectivity"></a>
 ## Nested schema for `private_connectivity`
 Create a Private Connectivity enabled cluster.<br>
+### Read-only attributes
+*___aws_private_link___*<br>
+<ins>Type</ins>: nested block, read-only, see [aws_private_link](#nested--aws_private_link) for nested schema<br>
+<br>
 <a id="nested--tag"></a>
 ## Nested schema for `tag`
 List of tags to apply to the Data Centre. Tags are metadata labels which allow you to identify, categorize and filter clusters. This can be useful for grouping together clusters into applications, environments, or any category that you require. Note: Tags will be returned sorted by key in alphabetical order regardless of input order. Terraform users: `tag` is not supported in terraform lifecycle `ignore_changes`.<br>
@@ -396,6 +403,9 @@ Defines information about the StorageGRID S3 bucket to be used as remote storage
 ## Nested schema for `resize_settings`
 Settings to determine how resize requests will be performed for the cluster.<br>
 ### Read-only attributes
+*___downsize_acknowledged___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>Set to `true` when the user has acknowledged that this resize reduces resource capacity and may cause node instability.<br><br>
 *___concurrency___*<br>
 <ins>Type</ins>: integer, read-only<br>
 <br>Number of concurrent nodes to resize during a resize operation.<br><br>
@@ -425,6 +435,19 @@ AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure 
 *___confirmation_email___*<br>
 <ins>Type</ins>: string, read-only<br>
 <ins>Constraints</ins>: pattern: `^(([\s]*[^<>()\[\]\\.,;:@\s"]+(\.[^<>()\[\]\\.,;:\s@"]+)*))@((\[\d{1,3}(\.\d{1,3}){3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}[\s]*))$`<br><br>The email address which will be contacted when the cluster is requested to be deleted.<br><br>
+<a id="nested--networks"></a>
+## Nested schema for `networks`
+All network CIDR blocks for this data centre, including the primary network and any expanded secondary CIDRs.<br>
+### Read-only attributes
+*___status___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Provisioning status of the network registration.<br><br>
+*___primary___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>True when this entry is the data centre primary network.<br><br>
+*___cidr___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Network CIDR in notation, for example 10.0.0.0/16.<br><br>
 <a id="nested--dedicated_click_house_keeper"></a>
 ## Nested schema for `dedicated_click_house_keeper`
 Provision additional dedicated nodes for ClickHouse Keeper to run on. ClickHouse Keeper will be co-located with ClickHouse Server if this is not provided.<br>
@@ -435,3 +458,13 @@ Provision additional dedicated nodes for ClickHouse Keeper to run on. ClickHouse
 *___node_count___*<br>
 <ins>Type</ins>: integer, read-only<br>
 <ins>Constraints</ins>: minimum: 3, maximum: 3<br><br>Dedicated ClickHouse Keeper node count, it must be 3.<br><br>
+<a id="nested--aws_private_link"></a>
+## Nested schema for `aws_private_link`
+
+### Read-only attributes
+*___endpoint_service_name___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>The endpoint service name for the PrivateLink connection.<br><br>
+*___use_aws_private_link___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>Enable PrivateLink on the cluster, see [PrivateLink](https://www.instaclustr.com/support/documentation/useful-information/privatelink/).<br><br>

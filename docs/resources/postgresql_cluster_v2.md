@@ -170,6 +170,9 @@ List of data centre settings.<br>
 *___nodes___*<br>
 <ins>Type</ins>: repeatable nested block, read-only, see [nodes](#nested--nodes) for nested schema<br>
 <br>List of non-deleted nodes in the data centre<br><br>
+*___networks___*<br>
+<ins>Type</ins>: repeatable nested block, read-only, see [networks](#nested--networks) for nested schema<br>
+<br>All network CIDR blocks for this data centre, including the primary network and any expanded secondary CIDRs.<br><br>
 <a id="nested--azure_settings"></a>
 ## Nested schema for `azure_settings`
 Azure specific settings for the Data Centre. Cannot be provided with AWS or GCP settings.<br>
@@ -314,6 +317,9 @@ List of non-deleted nodes in the data centre<br>
 ## Nested schema for `resize_settings`
 Settings to determine how resize requests will be performed for the cluster.<br>
 ### Input attributes - Optional
+*___downsize_acknowledged___*<br>
+<ins>Type</ins>: boolean, optional, updatable<br>
+<br>Set to `true` when the user has acknowledged that this resize reduces resource capacity and may cause node instability.<br><br>
 *___concurrency___*<br>
 <ins>Type</ins>: integer, optional, updatable<br>
 <br>Number of concurrent nodes to resize during a resize operation.<br><br>
@@ -360,6 +366,19 @@ AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure 
 *___confirmation_phone_number___*<br>
 <ins>Type</ins>: string, optional, updatable<br>
 <ins>Constraints</ins>: pattern: `^(?![\s])[\-\s\(\)\+0-9]*$`<br><br>The phone number which will be contacted when the cluster is requested to be delete.<br><br>
+<a id="nested--networks"></a>
+## Nested schema for `networks`
+All network CIDR blocks for this data centre, including the primary network and any expanded secondary CIDRs.<br>
+### Read-only attributes
+*___status___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Provisioning status of the network registration.<br><br>
+*___primary___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>True when this entry is the data centre primary network.<br><br>
+*___cidr___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Network CIDR in notation, for example 10.0.0.0/16.<br><br>
 <a id="nested--intra_data_centre_replication"></a>
 ## Nested schema for `intra_data_centre_replication`
 
