@@ -51,7 +51,7 @@ The following terms are used to describe attributes in the schema of this resour
 <ins>Constraints</ins>: allowed values: [ `PRODUCTION`, `NON_PRODUCTION` ]<br><br>SLA Tier of the cluster. Non-production clusters may receive lower priority support and reduced SLAs. Production tier is not available when using Developer class nodes. See [SLA Tier](https://www.instaclustr.com/support/documentation/useful-information/sla-tier/) for more information.<br><br>
 *___kafka_connect_version___*<br>
 <ins>Type</ins>: string, required, immutable<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Kafka connect to run on the cluster. Available versions: <ul> <li>`3.9.2`</li> <li>`4.2.1`</li> <li>`4.1.2`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Kafka connect to run on the cluster. Available versions: <ul> <li>`3.9.2`</li> <li>`4.3.1`</li> <li>`4.2.1`</li> <li>`4.1.2`</li> </ul><br><br>
 *___name___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <ins>Constraints</ins>: pattern: `[a-zA-Z0-9][a-zA-Z0-9_-]*`<br><br>Name of the cluster.<br><br>
@@ -141,6 +141,9 @@ List of data centre settings.<br>
 *___nodes___*<br>
 <ins>Type</ins>: repeatable nested block, read-only, see [nodes](#nested--nodes) for nested schema<br>
 <br>List of non-deleted nodes in the data centre<br><br>
+*___networks___*<br>
+<ins>Type</ins>: repeatable nested block, read-only, see [networks](#nested--networks) for nested schema<br>
+<br>All network CIDR blocks for this data centre, including the primary network and any expanded secondary CIDRs.<br><br>
 <a id="nested--azure_connector_settings"></a>
 ## Nested schema for `azure_connector_settings`
 Defines the information to access custom connectors located in an azure storage container. Cannot be provided if custom connectors are stored in GCP or AWS.<br>
@@ -370,6 +373,19 @@ Defines the information to access custom connectors located in a S3 bucket. Cann
 *___confirmation_phone_number___*<br>
 <ins>Type</ins>: string, optional, updatable<br>
 <ins>Constraints</ins>: pattern: `^(?![\s])[\-\s\(\)\+0-9]*$`<br><br>The phone number which will be contacted when the cluster is requested to be delete.<br><br>
+<a id="nested--networks"></a>
+## Nested schema for `networks`
+All network CIDR blocks for this data centre, including the primary network and any expanded secondary CIDRs.<br>
+### Read-only attributes
+*___status___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Provisioning status of the network registration.<br><br>
+*___primary___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>True when this entry is the data centre primary network.<br><br>
+*___cidr___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Network CIDR in notation, for example 10.0.0.0/16.<br><br>
 <a id="nested--target_cluster"></a>
 ## Nested schema for `target_cluster`
 Details to connect to a target Kafka Cluster cluster.<br>

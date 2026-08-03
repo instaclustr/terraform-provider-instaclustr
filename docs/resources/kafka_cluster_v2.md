@@ -56,7 +56,7 @@ The following terms are used to describe attributes in the schema of this resour
 <br>Enables Client ⇄ Cluster Encryption.<br><br>
 *___kafka_version___*<br>
 <ins>Type</ins>: string, required, immutable<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Kafka to run on the cluster. Available versions: <ul> <li>`3.9.2`</li> <li>`4.1.2`</li> <li>`4.2.1`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Kafka to run on the cluster. Available versions: <ul> <li>`3.9.2`</li> <li>`4.3.1`</li> <li>`4.1.2`</li> <li>`4.2.1`</li> </ul><br><br>
 *___auto_create_topics___*<br>
 <ins>Type</ins>: boolean, required, immutable<br>
 <br>Allows topics to be auto created by brokers when messages are published to a non-existent topic<br><br>
@@ -157,6 +157,29 @@ Provision additional dedicated nodes for Apache Zookeeper to run on. Zookeeper n
 *___zookeeper_node_count___*<br>
 <ins>Type</ins>: integer, required, immutable<br>
 <br>Number of dedicated Zookeeper node count, it must be 3 or 5.<br><br>
+<a id="nested--additional_listeners"></a>
+## Nested schema for `additional_listeners`
+The additional listeners to create for a kafka cluster along with the default one.<br>
+### Input attributes - Required
+*___protocol___*<br>
+<ins>Type</ins>: string, required, updatable<br>
+<ins>Constraints</ins>: allowed values: [ `SASL_SSL`, `SASL_PLAINTEXT`, `SSL`, `PLAINTEXT` ]<br><br>Kafka listener protocols<br><br>
+*___types___*<br>
+<ins>Type</ins>: list of strings, required, immutable<br>
+<ins>Constraints</ins>: minimum items: 1, maximum items: 2, allowed values: [ `PUBLIC`, `PRIVATE`, `MTLS` ]<br><br>
+*___private_link___*<br>
+<ins>Type</ins>: nested block, required, immutable, see [private_link](#nested--private_link) for nested schema<br>
+<ins>Constraints</ins>: minimum items: 1<br><br>Details of PrivateLink related properties.<br><br>
+### Read-only attributes
+*___id___*<br>
+<ins>Type</ins>: string (uuid), read-only<br>
+<br>ID of the PrivateLink listener. Only available after creation.<br><br>
+*___name___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Name of the PrivateLink listener. Only available after creation.<br><br>
+*___port___*<br>
+<ins>Type</ins>: integer, read-only<br>
+<br>Port of the PrivateLink listener. Only available after creation. <br><br>
 <a id="nested--rest_proxy"></a>
 ## Nested schema for `rest_proxy`
 Adds the specified version of Kafka REST Proxy to this Kafka cluster.<br>
@@ -209,6 +232,9 @@ List of data centre settings.<br>
 *___custom_subject_alternative_names___*<br>
 <ins>Type</ins>: list of strings, optional, updatable<br>
 <br>List of Subject Alternative Names FQDNs as per RFC 1035.  Used by the applications with self signed certificates in keystores of nodes in the datacenter. NOTE: No private link cluster support.<br><br>
+*___additional_listeners___*<br>
+<ins>Type</ins>: repeatable nested block, optional, immutable, see [additional_listeners](#nested--additional_listeners) for nested schema<br>
+<br>The additional listeners to create for a kafka cluster along with the default one.<br><br>
 *___tag_management_enabled___*<br>
 <ins>Type</ins>: boolean, optional, updatable<br>
 <br>(Optional) Enable tag management for the data centre, allowing you to create, update and delete custom tags on the data centre via Instaclustr Terraform Provider v2, Cluster Management API or Management Console. Tag management is only available for RIYOA clusters and cannot be disabled once enabled. If not specified, the current value will remain unchanged.<br><br>
@@ -243,6 +269,9 @@ List of data centre settings.<br>
 *___nodes___*<br>
 <ins>Type</ins>: repeatable nested block, read-only, see [nodes](#nested--nodes) for nested schema<br>
 <br>List of non-deleted nodes in the data centre<br><br>
+*___networks___*<br>
+<ins>Type</ins>: repeatable nested block, read-only, see [networks](#nested--networks) for nested schema<br>
+<br>All network CIDR blocks for this data centre, including the primary network and any expanded secondary CIDRs.<br><br>
 <a id="nested--basic_authentication"></a>
 ## Nested schema for `basic_authentication`
 Basic authentication settings for Client Telemetry endpoint.<br>
@@ -416,6 +445,9 @@ List of non-deleted nodes in the data centre<br>
 ## Nested schema for `resize_settings`
 Settings to determine how resize requests will be performed for the cluster.<br>
 ### Input attributes - Optional
+*___downsize_acknowledged___*<br>
+<ins>Type</ins>: boolean, optional, updatable<br>
+<br>Set to `true` when the user has acknowledged that this resize reduces resource capacity and may cause node instability.<br><br>
 *___concurrency___*<br>
 <ins>Type</ins>: integer, optional, updatable<br>
 <br>Number of concurrent nodes to resize during a resize operation.<br><br>
@@ -470,6 +502,20 @@ AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure 
 <br>ID of a KMS encryption key to encrypt data on nodes. KMS encryption key must be set in Cluster Resources through the Instaclustr Console before provisioning an encrypted Data Centre.<br><br>
 <a id="nested--private_link"></a>
 ## Nested schema for `private_link`
+Details of PrivateLink related properties.<br>
+### Input attributes - Required
+*___advertised_hostname___*<br>
+<ins>Type</ins>: string, required, immutable<br>
+<ins>Constraints</ins>: pattern: `^((?!-)[A-Za-z0-9-]{1,63}(?<!-)\.)++[A-Za-z]{2,6}$`<br><br>Name of the advertised host for this listener<br><br>
+### Read-only attributes
+*___end_point_service_id___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>The Instaclustr ID of the AWS endpoint service<br><br>
+*___end_point_service_name___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Name of the created endpoint service<br><br>
+<a id="nested--private_link"></a>
+## Nested schema for `private_link`
 Create a PrivateLink enabled cluster, see [PrivateLink](https://www.instaclustr.com/support/documentation/useful-information/privatelink/).<br>
 ### Input attributes - Required
 *___advertised_hostname___*<br>
@@ -493,6 +539,19 @@ Create a PrivateLink enabled cluster, see [PrivateLink](https://www.instaclustr.
 *___confirmation_phone_number___*<br>
 <ins>Type</ins>: string, optional, updatable<br>
 <ins>Constraints</ins>: pattern: `^(?![\s])[\-\s\(\)\+0-9]*$`<br><br>The phone number which will be contacted when the cluster is requested to be delete.<br><br>
+<a id="nested--networks"></a>
+## Nested schema for `networks`
+All network CIDR blocks for this data centre, including the primary network and any expanded secondary CIDRs.<br>
+### Read-only attributes
+*___status___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Provisioning status of the network registration.<br><br>
+*___primary___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>True when this entry is the data centre primary network.<br><br>
+*___cidr___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Network CIDR in notation, for example 10.0.0.0/16.<br><br>
 <a id="nested--karapace_schema_registry"></a>
 ## Nested schema for `karapace_schema_registry`
 Adds the specified version of Kafka Karapace Schema Registry to this Kafka cluster.<br>

@@ -67,6 +67,19 @@ The following terms are used to describe attributes in the schema of this data s
 *___pci_compliance_mode___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Creates a PCI compliant cluster, see [PCI Compliance](https://www.instaclustr.com/support/documentation/useful-information/pci-compliance/).<br><br>
+<a id="nested--vpc_associations"></a>
+## Nested schema for `vpc_associations`
+VPCs associated with this zone for private DNS resolution.<br>
+### Read-only attributes
+*___status___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Association status in Instaclustr's records.<br><br>
+*___vpc_id___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>AWS VPC id.<br><br>
+*___vpc_region___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>AWS region for the VPC.<br><br>
 <a id="nested--data_centre"></a>
 ## Nested schema for `data_centre`
 List of data centre settings.<br>
@@ -122,6 +135,9 @@ List of data centre settings.<br>
 *___gcp_settings___*<br>
 <ins>Type</ins>: nested block, read-only, see [gcp_settings](#nested--gcp_settings) for nested schema<br>
 <br>GCP specific settings for the Data Centre. Cannot be provided with AWS or Azure settings.<br><br>
+*___cluster_dns_zones___*<br>
+<ins>Type</ins>: repeatable nested block, read-only, see [cluster_dns_zones](#nested--cluster_dns_zones) for nested schema<br>
+<br>Cluster DNS hosted zones for this data centre: each entry is a DNS domain with the VPCs associated for private zone resolution.<br><br>
 *___private_connectivity___*<br>
 <ins>Type</ins>: nested block, read-only, see [private_connectivity](#nested--private_connectivity) for nested schema<br>
 <br>Configuration required for connecting to a PrivateLink or Private Service Connect enabled cluster.<br><br>
@@ -155,6 +171,9 @@ List of data centre settings.<br>
 *___private_ip_broadcast_for_discovery___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Enables broadcast of private IPs for auto-discovery.<br><br>
+*___networks___*<br>
+<ins>Type</ins>: repeatable nested block, read-only, see [networks](#nested--networks) for nested schema<br>
+<br>All network CIDR blocks for this data centre, including the primary network and any expanded secondary CIDRs.<br><br>
 *___network___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>The private network address block for the Data Centre specified using CIDR address notation. The network must have a prefix length between `/16` and `/26` and must be part of a private address space.<br><br>
@@ -273,6 +292,19 @@ Examples:
 - Shared VPC subnetwork URI: <code>projects/{riyoa-gcp-host-project-name}/regions/{region-id}/subnetworks/{subnetwork-name}</code>.
 
 <br><br>
+<a id="nested--cluster_dns_zones"></a>
+## Nested schema for `cluster_dns_zones`
+Cluster DNS hosted zones for this data centre: each entry is a DNS domain with the VPCs associated for private zone resolution.<br>
+### Read-only attributes
+*___vpc_associations___*<br>
+<ins>Type</ins>: repeatable nested block, read-only, see [vpc_associations](#nested--vpc_associations) for nested schema<br>
+<br>VPCs associated with this zone for private DNS resolution.<br><br>
+*___domain___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>DNS zone domain name when provisioned (Route53 hosted zone).<br><br>
+*___hosted_zone_id___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>AWS Route 53 hosted zone ID for this zone (e.g. Z123...), when provisioned.<br><br>
 <a id="nested--delete_node_operations"></a>
 ## Nested schema for `delete_node_operations`
 
@@ -404,6 +436,9 @@ Private Link / Private Service Connect endpoint addresses<br>
 ## Nested schema for `resize_settings`
 Settings to determine how resize requests will be performed for the cluster.<br>
 ### Read-only attributes
+*___downsize_acknowledged___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>Set to `true` when the user has acknowledged that this resize reduces resource capacity and may cause node instability.<br><br>
 *___concurrency___*<br>
 <ins>Type</ins>: integer, read-only<br>
 <br>Number of concurrent nodes to resize during a resize operation.<br><br>
@@ -449,3 +484,16 @@ AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure 
 *___confirmation_email___*<br>
 <ins>Type</ins>: string, read-only<br>
 <ins>Constraints</ins>: pattern: `^(([\s]*[^<>()\[\]\\.,;:@\s"]+(\.[^<>()\[\]\\.,;:\s@"]+)*))@((\[\d{1,3}(\.\d{1,3}){3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}[\s]*))$`<br><br>The email address which will be contacted when the cluster is requested to be deleted.<br><br>
+<a id="nested--networks"></a>
+## Nested schema for `networks`
+All network CIDR blocks for this data centre, including the primary network and any expanded secondary CIDRs.<br>
+### Read-only attributes
+*___status___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Provisioning status of the network registration.<br><br>
+*___primary___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>True when this entry is the data centre primary network.<br><br>
+*___cidr___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Network CIDR in notation, for example 10.0.0.0/16.<br><br>

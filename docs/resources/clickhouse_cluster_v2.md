@@ -161,6 +161,9 @@ List of data centre settings.<br>
 *___nodes___*<br>
 <ins>Type</ins>: repeatable nested block, read-only, see [nodes](#nested--nodes) for nested schema<br>
 <br>List of non-deleted nodes in the data centre<br><br>
+*___networks___*<br>
+<ins>Type</ins>: repeatable nested block, read-only, see [networks](#nested--networks) for nested schema<br>
+<br>All network CIDR blocks for this data centre, including the primary network and any expanded secondary CIDRs.<br><br>
 <a id="nested--current_operations"></a>
 ## Nested schema for `current_operations`
 Active operations in the data centre.<br>
@@ -311,6 +314,10 @@ Enable Tiered Storage for ClickHouse.<br>
 <a id="nested--private_connectivity"></a>
 ## Nested schema for `private_connectivity`
 Create a Private Connectivity enabled cluster.<br>
+### Input attributes - Optional
+*___aws_private_link___*<br>
+<ins>Type</ins>: nested block, optional, immutable, see [aws_private_link](#nested--aws_private_link) for nested schema<br>
+<br>
 <a id="nested--tag"></a>
 ## Nested schema for `tag`
 List of tags to apply to the Data Centre. Tags are metadata labels which allow you to identify, categorize and filter clusters. This can be useful for grouping together clusters into applications, environments, or any category that you require. Note: Tags will be returned sorted by key in alphabetical order regardless of input order. Terraform users: `tag` is not supported in terraform lifecycle `ignore_changes`.<br>
@@ -434,6 +441,9 @@ Defines information about the StorageGRID S3 bucket to be used as remote storage
 ## Nested schema for `resize_settings`
 Settings to determine how resize requests will be performed for the cluster.<br>
 ### Input attributes - Optional
+*___downsize_acknowledged___*<br>
+<ins>Type</ins>: boolean, optional, updatable<br>
+<br>Set to `true` when the user has acknowledged that this resize reduces resource capacity and may cause node instability.<br><br>
 *___concurrency___*<br>
 <ins>Type</ins>: integer, optional, updatable<br>
 <br>Number of concurrent nodes to resize during a resize operation.<br><br>
@@ -464,6 +474,19 @@ AWS specific settings for the Data Centre. Cannot be provided with GCP or Azure 
 *___confirmation_phone_number___*<br>
 <ins>Type</ins>: string, optional, updatable<br>
 <ins>Constraints</ins>: pattern: `^(?![\s])[\-\s\(\)\+0-9]*$`<br><br>The phone number which will be contacted when the cluster is requested to be delete.<br><br>
+<a id="nested--networks"></a>
+## Nested schema for `networks`
+All network CIDR blocks for this data centre, including the primary network and any expanded secondary CIDRs.<br>
+### Read-only attributes
+*___status___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Provisioning status of the network registration.<br><br>
+*___primary___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>True when this entry is the data centre primary network.<br><br>
+*___cidr___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Network CIDR in notation, for example 10.0.0.0/16.<br><br>
 <a id="nested--dedicated_click_house_keeper"></a>
 ## Nested schema for `dedicated_click_house_keeper`
 Provision additional dedicated nodes for ClickHouse Keeper to run on. ClickHouse Keeper will be co-located with ClickHouse Server if this is not provided.<br>
@@ -474,6 +497,17 @@ Provision additional dedicated nodes for ClickHouse Keeper to run on. ClickHouse
 *___node_count___*<br>
 <ins>Type</ins>: integer, required, immutable<br>
 <ins>Constraints</ins>: minimum: 3, maximum: 3<br><br>Dedicated ClickHouse Keeper node count, it must be 3.<br><br>
+<a id="nested--aws_private_link"></a>
+## Nested schema for `aws_private_link`
+
+### Input attributes - Optional
+*___use_aws_private_link___*<br>
+<ins>Type</ins>: boolean, optional, immutable<br>
+<br>Enable PrivateLink on the cluster, see [PrivateLink](https://www.instaclustr.com/support/documentation/useful-information/privatelink/).<br><br>
+### Read-only attributes
+*___endpoint_service_name___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>The endpoint service name for the PrivateLink connection.<br><br>
 ## Import
 This resource can be imported using the `terraform import` command as follows:
 ```
