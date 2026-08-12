@@ -74,6 +74,9 @@ The following terms are used to describe attributes in the schema of this resour
 <ins>Type</ins>: nested block, optional, updatable, see [two_factor_delete](#nested--two_factor_delete) for nested schema<br>
 <br>
 ### Read-only attributes
+*___default_user_password___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Password of the default user created for the ClickHouse cluster.<br><br>
 *___status___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Status of the cluster.<br><br>

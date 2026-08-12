@@ -22,6 +22,9 @@ The following terms are used to describe attributes in the schema of this data s
 *___data_centre___*<br>
 <ins>Type</ins>: nested block, read-only, see [data_centre](#nested--data_centre) for nested schema<br>
 <ins>Constraints</ins>: minimum items: 1<br><br>List of data centre settings.<br><br>
+*___default_user_password___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Password of the default user created for the ClickHouse cluster.<br><br>
 *___description___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>A description of the cluster<br><br>
