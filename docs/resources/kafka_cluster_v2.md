@@ -295,6 +295,20 @@ Defines the GCS bucket that will be used to store remote objects for GCP tiered 
 <br>GCS prefix to store the remote data in the GCS bucket, by default the prefix format is `<cluster_id>-data/`<br><br>
 <a id="nested--azure_settings"></a>
 ## Nested schema for `azure_settings`
+Defines the Azure Blob Storage container that will be used to store remote objects for Azure tiered storage.<br>
+### Input attributes - Required
+*___storage_account_name___*<br>
+<ins>Type</ins>: string, required, immutable<br>
+<br>Azure storage account name for Kafka remote storage<br><br>
+*___container_name___*<br>
+<ins>Type</ins>: string, required, immutable<br>
+<br>Azure Blob Storage container name for Kafka remote storage<br><br>
+### Read-only attributes
+*___prefix___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Azure Blob Storage prefix to store the remote data in the container, by default the prefix format is `<cluster_id>-data/`<br><br>
+<a id="nested--azure_settings"></a>
+## Nested schema for `azure_settings`
 Azure specific settings for the Data Centre. Cannot be provided with AWS or GCP settings.<br>
 ### Input attributes - Optional
 *___storage_network___*<br>
@@ -385,6 +399,9 @@ Enable Tiered Storage for Kafka<br>
 *___gcs_settings___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [gcs_settings](#nested--gcs_settings) for nested schema<br>
 <br>Defines the GCS bucket that will be used to store remote objects for GCP tiered storage.<br><br>
+*___azure_settings___*<br>
+<ins>Type</ins>: nested block, optional, immutable, see [azure_settings](#nested--azure_settings) for nested schema<br>
+<br>Defines the Azure Blob Storage container that will be used to store remote objects for Azure tiered storage.<br><br>
 *___s3_settings___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [s3_settings](#nested--s3_settings) for nested schema<br>
 <br>Defines the information to access S3 bucket used for remote storage.   Access could be provided via Access and Secret key pair or IAM Role ARN. If neither is provided, access policy is defaulted to be provided later.<br><br>

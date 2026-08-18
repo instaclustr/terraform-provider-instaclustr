@@ -58,6 +58,9 @@ The following terms are used to describe attributes in the schema of this data s
 *___index_management_plugin___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Enable index management plugin<br><br>
+*___vector_index_builder___*<br>
+<ins>Type</ins>: nested object, read-only, see [vector_index_builder](#nested--vector_index_builder) for nested schema<br>
+<br>Remote Vector Index Builder configuration for a dedicated GPU host.<br><br>
 *___observability_plugin___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Enable observability plugin<br><br>
@@ -288,6 +291,16 @@ List of deleted nodes in the data centre<br>
 *___public_address___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Public IP address of the node.<br><br>
+<a id="nested--vector_index_builder"></a>
+## Nested schema for `vector_index_builder`
+Remote Vector Index Builder configuration for a dedicated GPU host.<br>
+### Read-only attributes
+*___node_size___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Customer-selected size of the dedicated Vector Index Builder GPU host.<br><br>
+*___node_count___*<br>
+<ins>Type</ins>: integer, read-only<br>
+<br>Actual number of dedicated Vector Index Builder hosts.<br><br>
 <a id="nested--gcp_settings"></a>
 ## Nested schema for `gcp_settings`
 GCP specific settings for the Data Centre. Cannot be provided with AWS or Azure settings.<br>
