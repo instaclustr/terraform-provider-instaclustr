@@ -97,8 +97,8 @@ The following terms are used to describe attributes in the schema of this resour
 <ins>Type</ins>: boolean, optional, immutable<br>
 <br>Enable index management plugin<br><br>
 *___vector_index_builder___*<br>
-<ins>Type</ins>: nested object, optional, updatable, see [vector_index_builder](#nested--vector_index_builder) for nested schema<br>
-<br>Remote Vector Index Builder configuration for a dedicated GPU host.<br><br>
+<ins>Type</ins>: nested block, optional, immutable, see [vector_index_builder](#nested--vector_index_builder) for nested schema<br>
+<br>Remote Vector Index Builder settings. When provided, a dedicated GPU host is provisioned.<br><br>
 *___observability_plugin___*<br>
 <ins>Type</ins>: boolean, optional, immutable<br>
 <br>Enable observability plugin<br><br>
@@ -338,7 +338,7 @@ List of deleted nodes in the data centre<br>
 <br>Public IP address of the node.<br><br>
 <a id="nested--vector_index_builder"></a>
 ## Nested schema for `vector_index_builder`
-Remote Vector Index Builder configuration for a dedicated GPU host.<br>
+Remote Vector Index Builder settings. When provided, a dedicated GPU host is provisioned.<br>
 ### Input attributes - Required
 *___node_size___*<br>
 <ins>Type</ins>: string, required, updatable<br>
