@@ -29,7 +29,7 @@ The following terms are used to describe attributes in the schema of this data s
 ### Read-only attributes
 *___peer_subnets___*<br>
 <ins>Type</ins>: list of strings, read-only<br>
-<br>The subnets for the peering VPC.<br><br>
+<br>The subnets for the peering VPC when peerPrefixLists is not set. peerSubnets and peerPrefixLists are mutually exclusive; provide exactly one.<br><br>
 *___cdc_id___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
 <br>ID of the Cluster Data Centre<br><br>
@@ -45,6 +45,9 @@ The following terms are used to describe attributes in the schema of this data s
 *___id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>ID of the VPC peering connection.<br><br>
+*___peer_prefix_lists___*<br>
+<ins>Type</ins>: list of strings, read-only<br>
+<br>Customer-managed AWS prefix list IDs (pl-...) used as peering destinations when peerSubnets is not set. Only supported for Bring Your Own Cloud (BYOC) clusters. peerSubnets and peerPrefixLists are mutually exclusive; provide exactly one.<br><br>
 *___peer_aws_account_id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>The AWS account ID of the owner of the accepter VPC.<br><br>
