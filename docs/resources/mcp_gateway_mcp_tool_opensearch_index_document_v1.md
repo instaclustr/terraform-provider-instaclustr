@@ -1,16 +1,16 @@
 ---
-page_title: "instaclustr_mcp_gateway_mcp_tool_opensearch_document_search_v1 Resource - terraform-provider-instaclustr"
+page_title: "instaclustr_mcp_gateway_mcp_tool_opensearch_index_document_v1 Resource - terraform-provider-instaclustr"
 subcategory: ""
 description: |-
 ---
 
-# instaclustr_mcp_gateway_mcp_tool_opensearch_document_search_v1 (Resource)
-Configuration for an OpenSearch Query tool.
+# instaclustr_mcp_gateway_mcp_tool_opensearch_index_document_v1 (Resource)
+Configuration for an OpenSearch Index Document tool.
 ## Example Usage
 ```
-resource "instaclustr_mcp_gateway_mcp_tool_opensearch_document_search_v1" "example" {
-  query = "{ "query": { "match": { "field": ":value" } } }"
-  name = "my-opensearch-query-tool"
+resource "instaclustr_mcp_gateway_mcp_tool_opensearch_index_document_v1" "example" {
+  index_name = "my-events-index"
+  name = "my-opensearch-index-tool"
   backend_id = "b2c3d4e5-f6a7-8901-bcde-f12345678901"
 }
 ```
@@ -27,22 +27,19 @@ The following terms are used to describe attributes in the schema of this resour
 *___backend_id___*<br>
 <ins>Type</ins>: string (uuid), required, immutable<br>
 <br>ID of the backend this tool is associated with.<br><br>
-*___query___*<br>
-<ins>Type</ins>: string, required, updatable<br>
-<br>Query executed by this tool.<br><br>
 *___index_name___*<br>
 <ins>Type</ins>: string, required, updatable<br>
-<ins>Constraints</ins>: pattern: `[a-z0-9][a-z0-9_\-\.]*`<br><br>The OpenSearch index to search.<br><br>
+<ins>Constraints</ins>: pattern: `[a-z0-9][a-z0-9_\-\.]*`<br><br>The OpenSearch index to write documents into.<br><br>
 ### Input attributes - Optional
 *___description___*<br>
 <ins>Type</ins>: string, optional, updatable<br>
 <br>Description of the tool.<br><br>
+*___document_schema___*<br>
+<ins>Type</ins>: string, optional, updatable<br>
+<br>JSON Schema describing the structure of document to be ingested.<br><br>
 *___name___*<br>
 <ins>Type</ins>: string, optional, updatable<br>
 <ins>Constraints</ins>: pattern: `^[a-zA-Z0-9_-]+$`<br><br>Name of the tool.<br><br>
-*___parameter___*<br>
-<ins>Type</ins>: repeatable nested block, optional, updatable, see [parameter](#nested--parameter) for nested schema<br>
-<br>Bind variables accepted by the OpenSearch query, in order.<br><br>
 ### Read-only attributes
 *___id___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
@@ -53,23 +50,9 @@ The following terms are used to describe attributes in the schema of this resour
 *___virtual_server_id___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
 <br>ID of the virtual server this backend belongs to.<br><br>
-<a id="nested--parameter"></a>
-## Nested schema for `parameter`
-Bind variables accepted by the OpenSearch query, in order.<br>
-### Input attributes - Required
-*___name___*<br>
-<ins>Type</ins>: string, required, updatable<br>
-<br>Name of the bind variable or result column.<br><br>
-*___type___*<br>
-<ins>Type</ins>: string, required, updatable<br>
-<br>OpenSearch type name (for example keyword, text, integer).<br><br>
-### Input attributes - Optional
-*___description___*<br>
-<ins>Type</ins>: string, optional, updatable<br>
-<br>Description of the parameter or column.<br><br>
 ## Import
 This resource can be imported using the `terraform import` command as follows:
 ```
-terraform import instaclustr_mcp_gateway_mcp_tool_opensearch_document_search_v1.[resource-name] "[resource-id]"
+terraform import instaclustr_mcp_gateway_mcp_tool_opensearch_index_document_v1.[resource-name] "[resource-id]"
 ```
 `[resource-id]` is the unique identifier for this resource matching the value of the `id` attribute defined in the root schema above.

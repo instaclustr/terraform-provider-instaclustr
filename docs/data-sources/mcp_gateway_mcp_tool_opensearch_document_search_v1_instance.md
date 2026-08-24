@@ -39,7 +39,7 @@ The following terms are used to describe attributes in the schema of this data s
 <br>ID of the MCP Gateway cluster.<br><br>
 *___index_name___*<br>
 <ins>Type</ins>: string, read-only<br>
-<br>The OpenSearch index to search.<br><br>
+<ins>Constraints</ins>: pattern: `[a-z0-9][a-z0-9_\-\.]*`<br><br>The OpenSearch index to search.<br><br>
 *___virtual_server_id___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
 <br>ID of the virtual server this backend belongs to.<br><br>
