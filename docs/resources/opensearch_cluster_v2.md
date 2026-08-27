@@ -87,6 +87,9 @@ The following terms are used to describe attributes in the schema of this resour
 *___description___*<br>
 <ins>Type</ins>: string, optional, updatable<br>
 <br>A description of the cluster<br><br>
+*___enable_bidirectional_replication___*<br>
+<ins>Type</ins>: boolean, optional, immutable<br>
+<br>When true, provisions the new follower with bi-directional OpenSearch cross-cluster replication against the specified leader. Requires `leaderClusterId` and `crossClusterReplicationPlugin` to be set to true. The account must have the OpenSearch bi-directional CCR feature enabled. On GET, true when this cluster is a bi-directional follower of its leader.<br><br>
 *___restore_settings___*<br>
 <ins>Type</ins>: nested block, optional, updatable, see [restore_settings](#nested--restore_settings) for nested schema<br>
 <br>Triggers a restore operation when provided during cluster creation. Contains the settings for the restore request.<br><br>

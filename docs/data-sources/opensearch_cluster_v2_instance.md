@@ -46,6 +46,9 @@ The following terms are used to describe attributes in the schema of this data s
 *___portal26_plugin___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Whether or not the Portal26 plugin is enabled for this cluster.<br><br>
+*___enable_bidirectional_replication___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>When true, provisions the new follower with bi-directional OpenSearch cross-cluster replication against the specified leader. Requires `leaderClusterId` and `crossClusterReplicationPlugin` to be set to true. The account must have the OpenSearch bi-directional CCR feature enabled. On GET, true when this cluster is a bi-directional follower of its leader.<br><br>
 *___status___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Status of the cluster.<br><br>
