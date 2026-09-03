@@ -22,3 +22,9 @@ The following terms are used to describe attributes in the schema of this data s
 *___filesystem_id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>The AWS FSxN filesystem ID (e.g. fs-0c315066d18074b67).<br><br>
+*___username___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Username for the filesystem-level administrative user (fsxadmin role).<br><br>
+*___password___*<br>
+<ins>Type</ins>: string (password), read-only<br>
+<br>Password for the filesystem-level administrative user.<br><br>

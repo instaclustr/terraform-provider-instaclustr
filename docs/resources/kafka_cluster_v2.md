@@ -257,6 +257,9 @@ List of data centre settings.<br>
 <ins>Type</ins>: string, optional, immutable<br>
 <br>For customers running in their own account. Your provider account can be found on the Create Cluster page on the Instaclustr Console, or the "Provider Account" property on any existing cluster. For customers provisioning on Instaclustr's cloud provider accounts, this property may be omitted.<br><br>
 ### Read-only attributes
+*___current_operations___*<br>
+<ins>Type</ins>: nested block, read-only, see [current_operations](#nested--current_operations) for nested schema<br>
+<br>Active operations in the data centre.<br><br>
 *___status___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Status of the Data Centre.<br><br>
@@ -282,6 +285,16 @@ Basic authentication settings for Client Telemetry endpoint.<br>
 *___password___*<br>
 <ins>Type</ins>: string, optional, updatable<br>
 <br>Password for basic authentication when shipping client telemetry.<br><br>
+<a id="nested--current_operations"></a>
+## Nested schema for `current_operations`
+Active operations in the data centre.<br>
+### Read-only attributes
+*___resize___*<br>
+<ins>Type</ins>: nested block, read-only, see [resize](#nested--resize) for nested schema<br>
+<br>Active node resize operations<br><br>
+*___delete_nodes___*<br>
+<ins>Type</ins>: nested block, read-only, see [delete_nodes](#nested--delete_nodes) for nested schema<br>
+<br>Latest active delete nodes operation<br><br>
 <a id="nested--gcs_settings"></a>
 ## Nested schema for `gcs_settings`
 Defines the GCS bucket that will be used to store remote objects for GCP tiered storage.<br>
@@ -293,6 +306,13 @@ Defines the GCS bucket that will be used to store remote objects for GCP tiered 
 *___prefix___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>GCS prefix to store the remote data in the GCS bucket, by default the prefix format is `<cluster_id>-data/`<br><br>
+<a id="nested--resize"></a>
+## Nested schema for `resize`
+Active node resize operations<br>
+### Read-only attributes
+*___operations___*<br>
+<ins>Type</ins>: repeatable nested block, read-only, see [operations](#nested--operations) for nested schema<br>
+<br>
 <a id="nested--azure_settings"></a>
 ## Nested schema for `azure_settings`
 Defines the Azure Blob Storage container that will be used to store remote objects for Azure tiered storage.<br>
@@ -361,6 +381,32 @@ List of deleted nodes in the data centre<br>
 *___public_address___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Public IP address of the node.<br><br>
+<a id="nested--delete_nodes"></a>
+## Nested schema for `delete_nodes`
+Latest active delete nodes operation<br>
+### Input attributes - Optional
+*___status___*<br>
+<ins>Type</ins>: string, optional, updatable<br>
+<ins>Constraints</ins>: allowed values: [ `GENESIS`, `RUNNING`, `COMPLETED`, `CANCELLED`, `FAILED` ]<br><br>
+*___number_of_nodes_to_delete___*<br>
+<ins>Type</ins>: integer, optional, updatable<br>
+<br>Number of nodes set to delete in the operation.<br><br>
+### Read-only attributes
+*___cdc_id___*<br>
+<ins>Type</ins>: string (uuid), read-only<br>
+<br>ID of the Cluster Data Centre.<br><br>
+*___modified___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Timestamp of the last modification of the operation<br><br>
+*___delete_node_operations___*<br>
+<ins>Type</ins>: repeatable nested block, read-only, see [delete_node_operations](#nested--delete_node_operations) for nested schema<br>
+<br>
+*___id___*<br>
+<ins>Type</ins>: string (uuid), read-only<br>
+<br>Operation id<br><br>
+*___created___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Timestamp of the creation of the operation<br><br>
 <a id="nested--gcp_settings"></a>
 ## Nested schema for `gcp_settings`
 GCP specific settings for the Data Centre. Cannot be provided with AWS or Azure settings.<br>
@@ -405,6 +451,26 @@ Enable Tiered Storage for Kafka<br>
 *___s3_settings___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [s3_settings](#nested--s3_settings) for nested schema<br>
 <br>Defines the information to access S3 bucket used for remote storage.   Access could be provided via Access and Secret key pair or IAM Role ARN. If neither is provided, access policy is defaulted to be provided later.<br><br>
+<a id="nested--delete_node_operations"></a>
+## Nested schema for `delete_node_operations`
+
+### Input attributes - Optional
+*___status___*<br>
+<ins>Type</ins>: string, optional, updatable<br>
+<ins>Constraints</ins>: allowed values: [ `GENESIS`, `RUNNING`, `COMPLETED`, `CANCELLED`, `FAILED` ]<br><br>
+### Read-only attributes
+*___modified___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Timestamp of the last modification of the operation<br><br>
+*___id___*<br>
+<ins>Type</ins>: string (uuid), read-only<br>
+<br>Operation id<br><br>
+*___created___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Timestamp of the creation of the operation<br><br>
+*___node_id___*<br>
+<ins>Type</ins>: string (uuid), read-only<br>
+<br>ID of the node being replaced.<br><br>
 <a id="nested--tag"></a>
 ## Nested schema for `tag`
 List of tags to apply to the Data Centre. Tags are metadata labels which allow you to identify, categorize and filter clusters. This can be useful for grouping together clusters into applications, environments, or any category that you require. Note: Tags will be returned sorted by key in alphabetical order regardless of input order. Terraform users: `tag` is not supported in terraform lifecycle `ignore_changes`.<br>
@@ -416,6 +482,37 @@ List of tags to apply to the Data Centre. Tags are metadata labels which allow y
 *___value___*<br>
 <ins>Type</ins>: string, optional, updatable<br>
 <br>Value of the custom tag.<br><br>
+<a id="nested--operations"></a>
+## Nested schema for `operations`
+
+### Read-only attributes
+*___completed___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Timestamp of the completion of the operation.<br><br>
+*___status___*<br>
+<ins>Type</ins>: string, read-only<br>
+<ins>Constraints</ins>: allowed values: [ `COMPLETED`, `FAILED`, `DELETED`, `IN_PROGRESS`, `UNKNOWN` ]<br><br>Status of the operation<br><br>
+*___id___*<br>
+<ins>Type</ins>: string (uuid), read-only<br>
+<br>ID of the operation.<br><br>
+*___replace_operations___*<br>
+<ins>Type</ins>: repeatable nested block, read-only, see [replace_operations](#nested--replace_operations) for nested schema<br>
+<br>
+*___concurrent_resizes___*<br>
+<ins>Type</ins>: integer, read-only<br>
+<br>Number of nodes that can be concurrently resized at a given time.<br><br>
+*___created___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Timestamp of the creation of the operation<br><br>
+*___node_purpose___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Purpose of the node<br><br>
+*___instaclustr_support_alerted___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Timestamp of when Instaclustr Support has been alerted to the resize operation.<br><br>
+*___new_node_size___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>New size of the node.<br><br>
 <a id="nested--kraft"></a>
 ## Nested schema for `kraft`
 Create a collocated KRaft Cluster.
@@ -458,6 +555,25 @@ List of non-deleted nodes in the data centre<br>
 *___public_address___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Public IP address of the node.<br><br>
+<a id="nested--replace_operations"></a>
+## Nested schema for `replace_operations`
+
+### Read-only attributes
+*___status___*<br>
+<ins>Type</ins>: string, read-only<br>
+<ins>Constraints</ins>: allowed values: [ `GENESIS`, `RESIZING_DISK`, `RESIZED_DISK`, `EXPANDED_FILESYSTEM`, `GRACEFULLY_SHUTTING_DOWN`, `CREATING_REPLACEMENT`, `PROVISIONING`, `PROVISIONED`, `BACKEDUP`, `RESTORING`, `FLUSHING`, `FLUSHED`, `SWAPPING`, `SWAPPED`, `CLEARING_INSTALLED_BUNDLES`, `CLEARED_INSTALLED_BUNDLES`, `POST_BUNDLE_PROCESSING`, `RESTARTING`, `REPLACED`, `CANCELLING`, `CANCELLED`, `FAILING`, `FAILED`, `UNKNOWN` ]<br><br>Status of the node replacement operation.<br><br>
+*___id___*<br>
+<ins>Type</ins>: string (uuid), read-only<br>
+<br>ID of the node replacement operation.<br><br>
+*___created___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Timestamp of the creation of the node replacement operation.<br><br>
+*___new_node_id___*<br>
+<ins>Type</ins>: string (uuid), read-only<br>
+<br>ID of the new node in the replacement operation.<br><br>
+*___node_id___*<br>
+<ins>Type</ins>: string (uuid), read-only<br>
+<br>ID of the node being replaced.<br><br>
 <a id="nested--resize_settings"></a>
 ## Nested schema for `resize_settings`
 Settings to determine how resize requests will be performed for the cluster.<br>

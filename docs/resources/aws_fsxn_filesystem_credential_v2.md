@@ -9,7 +9,6 @@ Response body for FSxN admin credential submission.
 ## Example Usage
 ```
 resource "instaclustr_aws_fsxn_filesystem_credential_v2" "example" {
-  filesystem_id = "fs-0c315066d18074b67"
 }
 ```
 ## Glossary
@@ -22,8 +21,15 @@ The following terms are used to describe attributes in the schema of this resour
 - **_nested block_** - These attributes use the [Terraform block syntax](https://www.terraform.io/language/attr-as-blocks) when defined as an input in the Terraform code. Attributes with the type **_repeatable nested block_** are the same except that the nested block can be defined multiple times with varying nested attributes. When reading nested block attributes, an index must be provided when accessing the contents of the nested block, example - `my_resource.nested_block_attribute[0].nested_attribute`.
 ## Root Level Schema
 ### Input attributes - Optional
+*___username___*<br>
+<ins>Type</ins>: string, optional, immutable<br>
+<br>Username for the filesystem-level administrative user (fsxadmin role).<br><br>
+*___password___*<br>
+<ins>Type</ins>: string (password), optional, immutable<br>
+<br>Password for the filesystem-level administrative user.<br><br>
+### Read-only attributes
 *___filesystem_id___*<br>
-<ins>Type</ins>: string, optional, updatable<br>
+<ins>Type</ins>: string, read-only<br>
 <br>The AWS FSxN filesystem ID (e.g. fs-0c315066d18074b67).<br><br>
 ## Import
 This resource can be imported using the `terraform import` command as follows:

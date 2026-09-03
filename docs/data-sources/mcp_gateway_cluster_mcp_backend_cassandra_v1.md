@@ -23,6 +23,9 @@ The following terms are used to describe attributes in the schema of this data s
 <ins>Type</ins>: string, required<br>
 <br>ID of the MCP Gateway cluster.<br><br>
 ### Read-only attributes
+*___use_private_network___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>Use private network to communicate with the backend<br><br>
 *___cassandra_cluster_id___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
 <br>ID of the Cassandra Cluster<br><br>
@@ -35,6 +38,9 @@ The following terms are used to describe attributes in the schema of this data s
 *___cluster_id___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
 <br>ID of the MCP Gateway cluster.<br><br>
+*___peer_networks___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>Create a network peering connection between the backend and the MCP Gateway<br><br>
 *___cassandra_data_centre_id___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
 <br>ID of the Cassandra Data Centre<br><br>
