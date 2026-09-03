@@ -19,6 +19,9 @@ The following terms are used to describe attributes in the schema of this data s
 - **_nested block_** - These attributes use the [Terraform block syntax](https://www.terraform.io/language/attr-as-blocks) when defined as an input in the Terraform code. Attributes with the type **_repeatable nested block_** are the same except that the nested block can be defined multiple times with varying nested attributes. When reading nested block attributes, an index must be provided when accessing the contents of the nested block, example - `my_resource.nested_block_attribute[0].nested_attribute`.
 ## Root Level Schema
 ### Read-only attributes
+*___use_private_network___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>Use private network to communicate with the backend<br><br>
 *___opensearch_cluster_id___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
 <br>
@@ -31,6 +34,9 @@ The following terms are used to describe attributes in the schema of this data s
 *___cluster_id___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
 <br>ID of the MCP Gateway cluster.<br><br>
+*___peer_networks___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>Create a network peering connection between the backend and the MCP Gateway<br><br>
 *___authentication_sasl_plain___*<br>
 <ins>Type</ins>: nested block, read-only, see [authentication_sasl_plain](#nested--authentication_sasl_plain) for nested schema<br>
 <br>

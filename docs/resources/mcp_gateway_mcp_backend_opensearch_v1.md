@@ -34,6 +34,12 @@ The following terms are used to describe attributes in the schema of this resour
 <ins>Type</ins>: string (uuid), required, immutable<br>
 <br>ID of the virtual server this backend belongs to.<br><br>
 ### Input attributes - Optional
+*___use_private_network___*<br>
+<ins>Type</ins>: boolean, optional, updatable<br>
+<br>Use private network to communicate with the backend<br><br>
+*___peer_networks___*<br>
+<ins>Type</ins>: boolean, optional, updatable<br>
+<br>Create a network peering connection between the backend and the MCP Gateway<br><br>
 *___authentication_sasl_plain___*<br>
 <ins>Type</ins>: nested block, optional, updatable, see [authentication_sasl_plain](#nested--authentication_sasl_plain) for nested schema<br>
 <br>
