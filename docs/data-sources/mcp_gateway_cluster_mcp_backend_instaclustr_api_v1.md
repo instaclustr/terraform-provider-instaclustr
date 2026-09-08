@@ -1,14 +1,14 @@
 ---
-page_title: "instaclustr_mcp_gateway_cluster_mcp_backend_kafka_v1 Data Source - terraform-provider-instaclustr"
+page_title: "instaclustr_mcp_gateway_cluster_mcp_backend_instaclustr_api_v1 Data Source - terraform-provider-instaclustr"
 subcategory: ""
 description: |-
 ---
 
-# instaclustr_mcp_gateway_cluster_mcp_backend_kafka_v1 (Data Source)
-Configuration for a Kafka backend.
+# instaclustr_mcp_gateway_cluster_mcp_backend_instaclustr_api_v1 (Data Source)
+Configuration for an Instaclustr API backend.
 ## Example Usage
 ```
-data "instaclustr_mcp_gateway_cluster_mcp_backend_kafka_v1" "example" { 
+data "instaclustr_mcp_gateway_cluster_mcp_backend_instaclustr_api_v1" "example" { 
   mcp_gateway_cluster_id = "<mcp_gateway_cluster_id>" // the value of the `mcp_gateway_cluster_id` attribute defined in the root schema below
 }
 ```
@@ -23,37 +23,24 @@ The following terms are used to describe attributes in the schema of this data s
 <ins>Type</ins>: string, required<br>
 <br>ID of the MCP Gateway cluster.<br><br>
 ### Read-only attributes
-*___use_private_network___*<br>
-<ins>Type</ins>: boolean, read-only<br>
-<br>Use private network to communicate with the backend<br><br>
+*___server_url___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Host URL of the Instaclustr API. Assigned by the platform.<br><br>
+*___components___*<br>
+<ins>Type</ins>: list of strings, read-only<br>
+<ins>Constraints</ins>: minimum items: 1, allowed values: [ `CLUSTER_MANAGEMENT_API_CORE`, `MONITORING_API_CORE` ]<br><br>Instaclustr API groups to expose as MCP tools. At least one group is required. CLUSTER_MANAGEMENT_API_CORE covers cluster details and operational state. MONITORING_API_CORE covers metrics.<br><br>
 *___id___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
 <br>ID of the backend.<br><br>
 *___name___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: pattern: `^[a-z0-9]([-a-z0-9]*[a-z0-9])?$`<br><br>Name of the backend.<br><br>
+<br>
 *___cluster_id___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
 <br>ID of the MCP Gateway cluster.<br><br>
-*___kafka_cluster_id___*<br>
-<ins>Type</ins>: string (uuid), read-only<br>
-<br>
-*___peer_networks___*<br>
-<ins>Type</ins>: boolean, read-only<br>
-<br>Create a network peering connection between the backend and the MCP Gateway<br><br>
-*___authentication_sasl_plain___*<br>
-<ins>Type</ins>: nested block, read-only, see [authentication_sasl_plain](#nested--authentication_sasl_plain) for nested schema<br>
-<br>
+*___api_user___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Username of an account-linked user or Service User whose Instaclustr API keys this backend uses. A MONITORING key is required when MONITORING_API_CORE is selected, and a PROVISIONING_READONLY key is required when CLUSTER_MANAGEMENT_API_CORE is selected. After you rotate a key, call the Instaclustr API backend sync endpoint to update configuration<br><br>
 *___virtual_server_id___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
 <br>ID of the virtual server this backend belongs to.<br><br>
-<a id="nested--authentication_sasl_plain"></a>
-## Nested schema for `authentication_sasl_plain`
-
-### Read-only attributes
-*___username___*<br>
-<ins>Type</ins>: string, read-only<br>
-<br>
-*___password___*<br>
-<ins>Type</ins>: string, read-only<br>
-<br>

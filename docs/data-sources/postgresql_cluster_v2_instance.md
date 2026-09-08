@@ -19,6 +19,9 @@ The following terms are used to describe attributes in the schema of this data s
 - **_nested block_** - These attributes use the [Terraform block syntax](https://www.terraform.io/language/attr-as-blocks) when defined as an input in the Terraform code. Attributes with the type **_repeatable nested block_** are the same except that the nested block can be defined multiple times with varying nested attributes. When reading nested block attributes, an index must be provided when accessing the contents of the nested block, example - `my_resource.nested_block_attribute[0].nested_attribute`.
 ## Root Level Schema
 ### Read-only attributes
+*___backup_retention_days___*<br>
+<ins>Type</ins>: integer (int32), read-only<br>
+<br>Number of days for which backups are retained, to a maximum of 36. Retention can be changed to between 7 and 36 days, and only on AWS_VPC clusters.<br><br>
 *___extensions___*<br>
 <ins>Type</ins>: list of strings, read-only<br>
 <ins>Constraints</ins>: allowed values: [ `PG_CRON`, `PG_PARTMAN` ]<br><br>List of PostgreSQL extensions.<br><br>
