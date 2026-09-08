@@ -26,7 +26,7 @@ The following terms are used to describe attributes in the schema of this resour
 ### Input attributes - Required
 *___name___*<br>
 <ins>Type</ins>: string, required, updatable<br>
-<ins>Constraints</ins>: pattern: `^[a-z0-9_-]+$`<br><br>Name of the backend.<br><br>
+<ins>Constraints</ins>: pattern: `^[a-z0-9]([-a-z0-9]*[a-z0-9])?$`<br><br>Name of the backend.<br><br>
 *___kafka_cluster_id___*<br>
 <ins>Type</ins>: string (uuid), required, immutable<br>
 <br>

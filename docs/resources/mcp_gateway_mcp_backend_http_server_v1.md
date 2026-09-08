@@ -29,7 +29,7 @@ The following terms are used to describe attributes in the schema of this resour
 <br>Host URL of the HTTP Server backend.<br><br>
 *___name___*<br>
 <ins>Type</ins>: string, required, updatable<br>
-<ins>Constraints</ins>: pattern: `^[a-z0-9_-]+$`<br><br>Name of the backend.<br><br>
+<ins>Constraints</ins>: pattern: `^[a-z0-9]([-a-z0-9]*[a-z0-9])?$`<br><br>Name of the backend.<br><br>
 *___virtual_server_id___*<br>
 <ins>Type</ins>: string (uuid), required, immutable<br>
 <br>ID of the virtual server this backend belongs to.<br><br>

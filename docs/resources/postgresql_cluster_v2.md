@@ -64,6 +64,9 @@ The following terms are used to describe attributes in the schema of this resour
 <ins>Type</ins>: boolean, required, immutable<br>
 <br>Creates a PCI compliant cluster, see [PCI Compliance](https://www.instaclustr.com/support/documentation/useful-information/pci-compliance/).<br><br>
 ### Input attributes - Optional
+*___backup_retention_days___*<br>
+<ins>Type</ins>: integer (int32), optional, updatable<br>
+<br>Number of days for which backups are retained, to a maximum of 36. Retention can be changed to between 7 and 36 days, and only on AWS_VPC clusters.<br><br>
 *___extensions___*<br>
 <ins>Type</ins>: list of strings, optional, updatable<br>
 <ins>Constraints</ins>: allowed values: [ `PG_CRON`, `PG_PARTMAN` ]<br><br>List of PostgreSQL extensions.<br><br>

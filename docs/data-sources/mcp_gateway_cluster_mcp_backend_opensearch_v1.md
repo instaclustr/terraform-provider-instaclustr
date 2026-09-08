@@ -34,7 +34,7 @@ The following terms are used to describe attributes in the schema of this data s
 <br>ID of the backend.<br><br>
 *___name___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: pattern: `^[a-z0-9_-]+$`<br><br>Name of the backend.<br><br>
+<ins>Constraints</ins>: pattern: `^[a-z0-9]([-a-z0-9]*[a-z0-9])?$`<br><br>Name of the backend.<br><br>
 *___cluster_id___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
 <br>ID of the MCP Gateway cluster.<br><br>

@@ -26,7 +26,7 @@ The following terms are used to describe attributes in the schema of this resour
 ## Root Level Schema
 ### Input attributes - Required
 *___persona_role___*<br>
-<ins>Type</ins>: string, required, immutable<br>
+<ins>Type</ins>: string, required, updatable<br>
 <ins>Constraints</ins>: pattern: `[^"'\\]+`<br><br>Name of the persona role.<br><br>
 *___type___*<br>
 <ins>Type</ins>: string, required, updatable<br>
