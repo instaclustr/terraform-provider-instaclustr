@@ -287,9 +287,6 @@ Defines the Azure Blob Storage container that will be used to store remote objec
 *___prefix___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Azure Blob Storage prefix to store the remote data in the container, by default the prefix format is `<cluster_id>-data/`<br><br>
-*___storage_account_name___*<br>
-<ins>Type</ins>: string, read-only<br>
-<br>Azure storage account name for Kafka remote storage<br><br>
 *___container_name___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Azure Blob Storage container name for Kafka remote storage<br><br>
