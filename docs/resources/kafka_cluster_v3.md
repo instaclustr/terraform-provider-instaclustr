@@ -350,9 +350,6 @@ Active node resize operations<br>
 ## Nested schema for `azure_settings`
 Defines the Azure Blob Storage container that will be used to store remote objects for Azure tiered storage.<br>
 ### Input attributes - Required
-*___storage_account_name___*<br>
-<ins>Type</ins>: string, required, immutable<br>
-<br>Azure storage account name for Kafka remote storage<br><br>
 *___container_name___*<br>
 <ins>Type</ins>: string, required, immutable<br>
 <br>Azure Blob Storage container name for Kafka remote storage<br><br>
