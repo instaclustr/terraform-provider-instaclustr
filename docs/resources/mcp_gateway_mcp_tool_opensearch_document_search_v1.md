@@ -9,7 +9,7 @@ Configuration for an OpenSearch Query tool.
 ## Example Usage
 ```
 resource "instaclustr_mcp_gateway_mcp_tool_opensearch_document_search_v1" "example" {
-  query = "{ "query": { "match": { "field": ":value" } } }"
+  query = "{ \"query\": { \"match\": { \"field\": \":value\" } } }"
   name = "my-opensearch-query-tool"
   backend_id = "b2c3d4e5-f6a7-8901-bcde-f12345678901"
 }
