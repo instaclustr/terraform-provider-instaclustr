@@ -30,7 +30,7 @@ The following terms are used to describe attributes in the schema of this data s
 <br>Status of the BYOC provider account setup.<br><br>
 *___existing_key_pair_provider_account_names___*<br>
 <ins>Type</ins>: list of strings, read-only<br>
-<br>Names of other RUNNING BYOC provider accounts under this Instaclustr account that already share the same AWS account ID and primary data centre region. Empty when skipKeyPairCreation is false.<br><br>
+<br>Names of other RUNNING BYOC provider accounts under this Instaclustr account that share the same AWS account ID and overlap at least one configured data centre region.<br><br>
 *___account_id___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
 <br>UUID of the Instaclustr Account.<br><br>
@@ -45,20 +45,20 @@ The following terms are used to describe attributes in the schema of this data s
 <br>ID of the provider account.<br><br>
 *___data_centre_backup_buckets___*<br>
 <ins>Type</ins>: repeatable nested block, read-only, see [data_centre_backup_buckets](#nested--data_centre_backup_buckets) for nested schema<br>
-<br>Ordered list of data centre backup bucket mappings. The first entry is the primary region. Exactly one entry is required on create.<br><br>
+<ins>Constraints</ins>: maximum items: 30<br><br>One or more data centre backup bucket mappings. Array order has no semantic meaning.<br><br>
 *___skip_key_pair_creation___*<br>
 <ins>Type</ins>: boolean, read-only<br>
-<br>When true, an EC2 key pair already exists for this Instaclustr account in the target AWS account and primary data centre region (created by another RUNNING BYOC setup, or by this setup if already validated). Terraform users should pass create_key_pair = false when applying the template. CloudFormation downloads set CreateKeyPair automatically.<br><br>
+<br>When true, an EC2 key pair already exists for this Instaclustr account in every configured data centre region in the target AWS account (created by another RUNNING BYOC setup, or by this setup if already validated). Terraform users should pass create_key_pair = false when applying the template. When false, individual regions may still overlap the RUNNING accounts named in existingKeyPairProviderAccountNames; compare their data centre mappings and set create_key_pair = false only for overlapping regions. CloudFormation downloads set CreateKeyPair automatically per region.<br><br>
 *___provider_account_name___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Name of the provider account.<br><br>
 <a id="nested--data_centre_backup_buckets"></a>
 ## Nested schema for `data_centre_backup_buckets`
-Ordered list of data centre backup bucket mappings. The first entry is the primary region. Exactly one entry is required on create.<br>
+One or more data centre backup bucket mappings. Array order has no semantic meaning.<br>
 ### Read-only attributes
 *___data_centre___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Data centre region name.<br><br>
 *___backup_bucket_name___*<br>
 <ins>Type</ins>: string, read-only<br>
-<br>S3 backup bucket name for the data centre region.<br><br>
+<br>S3 backup bucket name for the data centre region. An empty string indicates that an existing validated region from a manually configured provider account has no backup bucket. New and pending regions require a valid bucket name.<br><br>
