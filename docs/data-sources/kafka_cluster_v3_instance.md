@@ -345,6 +345,16 @@ Adds the specified version of Kafka Karapace REST Proxy to this Kafka cluster.<b
 *___version___*<br>
 <ins>Type</ins>: string, read-only<br>
 <ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Adds the specified version of Kafka REST Proxy to the Kafka cluster. Available versions: <ul> <li>`6.2.1`</li> <li>`5.2.0`</li> </ul><br><br>
+<a id="nested--azure_private_link"></a>
+## Nested schema for `azure_private_link`
+Azure Private Link settings for Kafka. This feature is not generally available. Please contact Instaclustr Support (support@instaclustr.com) for more information.<br>
+### Read-only attributes
+*___private_link_service_alias___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>The Azure Private Link Service alias, returned by Instaclustr after the Private Link Service is provisioned.<br><br>
+*___advertised_hostname___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Customer-owned DNS name to advertise as the broker hostname for Azure PrivateLink clients. Set at cluster creation and cannot be changed.<br><br>
 <a id="nested--deleted_nodes"></a>
 ## Nested schema for `deleted_nodes`
 List of deleted nodes in the data centre<br>
@@ -495,6 +505,9 @@ The custom listeners to create for a kafka cluster along with the default one.<b
 ## Nested schema for `private_connectivity`
 Create a PrivateLink/Private Service Connect enabled cluster, see [PrivateLink](https://www.instaclustr.com/support/documentation/useful-information/privatelink/).<br>
 ### Read-only attributes
+*___azure_private_link___*<br>
+<ins>Type</ins>: nested block, read-only, see [azure_private_link](#nested--azure_private_link) for nested schema<br>
+<br>Azure Private Link settings for Kafka. This feature is not generally available. Please contact Instaclustr Support (support@instaclustr.com) for more information.<br><br>
 *___gcp_private_service_connect___*<br>
 <ins>Type</ins>: nested block, read-only, see [gcp_private_service_connect](#nested--gcp_private_service_connect) for nested schema<br>
 <br>
