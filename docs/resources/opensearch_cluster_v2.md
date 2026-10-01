@@ -162,6 +162,9 @@ The following terms are used to describe attributes in the schema of this resour
 *___ai_search_plugin___*<br>
 <ins>Type</ins>: boolean, optional, immutable<br>
 <br>Enable AI Search plugin<br><br>
+*___node_type_attributes_enabled___*<br>
+<ins>Type</ins>: boolean, optional, immutable<br>
+<br>Enable managed node_type attributes. Requires the OPENSEARCH_NODE_TYPE_ATTRIBUTES account feature. Exactly one data-role node per rack is assigned node_type=metadata and all remaining data-role nodes are assigned node_type=data.<br><br>
 ### Read-only attributes
 *___mapper_size_plugin___*<br>
 <ins>Type</ins>: boolean, read-only<br>
