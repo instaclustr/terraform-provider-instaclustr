@@ -100,7 +100,7 @@ The following terms are used to describe attributes in the schema of this resour
 <ins>Type</ins>: boolean, optional, immutable<br>
 <br>Enable index management plugin<br><br>
 *___vector_index_builder___*<br>
-<ins>Type</ins>: nested block, optional, immutable, see [vector_index_builder](#nested--vector_index_builder) for nested schema<br>
+<ins>Type</ins>: nested block, optional, updatable, see [vector_index_builder](#nested--vector_index_builder) for nested schema<br>
 <br>Remote Vector Index Builder settings. When provided, a dedicated GPU host is provisioned.<br><br>
 *___observability_plugin___*<br>
 <ins>Type</ins>: boolean, optional, immutable<br>
