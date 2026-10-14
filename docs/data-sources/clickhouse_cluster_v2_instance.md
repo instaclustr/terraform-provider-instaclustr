@@ -245,7 +245,10 @@ Defines information about the S3 bucket to be used as remote storage.<br>
 <ins>Constraints</ins>: pattern: `^[a-zA-Z\d\-_]{0,100}$`<br><br>By default data in the S3 bucket will be stored in a folder named after the cluster's ID. If a prefix is provided, data will be stored in `<prefix>/<cluster_id>` instead<br><br>
 *___s3_bucket_name___*<br>
 <ins>Type</ins>: string, read-only<br>
-<br>S3 bucket name for ClickHouse remote storage<br><br>
+<br>S3 bucket name for ClickHouse remote storage. Must be omitted when autoProvisionBucket is true. Names reserved for Instaclustr-managed buckets are not accepted for customer-provided buckets.<br><br>
+*___auto_provision_bucket___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>When true, Instaclustr provisions an S3 bucket for ClickHouse remote storage. s3BucketName and prefix must be omitted when autoProvisionBucket is true.<br><br>
 <a id="nested--tiered_storage"></a>
 ## Nested schema for `tiered_storage`
 Enable Tiered Storage for ClickHouse.<br>
