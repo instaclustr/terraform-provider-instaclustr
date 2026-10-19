@@ -106,6 +106,9 @@ The following terms are used to describe attributes in the schema of this data s
 *___leader_cluster_id___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
 <br>Specifies the leader cluster ID for a Cross Cluster Replication enabled follower cluster. This requires crossClusterReplicationPlugin to be set to true. Not defining this will make the cluster a leader cluster if crossClusterReplicationPlugin is set to true.<br><br>
+*___app_dynamics_plugin___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>Enable the AppDynamics plugin. Requires the account feature OPENSEARCH_APPDYNAMICS_PLUGIN. Defaults to false.<br><br>
 *___ingest_nodes___*<br>
 <ins>Type</ins>: nested block, read-only, see [ingest_nodes](#nested--ingest_nodes) for nested schema<br>
 <br>Ingest nodes settings.<br><br>
