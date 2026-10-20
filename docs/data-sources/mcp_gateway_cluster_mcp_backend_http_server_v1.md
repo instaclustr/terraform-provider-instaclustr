@@ -38,6 +38,9 @@ The following terms are used to describe attributes in the schema of this data s
 *___authentication___*<br>
 <ins>Type</ins>: nested block, read-only, see [authentication](#nested--authentication) for nested schema<br>
 <br>
+*___tls_configuration___*<br>
+<ins>Type</ins>: nested block, read-only, see [tls_configuration](#nested--tls_configuration) for nested schema<br>
+<br>
 *___virtual_server_id___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
 <br>ID of the virtual server this backend belongs to.<br><br>
@@ -70,3 +73,19 @@ HTTP header configuration for backend authentication. Defaults to Authorization:
 *___key___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>The authentication credentials for the backend.<br><br>
+<a id="nested--tls_configuration"></a>
+## Nested schema for `tls_configuration`
+
+### Read-only attributes
+*___client_certificate_key___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>For mutual TLS, the client certificate key to use.<br><br>
+*___mode___*<br>
+<ins>Type</ins>: string, read-only<br>
+<ins>Constraints</ins>: allowed values: [ `INSECURE_HOST`, `INSECURE` ]<br><br>not specified - verify certificate and hostname, INSECURE_HOST - verify certificate but not the hostname, INSECURE - no verification<br><br>
+*___root_c_a_certificate___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>The root CA certificate used to verify host identity. If unset, the Global CAs will be used.<br><br>
+*___client_certificate___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>For mutual TLS, the client certificate to use.<br><br>

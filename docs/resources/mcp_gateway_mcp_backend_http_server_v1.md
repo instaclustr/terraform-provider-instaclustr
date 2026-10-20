@@ -37,6 +37,9 @@ The following terms are used to describe attributes in the schema of this resour
 *___authentication___*<br>
 <ins>Type</ins>: nested block, optional, updatable, see [authentication](#nested--authentication) for nested schema<br>
 <br>
+*___tls_configuration___*<br>
+<ins>Type</ins>: nested block, optional, updatable, see [tls_configuration](#nested--tls_configuration) for nested schema<br>
+<br>
 ### Read-only attributes
 *___id___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
@@ -75,6 +78,22 @@ HTTP header configuration for backend authentication. Defaults to Authorization:
 *___key___*<br>
 <ins>Type</ins>: string, optional, updatable<br>
 <br>The authentication credentials for the backend.<br><br>
+<a id="nested--tls_configuration"></a>
+## Nested schema for `tls_configuration`
+
+### Input attributes - Optional
+*___client_certificate_key___*<br>
+<ins>Type</ins>: string, optional, updatable<br>
+<br>For mutual TLS, the client certificate key to use.<br><br>
+*___mode___*<br>
+<ins>Type</ins>: string, optional, updatable<br>
+<ins>Constraints</ins>: allowed values: [ `INSECURE_HOST`, `INSECURE` ]<br><br>not specified - verify certificate and hostname, INSECURE_HOST - verify certificate but not the hostname, INSECURE - no verification<br><br>
+*___root_c_a_certificate___*<br>
+<ins>Type</ins>: string, optional, updatable<br>
+<br>The root CA certificate used to verify host identity. If unset, the Global CAs will be used.<br><br>
+*___client_certificate___*<br>
+<ins>Type</ins>: string, optional, updatable<br>
+<br>For mutual TLS, the client certificate to use.<br><br>
 ## Import
 This resource can be imported using the `terraform import` command as follows:
 ```

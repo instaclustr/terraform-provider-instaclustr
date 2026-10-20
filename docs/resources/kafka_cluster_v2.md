@@ -94,6 +94,9 @@ The following terms are used to describe attributes in the schema of this resour
 *___tiered_storage___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [tiered_storage](#nested--tiered_storage) for nested schema<br>
 <br>Enable Tiered Storage for Kafka<br><br>
+*___aws_capacity_reservations___*<br>
+<ins>Type</ins>: repeatable nested block, optional, updatable, see [aws_capacity_reservations](#nested--aws_capacity_reservations) for nested schema<br>
+<br>AWS On-Demand Capacity Reservations to launch nodes into, one per rack and instance type. Only available for BYOC clusters.<br><br>
 *___bundled_use_only___*<br>
 <ins>Type</ins>: boolean, optional, immutable<br>
 <br>Provision this cluster for [Bundled Use only](https://www.instaclustr.com/support/documentation/cadence/getting-started-with-cadence/bundled-use-only-cluster-deployments/).<br><br>
@@ -468,6 +471,19 @@ Enable Tiered Storage for Kafka<br>
 *___node_id___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
 <br>ID of the node being replaced.<br><br>
+<a id="nested--aws_capacity_reservations"></a>
+## Nested schema for `aws_capacity_reservations`
+AWS On-Demand Capacity Reservations to launch nodes into, one per rack and instance type. Only available for BYOC clusters.<br>
+### Input attributes - Required
+*___rack_name___*<br>
+<ins>Type</ins>: string, required, updatable<br>
+<br>Rack name, for example us-east-1a.<br><br>
+*___instance_type___*<br>
+<ins>Type</ins>: string, required, updatable<br>
+<br>AWS instance type, for example m6g.xlarge.<br><br>
+*___reservation_id___*<br>
+<ins>Type</ins>: string, required, updatable<br>
+<ins>Constraints</ins>: pattern: `^[cC][rR]-[0-9a-fA-F]{8,17}$`<br><br>AWS capacity reservation ID, for example cr-0123456789abcdef0.<br><br>
 <a id="nested--tag"></a>
 ## Nested schema for `tag`
 List of tags to apply to the Data Centre. Tags are metadata labels which allow you to identify, categorize and filter clusters. This can be useful for grouping together clusters into applications, environments, or any category that you require. Note: Tags will be returned sorted by key in alphabetical order regardless of input order. Terraform users: `tag` is not supported in terraform lifecycle `ignore_changes`.<br>

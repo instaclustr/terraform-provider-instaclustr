@@ -54,6 +54,9 @@ The following terms are used to describe attributes in the schema of this resour
 *___description___*<br>
 <ins>Type</ins>: string, optional, updatable<br>
 <br>A description of the cluster<br><br>
+*___aws_capacity_reservations___*<br>
+<ins>Type</ins>: repeatable nested block, optional, updatable, see [aws_capacity_reservations](#nested--aws_capacity_reservations) for nested schema<br>
+<br>AWS On-Demand Capacity Reservations to launch nodes into, one per rack and instance type. Only available for BYOC clusters.<br><br>
 *___two_factor_delete___*<br>
 <ins>Type</ins>: nested block, optional, updatable, see [two_factor_delete](#nested--two_factor_delete) for nested schema<br>
 <br>
@@ -199,6 +202,19 @@ Examples:
 - Shared VPC subnetwork URI: <code>projects/{riyoa-gcp-host-project-name}/regions/{region-id}/subnetworks/{subnetwork-name}</code>.
 
 <br><br>
+<a id="nested--aws_capacity_reservations"></a>
+## Nested schema for `aws_capacity_reservations`
+AWS On-Demand Capacity Reservations to launch nodes into, one per rack and instance type. Only available for BYOC clusters.<br>
+### Input attributes - Required
+*___rack_name___*<br>
+<ins>Type</ins>: string, required, updatable<br>
+<br>Rack name, for example us-east-1a.<br><br>
+*___instance_type___*<br>
+<ins>Type</ins>: string, required, updatable<br>
+<br>AWS instance type, for example m6g.xlarge.<br><br>
+*___reservation_id___*<br>
+<ins>Type</ins>: string, required, updatable<br>
+<ins>Constraints</ins>: pattern: `^[cC][rR]-[0-9a-fA-F]{8,17}$`<br><br>AWS capacity reservation ID, for example cr-0123456789abcdef0.<br><br>
 <a id="nested--tag"></a>
 ## Nested schema for `tag`
 List of tags to apply to the Data Centre. Tags are metadata labels which allow you to identify, categorize and filter clusters. This can be useful for grouping together clusters into applications, environments, or any category that you require. Note: Tags will be returned sorted by key in alphabetical order regardless of input order. Terraform users: `tag` is not supported in terraform lifecycle `ignore_changes`.<br>
