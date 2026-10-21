@@ -26,6 +26,9 @@ The following terms are used to describe attributes in the schema of this data s
 *___exclusion_windows___*<br>
 <ins>Type</ins>: repeatable nested block, read-only, see [exclusion_windows](#nested--exclusion_windows) for nested schema<br>
 <br>List of cluster exclusion windows<br><br>
+*___weekly_limit_in_hours___*<br>
+<ins>Type</ins>: integer (int32), read-only<br>
+<br>Maximum total hours of recurring exclusion time this account can add per week<br><br>
 *___cluster_id___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>ID of the cluster<br><br>
