@@ -23,6 +23,9 @@ The following terms are used to describe attributes in the schema of this data s
 <ins>Type</ins>: string, required<br>
 <br>ID of the MCP Gateway cluster.<br><br>
 ### Read-only attributes
+*___rate_limit___*<br>
+<ins>Type</ins>: nested block, read-only, see [rate_limit](#nested--rate_limit) for nested schema<br>
+<br>Rate limiting policy for the MCP tool.<br><br>
 *___description___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Description of the tool.<br><br>
@@ -50,6 +53,19 @@ The following terms are used to describe attributes in the schema of this data s
 *___parameter___*<br>
 <ins>Type</ins>: repeatable nested block, read-only, see [parameter](#nested--parameter) for nested schema<br>
 <br>Bind variables accepted by the OpenSearch query, in order.<br><br>
+<a id="nested--rate_limit"></a>
+## Nested schema for `rate_limit`
+Rate limiting policy for the MCP tool.<br>
+### Read-only attributes
+*___token_bucket_capacity___*<br>
+<ins>Type</ins>: integer (int32), read-only<br>
+<ins>Constraints</ins>: minimum: 1<br><br>Capacity of the token bucket used to limit requests.<br><br>
+*___fill_interval_milliseconds___*<br>
+<ins>Type</ins>: integer (int64), read-only<br>
+<ins>Constraints</ins>: minimum: 1E+2, maximum: 8.64E+7<br><br>Number of milliseconds to wait before returning tokensPerFill to the bucket.<br><br>
+*___tokens_per_fill___*<br>
+<ins>Type</ins>: integer (int32), read-only<br>
+<ins>Constraints</ins>: minimum: 1<br><br>Number of tokens to return to the bucket on every fill interval.<br><br>
 <a id="nested--parameter"></a>
 ## Nested schema for `parameter`
 Bind variables accepted by the OpenSearch query, in order.<br>
