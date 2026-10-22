@@ -35,6 +35,9 @@ The following terms are used to describe attributes in the schema of this resour
 <ins>Type</ins>: integer (int32), required, updatable<br>
 <br>Period in seconds to look back when consuming messages.<br><br>
 ### Input attributes - Optional
+*___rate_limit___*<br>
+<ins>Type</ins>: nested block, optional, updatable, see [rate_limit](#nested--rate_limit) for nested schema<br>
+<br>Rate limiting policy for the MCP tool.<br><br>
 *___description___*<br>
 <ins>Type</ins>: string, optional, updatable<br>
 <br>Description of the tool.<br><br>
@@ -54,6 +57,19 @@ The following terms are used to describe attributes in the schema of this resour
 *___virtual_server_id___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
 <br>ID of the virtual server this backend belongs to.<br><br>
+<a id="nested--rate_limit"></a>
+## Nested schema for `rate_limit`
+Rate limiting policy for the MCP tool.<br>
+### Input attributes - Required
+*___token_bucket_capacity___*<br>
+<ins>Type</ins>: integer (int32), required, updatable<br>
+<ins>Constraints</ins>: minimum: 1<br><br>Capacity of the token bucket used to limit requests.<br><br>
+*___fill_interval_milliseconds___*<br>
+<ins>Type</ins>: integer (int64), required, updatable<br>
+<ins>Constraints</ins>: minimum: 1E+2, maximum: 8.64E+7<br><br>Number of milliseconds to wait before returning tokensPerFill to the bucket.<br><br>
+*___tokens_per_fill___*<br>
+<ins>Type</ins>: integer (int32), required, updatable<br>
+<ins>Constraints</ins>: minimum: 1<br><br>Number of tokens to return to the bucket on every fill interval.<br><br>
 ## Import
 This resource can be imported using the `terraform import` command as follows:
 ```

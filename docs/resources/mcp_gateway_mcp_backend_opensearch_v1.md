@@ -34,6 +34,9 @@ The following terms are used to describe attributes in the schema of this resour
 <ins>Type</ins>: string (uuid), required, immutable<br>
 <br>ID of the virtual server this backend belongs to.<br><br>
 ### Input attributes - Optional
+*___rate_limit___*<br>
+<ins>Type</ins>: nested block, optional, updatable, see [rate_limit](#nested--rate_limit) for nested schema<br>
+<br>Rate limiting policy for the MCP backend.<br><br>
 *___use_private_network___*<br>
 <ins>Type</ins>: boolean, optional, updatable<br>
 <br>Use private network to communicate with the backend<br><br>
@@ -50,6 +53,19 @@ The following terms are used to describe attributes in the schema of this resour
 *___cluster_id___*<br>
 <ins>Type</ins>: string (uuid), read-only<br>
 <br>ID of the MCP Gateway cluster.<br><br>
+<a id="nested--rate_limit"></a>
+## Nested schema for `rate_limit`
+Rate limiting policy for the MCP backend.<br>
+### Input attributes - Required
+*___token_bucket_capacity___*<br>
+<ins>Type</ins>: integer (int32), required, updatable<br>
+<ins>Constraints</ins>: minimum: 1<br><br>Capacity of the token bucket used to limit requests.<br><br>
+*___fill_interval_milliseconds___*<br>
+<ins>Type</ins>: integer (int64), required, updatable<br>
+<ins>Constraints</ins>: minimum: 1E+2, maximum: 8.64E+7<br><br>Number of milliseconds to wait before returning tokensPerFill to the bucket.<br><br>
+*___tokens_per_fill___*<br>
+<ins>Type</ins>: integer (int32), required, updatable<br>
+<ins>Constraints</ins>: minimum: 1<br><br>Number of tokens to return to the bucket on every fill interval.<br><br>
 <a id="nested--authentication_sasl_plain"></a>
 ## Nested schema for `authentication_sasl_plain`
 
