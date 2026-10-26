@@ -1,0 +1,118 @@
+---
+page_title: "instaclustr_mcp_gateway_mcp_backend_mcp_remote_server_v1 Resource - terraform-provider-instaclustr"
+subcategory: ""
+description: |-
+---
+
+# instaclustr_mcp_gateway_mcp_backend_mcp_remote_server_v1 (Resource)
+Remote Server backend configuration.
+## Example Usage
+```
+resource "instaclustr_mcp_gateway_mcp_backend_mcp_remote_server_v1" "example" {
+  virtual_server_id = "b2c3d4e5-f6a7-8901-bcde-f12345678901"
+  server_url = "https://mcp.example.com/mcp"
+  name = "my-remote-server-backend"
+}
+```
+## Glossary
+The following terms are used to describe attributes in the schema of this resource:
+- **_read-only_** - These are attributes that can only be read and not provided as an input to the resource.
+- **_required_** - These attributes must be provided for the resource to be created.
+- **_optional_** - These input attributes can be omitted, and doing so may result in a default value being used.
+- **_immutable_** - These are input attributes that cannot be changed after the resource is created.
+- **_updatable_** - These input attributes can be updated to a different value if needed, and doing so will trigger an update operation.
+- **_nested block_** - These attributes use the [Terraform block syntax](https://www.terraform.io/language/attr-as-blocks) when defined as an input in the Terraform code. Attributes with the type **_repeatable nested block_** are the same except that the nested block can be defined multiple times with varying nested attributes. When reading nested block attributes, an index must be provided when accessing the contents of the nested block, example - `my_resource.nested_block_attribute[0].nested_attribute`.
+## Root Level Schema
+### Input attributes - Required
+*___server_url___*<br>
+<ins>Type</ins>: string, required, updatable<br>
+<br>HTTPS URL of the remote MCP server's Streamable HTTP endpoint.<br><br>
+*___name___*<br>
+<ins>Type</ins>: string, required, updatable<br>
+<ins>Constraints</ins>: pattern: `^[a-z0-9]([-a-z0-9]*[a-z0-9])?$`<br><br>Name of the backend.<br><br>
+*___virtual_server_id___*<br>
+<ins>Type</ins>: string (uuid), required, immutable<br>
+<br>ID of the virtual server this backend belongs to.<br><br>
+### Input attributes - Optional
+*___rate_limit___*<br>
+<ins>Type</ins>: nested block, optional, updatable, see [rate_limit](#nested--rate_limit) for nested schema<br>
+<br>Rate limiting policy for the MCP backend.<br><br>
+*___authentication___*<br>
+<ins>Type</ins>: nested block, optional, updatable, see [authentication](#nested--authentication) for nested schema<br>
+<br>
+*___tls_configuration___*<br>
+<ins>Type</ins>: nested block, optional, updatable, see [tls_configuration](#nested--tls_configuration) for nested schema<br>
+<br>
+### Read-only attributes
+*___id___*<br>
+<ins>Type</ins>: string (uuid), read-only<br>
+<br>ID of the backend.<br><br>
+*___cluster_id___*<br>
+<ins>Type</ins>: string (uuid), read-only<br>
+<br>ID of the MCP Gateway cluster.<br><br>
+<a id="nested--rate_limit"></a>
+## Nested schema for `rate_limit`
+Rate limiting policy for the MCP backend.<br>
+### Input attributes - Required
+*___token_bucket_capacity___*<br>
+<ins>Type</ins>: integer (int32), required, updatable<br>
+<ins>Constraints</ins>: minimum: 1<br><br>Capacity of the token bucket used to limit requests.<br><br>
+*___fill_interval_milliseconds___*<br>
+<ins>Type</ins>: integer (int64), required, updatable<br>
+<ins>Constraints</ins>: minimum: 1E+2, maximum: 8.64E+7<br><br>Number of milliseconds to wait before returning tokensPerFill to the bucket.<br><br>
+*___tokens_per_fill___*<br>
+<ins>Type</ins>: integer (int32), required, updatable<br>
+<ins>Constraints</ins>: minimum: 1<br><br>Number of tokens to return to the bucket on every fill interval.<br><br>
+<a id="nested--header"></a>
+## Nested schema for `header`
+HTTP header configuration for backend authentication. Defaults to Authorization: Bearer {KEY}<br>
+### Input attributes - Required
+*___key_prefix___*<br>
+<ins>Type</ins>: string, required, updatable<br>
+<br>Key prefix, usually specifying authentication scheme.<br><br>
+### Input attributes - Optional
+*___name___*<br>
+<ins>Type</ins>: string, optional, updatable<br>
+<br>HTTP header name for backend authentication. Defaults to Authorization.<br><br>
+<a id="nested--authentication"></a>
+## Nested schema for `authentication`
+
+### Input attributes - Required
+*___scheme___*<br>
+<ins>Type</ins>: string, required, updatable<br>
+<ins>Constraints</ins>: allowed values: [ `PASSTHROUGH`, `KEY` ]<br><br>HTTP Authentication scheme for the backend.<br><br>
+### Input attributes - Optional
+*___cookie_name___*<br>
+<ins>Type</ins>: string, optional, updatable<br>
+<br>HTTP cookie name for backend authentication.<br><br>
+*___header___*<br>
+<ins>Type</ins>: list of objects, optional, updatable<br>
+<br>HTTP header configuration for backend authentication. Defaults to Authorization: Bearer {KEY}<br><br>
+*___query_parameter_name___*<br>
+<ins>Type</ins>: string, optional, updatable<br>
+<br>HTTP query parameter name for backend authentication.<br><br>
+*___key___*<br>
+<ins>Type</ins>: string, optional, updatable<br>
+<br>The authentication credentials for the backend.<br><br>
+<a id="nested--tls_configuration"></a>
+## Nested schema for `tls_configuration`
+
+### Input attributes - Optional
+*___client_certificate_key___*<br>
+<ins>Type</ins>: string, optional, updatable<br>
+<br>For mutual TLS, the client certificate key to use.<br><br>
+*___mode___*<br>
+<ins>Type</ins>: string, optional, updatable<br>
+<ins>Constraints</ins>: allowed values: [ `INSECURE_HOST`, `INSECURE` ]<br><br>not specified - verify certificate and hostname, INSECURE_HOST - verify certificate but not the hostname, INSECURE - no verification<br><br>
+*___root_c_a_certificate___*<br>
+<ins>Type</ins>: string, optional, updatable<br>
+<br>The root CA certificate used to verify host identity. If unset, the Global CAs will be used.<br><br>
+*___client_certificate___*<br>
+<ins>Type</ins>: string, optional, updatable<br>
+<br>For mutual TLS, the client certificate to use.<br><br>
+## Import
+This resource can be imported using the `terraform import` command as follows:
+```
+terraform import instaclustr_mcp_gateway_mcp_backend_mcp_remote_server_v1.[resource-name] "[resource-id]"
+```
+`[resource-id]` is the unique identifier for this resource matching the value of the `id` attribute defined in the root schema above.
