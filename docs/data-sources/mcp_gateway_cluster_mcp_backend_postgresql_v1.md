@@ -1,0 +1,78 @@
+---
+page_title: "instaclustr_mcp_gateway_cluster_mcp_backend_postgresql_v1 Data Source - terraform-provider-instaclustr"
+subcategory: ""
+description: |-
+---
+
+# instaclustr_mcp_gateway_cluster_mcp_backend_postgresql_v1 (Data Source)
+Configuration for a PostgreSQL backend.
+## Example Usage
+```
+data "instaclustr_mcp_gateway_cluster_mcp_backend_postgresql_v1" "example" { 
+  mcp_gateway_cluster_id = "<mcp_gateway_cluster_id>" // the value of the `mcp_gateway_cluster_id` attribute defined in the root schema below
+}
+```
+## Glossary
+The following terms are used to describe attributes in the schema of this data source:
+- **_read-only_** - These are attributes that can only be read and not provided as an input to the data source.
+- **_required_** - These attributes must be provided for the data source's information to be queried.
+- **_nested block_** - These attributes use the [Terraform block syntax](https://www.terraform.io/language/attr-as-blocks) when defined as an input in the Terraform code. Attributes with the type **_repeatable nested block_** are the same except that the nested block can be defined multiple times with varying nested attributes. When reading nested block attributes, an index must be provided when accessing the contents of the nested block, example - `my_resource.nested_block_attribute[0].nested_attribute`.
+## Root Level Schema
+### Input attributes - Required
+*___mcp_gateway_cluster_id___*<br>
+<ins>Type</ins>: string, required<br>
+<br>ID of the MCP Gateway cluster.<br><br>
+### Read-only attributes
+*___rate_limit___*<br>
+<ins>Type</ins>: nested block, read-only, see [rate_limit](#nested--rate_limit) for nested schema<br>
+<br>Rate limiting policy for the MCP backend.<br><br>
+*___use_private_network___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>Use private network to communicate with the backend<br><br>
+*___id___*<br>
+<ins>Type</ins>: string (uuid), read-only<br>
+<br>ID of the backend.<br><br>
+*___name___*<br>
+<ins>Type</ins>: string, read-only<br>
+<ins>Constraints</ins>: pattern: `^[a-z0-9]([-a-z0-9]*[a-z0-9])?$`<br><br>Name of the backend.<br><br>
+*___cluster_id___*<br>
+<ins>Type</ins>: string (uuid), read-only<br>
+<br>ID of the MCP Gateway cluster.<br><br>
+*___postgresql_cluster_id___*<br>
+<ins>Type</ins>: string (uuid), read-only<br>
+<br>ID of the PostgreSQL Cluster<br><br>
+*___peer_networks___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>Create a network peering connection between the backend and the MCP Gateway<br><br>
+*___authentication_sasl_plain___*<br>
+<ins>Type</ins>: nested block, read-only, see [authentication_sasl_plain](#nested--authentication_sasl_plain) for nested schema<br>
+<br>
+*___virtual_server_id___*<br>
+<ins>Type</ins>: string (uuid), read-only<br>
+<br>ID of the virtual server this backend belongs to.<br><br>
+*___database___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>Name of the database to connect to. Defaults to `postgres`.<br><br>
+<a id="nested--rate_limit"></a>
+## Nested schema for `rate_limit`
+Rate limiting policy for the MCP backend.<br>
+### Read-only attributes
+*___token_bucket_capacity___*<br>
+<ins>Type</ins>: integer (int32), read-only<br>
+<ins>Constraints</ins>: minimum: 1<br><br>Capacity of the token bucket used to limit requests.<br><br>
+*___fill_interval_milliseconds___*<br>
+<ins>Type</ins>: integer (int64), read-only<br>
+<ins>Constraints</ins>: minimum: 1E+2, maximum: 8.64E+7<br><br>Number of milliseconds to wait before returning tokensPerFill to the bucket.<br><br>
+*___tokens_per_fill___*<br>
+<ins>Type</ins>: integer (int32), read-only<br>
+<ins>Constraints</ins>: minimum: 1<br><br>Number of tokens to return to the bucket on every fill interval.<br><br>
+<a id="nested--authentication_sasl_plain"></a>
+## Nested schema for `authentication_sasl_plain`
+
+### Read-only attributes
+*___username___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>
+*___password___*<br>
+<ins>Type</ins>: string, read-only<br>
+<br>
