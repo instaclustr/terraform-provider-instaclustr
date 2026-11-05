@@ -56,7 +56,7 @@ The following terms are used to describe attributes in the schema of this resour
 <br>Enables Client ⇄ Cluster Encryption.<br><br>
 *___kafka_version___*<br>
 <ins>Type</ins>: string, required, immutable<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Kafka to run on the cluster. Available versions: <ul> <li>`3.9.2`</li> <li>`4.3.1`</li> <li>`4.1.2`</li> <li>`4.2.1`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Version of Kafka to run on the cluster. Available versions: <ul> <li>`3.9.2`</li> <li>`4.3.1`</li> <li>`4.2.1`</li> </ul><br><br>
 *___auto_create_topics___*<br>
 <ins>Type</ins>: boolean, required, immutable<br>
 <br>Allows topics to be auto created by brokers when messages are published to a non-existent topic<br><br>
@@ -82,9 +82,6 @@ The following terms are used to describe attributes in the schema of this resour
 *___dedicated_zookeeper___*<br>
 <ins>Type</ins>: nested block, optional, updatable, see [dedicated_zookeeper](#nested--dedicated_zookeeper) for nested schema<br>
 <br>Provision additional dedicated nodes for Apache Zookeeper to run on. Zookeeper nodes will be co-located with Kafka if this is not provided<br><br>
-*___rest_proxy___*<br>
-<ins>Type</ins>: nested block, optional, immutable, see [rest_proxy](#nested--rest_proxy) for nested schema<br>
-<br>Adds the specified version of Kafka REST Proxy to this Kafka cluster.<br><br>
 *___description___*<br>
 <ins>Type</ins>: string, optional, updatable<br>
 <br>A description of the cluster<br><br>
@@ -131,9 +128,6 @@ Kafka 3.6.1 and later will use KRaft instead of Zookeeper unless this is specifi
 *___karapace_schema_registry___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [karapace_schema_registry](#nested--karapace_schema_registry) for nested schema<br>
 <br>Adds the specified version of Kafka Karapace Schema Registry to this Kafka cluster.<br><br>
-*___schema_registry___*<br>
-<ins>Type</ins>: nested block, optional, immutable, see [schema_registry](#nested--schema_registry) for nested schema<br>
-<br>Adds the specified version of Kafka Schema Registry to this Kafka cluster.<br><br>
 *___client_telemetry___*<br>
 <ins>Type</ins>: nested block, optional, immutable, see [client_telemetry](#nested--client_telemetry) for nested schema<br>
 <br>Enable Client Telemetry for Kafka<br><br>
@@ -196,29 +190,6 @@ The additional listeners to create for a kafka cluster along with the default on
 *___port___*<br>
 <ins>Type</ins>: integer, read-only<br>
 <br>Port of the PrivateLink listener. Only available after creation. <br><br>
-<a id="nested--rest_proxy"></a>
-## Nested schema for `rest_proxy`
-Adds the specified version of Kafka REST Proxy to this Kafka cluster.<br>
-### Input attributes - Required
-*___integrate_rest_proxy_with_schema_registry___*<br>
-<ins>Type</ins>: boolean, required, updatable<br>
-<br>Enables Integration of the REST proxy with a Schema registry.<br><br>
-*___version___*<br>
-<ins>Type</ins>: string, required, updatable<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Adds the specified version of Kafka REST Proxy to the Kafka cluster. Available versions: <ul> </ul><br><br>
-### Input attributes - Optional
-*___use_local_schema_registry___*<br>
-<ins>Type</ins>: boolean, optional, updatable<br>
-<br>Integrates the REST proxy with the Schema registry attached to this cluster. Requires 'integrateRestProxyWithSchemaRegistry' to be 'true'.<br><br>
-*___schema_registry_username___*<br>
-<ins>Type</ins>: string, optional, updatable<br>
-<br>Username to use when connecting to the Kafka schema registry. Requires 'integrateRestProxyWithSchemaRegistry' to be 'true' and useLocalSchemaRegistry to be 'false'.<br><br>
-*___schema_registry_server_url___*<br>
-<ins>Type</ins>: string, optional, updatable<br>
-<br>URL of the Kafka schema registry to integrate with. Requires 'integrateRestProxyWithSchemaRegistry' to be 'true' and useLocalSchemaRegistry to be 'false'.<br><br>
-*___schema_registry_password___*<br>
-<ins>Type</ins>: string, optional, updatable<br>
-<br>Password to use when connecting to the Kafka schema registry. Requires 'integrateRestProxyWithSchemaRegistry' to be 'true' and useLocalSchemaRegistry to be 'false'.<br><br>
 <a id="nested--data_centre"></a>
 ## Nested schema for `data_centre`
 List of data centre settings.<br>
@@ -382,7 +353,7 @@ Adds the specified version of Kafka Karapace REST Proxy to this Kafka cluster.<b
 <br>Enables Integration of the Karapace REST proxy with the local Karapace Schema registry.<br><br>
 *___version___*<br>
 <ins>Type</ins>: string, required, updatable<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Adds the specified version of Kafka REST Proxy to the Kafka cluster. Available versions: <ul> <li>`6.2.1`</li> <li>`5.2.0`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Adds the specified version of Karapace REST Proxy to the Kafka cluster. Available versions: <ul> <li>`5.2.0`</li> <li>`6.2.1`</li> </ul><br><br>
 <a id="nested--azure_private_link"></a>
 ## Nested schema for `azure_private_link`
 Azure Private Link settings for Kafka. This feature is not generally available. Please contact Instaclustr Support (support@instaclustr.com) for more information.<br>
@@ -421,7 +392,7 @@ List of deleted nodes in the data centre<br>
 <br>Private IP address of the node.<br><br>
 *___node_roles___*<br>
 <ins>Type</ins>: list of strings, read-only<br>
-<ins>Constraints</ins>: allowed values: [ `CASSANDRA`, `SPARK_MASTER`, `SPARK_JOBSERVER`, `KAFKA_BROKER`, `KAFKA_DEDICATED_ZOOKEEPER`, `KAFKA_DEDICATED_KRAFT_CONTROLLER`, `KAFKA_ZOOKEEPER`, `KAFKA_KRAFT_CONTROLLER`, `KAFKA_SCHEMA_REGISTRY`, `KAFKA_REST_PROXY`, `APACHE_ZOOKEEPER`, `POSTGRESQL`, `PGBOUNCER`, `KAFKA_CONNECT`, `KAFKA_KARAPACE_SCHEMA_REGISTRY`, `KAFKA_KARAPACE_REST_PROXY`, `CADENCE`, `CLICKHOUSE_SERVER`, `CLICKHOUSE_KEEPER`, `CLICKHOUSE_SERVER_AND_KEEPER`, `REDIS_MASTER`, `REDIS_REPLICA`, `VALKEY_MASTER`, `VALKEY_REPLICA`, `OPENSEARCH_DASHBOARDS`, `OPENSEARCH_COORDINATOR`, `OPENSEARCH_MASTER`, `OPENSEARCH_DATA`, `OPENSEARCH_INGEST`, `OPENSEARCH_DATA_AND_INGEST`, `KAFKA_SHOTOVER_PROXY`, `MCP_GATEWAY_SERVER`, `KAFKA_DISKLESS` ]<br><br>The roles or purposes of the node. Useful for filtering for nodes that have a specific role.<br><br>
+<ins>Constraints</ins>: allowed values: [ `CASSANDRA`, `SPARK_MASTER`, `SPARK_JOBSERVER`, `KAFKA_BROKER`, `KAFKA_DEDICATED_ZOOKEEPER`, `KAFKA_DEDICATED_KRAFT_CONTROLLER`, `KAFKA_ZOOKEEPER`, `KAFKA_KRAFT_CONTROLLER`, `APACHE_ZOOKEEPER`, `POSTGRESQL`, `PGBOUNCER`, `KAFKA_CONNECT`, `KAFKA_KARAPACE_SCHEMA_REGISTRY`, `KAFKA_KARAPACE_REST_PROXY`, `CADENCE`, `CLICKHOUSE_SERVER`, `CLICKHOUSE_KEEPER`, `CLICKHOUSE_SERVER_AND_KEEPER`, `REDIS_MASTER`, `REDIS_REPLICA`, `VALKEY_MASTER`, `VALKEY_REPLICA`, `OPENSEARCH_DASHBOARDS`, `OPENSEARCH_COORDINATOR`, `OPENSEARCH_MASTER`, `OPENSEARCH_DATA`, `OPENSEARCH_INGEST`, `OPENSEARCH_DATA_AND_INGEST`, `KAFKA_SHOTOVER_PROXY`, `MCP_GATEWAY_SERVER`, `KAFKA_DISKLESS` ]<br><br>The roles or purposes of the node. Useful for filtering for nodes that have a specific role.<br><br>
 *___public_address___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Public IP address of the node.<br><br>
@@ -665,7 +636,7 @@ List of non-deleted nodes in the data centre<br>
 <br>Private IP address of the node.<br><br>
 *___node_roles___*<br>
 <ins>Type</ins>: list of strings, read-only<br>
-<ins>Constraints</ins>: allowed values: [ `CASSANDRA`, `SPARK_MASTER`, `SPARK_JOBSERVER`, `KAFKA_BROKER`, `KAFKA_DEDICATED_ZOOKEEPER`, `KAFKA_DEDICATED_KRAFT_CONTROLLER`, `KAFKA_ZOOKEEPER`, `KAFKA_KRAFT_CONTROLLER`, `KAFKA_SCHEMA_REGISTRY`, `KAFKA_REST_PROXY`, `APACHE_ZOOKEEPER`, `POSTGRESQL`, `PGBOUNCER`, `KAFKA_CONNECT`, `KAFKA_KARAPACE_SCHEMA_REGISTRY`, `KAFKA_KARAPACE_REST_PROXY`, `CADENCE`, `CLICKHOUSE_SERVER`, `CLICKHOUSE_KEEPER`, `CLICKHOUSE_SERVER_AND_KEEPER`, `REDIS_MASTER`, `REDIS_REPLICA`, `VALKEY_MASTER`, `VALKEY_REPLICA`, `OPENSEARCH_DASHBOARDS`, `OPENSEARCH_COORDINATOR`, `OPENSEARCH_MASTER`, `OPENSEARCH_DATA`, `OPENSEARCH_INGEST`, `OPENSEARCH_DATA_AND_INGEST`, `KAFKA_SHOTOVER_PROXY`, `MCP_GATEWAY_SERVER`, `KAFKA_DISKLESS` ]<br><br>The roles or purposes of the node. Useful for filtering for nodes that have a specific role.<br><br>
+<ins>Constraints</ins>: allowed values: [ `CASSANDRA`, `SPARK_MASTER`, `SPARK_JOBSERVER`, `KAFKA_BROKER`, `KAFKA_DEDICATED_ZOOKEEPER`, `KAFKA_DEDICATED_KRAFT_CONTROLLER`, `KAFKA_ZOOKEEPER`, `KAFKA_KRAFT_CONTROLLER`, `APACHE_ZOOKEEPER`, `POSTGRESQL`, `PGBOUNCER`, `KAFKA_CONNECT`, `KAFKA_KARAPACE_SCHEMA_REGISTRY`, `KAFKA_KARAPACE_REST_PROXY`, `CADENCE`, `CLICKHOUSE_SERVER`, `CLICKHOUSE_KEEPER`, `CLICKHOUSE_SERVER_AND_KEEPER`, `REDIS_MASTER`, `REDIS_REPLICA`, `VALKEY_MASTER`, `VALKEY_REPLICA`, `OPENSEARCH_DASHBOARDS`, `OPENSEARCH_COORDINATOR`, `OPENSEARCH_MASTER`, `OPENSEARCH_DATA`, `OPENSEARCH_INGEST`, `OPENSEARCH_DATA_AND_INGEST`, `KAFKA_SHOTOVER_PROXY`, `MCP_GATEWAY_SERVER`, `KAFKA_DISKLESS` ]<br><br>The roles or purposes of the node. Useful for filtering for nodes that have a specific role.<br><br>
 *___public_address___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Public IP address of the node.<br><br>
@@ -811,7 +782,7 @@ Adds the specified version of Kafka Karapace Schema Registry to this Kafka clust
 ### Input attributes - Required
 *___version___*<br>
 <ins>Type</ins>: string, required, updatable<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Adds the specified version of Kafka Schema Registry to the Kafka cluster. Available versions: <ul> <li>`5.2.0`</li> <li>`6.2.1`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Adds the specified version of Karapace Schema Registry to the Kafka cluster. Available versions: <ul> <li>`6.2.1`</li> <li>`5.2.0`</li> </ul><br><br>
 <a id="nested--aws_private_link"></a>
 ## Nested schema for `aws_private_link`
 
@@ -826,13 +797,6 @@ Adds the specified version of Kafka Karapace Schema Registry to this Kafka clust
 *___end_point_service_name___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>Name of the created endpoint service<br><br>
-<a id="nested--schema_registry"></a>
-## Nested schema for `schema_registry`
-Adds the specified version of Kafka Schema Registry to this Kafka cluster.<br>
-### Input attributes - Required
-*___version___*<br>
-<ins>Type</ins>: string, required, updatable<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>Adds the specified version of Kafka Schema Registry to the Kafka cluster. Available versions: <ul> </ul><br><br>
 <a id="nested--client_telemetry"></a>
 ## Nested schema for `client_telemetry`
 Enable Client Telemetry for Kafka<br>
