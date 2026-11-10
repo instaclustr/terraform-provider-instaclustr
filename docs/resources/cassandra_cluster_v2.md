@@ -140,7 +140,7 @@ List of data centre settings.<br>
 <ins>Constraints</ins>: allowed values: [ `AWS_VPC`, `GCP`, `AZURE`, `AZURE_AZ`, `ONPREMISES` ]<br><br>Name of a cloud provider service.<br><br>
 *___number_of_nodes___*<br>
 <ins>Type</ins>: integer, required, updatable<br>
-<br>Total number of nodes in the Data Centre. Includes only Cassandra nodes, other node types in the cluster such as shotover nodes are excluded from this count. Must be a multiple of `replicationFactor`.<br><br>
+<br>Total number of nodes in the Data Centre. Includes only Cassandra nodes, other node types in the cluster such as shotover nodes are excluded from this count. Must be a multiple of `replicationFactor`. Increasing it adds Cassandra nodes one at a time. Terraform apply waits for the whole operation. If the apply stops waiting, wait for the operation to finish before applying again; an apply while the operation is running is rejected. If the operation fails or is stopped, the apply can still succeed, so check the cluster's node count. To stop, use Instaclustr Management Console or the Cluster Management API. Stopping does not remove nodes already added.<br><br>
 *___replication_factor___*<br>
 <ins>Type</ins>: integer, required, immutable<br>
 <br>Number of racks to use when allocating nodes.<br><br>
@@ -243,7 +243,7 @@ Details of the Shotover Proxy nodes provisioned for Private Link.<br>
 ### Read-only attributes
 *___version___*<br>
 <ins>Type</ins>: string, read-only<br>
-<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>The version of Shotover Proxy running on the Cluster.Available versions: <ul> <li>`0.7.4`</li> </ul><br><br>
+<ins>Constraints</ins>: pattern: `[0-9]+\.[0-9]+\.[0-9]+`<br><br>The version of Shotover Proxy running on the Cluster.Available versions: <ul> <li>`0.7.5`</li> </ul><br><br>
 <a id="nested--current_operations"></a>
 ## Nested schema for `current_operations`
 Active operations in the data centre.<br>
