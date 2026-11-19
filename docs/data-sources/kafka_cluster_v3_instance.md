@@ -89,6 +89,9 @@ Kafka 3.6.1 and later will use KRaft instead of Zookeeper unless this is specifi
 <ins>Type</ins>: nested block, read-only, see [dedicated_kraft_controller](#nested--dedicated_kraft_controller) for nested schema<br>
 <br>Provision additional dedicated nodes for KRaft Controllers. If this is not provided, some Kafka brokers will be required to act as KRaft controllers.
 <br><br>
+*___consumer_offsets_number_of_partitions___*<br>
+<ins>Type</ins>: integer, read-only<br>
+<ins>Constraints</ins>: minimum: 5E+1, maximum: 5E+2<br><br>The number of partitions of the internal __consumer_offsets topic. Can only be set when the cluster is created and cannot be changed afterwards. Changing it in Terraform forces the cluster to be replaced (destroyed and recreated). Must be between 50 and 500. If not provided, Kafka's default of 50 is used.<br><br>
 *___private_network_cluster___*<br>
 <ins>Type</ins>: boolean, read-only<br>
 <br>Creates the cluster with private network only, see [Private Network Clusters](https://www.instaclustr.com/support/documentation/useful-information/private-network-clusters/).<br><br>
