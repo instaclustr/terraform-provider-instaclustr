@@ -177,6 +177,9 @@ List of data centre settings.<br>
 *___networks___*<br>
 <ins>Type</ins>: repeatable nested block, read-only, see [networks](#nested--networks) for nested schema<br>
 <br>All network CIDR blocks for this data centre, including the primary network and any expanded secondary CIDRs.<br><br>
+*___private_ip_broadcast_for_internode___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>Whether Cassandra nodes advertise their private IP for internode communication. Read-only. When adding a data centre this value is copied from the existing data centres.<br><br>
 *___network___*<br>
 <ins>Type</ins>: string, read-only<br>
 <br>The private network address block for the Data Centre specified using CIDR address notation. The network must have a prefix length between `/16` and `/26` and must be part of a private address space.<br><br>

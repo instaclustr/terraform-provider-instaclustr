@@ -233,6 +233,9 @@ List of data centre settings.<br>
 *___networks___*<br>
 <ins>Type</ins>: repeatable nested block, read-only, see [networks](#nested--networks) for nested schema<br>
 <br>All network CIDR blocks for this data centre, including the primary network and any expanded secondary CIDRs.<br><br>
+*___private_ip_broadcast_for_internode___*<br>
+<ins>Type</ins>: boolean, read-only<br>
+<br>Whether Cassandra nodes advertise their private IP for internode communication. Read-only. When adding a data centre this value is copied from the existing data centres.<br><br>
 <a id="nested--shotover_proxy"></a>
 ## Nested schema for `shotover_proxy`
 Details of the Shotover Proxy nodes provisioned for Private Link.<br>
